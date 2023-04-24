@@ -1,3 +1,10 @@
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.3.15")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.5")
+    }
+}
+
 plugins {
     //trick: for the same plugin versions in all sub-modules
     id("com.android.application").version("7.4.1").apply(false)

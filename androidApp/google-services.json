@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "631976126032",
+    "project_id": "loacell",
+    "storage_bucket": "loacell.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631976126032:android:961a91a12e562fcfde5355",
+        "android_client_info": {
+          "package_name": "com.wonddak.loacell.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "631976126032-92uqtiq7tm3ts5rd6dmmbej17sq3hu6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wonddak.loacell.android",
+            "certificate_hash": "075a2aa98bdb3240bcb19c871e1c58e1942e972d"
+          }
+        },
+        {
+          "client_id": "631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyRR4kqpd2iHlt-n4Uc1UvEv6XKjqMXOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
