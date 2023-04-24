@@ -3,9 +3,10 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     kotlin("plugin.serialization") version "1.8.10"
-
+    id("app.cash.sqldelight") version "2.0.0-alpha05"
 }
 
+val sqlDelightVersion = "2.0.0-alpha05"
 val ktorVersion = "2.2.1"
 
 kotlin {
@@ -42,6 +43,12 @@ kotlin {
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+                implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
+                implementation("app.cash.sqldelight:coroutines-extensions:$sqlDelightVersion")
+
+
+
             }
         }
         val commonTest by getting {
@@ -52,6 +59,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("app.cash.sqldelight:android-driver:$sqlDelightVersion")
             }
         }
         val androidUnitTest by getting
@@ -62,6 +70,7 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation("app.cash.sqldelight:native-driver:$sqlDelightVersion")
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
@@ -85,5 +94,13 @@ android {
     defaultConfig {
         minSdk = 30
         targetSdk = 33
+    }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.wonddak.loacell")
+        }
     }
 }

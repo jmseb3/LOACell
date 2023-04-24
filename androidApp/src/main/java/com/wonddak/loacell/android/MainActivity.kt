@@ -8,19 +8,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.wonddak.loacell.AppDataBase
+import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.android.util.LoginHelper
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
+        val db = AppDataBase(DriverFactory(this))
         setContent {
             MyApplicationTheme {
                 Surface(
@@ -39,8 +47,41 @@ class MainActivity : ComponentActivity() {
                     ) { result ->
                         loginHelper.registerAnonymousToGoogle(result)
                     }
+                    val items by db.getRoomInfo().collectAsState(initial = emptyList())
 
+                    val scope = rememberCoroutineScope()
                     Column {
+                        OutlinedButton(onClick = { 
+                            scope.launch { 
+                                db.addRoomInfo("test")
+                            }
+                        }) {
+                            Text(text = "ADD")
+                        }
+                        items.forEach { roominfo ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "${roominfo.id}-${roominfo.title}")
+                                OutlinedButton(onClick = {
+                                    db.addRaidInfo(roominfo.id,"testRaid")
+                                }) {
+                                    Text(text = "ADD")
+                                }
+                                OutlinedButton(onClick = {
+                                    db.deleteRoomInfo(roominfo.id)
+                                }) {
+                                    Text(text = "Delete")
+                                }
+                            }
+                            val raidInfo by db.getRaidInfoFromRoomId(roominfo.id).collectAsState(initial = emptyList())
+                            raidInfo.forEach {
+                                Text(text = "\t${it.id}-${it.title}")
+                            }
+                            Divider()
+                        }
                         LoginView(
                             googleLoginAction = {
                                 loginHelper.requestGoogleLogin { intent ->

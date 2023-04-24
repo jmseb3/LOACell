@@ -1,0 +1,12 @@
+CREATE TABLE RaidInfo (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  roomId INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE
+);
+
+selectByRoomId:
+SELECT * FROM RaidInfo WHERE roomId = ?;
+
+insertRaidInfo:
+INSERT INTO RaidInfo VALUES (?,?,?);
