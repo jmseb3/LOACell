@@ -3,6 +3,7 @@ package com.wonddak.loacell
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.wonddak.loacell.const.RaidType
 import com.wonddak.loacell.room.RaidInfo
 import com.wonddak.loacell.room.RoomInfo
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +24,26 @@ class AppDataBase(driverFactory: DriverFactory) {
 //        override fun encode(value: List<String>) = value.joinToString(separator = ",")
 //    }
 
+    private val raidTypeAdapter = object : ColumnAdapter<RaidType,String> {
+        override fun decode(databaseValue: String): RaidType {
+            if (databaseValue == RaidType.VALTAN_NORMAL.name) {
+                return  RaidType.VALTAN_NORMAL
+            } else if (databaseValue == RaidType.VALTAN_HARD.name) {
+                return  RaidType.VALTAN_HARD
+            }
+            return RaidType.VALTAN_NORMAL
+        }
+
+        override fun encode(value: RaidType): String {
+            return value.name
+        }
+    }
+
     private val database = Database(
-        driver = driver
+        driver = driver,
+        RaidInfoAdapter = RaidInfo.Adapter(
+            typeAdapter = raidTypeAdapter
+        )
     )
 
     private val roomInfoQueries = database.roomInfoQueries
@@ -43,7 +62,7 @@ class AppDataBase(driverFactory: DriverFactory) {
     }
 
     fun addRaidInfo(roomId: Long, title: String) {
-        raidInfoQueries.insertRaidInfo(null, roomId, title)
+        raidInfoQueries.insertRaidInfo(null, roomId, title, RaidType.VALTAN_HARD)
     }
 
     fun deleteRoomInfo(roomId: Long) {
