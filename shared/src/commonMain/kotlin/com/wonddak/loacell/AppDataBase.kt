@@ -26,12 +26,14 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val raidTypeAdapter = object : ColumnAdapter<RaidType,String> {
         override fun decode(databaseValue: String): RaidType {
-            if (databaseValue == RaidType.VALTAN_NORMAL.name) {
-                return  RaidType.VALTAN_NORMAL
-            } else if (databaseValue == RaidType.VALTAN_HARD.name) {
-                return  RaidType.VALTAN_HARD
+            return when (databaseValue) {
+                RaidType.VALTAN.name -> RaidType.VALTAN
+                RaidType.VYKAS.name -> RaidType.VYKAS
+                RaidType.KOUKU.name -> RaidType.KOUKU
+                RaidType.ABRELSHUD.name -> RaidType.ABRELSHUD
+                RaidType.ILLIALAN.name -> RaidType.ILLIALAN
+                else -> RaidType.NONE
             }
-            return RaidType.VALTAN_NORMAL
         }
 
         override fun encode(value: RaidType): String {
@@ -62,7 +64,7 @@ class AppDataBase(driverFactory: DriverFactory) {
     }
 
     fun addRaidInfo(roomId: Long, title: String) {
-        raidInfoQueries.insertRaidInfo(null, roomId, title, RaidType.VALTAN_HARD)
+        raidInfoQueries.insertRaidInfo(null, roomId, title, RaidType.ILLIALAN)
     }
 
     fun deleteRoomInfo(roomId: Long) {

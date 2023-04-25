@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                             }
                             val raidInfo by db.getRaidInfoFromRoomId(roominfo.id).collectAsState(initial = emptyList())
                             raidInfo.forEach {
-                                Text(text = "\t${it.id}-${it.title}-${it.type?.name}||${it.type?.minLevel}")
+                                Text(text = "\t${it.id}-${it.title}-${it.type?.name}(${it.type?.maxPerson})")
                             }
                             Divider()
                         }
