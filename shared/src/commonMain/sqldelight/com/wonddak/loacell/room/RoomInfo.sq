@@ -1,17 +1,11 @@
 CREATE TABLE RoomInfo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  title TEXT NOT NULL
+  title TEXT NOT NULL,
+  description TEXT NOT NULL
 );
-INSERT INTO RoomInfo
-VALUES (1,"23");
-
-INSERT INTO RaidInfo VALUES (1,1,"test1","VALTAN_NORMAL");
-INSERT INTO RaidInfo VALUES (2,1,"test2","VALTAN_NORMAL");
-INSERT INTO RaidInfo VALUES (3,1,"test3","VALTAN_NORMAL");
-INSERT INTO RaidInfo VALUES (4,1,"test4","VALTAN_NORMAL");
 
 insertRoomInfo:
-INSERT INTO RoomInfo VALUES (?,?);
+INSERT INTO RoomInfo VALUES (?,?,?);
 
 selectAll:
 SELECT * FROM RoomInfo;

@@ -15,8 +15,8 @@ class RoomInfoQueriesHelper(
         return queries.selectAll().asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun addRoomInfo(title: String) {
-        queries.insertRoomInfo(null, title)
+    fun addRoomInfo(title: String, description: String) {
+        queries.insertRoomInfo(null, title, description)
     }
 
     fun deleteRoomInfo(roomId: Long) {
