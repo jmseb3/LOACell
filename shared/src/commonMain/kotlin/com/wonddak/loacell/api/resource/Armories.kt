@@ -1,4 +1,4 @@
-package com.wonddak.loacell.resource
+package com.wonddak.loacell.api.resource
 
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable

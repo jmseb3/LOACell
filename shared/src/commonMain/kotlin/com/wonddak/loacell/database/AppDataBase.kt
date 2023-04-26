@@ -1,9 +1,10 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.database
 
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.wonddak.loacell.const.RaidType
+import com.wonddak.loacell.Database
+import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.room.RaidInfo
 import com.wonddak.loacell.room.RoomInfo
 import kotlinx.coroutines.Dispatchers
@@ -12,19 +13,7 @@ import kotlinx.coroutines.flow.Flow
 class AppDataBase(driverFactory: DriverFactory) {
     private val driver = driverFactory.createDriver()
 
-
-//    private val listOfStringsAdapter = object : ColumnAdapter<List<String>, String> {
-//        override fun decode(databaseValue: String) =
-//            if (databaseValue.isEmpty()) {
-//                listOf()
-//            } else {
-//                databaseValue.split(",")
-//            }
-//
-//        override fun encode(value: List<String>) = value.joinToString(separator = ",")
-//    }
-
-    private val raidTypeAdapter = object : ColumnAdapter<RaidType,String> {
+    private val raidTypeAdapter = object : ColumnAdapter<RaidType, String> {
         override fun decode(databaseValue: String): RaidType {
             return when (databaseValue) {
                 RaidType.VALTAN.name -> RaidType.VALTAN

@@ -1,9 +1,9 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.api
 
-import com.wonddak.loacell.model.CharacterInfo
-import com.wonddak.loacell.model.armories.EquipmentItem
-import com.wonddak.loacell.model.armories.ProfilesItem
-import com.wonddak.loacell.resource.Armories
+import com.wonddak.loacell.api.model.CharacterInfo
+import com.wonddak.loacell.api.model.armories.EquipmentItem
+import com.wonddak.loacell.api.model.armories.ProfilesItem
+import com.wonddak.loacell.api.resource.Armories
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

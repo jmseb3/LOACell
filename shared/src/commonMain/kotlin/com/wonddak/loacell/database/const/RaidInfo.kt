@@ -1,4 +1,4 @@
-package com.wonddak.loacell.const
+package com.wonddak.loacell.database.const
 
 
 enum class RaidType(

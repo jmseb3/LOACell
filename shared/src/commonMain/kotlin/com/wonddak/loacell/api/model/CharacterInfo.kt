@@ -1,4 +1,4 @@
-package com.wonddak.loacell.model
+package com.wonddak.loacell.api.model
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName

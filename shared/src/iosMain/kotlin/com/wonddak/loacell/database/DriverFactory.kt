@@ -1,7 +1,8 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.database
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import com.wonddak.loacell.Database
 
 actual class DriverFactory() {
     actual fun createDriver(): SqlDriver {

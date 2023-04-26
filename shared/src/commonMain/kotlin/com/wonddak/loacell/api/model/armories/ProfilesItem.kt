@@ -1,4 +1,4 @@
-package com.wonddak.loacell.model.armories
+package com.wonddak.loacell.api.model.armories
 
 
 import kotlinx.serialization.SerialName
