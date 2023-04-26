@@ -5,6 +5,8 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.database.const.RaidType
+import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
+import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.loacell.room.RaidInfo
 import com.wonddak.loacell.room.RoomInfo
 import kotlinx.coroutines.Dispatchers
@@ -37,27 +39,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         )
     )
 
-    private val roomInfoQueries = database.roomInfoQueries
-    private val raidInfoQueries = database.raidInfoQueries
-
-    fun getRoomInfo(): Flow<List<RoomInfo>> {
-        return roomInfoQueries.selectAll().asFlow().mapToList(Dispatchers.Main)
-    }
-
-    fun getRaidInfoFromRoomId(roomId: Long): Flow<List<RaidInfo>> {
-        return raidInfoQueries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
-    }
-
-    fun addRoomInfo(title: String) {
-        roomInfoQueries.insertRoomInfo(null, title)
-    }
-
-    fun addRaidInfo(roomId: Long, title: String) {
-        raidInfoQueries.insertRaidInfo(null, roomId, title, RaidType.ILLIALAN)
-    }
-
-    fun deleteRoomInfo(roomId: Long) {
-        roomInfoQueries.deleteById(roomId)
-    }
+    val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
+    val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
 
 }

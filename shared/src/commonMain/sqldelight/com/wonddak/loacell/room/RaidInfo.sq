@@ -1,4 +1,4 @@
-import com.wonddak.loacell.const.RaidType;
+import com.wonddak.loacell.database.const.RaidType;
 
 CREATE TABLE RaidInfo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,3 +13,6 @@ SELECT * FROM RaidInfo WHERE roomId = ?;
 
 insertRaidInfo:
 INSERT INTO RaidInfo VALUES (?,?,?,?);
+
+delete:
+DELETE FROM RaidInfo WHERE id =?;
