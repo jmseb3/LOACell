@@ -16,4 +16,5 @@ class LoaCellViewModel : ViewModel() {
     fun hideRoomInfo() {
         _roomId.value = 0
     }
+
 }

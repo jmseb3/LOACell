@@ -1,16 +1,11 @@
 package com.wonddak.loacell.database
 
 import app.cash.sqldelight.ColumnAdapter
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.loacell.Database
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
-import com.wonddak.loacell.room.RaidInfo
-import com.wonddak.loacell.room.RoomInfo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 
 class AppDataBase(driverFactory: DriverFactory) {
     private val driver = driverFactory.createDriver()

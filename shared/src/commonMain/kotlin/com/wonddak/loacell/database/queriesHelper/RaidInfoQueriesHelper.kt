@@ -2,18 +2,20 @@ package com.wonddak.loacell.database.queriesHelper
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.RaidInfoQueries
 import com.wonddak.loacell.database.const.RaidType
-import com.wonddak.loacell.room.RaidInfo
-import com.wonddak.loacell.room.RaidInfoQueries
-import com.wonddak.loacell.room.RoomInfo
-import com.wonddak.loacell.room.RoomInfoQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class RaidInfoQueriesHelper(
     private val queries: RaidInfoQueries
 ) {
     fun getALlByRoomId(roomId: Long): Flow<List<RaidInfo>> {
+        if (roomId <= 0L) {
+            return flow { emit(emptyList()) }
+        }
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
