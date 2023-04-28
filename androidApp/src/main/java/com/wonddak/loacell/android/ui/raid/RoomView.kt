@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,12 +65,16 @@ fun RoomInfoRow(
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = room.title,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
         )
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = room.description,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2
         )
     }
 }

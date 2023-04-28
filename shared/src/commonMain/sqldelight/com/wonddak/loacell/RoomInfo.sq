@@ -13,5 +13,8 @@ SELECT * FROM RoomInfo;
 selectById:
 SELECT * FROM RoomInfo WHERE id = ?;
 
+lastInsertRowId:
+SELECT last_insert_rowid();
+
 deleteById:
 DELETE FROM RoomInfo WHERE id = ?;
