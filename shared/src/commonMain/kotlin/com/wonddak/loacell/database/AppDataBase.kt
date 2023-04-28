@@ -19,14 +19,12 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val raidTypeAdapter = object : ColumnAdapter<RaidType, String> {
         override fun decode(databaseValue: String): RaidType {
-            return when (databaseValue) {
-                RaidType.VALTAN.name -> RaidType.VALTAN
-                RaidType.VYKAS.name -> RaidType.VYKAS
-                RaidType.KOUKU.name -> RaidType.KOUKU
-                RaidType.ABRELSHUD.name -> RaidType.ABRELSHUD
-                RaidType.ILLIALAN.name -> RaidType.ILLIALAN
-                else -> RaidType.NONE
+            RaidType.values().forEach {
+                if (it.name == databaseValue) {
+                    return it
+                }
             }
+            return  RaidType.ETC
         }
 
         override fun encode(value: RaidType): String {

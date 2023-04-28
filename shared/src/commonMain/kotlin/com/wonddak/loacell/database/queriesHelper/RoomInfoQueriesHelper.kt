@@ -17,13 +17,13 @@ class RoomInfoQueriesHelper(
 
     fun getRoomInfoById(id:Long) :RoomInfo {
         if (id <= 0L) {
-            return RoomInfo(0,"","")
+            return RoomInfo(0,"","","")
         }
         return queries.selectById(id).executeAsOne()
     }
 
-    fun addRoomInfo(title: String, description: String) {
-        queries.insertRoomInfo(null, title, description)
+    fun addRoomInfo(title: String, description: String,uniqueId:String) {
+        queries.insertRoomInfo(null, title, description,uniqueId)
     }
 
     fun deleteRoomInfo(roomId: Long) {

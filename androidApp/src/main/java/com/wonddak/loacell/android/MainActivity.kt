@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
@@ -30,6 +34,7 @@ import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.DriverFactory
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -37,6 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
+        val fireStore  = Firebase.firestore
         val db = AppDataBase(DriverFactory(this))
         setContent {
             MainContent() {
@@ -71,7 +77,13 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     AddRoomSheet() {title, description ->
                                         if (title.isNotEmpty()) {
-                                            db.roomInfoQueriesHelper.addRoomInfo(title, description)
+                                            val data = HashMap<String, Any>()
+                                            data["title"] =title
+                                            data["description"] = description
+                                            data["timeStamp"] = System.currentTimeMillis()
+                                            val newRooms = fireStore.collection("rooms").document()
+                                            newRooms.set(data)
+                                            db.roomInfoQueriesHelper.addRoomInfo(title, description,newRooms.id)
                                             show = false
                                         } else {
                                             Toast.makeText(context,"title이 비어있습니다.",Toast.LENGTH_SHORT).show()
@@ -83,15 +95,9 @@ class MainActivity : ComponentActivity() {
                     }
                     AnimatedVisibility(selectedRoomId != 0L) {
                         Column() {
-                            val selectedRoom =
-                                db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
-                            val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(
-                                selectedRoomId
-                            ).collectAsState(initial = emptyList())
                             RaidView(
-                                db = db,
-                                roomInfo = selectedRoom,
-                                raidInfoList = raidInfoList,
+                                db,
+                                selectedRoomId
                             ) {
                                 loaCellViewModel.hideRoomInfo()
                             }

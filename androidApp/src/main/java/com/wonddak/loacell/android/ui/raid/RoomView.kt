@@ -40,9 +40,9 @@ fun RoomView(
 @Composable
 fun RoomViewPreview() {
     val testList: List<RoomInfo> = listOf(
-        RoomInfo(1, "test1", "여기는 1 이다."),
-        RoomInfo(2, "test2", "여기는 2 이다."),
-        RoomInfo(3, "test3", "여기는 3 이다."),
+        RoomInfo(1, "test1", "여기는 1 이다.",""),
+        RoomInfo(2, "test2", "여기는 2 이다.",""),
+        RoomInfo(3, "test3", "여기는 3 이다.",""),
     )
     RoomView(testList)
 }

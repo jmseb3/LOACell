@@ -19,7 +19,7 @@ class RaidInfoQueriesHelper(
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun addRaidInfo(roomId: Long, title: String, type: RaidType = RaidType.NONE) {
+    fun addRaidInfo(roomId: Long, title: String, type: RaidType = RaidType.ETC) {
         queries.insertRaidInfo(null, roomId, title, type)
     }
 
