@@ -1,8 +1,15 @@
 CREATE TABLE Character (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  userId INTEGER NOT NULL,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL PRIMARY KEY,
+  username TEXT NOT NULL,
   server TEXT NOT NULL,
-  level REAL NOT NULL,
-  FOREIGN KEY(userId) REFERENCES UserInfo(id) ON DELETE CASCADE
+  class TEXT NOT NULL,
+  level TEXT NOT NULL,
+  FOREIGN KEY(username) REFERENCES UserInfo(name) ON DELETE CASCADE
 );
+
+
+insertCharacterInfo:
+INSERT INTO Character VALUES (?,?,?,?,?);
+
+selectByUserName:
+SELECT * FROM Character WHERE username = ?;

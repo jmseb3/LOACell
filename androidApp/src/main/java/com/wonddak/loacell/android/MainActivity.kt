@@ -1,41 +1,35 @@
 package com.wonddak.loacell.android
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
-import com.wonddak.loacell.database.AppDataBase
-import com.wonddak.loacell.database.DriverFactory
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.database.const.RaidType
+import com.wonddak.loacell.database.AppDataBase
+import com.wonddak.loacell.database.DriverFactory
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -52,9 +46,6 @@ class MainActivity : ComponentActivity() {
 
                 val selectedRoomId by loaCellViewModel.roomId.collectAsState()
 
-                BackHandler(selectedRoomId != 0L) {
-                    loaCellViewModel.hideRoomInfo()
-                }
                 Column(Modifier.fillMaxSize()) {
                     AnimatedVisibility(selectedRoomId == 0L) {
                         Column() {
@@ -86,7 +77,6 @@ class MainActivity : ComponentActivity() {
                                             Toast.makeText(context,"title이 비어있습니다.",Toast.LENGTH_SHORT).show()
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -98,22 +88,13 @@ class MainActivity : ComponentActivity() {
                             val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(
                                 selectedRoomId
                             ).collectAsState(initial = emptyList())
-                            OutlinedButton(onClick = { loaCellViewModel.hideRoomInfo() }) {
-                                Text(text = "BACK")
-                            }
-                            OutlinedButton(onClick = {
-                                db.raidInfoQueriesHelper.addRaidInfo(
-                                    selectedRoomId,
-                                    "test",
-                                    RaidType.VALTAN
-                                )
-                            }) {
-                                Text(text = "ADD")
-                            }
                             RaidView(
+                                db = db,
                                 roomInfo = selectedRoom,
-                                raidInfoList = raidInfoList
-                            )
+                                raidInfoList = raidInfoList,
+                            ) {
+                                loaCellViewModel.hideRoomInfo()
+                            }
                         }
                     }
                 }
