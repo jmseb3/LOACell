@@ -1,13 +1,18 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
+import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -35,37 +41,35 @@ fun AddRoomSheet(
         val focusManager = LocalFocusManager.current
 
         val textFieldModifier = Modifier.fillMaxWidth()
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = {
-                Text(text = "Title")
-            },
-            placeholder = {
-                Text(text = "Input Room Title")
-            },
+        AddRoomTextField(
+            modifier = textFieldModifier,
+            text = title ,
+            label = "Title",
+            placeHolder = "Input Room Title",
+            maxLine = 1,
+            maxLength = 10,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
-            modifier = textFieldModifier,
-            singleLine = true
+            textChange = {
+                title = it
+            }
         )
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = {
-                Text(text = "Description")
-            },
-            placeholder = {
-                Text(text = "Input Room Description")
-            },
-            maxLines = 3,
+        AddRoomTextField(
+            modifier = textFieldModifier,
+            text = description ,
+            label = "Description",
+            placeHolder = "Input Room Description",
+            maxLine = 3,
+            maxLength = 100,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
-            modifier = textFieldModifier,
-            keyboardActions = KeyboardActions{
+            keyboardActions = KeyboardActions {
                 focusManager.clearFocus()
+            },
+            textChange = {
+                description = it
             }
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -77,6 +81,51 @@ fun AddRoomSheet(
         ) {
             Text(text = "ADD")
         }
+    }
+}
+
+@Composable
+fun AddRoomTextField(
+    modifier: Modifier,
+    text: String,
+    label: String,
+    placeHolder: String,
+    maxLine: Int,
+    maxLength: Int,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    textChange: (text: String) -> Unit
+) {
+    fun String.addEmptyLines(lines: Int) = this + "\n".repeat(lines)
+
+    Column(
+        modifier = modifier.padding(10.dp),
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "${text.length}/$maxLength",
+            textAlign = TextAlign.End
+        )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = text.addEmptyLines(maxLine),
+            onValueChange = {
+                if (it.length <= maxLength) {
+                    textChange(it.replace("\n",""))
+                } else {
+
+                }
+            },
+            label = {
+                Text(text = label)
+            },
+            placeholder = {
+                Text(text = placeHolder)
+            },
+            maxLines = maxLine,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+        )
     }
 }
 
