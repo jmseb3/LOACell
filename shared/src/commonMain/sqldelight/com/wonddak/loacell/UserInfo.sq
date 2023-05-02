@@ -1,11 +1,16 @@
 CREATE TABLE UserInfo (
-  name TEXT NOT NULL PRIMARY KEY,
+  id INTEGER,
+  name TEXT NOT NULL,
   roomId INTEGER NOT NULL,
-  FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE
+  FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE,
+  PRIMARY KEY (id)
 );
 
 insertUserInfo:
-INSERT INTO UserInfo VALUES (?,?);
+INSERT INTO UserInfo VALUES (?,?,?);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
 
 selectByRoomId:
 SELECT * FROM UserInfo WHERE roomId = ?;

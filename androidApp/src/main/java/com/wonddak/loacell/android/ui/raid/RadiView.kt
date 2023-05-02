@@ -2,11 +2,13 @@ package com.wonddak.loacell.android.ui.raid
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -17,45 +19,46 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
-import com.wonddak.loacell.api.model.CharacterInfo
+import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
+import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.database.AppDataBase
 
 @Composable
 fun RaidView(
-    db :AppDataBase,
-    selectedRoomId :Long,
+    db: AppDataBase,
+    selectedRoomId: Long,
     backAction: () -> Unit
 ) {
     val roomInfo = db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
-    val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId).collectAsState(initial = emptyList())
-    Column {
-        var showAddRaidSheet by remember {
-            mutableStateOf(false)
-        }
-        var showAddUserSheet by remember {
-            mutableStateOf(false)
-        }
-        BackHandler(showAddRaidSheet) {
-            showAddRaidSheet = false
-        }
-        BackHandler(showAddUserSheet) {
-            showAddUserSheet = false
-        }
-        BackHandler(!showAddUserSheet && !showAddRaidSheet) {
-            backAction()
-        }
+    val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
+        .collectAsState(initial = emptyList())
 
+    val context = LocalContext.current
+
+    var showAddRaidSheet by remember {
+        mutableStateOf(false)
+    }
+    var showAddUserSheet by remember {
+        mutableStateOf(false)
+    }
+    BackHandler(!showAddUserSheet && !showAddRaidSheet) {
+        backAction()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(0f)
+    ) {
         OutlinedButton(onClick = { backAction() }) {
             Text(text = "BACK")
         }
@@ -91,11 +94,13 @@ fun RaidView(
                 OutlinedButton(onClick = { showAddUserSheet = true }) {
                     Text(text = "show")
                 }
-                val userList by db.getUsersByRoomId(roomInfo.id).collectAsState(initial = emptyList())
+                val userList by db.getUsersByRoomId(roomInfo.id)
+                    .collectAsState(initial = emptyList())
                 LazyColumn {
                     items(userList) { user ->
                         Text(text = user.name)
-                        val characters by db.getCharactersByUser(user.name).collectAsState(initial = emptyList())
+                        val characters by db.getCharactersByUser(user.id!!)
+                            .collectAsState(initial = emptyList())
                         characters.forEach {
                             Text(text = "\t${it.name}")
                         }
@@ -103,39 +108,49 @@ fun RaidView(
                 }
             }
         }
-        val context = LocalContext.current
+    }
 
-        if (showAddUserSheet) {
-            BottomSheetDialog(
-                onDismissRequest = { showAddUserSheet = false },
-                properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-            ) {
-                AddUserSheet() { user, characterList ->
+    if (showAddRaidSheet) {
+        BackHandler(true) {
+            showAddRaidSheet = false
+        }
+        BottomSheetDialog(
+            onDismissRequest = { showAddRaidSheet = false },
+            properties = BottomSheetDialogProperties(dismissWithAnimation = true),
+        ) {
+            AddRaidSheet()
+        }
+    }
+
+    if (showAddUserSheet) {
+        BackHandler(true) {
+            showAddUserSheet = false
+        }
+        BottomSheetDialog(
+            onDismissRequest = { showAddUserSheet = false },
+            properties = BottomSheetDialogProperties(
+                dismissWithAnimation = true,
+            ),
+        ) {
+            BaseSheet(title = "Add User Info") {
+                AddUserView() { user, characterList ->
                     when {
                         user.isEmpty() -> {
-                            Toast.makeText(context,"유저 이름이 비어있습니다.",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "유저 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
                         }
+
                         characterList.isEmpty() -> {
-                            Toast.makeText(context,"선택된 캐릭터 정보가 없습니다.",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "선택된 캐릭터 정보가 없습니다.", Toast.LENGTH_SHORT).show()
                         }
+
                         else -> {
-                            db.addUserAndCharacters(roomId = roomInfo.id,user,characterList)
+                            db.addUserAndCharacters(roomId = roomInfo.id, user, characterList)
                             showAddUserSheet = false
                         }
                     }
-
                 }
             }
         }
-        if (showAddRaidSheet) {
-            BottomSheetDialog(
-                onDismissRequest = { showAddRaidSheet = false },
-                properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-            ) {
-                AddRaidSheet()
-            }
-        }
-
     }
 }
 

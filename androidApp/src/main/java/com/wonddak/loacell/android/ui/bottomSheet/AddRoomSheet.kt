@@ -96,7 +96,6 @@ fun AddRoomTextField(
     keyboardActions: KeyboardActions = KeyboardActions(),
     textChange: (text: String) -> Unit
 ) {
-    fun String.addEmptyLines(lines: Int) = this + "\n".repeat(lines)
 
     Column(
         modifier = modifier.padding(10.dp),
@@ -108,10 +107,10 @@ fun AddRoomTextField(
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = text.addEmptyLines(maxLine),
+            value = text,
             onValueChange = {
                 if (it.length <= maxLength) {
-                    textChange(it.replace("\n",""))
+                    textChange(it)
                 } else {
 
                 }

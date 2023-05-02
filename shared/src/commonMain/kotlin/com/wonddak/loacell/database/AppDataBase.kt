@@ -43,16 +43,18 @@ class AppDataBase(driverFactory: DriverFactory) {
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
     fun addUserAndCharacters(roomId:Long,user:String,characterList : List<CharacterInfo>) {
         database.apply {
-            userInfoQueries.insertUserInfo(user,roomId)
-            characterQueries.transaction {
-                characterList.forEach { info ->
-                    database.characterQueries.insertCharacterInfo(
-                        info.characterName,
-                        user,
-                        info.serverName,
-                        info.characterClassName,
-                        info.itemMaxLevel
-                    )
+            userInfoQueries.insertUserInfo(null,user,roomId)
+            userInfoQueries.lastInsertRowId().executeAsOne().let {userId ->
+                characterQueries.transaction {
+                    characterList.forEach { info ->
+                        database.characterQueries.insertCharacterInfo(
+                            info.characterName,
+                            userId,
+                            info.serverName,
+                            info.characterClassName,
+                            info.itemMaxLevel
+                        )
+                    }
                 }
             }
         }
@@ -62,8 +64,8 @@ class AppDataBase(driverFactory: DriverFactory) {
         return database.userInfoQueries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun getCharactersByUser(username: String) : Flow<List<Character>> {
-        return database.characterQueries.selectByUserName(username).asFlow().mapToList(Dispatchers.Main)
+    fun getCharactersByUser(userId: Long) : Flow<List<Character>> {
+        return database.characterQueries.selectByUserId(userId).asFlow().mapToList(Dispatchers.Main)
     }
 
 }
