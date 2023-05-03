@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.raid.user
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +31,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.api.LostArkApi
 import com.wonddak.loacell.api.model.CharacterInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -42,6 +45,10 @@ fun AddUserView(
         modifier = modifier.padding(10.dp)
     ) {
         var characterName by remember {
+            mutableStateOf("")
+        }
+
+        var user by remember {
             mutableStateOf("")
         }
         var characterList: List<CharacterInfo> by remember {
@@ -59,6 +66,21 @@ fun AddUserView(
         }
         AnimatedVisibility(characterList.isEmpty()) {
             Column() {
+                OutlinedTextField(
+                    value = user,
+                    onValueChange = { user = it.replace(" ","") },
+                    label = {
+                        Text(text = "유저 이름")
+                    },
+                    placeholder = {
+                        Text(text = "유저 이름 입력")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    ),
+                    modifier = textFieldModifier,
+                    singleLine = true
+                )
                 OutlinedTextField(
                     value = characterName,
                     onValueChange = { characterName = it.replace(" ","") },
@@ -81,12 +103,22 @@ fun AddUserView(
 
                 OutlinedButton(
                     onClick = {
-                        scope.launch {
-                            showProgress = true
-                            val api = LostArkApi()
-                            characterList = api.getCharacterInfo(characterName)
-                            characterName = ""
-                            showProgress = false
+                        if (characterName.isNotEmpty() && user.isNotEmpty()) {
+                            scope.launch {
+                                showProgress = true
+                                val api = LostArkApi()
+                                characterList = api.getCharacterInfo(characterName)
+                                withContext(Dispatchers.IO) {
+                                    characterList.forEachIndexed { index, characterInfo ->
+                                        if (characterInfo.characterName == characterName) {
+                                            val temp = selectedList.toMutableSet()
+                                            temp.add(index)
+                                            selectedList = temp
+                                        }
+                                    }
+                                }
+                                showProgress = false
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -94,38 +126,28 @@ fun AddUserView(
                     Text(text = "Search")
                 }
                 if (showProgress) {
+                    Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
                     CircularProgressIndicator()
                 }
             }
         }
         AnimatedVisibility(characterList.isNotEmpty()) {
             Column() {
-                var user by remember {
-                    mutableStateOf("")
-                }
-                OutlinedTextField(
-                    value = user,
-                    onValueChange = { user = it.replace(" ","") },
-                    label = {
-                        Text(text = "유저 이름")
-                    },
-                    placeholder = {
-                        Text(text = "유저 이름 입력")
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = textFieldModifier,
-                    singleLine = true
-                )
-                OutlinedButton(
-                    onClick = {
-                        val selectedCharacterList =
-                            selectedList.map { index -> characterList[index] }
-                        addAction(user, selectedCharacterList)
-                    }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("추가하기")
+                    OutlinedButton(
+                        onClick = {
+                            val selectedCharacterList =
+                                selectedList.map { index -> characterList[index] }
+                            addAction(user, selectedCharacterList)
+                        }
+                    ) {
+                        Text("추가하기")
+                    }
+                    Text(text = "캐릭터 ${selectedList.size}개를 선택하였습니다.")
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -133,6 +155,8 @@ fun AddUserView(
                     itemsIndexed(characterList) { index, info ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Checkbox(
                                 checked = selectedList.contains(index),
@@ -150,6 +174,12 @@ fun AddUserView(
                             )
                             Text(
                                 text = info.characterName
+                            )
+                            Text(
+                                text = info.characterClassName
+                            )
+                            Text(
+                                text = info.itemMaxLevel
                             )
                         }
                     }

@@ -29,7 +29,6 @@ fun BaseSheet(
     Column(
         modifier = Modifier
             .wrapContentHeight()
-            .fillMaxHeight(0.5f)
             .clip(
                 RoundedCornerShape(
                     topStart = 10.dp,
@@ -37,7 +36,7 @@ fun BaseSheet(
                 )
             )
             .background(Color.White)
-            .defaultMinSize(minHeight = 200.dp)
+            .defaultMinSize(minHeight = 400.dp)
             .padding(10.dp)
     ) {
         Text(
