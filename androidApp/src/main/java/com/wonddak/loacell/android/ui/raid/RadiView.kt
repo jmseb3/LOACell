@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
@@ -153,7 +154,7 @@ fun RaidView(
                                     if (!result) {
                                         Toast.makeText(
                                             context,
-                                            "이미 추가된 캐릭터입니다.",
+                                            "이미 추가되어있는 캐릭터정보 입니다.",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -172,14 +173,21 @@ fun UserInfoCard(
     db: AppDataBase,
     user: UserInfo
 ) {
+    fun updateRepresentativeCharacter() {
+        db.updateUserRepresentativeCharacter(user.userId,"")
+    }
+
     val characters by db.getCharacters(user.userId).collectAsState(initial = emptyList())
-    var show by rememberSaveable {
+    var showCharacters by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showMore by remember {
         mutableStateOf(false)
     }
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .padding(5.dp)
+            .padding(8.dp)
             .fillMaxWidth()
     ) {
         Column(
@@ -189,44 +197,67 @@ fun UserInfoCard(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { show = !show },
-                text = "${user.name} - ${user.representativeCharacter} (${characters.size})",
+                    .clickable { showCharacters = !showCharacters },
+                text = "${user.name} - ${user.representativeCharacter}",
                 textAlign = TextAlign.Center
             )
-            AnimatedVisibility(visible = show) {
-                Column() {
+            AnimatedVisibility(visible = showCharacters) {
+                Column {
                     Row() {
-                        
+                        OutlinedButton(onClick = {  }) {
+                            Text(text = "대표 캐릭터 변경")
+                        }
                     }
-                    characters.forEach {
-                        Column(
+
+                    Divider()
+                    if (characters.size <= 6) {
+                        characters.forEach { UserInfoCharacters(it) }
+                    } else {
+                        if (showMore) {
+                            characters.forEach { UserInfoCharacters(it) }
+                        } else {
+                            characters.subList(0,6).forEach { UserInfoCharacters(it) }
+                        }
+                        Text(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(3.dp)
-                        ) {
-                            Text(text = "${it.name}")
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                val modifier = Modifier.fillMaxWidth(0.5f)
-                                Text(
-                                    text = "${it.className}",
-                                    modifier = modifier
-                                )
-                                Text(
-                                    text = "${it.level}",
-                                    modifier = modifier
-                                )
-                            }
-                            Divider()
-                        }
+                                .clickable { showMore = !showMore },
+                            text = if (showMore) "닫기" else "더보기 (${characters.size-6})",
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
         }
     }
+}
 
+@Composable
+fun UserInfoCharacters(
+    character: Character
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(3.dp)
+    ) {
+        Text(text = "${character.name}")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            val modifier = Modifier.fillMaxWidth(0.5f)
+            Text(
+                text = "${character.className}",
+                modifier = modifier
+            )
+            Text(
+                text = "${character.level}",
+                modifier = modifier
+            )
+        }
+        Divider()
+    }
 }
 
 @Composable

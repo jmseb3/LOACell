@@ -90,6 +90,14 @@ class AppDataBase(driverFactory: DriverFactory) {
         }
         return true
     }
+    fun updateUserRepresentativeCharacter(
+        userId: Long,
+        representativeCharacter: String
+    ) {
+        database.userInfoQueries.upadteRepresentativeCharacter(
+            representativeCharacter, userId
+        )
+    }
 
     fun getUsersByRoomId(roomId: Long): Flow<List<UserInfo>> {
         return database.userInfoQueries.selectByRoomId(roomId).asFlow()

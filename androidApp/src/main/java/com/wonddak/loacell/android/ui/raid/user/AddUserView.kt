@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.raid.user
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -80,8 +82,14 @@ fun AddUserView(
                         focusManager.clearFocus()
                     }
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-
+                Spacer(modifier = Modifier.height(5.dp))
+                if (showProgress) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
+                        CircularProgressIndicator()
+                    }
+                }
+                Spacer(modifier = Modifier.height(5.dp))
                 OutlinedButton(
                     onClick = {
                         scope.launch {
@@ -90,16 +98,13 @@ fun AddUserView(
                                 user.replace("/n",""),
                                 characterName.replace("/n","")
                             )
+                            delay(1_000L)
                             showProgress = false
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "추가하기")
-                }
-                if (showProgress) {
-                    Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
-                    CircularProgressIndicator()
                 }
             }
 
