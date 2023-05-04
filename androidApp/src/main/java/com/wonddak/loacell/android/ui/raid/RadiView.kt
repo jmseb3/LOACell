@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -171,8 +173,7 @@ fun UserInfoCard(
     user: UserInfo
 ) {
     val characters by db.getCharacters(user.userId).collectAsState(initial = emptyList())
-
-    var show by remember {
+    var show by rememberSaveable {
         mutableStateOf(false)
     }
     Card(
@@ -189,17 +190,36 @@ fun UserInfoCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { show = !show },
-                text = "${user.name} - ${user.representativeCharacter}",
+                text = "${user.name} - ${user.representativeCharacter} (${characters.size})",
                 textAlign = TextAlign.Center
             )
             AnimatedVisibility(visible = show) {
                 Column() {
-                    val new = characters.sortedByDescending { it.level.replace(",", "").toFloat() }
-                    new.forEach{
-                        Column() {
+                    Row() {
+                        
+                    }
+                    characters.forEach {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(3.dp)
+                        ) {
                             Text(text = "${it.name}")
-                            Text(text = "${it.class_}")
-                            Text(text = "${it.level}")
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                val modifier = Modifier.fillMaxWidth(0.5f)
+                                Text(
+                                    text = "${it.className}",
+                                    modifier = modifier
+                                )
+                                Text(
+                                    text = "${it.level}",
+                                    modifier = modifier
+                                )
+                            }
+                            Divider()
                         }
                     }
                 }

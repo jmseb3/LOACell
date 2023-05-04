@@ -14,6 +14,7 @@ import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.transform
 
 class AppDataBase(driverFactory: DriverFactory) {
     private val driver = driverFactory.createDriver()
@@ -97,7 +98,9 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     fun getCharacters(userId: Long): Flow<List<Character>> {
         return database.characterQueries.selectByuserId(userId).asFlow()
-            .mapToList(Dispatchers.Main)
+            .mapToList(Dispatchers.Main).transform {
+                emit(it.sortedByDescending { it.level.replace(",", "").toFloat()  })
+            }
     }
 
 }
