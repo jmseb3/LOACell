@@ -2,52 +2,31 @@ package com.wonddak.loacell.android.ui.raid
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Card
 import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
-import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
+import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
 import com.wonddak.loacell.database.AppDataBase
 
 @Composable
@@ -177,163 +156,6 @@ fun RaidView(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun UserInfoCard(
-    db: AppDataBase,
-    user: UserInfo
-) {
-
-    val characters by db.getCharacters(user.userId).collectAsState(initial = emptyList())
-    var showCharacters by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showMore by remember {
-        mutableStateOf(false)
-    }
-    var openDialog by remember { mutableStateOf(false) }
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(5.dp)
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showCharacters = !showCharacters },
-                text = "${user.name} - ${user.representativeCharacter}",
-                textAlign = TextAlign.Center
-            )
-            AnimatedVisibility(visible = showCharacters) {
-                Column {
-                    Row() {
-                        OutlinedButton(onClick = { openDialog = true }) {
-                            Text(text = "대표 캐릭터 변경")
-                        }
-                    }
-
-                    Divider()
-                    if (characters.size <= 6) {
-                        characters.forEach { UserInfoCharacters(it) }
-                    } else {
-                        if (showMore) {
-                            characters.forEach { UserInfoCharacters(it) }
-                        } else {
-                            characters.subList(0, 6).forEach { UserInfoCharacters(it) }
-                        }
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { showMore = !showMore },
-                            text = if (showMore) "닫기" else "더보기 (${characters.size - 6})",
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    if (openDialog) {
-        var expanded by remember { mutableStateOf(false) }
-        var selectedText by remember { mutableStateOf(user.representativeCharacter) }
-
-        AlertDialog(
-            onDismissRequest = {
-                openDialog = false
-            },
-            title = {
-                Text(text = "대표 캐릭터 변경")
-            },
-            text = {
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
-                ) {
-                    TextField(
-                        value = selectedText,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        characters.map { it.name }.forEach { item ->
-                            DropdownMenuItem(
-                                content = { Text(
-                                    text = item,
-                                    fontWeight = if (selectedText == item) FontWeight.Bold else FontWeight.Normal
-                                ) },
-                                onClick = {
-                                    selectedText = item
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        db.updateUserRepresentativeCharacter(user.userId, selectedText)
-                        openDialog = false
-                    }
-                ) {
-                    Text("변경")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog = false
-                    }
-                ) {
-                    Text("취소")
-                }
-            },
-            shape = RoundedCornerShape(24.dp)
-        )
-    }
-}
-@Composable
-fun UserInfoCharacters(
-    character: Character
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(3.dp)
-    ) {
-        Text(text = "${character.name}")
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            val modifier = Modifier.fillMaxWidth(0.5f)
-            Text(
-                text = "${character.className}",
-                modifier = modifier
-            )
-            Text(
-                text = "${character.level}",
-                modifier = modifier
-            )
-        }
-        Divider()
-    }
-}
 
 @Composable
 fun RaidItemRow(raidInfo: RaidInfo) {
