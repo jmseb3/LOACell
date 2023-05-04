@@ -42,28 +42,41 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
-    suspend fun addUserAndCharacters(roomId: Long, user: String, representativeCharacter: String) {
+    suspend fun addUserAndCharacters(
+        roomId: Long,
+        user: String,
+        representativeCharacter: String
+    ): Boolean {
+        val result = database.characterQueries.checkAlreadyExist(representativeCharacter).executeAsOne()
+        if (result) {
+            return false
+        }
+        val characterList = api.getCharacterInfo(representativeCharacter)
         database.apply {
-            userInfoQueries.insertUserInfo(roomId, user, representativeCharacter)
-            api.getCharacterInfo(representativeCharacter).forEach {
-                characterQueries.insertCharacterInfo(
-                    it.characterName,
-                    user,
-                    representativeCharacter,
-                    it.serverName,
-                    it.characterClassName,
-                    it.itemMaxLevel
-                )
+            userInfoQueries.insertUserInfo(null, roomId, user, representativeCharacter)
+            userInfoQueries.lastInsertRowId().executeAsOne().let { userId ->
+                characterList.forEach {
+                    characterQueries.insertCharacterInfo(
+                        it.characterName,
+                        userId,
+                        it.serverName,
+                        it.characterClassName,
+                        it.itemMaxLevel
+                    )
+                }
             }
         }
+        return true
     }
 
     fun getUsersByRoomId(roomId: Long): Flow<List<UserInfo>> {
-        return database.userInfoQueries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
+        return database.userInfoQueries.selectByRoomId(roomId).asFlow()
+            .mapToList(Dispatchers.Main)
     }
 
-    fun getCharacters(representativeCharacter: String) : Flow<List<Character>> {
-        return database.characterQueries.selectByRepresentativeCharacter(representativeCharacter).asFlow().mapToList(Dispatchers.Main)
+    fun getCharacters(userId: Long): Flow<List<Character>> {
+        return database.characterQueries.selectByuserId(userId).asFlow()
+            .mapToList(Dispatchers.Main)
     }
 
 }

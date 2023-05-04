@@ -103,10 +103,12 @@ fun RaidView(
                     .collectAsState(initial = emptyList())
                 LazyColumn {
                     items(userList) { user ->
-                        Text(text = user.name)
-                        val characters by db.getCharacters(user.representativeCharacter)
+                        Text(text = "${user.name} - ${user.representativeCharacter}")
+                        val characters by db.getCharacters(user.userId)
                             .collectAsState(initial = emptyList())
-                        characters.sortedBy { it.name == it.representativeCharacter }.forEach {
+                        val new = characters.sortedByDescending { it.level.replace(",","").toFloat() }
+
+                        new.forEach {
                             Text(text = "\t\t${it.name}_${it.class_}_${it.level}")
                         }
                     }
@@ -149,7 +151,11 @@ fun RaidView(
                             Toast.makeText(context, "캐릭터 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            db.addUserAndCharacters(roomInfo.id,user,characterName)
+                            db.addUserAndCharacters(roomInfo.id,user,characterName).let {result ->
+                                if (!result) {
+                                    Toast.makeText(context, "이미 추가된 캐릭터입니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                             showAddUserSheet = false
                         }
                     }

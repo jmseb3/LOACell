@@ -1,13 +1,13 @@
 CREATE TABLE UserInfo (
+  userId INTEGER PRIMARY KEY AUTOINCREMENT,
   roomId INTEGER NOT NULL,
   name TEXT NOT NULL,
   representativeCharacter Text NOT NULL ,
-  PRIMARY KEY(name,representativeCharacter),
   FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE
 );
 
 insertUserInfo:
-INSERT INTO UserInfo VALUES (?,?,?);
+INSERT INTO UserInfo VALUES (?,?,?,?);
 
 lastInsertRowId:
 SELECT last_insert_rowid();
