@@ -8,6 +8,7 @@ import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.api.LostArkApi
+import com.wonddak.loacell.database.const.Difficulty
 import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
@@ -33,10 +34,30 @@ class AppDataBase(driverFactory: DriverFactory) {
         }
     }
 
+    private val difficultyTypeAdapter = object : ColumnAdapter<Difficulty, Long> {
+        override fun decode(databaseValue: Long): Difficulty {
+            return when(databaseValue) {
+                2L -> Difficulty.Hell
+                1L -> Difficulty.Hard
+                else -> Difficulty.Normal
+            }
+        }
+
+        override fun encode(value: Difficulty): Long {
+            return when(value) {
+                Difficulty.Hell -> 2L
+                Difficulty.Hard -> 1L
+                else -> 0L
+            }
+        }
+
+    }
+
     private val database = Database(
         driver = driver,
         RaidInfoAdapter = RaidInfo.Adapter(
-            typeAdapter = raidTypeAdapter
+            typeAdapter = raidTypeAdapter,
+            DifficultyAdapter = difficultyTypeAdapter
         )
     )
 

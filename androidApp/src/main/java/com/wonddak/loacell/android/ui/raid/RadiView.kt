@@ -1,14 +1,18 @@
 package com.wonddak.loacell.android.ui.raid
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Tab
@@ -19,23 +23,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
-import com.wonddak.loacell.api.LostArkApi
-import com.wonddak.loacell.api.model.CharacterInfo
 import com.wonddak.loacell.database.AppDataBase
-import kotlinx.coroutines.launch
 
 @Composable
 fun RaidView(
@@ -103,14 +104,7 @@ fun RaidView(
                     .collectAsState(initial = emptyList())
                 LazyColumn {
                     items(userList) { user ->
-                        Text(text = "${user.name} - ${user.representativeCharacter}")
-                        val characters by db.getCharacters(user.userId)
-                            .collectAsState(initial = emptyList())
-                        val new = characters.sortedByDescending { it.level.replace(",","").toFloat() }
-
-                        new.forEach {
-                            Text(text = "\t\t${it.name}_${it.class_}_${it.level}")
-                        }
+                        UserInfoCard(db = db, user = user)
                     }
                 }
             }
@@ -150,12 +144,18 @@ fun RaidView(
                         characterName.isEmpty() -> {
                             Toast.makeText(context, "캐릭터 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
                         }
+
                         else -> {
-                            db.addUserAndCharacters(roomInfo.id,user,characterName).let {result ->
-                                if (!result) {
-                                    Toast.makeText(context, "이미 추가된 캐릭터입니다.", Toast.LENGTH_SHORT).show()
+                            db.addUserAndCharacters(roomInfo.id, user, characterName)
+                                .let { result ->
+                                    if (!result) {
+                                        Toast.makeText(
+                                            context,
+                                            "이미 추가된 캐릭터입니다.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
-                            }
                             showAddUserSheet = false
                         }
                     }
@@ -163,6 +163,50 @@ fun RaidView(
             }
         }
     }
+}
+
+@Composable
+fun UserInfoCard(
+    db: AppDataBase,
+    user: UserInfo
+) {
+    val characters by db.getCharacters(user.userId).collectAsState(initial = emptyList())
+
+    var show by remember {
+        mutableStateOf(false)
+    }
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .padding(5.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(5.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { show = !show },
+                text = "${user.name} - ${user.representativeCharacter}",
+                textAlign = TextAlign.Center
+            )
+            AnimatedVisibility(visible = show) {
+                Column() {
+                    val new = characters.sortedByDescending { it.level.replace(",", "").toFloat() }
+                    new.forEach{
+                        Column() {
+                            Text(text = "${it.name}")
+                            Text(text = "${it.class_}")
+                            Text(text = "${it.level}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

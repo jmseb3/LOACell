@@ -2,7 +2,7 @@ CREATE TABLE Character (
   name TEXT NOT NULL PRIMARY KEY,
   userId INTEGER NOT NULL ,
   server TEXT NOT NULL,
-  class TEXT NOT NULL,
+  className TEXT NOT NULL,
   level TEXT NOT NULL,
   FOREIGN KEY(userId) REFERENCES UserInfo(userId) ON DELETE CASCADE
 );

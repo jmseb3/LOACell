@@ -1,7 +1,7 @@
 package com.wonddak.loacell.database.const
 
 
-enum class RaidType() {
+enum class RaidType {
     VALTAN,
     VYKAS,
     KOUKU,
@@ -23,10 +23,4 @@ enum class RaidType() {
             ETC -> "기타"
         }
     }
-}
-
-enum class Difficulty {
-    Normal,
-    Hard,
-    Hell
 }
