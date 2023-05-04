@@ -31,55 +31,59 @@ fun AddRoomSheet(
     addAction: (title: String, description: String) -> Unit
 ) {
     BaseSheet(title = "Room Info") {
-        var title by remember {
-            mutableStateOf("")
-        }
-
-        var description by remember {
-            mutableStateOf("")
-        }
-        val focusManager = LocalFocusManager.current
-
-        val textFieldModifier = Modifier.fillMaxWidth()
-        AddRoomTextField(
-            modifier = textFieldModifier,
-            text = title ,
-            label = "Title",
-            placeHolder = "Input Room Title",
-            maxLine = 1,
-            maxLength = 10,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
-            textChange = {
-                title = it
+        Column() {
+            var title by remember {
+                mutableStateOf("")
             }
-        )
-        AddRoomTextField(
-            modifier = textFieldModifier,
-            text = description ,
-            label = "Description",
-            placeHolder = "Input Room Description",
-            maxLine = 3,
-            maxLength = 100,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions {
-                focusManager.clearFocus()
-            },
-            textChange = {
-                description = it
+
+            var description by remember {
+                mutableStateOf("")
             }
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        OutlinedButton(
-            onClick = {
-                addAction(title, description)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "ADD")
+            val focusManager = LocalFocusManager.current
+
+            val textFieldModifier = Modifier
+                .fillMaxWidth()
+            AddRoomTextField(
+                modifier = textFieldModifier,
+                text = title,
+                label = "Title",
+                placeHolder = "Input Room Title",
+                maxLine = 1,
+                maxLength = 10,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                textChange = {
+                    title = it
+                }
+            )
+            AddRoomTextField(
+                modifier = textFieldModifier,
+                text = description,
+                label = "Description",
+                placeHolder = "Input Room Description",
+                maxLine = 3,
+                maxLength = 100,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions {
+                    focusManager.clearFocus()
+                },
+                textChange = {
+                    description = it
+                }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = {
+                    addAction(title, description)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(text = "ADD")
+            }
         }
     }
 }

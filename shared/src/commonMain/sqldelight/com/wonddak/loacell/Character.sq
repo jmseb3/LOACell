@@ -1,15 +1,16 @@
 CREATE TABLE Character (
   name TEXT NOT NULL PRIMARY KEY,
-  userId INTEGER,
+  userName TEXT  NOT NULL,
+  representativeCharacter TEXT NOT NULL ,
   server TEXT NOT NULL,
   class TEXT NOT NULL,
   level TEXT NOT NULL,
-  FOREIGN KEY(userId) REFERENCES UserInfo(id) ON DELETE CASCADE
+  FOREIGN KEY(userName,representativeCharacter) REFERENCES UserInfo(name,representativeCharacter) ON DELETE CASCADE
 );
 
-
 insertCharacterInfo:
-INSERT INTO Character VALUES (?,?,?,?,?);
+INSERT OR REPLACE INTO Character(name,userName,representativeCharacter,server,class,level)
+VALUES (?,?,?,?,?,?);
 
-selectByUserId:
-SELECT * FROM Character WHERE userId = ?;
+selectByRepresentativeCharacter:
+SELECT * FROM Character WHERE representativeCharacter = ?;

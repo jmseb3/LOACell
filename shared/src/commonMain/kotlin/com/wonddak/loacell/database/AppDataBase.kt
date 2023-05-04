@@ -7,7 +7,7 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.api.model.CharacterInfo
+import com.wonddak.loacell.api.LostArkApi
 import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 class AppDataBase(driverFactory: DriverFactory) {
     private val driver = driverFactory.createDriver()
+    private val api = LostArkApi()
 
     private val raidTypeAdapter = object : ColumnAdapter<RaidType, String> {
         override fun decode(databaseValue: String): RaidType {
@@ -24,7 +25,7 @@ class AppDataBase(driverFactory: DriverFactory) {
                     return it
                 }
             }
-            return  RaidType.ETC
+            return RaidType.ETC
         }
 
         override fun encode(value: RaidType): String {
@@ -41,31 +42,28 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
-    fun addUserAndCharacters(roomId:Long,user:String,characterList : List<CharacterInfo>) {
+    suspend fun addUserAndCharacters(roomId: Long, user: String, representativeCharacter: String) {
         database.apply {
-            userInfoQueries.insertUserInfo(null,user,roomId)
-            userInfoQueries.lastInsertRowId().executeAsOne().let {userId ->
-                characterQueries.transaction {
-                    characterList.forEach { info ->
-                        database.characterQueries.insertCharacterInfo(
-                            info.characterName,
-                            userId,
-                            info.serverName,
-                            info.characterClassName,
-                            info.itemMaxLevel
-                        )
-                    }
-                }
+            userInfoQueries.insertUserInfo(roomId, user, representativeCharacter)
+            api.getCharacterInfo(representativeCharacter).forEach {
+                characterQueries.insertCharacterInfo(
+                    it.characterName,
+                    user,
+                    representativeCharacter,
+                    it.serverName,
+                    it.characterClassName,
+                    it.itemMaxLevel
+                )
             }
         }
     }
 
-    fun getUsersByRoomId(roomId: Long) : Flow<List<UserInfo>> {
+    fun getUsersByRoomId(roomId: Long): Flow<List<UserInfo>> {
         return database.userInfoQueries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun getCharactersByUser(userId: Long) : Flow<List<Character>> {
-        return database.characterQueries.selectByUserId(userId).asFlow().mapToList(Dispatchers.Main)
+    fun getCharacters(representativeCharacter: String) : Flow<List<Character>> {
+        return database.characterQueries.selectByRepresentativeCharacter(representativeCharacter).asFlow().mapToList(Dispatchers.Main)
     }
 
 }

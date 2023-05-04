@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.raid
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +32,10 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
+import com.wonddak.loacell.api.LostArkApi
+import com.wonddak.loacell.api.model.CharacterInfo
 import com.wonddak.loacell.database.AppDataBase
+import kotlinx.coroutines.launch
 
 @Composable
 fun RaidView(
@@ -99,10 +104,10 @@ fun RaidView(
                 LazyColumn {
                     items(userList) { user ->
                         Text(text = user.name)
-                        val characters by db.getCharactersByUser(user.id!!)
+                        val characters by db.getCharacters(user.representativeCharacter)
                             .collectAsState(initial = emptyList())
-                        characters.forEach {
-                            Text(text = "\t${it.name}")
+                        characters.sortedBy { it.name == it.representativeCharacter }.forEach {
+                            Text(text = "\t\t${it.name}_${it.class_}_${it.level}")
                         }
                     }
                 }
@@ -133,18 +138,18 @@ fun RaidView(
             ),
         ) {
             BaseSheet(title = "Add User Info") {
-                AddUserView() { user, characterList ->
+                AddUserView(
+                ) { user, characterName ->
                     when {
                         user.isEmpty() -> {
                             Toast.makeText(context, "유저 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
                         }
 
-                        characterList.isEmpty() -> {
-                            Toast.makeText(context, "선택된 캐릭터 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                        characterName.isEmpty() -> {
+                            Toast.makeText(context, "캐릭터 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
                         }
-
                         else -> {
-                            db.addUserAndCharacters(roomId = roomInfo.id, user, characterList)
+                            db.addUserAndCharacters(roomInfo.id,user,characterName)
                             showAddUserSheet = false
                         }
                     }

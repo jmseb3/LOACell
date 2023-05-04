@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.api.LostArkApi
 import com.wonddak.loacell.api.model.CharacterInfo
@@ -39,7 +41,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun AddUserView(
     modifier: Modifier = Modifier,
-    addAction: (user: String, characterList: List<CharacterInfo>) -> Unit
+    addAction: suspend (user: String, characterName :String) -> Unit
 ) {
     Column(
         modifier = modifier.padding(10.dp)
@@ -51,12 +53,6 @@ fun AddUserView(
         var user by remember {
             mutableStateOf("")
         }
-        var characterList: List<CharacterInfo> by remember {
-            mutableStateOf(emptyList())
-        }
-        var selectedList: Set<Int> by remember {
-            mutableStateOf(emptySet())
-        }
         val scope = rememberCoroutineScope()
         val focusManager = LocalFocusManager.current
 
@@ -64,11 +60,10 @@ fun AddUserView(
         var showProgress by remember {
             mutableStateOf(false)
         }
-        AnimatedVisibility(characterList.isEmpty()) {
             Column() {
                 OutlinedTextField(
                     value = user,
-                    onValueChange = { user = it.replace(" ","") },
+                    onValueChange = { user = it.replace(" ", "") },
                     label = {
                         Text(text = "유저 이름")
                     },
@@ -83,14 +78,14 @@ fun AddUserView(
                 )
                 OutlinedTextField(
                     value = characterName,
-                    onValueChange = { characterName = it.replace(" ","") },
+                    onValueChange = { characterName = it.replace(" ", "") },
                     label = {
                         Text(text = "대표 캐릭터")
                     },
                     placeholder = {
                         Text(text = "대표 캐릭터 입력")
                     },
-                    maxLines = 3,
+                    maxLines = 1,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Done
                     ),
@@ -103,89 +98,21 @@ fun AddUserView(
 
                 OutlinedButton(
                     onClick = {
-                        if (characterName.isNotEmpty() && user.isNotEmpty()) {
-                            scope.launch {
-                                showProgress = true
-                                val api = LostArkApi()
-                                characterList = api.getCharacterInfo(characterName)
-                                withContext(Dispatchers.IO) {
-                                    characterList.forEachIndexed { index, characterInfo ->
-                                        if (characterInfo.characterName == characterName) {
-                                            val temp = selectedList.toMutableSet()
-                                            temp.add(index)
-                                            selectedList = temp
-                                        }
-                                    }
-                                }
-                                showProgress = false
-                            }
+                        scope.launch {
+                            showProgress = true
+                            addAction(user,characterName)
+                            showProgress = false
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Search")
+                    Text(text = "추가하기")
                 }
                 if (showProgress) {
                     Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
                     CircularProgressIndicator()
                 }
             }
-        }
-        AnimatedVisibility(characterList.isNotEmpty()) {
-            Column() {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            val selectedCharacterList =
-                                selectedList.map { index -> characterList[index] }
-                            addAction(user, selectedCharacterList)
-                        }
-                    ) {
-                        Text("추가하기")
-                    }
-                    Text(text = "캐릭터 ${selectedList.size}개를 선택하였습니다.")
-                }
-                LazyColumn(
-                    modifier = Modifier
-                ) {
-                    itemsIndexed(characterList) { index, info ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Checkbox(
-                                checked = selectedList.contains(index),
-                                onCheckedChange = {
-                                    selectedList = if (selectedList.contains(index)) {
-                                        val temp = selectedList.toMutableSet()
-                                        temp.remove(index)
-                                        temp
-                                    } else {
-                                        val temp = selectedList.toMutableSet()
-                                        temp.add(index)
-                                        temp
-                                    }
-                                }
-                            )
-                            Text(
-                                text = info.characterName
-                            )
-                            Text(
-                                text = info.characterClassName
-                            )
-                            Text(
-                                text = info.itemMaxLevel
-                            )
-                        }
-                    }
-                }
-            }
 
-        }
     }
 }
