@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.database.AppDataBase
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserInfoCard(
     db: AppDataBase,
@@ -30,7 +30,7 @@ fun UserInfoCard(
     var showMore by remember {
         mutableStateOf(false)
     }
-    var openDialog by remember { mutableStateOf(false) }
+    var openCharacterEditDialog by remember { mutableStateOf(false) }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -52,7 +52,7 @@ fun UserInfoCard(
             AnimatedVisibility(visible = showCharacters) {
                 Column {
                     Row() {
-                        OutlinedButton(onClick = { openDialog = true }) {
+                        OutlinedButton(onClick = { openCharacterEditDialog = true }) {
                             Text(text = "대표 캐릭터 변경")
                         }
                     }
@@ -79,70 +79,92 @@ fun UserInfoCard(
         }
     }
 
-    if (openDialog) {
-        var expanded by remember { mutableStateOf(false) }
-        var selectedText by remember { mutableStateOf(user.representativeCharacter) }
-
-        AlertDialog(
-            onDismissRequest = {
-                openDialog = false
+    if (openCharacterEditDialog) {
+        EditCharacterDialog(
+            user = user,
+            characters = characters,
+            confirm = { name ->
+                db.updateUserRepresentativeCharacter(user.userId, name)
+                openCharacterEditDialog = false
             },
-            title = {
-                Text(text = "대표 캐릭터 변경")
-            },
-            text = {
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
-                ) {
-                    TextField(
-                        value = selectedText,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        characters.map { it.name }.forEach { item ->
-                            DropdownMenuItem(
-                                content = { Text(
-                                    text = item,
-                                    fontWeight = if (selectedText == item) FontWeight.Bold else FontWeight.Normal
-                                ) },
-                                onClick = {
-                                    selectedText = item
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        db.updateUserRepresentativeCharacter(user.userId, selectedText)
-                        openDialog = false
-                    }
-                ) {
-                    Text("변경")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog = false
-                    }
-                ) {
-                    Text("취소")
-                }
-            },
-            shape = RoundedCornerShape(24.dp)
+            dismiss = {
+                openCharacterEditDialog = false
+            }
         )
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun EditCharacterDialog(
+    user: UserInfo,
+    characters: List<Character>,
+    confirm: (name: String) -> Unit,
+    dismiss: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf(user.representativeCharacter) }
+
+    AlertDialog(
+        onDismissRequest = dismiss,
+        title = {
+            Text(text = "대표 캐릭터 변경")
+        },
+        text = {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                }
+            ) {
+                TextField(
+                    value = selectedText,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = {
+                        Text(text = "대표 캐릭터 선택")
+                    },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    characters.map { it.name }.forEach { item ->
+                        DropdownMenuItem(
+                            content = {
+                                Text(
+                                    text = item,
+                                    fontWeight = if (selectedText == item) FontWeight.Bold else FontWeight.Normal
+                                )
+                            },
+                            onClick = {
+                                selectedText = item
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    confirm(selectedText)
+                },
+                enabled = (user.representativeCharacter != selectedText)
+            ) {
+                Text("변경")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = dismiss
+            ) {
+                Text("취소")
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
 }
