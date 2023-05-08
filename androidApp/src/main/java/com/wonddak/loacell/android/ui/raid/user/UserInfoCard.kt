@@ -34,6 +34,7 @@ fun UserInfoCard(
         mutableStateOf(false)
     }
     var openCharacterEditDialog by remember { mutableStateOf(false) }
+    var openCharacterDeleteDialog by remember { mutableStateOf(false) }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -67,7 +68,7 @@ fun UserInfoCard(
                         MyIconButton(
                             SharedRes.images.delete
                         ) {
-                            db.deleteUserById(user.userId)
+                            openCharacterDeleteDialog = true
                         }
                     }
 
@@ -103,6 +104,18 @@ fun UserInfoCard(
             },
             dismiss = {
                 openCharacterEditDialog = false
+            }
+        )
+    }
+    if (openCharacterDeleteDialog) {
+        DeleteCharacterDialog(
+            user = user,
+            characters = characters,
+            confirm = {
+                db.deleteUserById(user.userId)
+            },
+            dismiss = {
+                openCharacterDeleteDialog = false
             }
         )
     }
@@ -171,6 +184,49 @@ fun EditCharacterDialog(
                 enabled = (user.representativeCharacter != selectedText)
             ) {
                 Text("변경")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = dismiss
+            ) {
+                Text("취소")
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
+}
+
+@Composable
+fun DeleteCharacterDialog(
+    user: UserInfo,
+    characters: List<Character>,
+    confirm: () -> Unit,
+    dismiss: () -> Unit
+) {
+
+    AlertDialog(
+        onDismissRequest = dismiss,
+        title = {
+            Text(text = "유저 정보 삭제")
+        },
+        text = {
+            Column() {
+                Text(text = "${user.name}님 의 정보를 삭제 하시겠습니까?")
+                if (characters.size == 1) {
+                    Text(text = "${user.representativeCharacter}의 데이터 삭제 합니다.")
+                } else {
+                    Text(text = "${user.representativeCharacter} 및 ${characters.size-1}개의 데이터를 삭제 합니다.")
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    confirm()
+                },
+            ) {
+                Text("삭제")
             }
         },
         dismissButton = {
