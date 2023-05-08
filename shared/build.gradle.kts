@@ -4,10 +4,12 @@ plugins {
     id("com.android.library")
     kotlin("plugin.serialization") version "1.8.10"
     id("app.cash.sqldelight") version "2.0.0-alpha05"
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 val sqlDelightVersion = "2.0.0-alpha05"
 val ktorVersion = "2.2.1"
+val mokoResourceVersion ="0.22.0"
 
 kotlin {
     android {
@@ -30,6 +32,8 @@ kotlin {
         framework {
             baseName = "shared"
             isStatic = false
+            export("dev.icerock.moko:resources:0.22.0")
+            export("dev.icerock.moko:graphics:0.9.0")
         }
     }
     
@@ -47,7 +51,7 @@ kotlin {
                 implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqlDelightVersion")
 
-
+                api("dev.icerock.moko:resources:$mokoResourceVersion")
 
             }
         }
@@ -103,4 +107,10 @@ sqldelight {
             packageName.set("com.wonddak.loacell")
         }
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.wonddak.loacell" // required
+    multiplatformResourcesClassName = "SharedRes" // optional, default MR
+    iosBaseLocalizationRegion = "ko" // optional, default "en"
 }
