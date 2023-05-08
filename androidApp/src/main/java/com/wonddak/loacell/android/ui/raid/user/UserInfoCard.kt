@@ -9,12 +9,15 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
+import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.database.AppDataBase
 
 @Composable
@@ -51,9 +54,20 @@ fun UserInfoCard(
             )
             AnimatedVisibility(visible = showCharacters) {
                 Column {
-                    Row() {
-                        OutlinedButton(onClick = { openCharacterEditDialog = true }) {
-                            Text(text = "대표 캐릭터 변경")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        MyIconButton(
+                            SharedRes.images.change_person
+                        ) {
+                            openCharacterEditDialog = true
+                        }
+                        MyIconButton(
+                            SharedRes.images.delete
+                        ) {
+                            db.deleteUserById(user.userId)
                         }
                     }
 
@@ -128,6 +142,7 @@ fun EditCharacterDialog(
                 )
 
                 ExposedDropdownMenu(
+                    modifier = Modifier.height(200.dp),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {

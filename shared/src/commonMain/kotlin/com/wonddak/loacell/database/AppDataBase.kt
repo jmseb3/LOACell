@@ -134,4 +134,8 @@ class AppDataBase(driverFactory: DriverFactory) {
         emit("finish")
     }
 
+    fun deleteUserById(userId: Long) {
+        database.userInfoQueries.deleteUserById(userId)
+    }
+
 }

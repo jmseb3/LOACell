@@ -17,3 +17,6 @@ SELECT last_insert_rowid();
 
 selectByRoomId:
 SELECT * FROM UserInfo WHERE roomId = ?;
+
+deleteUserById:
+DELETE FROM UserInfo WHERE  userId =?;
