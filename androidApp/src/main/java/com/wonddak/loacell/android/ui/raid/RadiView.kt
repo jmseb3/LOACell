@@ -195,7 +195,7 @@ fun RaidView(
                 dismissWithAnimation = true,
             ),
         ) {
-            BaseSheet(title = "Add User Info") {
+            BaseSheet(title = "유저 정보 추가") {
                 AddUserView(
                 ) { user, characterName ->
                     when {

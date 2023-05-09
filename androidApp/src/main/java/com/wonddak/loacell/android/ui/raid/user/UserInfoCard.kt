@@ -213,11 +213,6 @@ fun DeleteCharacterDialog(
         text = {
             Column() {
                 Text(text = "${user.name}님 의 정보를 삭제 하시겠습니까?")
-                if (characters.size == 1) {
-                    Text(text = "${user.representativeCharacter}의 데이터 삭제 합니다.")
-                } else {
-                    Text(text = "${user.representativeCharacter} 및 ${characters.size-1}개의 데이터를 삭제 합니다.")
-                }
             }
         },
         confirmButton = {
