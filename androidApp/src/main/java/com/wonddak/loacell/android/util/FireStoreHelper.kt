@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.util
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -32,6 +33,31 @@ object FireStoreHelper {
         failAction: () -> Unit = {},
         successAction: () -> Unit
     ) {
+        fun updateCharacters(userRoom:DocumentReference)  {
+            val room = userRoom.collection("characters")
+            characterList.forEach { character ->
+                val data = HashMap<String, Any>()
+                data["level"] = character.itemMaxLevel
+                data["server"] = character.serverName
+                data["className"] = character.characterClassName
+                room.document(character.characterName).let { characterRoom ->
+                    characterRoom.update(data)
+                        .addOnSuccessListener {
+                            successAction()
+                        }
+                        .addOnFailureListener {
+                            characterRoom.set(data)
+                                .addOnSuccessListener {
+                                    successAction()
+                                }
+                                .addOnFailureListener {
+                                    failAction()
+                                }
+                        }
+
+                }
+            }
+        }
         Firebase.firestore.let { fs ->
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
@@ -42,27 +68,18 @@ object FireStoreHelper {
                 .collection("users")
                 .document(name)
                 .let { userRoom ->
-                    userRoom.set(userData)
+                    userRoom.update(userData)
                         .addOnSuccessListener {
-                            val room = userRoom.collection("characters")
-                            characterList.forEach { character ->
-                                val data = HashMap<String, Any>()
-                                data["level"] = character.itemMaxLevel
-                                data["server"] = character.serverName
-                                data["className"] = character.characterClassName
-                                room.document(character.characterName).let { characterRoom ->
-                                    characterRoom.set(data)
-                                        .addOnSuccessListener {
-                                            successAction()
-                                        }
-                                        .addOnFailureListener {
-                                            failAction()
-                                        }
-                                }
-                            }
+                            updateCharacters(userRoom)
                         }
                         .addOnFailureListener {
-                            failAction()
+                            userRoom.set(userData)
+                                .addOnSuccessListener {
+                                    updateCharacters(userRoom)
+                                }
+                                .addOnFailureListener {
+                                    failAction()
+                                }
                         }
                 }
         }
@@ -71,10 +88,14 @@ object FireStoreHelper {
     fun deleteUser(
         roomId: String,
         userName: String,
+        successAction:() ->Unit
     ){
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("users")
             .document(userName).update("show",false)
+            .addOnSuccessListener {
+                successAction()
+            }
     }
 }
