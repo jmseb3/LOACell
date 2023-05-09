@@ -39,7 +39,7 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val difficultyTypeAdapter = object : ColumnAdapter<Difficulty, Long> {
         override fun decode(databaseValue: Long): Difficulty {
-            return when(databaseValue) {
+            return when (databaseValue) {
                 2L -> Difficulty.Hell
                 1L -> Difficulty.Hard
                 else -> Difficulty.Normal
@@ -47,7 +47,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         }
 
         override fun encode(value: Difficulty): Long {
-            return when(value) {
+            return when (value) {
                 Difficulty.Hell -> 2L
                 Difficulty.Hard -> 1L
                 else -> 0L
@@ -66,32 +66,21 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
-    suspend fun addUserAndCharacters(
-        roomId: Long,
-        user: String,
+
+    fun addUser(
+        roomId: String,
+        userString: String,
         representativeCharacter: String
-    ): Boolean {
-        val result = database.characterQueries.checkAlreadyExist(representativeCharacter).executeAsOne()
-        if (result) {
-            return false
-        }
-        val characterList = api.getCharacterInfo(representativeCharacter)
-        database.apply {
-            userInfoQueries.insertUserInfo(null, roomId, user, representativeCharacter)
-            userInfoQueries.lastInsertRowId().executeAsOne().let { userId ->
-                characterList.forEach {
-                    characterQueries.insertCharacterInfo(
-                        it.characterName,
-                        userId,
-                        it.serverName,
-                        it.characterClassName,
-                        it.itemMaxLevel
-                    )
-                }
-            }
-        }
-        return true
+    ) {
+        database.userInfoQueries.insertUserInfo(
+            null,
+            roomId,
+            userString,
+            representativeCharacter
+        )
     }
+
+
     fun updateUserRepresentativeCharacter(
         userId: Long,
         representativeCharacter: String
@@ -101,7 +90,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         )
     }
 
-    fun getUsersByRoomId(roomId: Long): Flow<List<UserInfo>> {
+    fun getUsersByRoomId(roomId: String): Flow<List<UserInfo>> {
         return database.userInfoQueries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
     }
@@ -109,11 +98,11 @@ class AppDataBase(driverFactory: DriverFactory) {
     fun getCharacters(userId: Long): Flow<List<Character>> {
         return database.characterQueries.selectByuserId(userId).asFlow()
             .mapToList(Dispatchers.Main).transform {
-                emit(it.sortedByDescending { it.level.replace(",", "").toFloat()  })
+                emit(it.sortedByDescending { it.level.replace(",", "").toFloat() })
             }
     }
 
-    suspend fun updateUserCharacters(roomId: Long) : Flow<String> = flow{
+    suspend fun updateUserCharacters(roomId: String): Flow<String> = flow {
         database.userInfoQueries.selectByRoomId(roomId).executeAsList().forEach { userInfo ->
             val characterList = api.getCharacterInfo(userInfo.representativeCharacter)
             emit(userInfo.name)

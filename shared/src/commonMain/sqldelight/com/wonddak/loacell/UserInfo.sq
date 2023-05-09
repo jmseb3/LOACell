@@ -1,9 +1,9 @@
 CREATE TABLE UserInfo (
   userId INTEGER PRIMARY KEY AUTOINCREMENT,
-  roomId INTEGER NOT NULL,
+  roomId TEXT NOT NULL,
   name TEXT NOT NULL,
   representativeCharacter Text NOT NULL ,
-  FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE
+  FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE
 );
 
 insertUserInfo:

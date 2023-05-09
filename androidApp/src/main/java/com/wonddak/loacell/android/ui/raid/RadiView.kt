@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.raid
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -30,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
@@ -39,6 +42,8 @@ import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
+import com.wonddak.loacell.android.util.FireStoreHelper
+import com.wonddak.loacell.api.LostArkApi
 import com.wonddak.loacell.database.AppDataBase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -47,7 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RaidView(
     db: AppDataBase,
-    selectedRoomId: Long,
+    selectedRoomId: String,
     backAction: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -109,7 +114,7 @@ fun RaidView(
                 Text(text = "BACK")
             }
 
-            Text(text = "SelectRoomId : ${roomInfo.id}")
+            Text(text = "SelectRoomId : ${roomInfo.uniqueId}")
             Text(text = "title : ${roomInfo.title}")
             Text(text = "description : ${roomInfo.description}")
             Divider()
@@ -152,7 +157,7 @@ fun RaidView(
                         ) {
                             scope.launch {
                                 showLoadingProgress = true
-                                db.updateUserCharacters(roomId = roomInfo.id).collect {
+                                db.updateUserCharacters(roomId = roomInfo.uniqueId).collect {
                                     showLoadingProgressText = it
                                     // TODO update Last update Time
                                 }
@@ -160,7 +165,7 @@ fun RaidView(
                             }
                         }
                     }
-                    val userList by db.getUsersByRoomId(roomInfo.id)
+                    val userList by db.getUsersByRoomId(roomInfo.uniqueId)
                         .collectAsState(initial = emptyList())
                     LazyColumn {
                         items(userList) { user ->
@@ -208,16 +213,17 @@ fun RaidView(
                         }
 
                         else -> {
-                            db.addUserAndCharacters(roomInfo.id, user, characterName)
-                                .let { result ->
-                                    if (!result) {
-                                        Toast.makeText(
-                                            context,
-                                            "이미 추가되어있는 캐릭터정보 입니다.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                            scope.launch {
+                                val list = LostArkApi().getCharacterInfo(characterName)
+                                FireStoreHelper.addUserAndCharacterInfo(
+                                    roomInfo.uniqueId,
+                                    user,
+                                    characterName,
+                                    list
+                                ) {
+
                                 }
+                            }
                             showAddUserSheet = false
                         }
                     }

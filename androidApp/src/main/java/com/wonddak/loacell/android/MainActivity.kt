@@ -30,6 +30,7 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
+import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
@@ -42,7 +43,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
-        val fireStore  = Firebase.firestore
         val db = AppDataBase(DriverFactory(this))
         setContent {
             MainContent() {
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                 val selectedRoomId by loaCellViewModel.roomId.collectAsState()
 
                 Column(Modifier.fillMaxSize()) {
-                    AnimatedVisibility(selectedRoomId == 0L) {
+                    AnimatedVisibility(selectedRoomId.isEmpty()) {
                         Column() {
                             var show by remember {
                                 mutableStateOf(false)
@@ -62,6 +62,15 @@ class MainActivity : ComponentActivity() {
                                 show = true
                             }) {
                                 Text(text = "ADD")
+                            }
+                            OutlinedButton(onClick = {
+                                db.roomInfoQueriesHelper.addRoomInfo(
+                                    "123",
+                                    "456",
+                                    "kYdq2AE19rTMI8yDymdB"
+                                )
+                            }) {
+                                Text(text = "ADD_TestRoom")
                             }
                             RoomView(
                                 roomList = roomList,
@@ -77,13 +86,11 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     AddRoomSheet() {title, description ->
                                         if (title.isNotEmpty()) {
-                                            val data = HashMap<String, Any>()
-                                            data["title"] =title
-                                            data["description"] = description
-                                            data["timeStamp"] = System.currentTimeMillis()
-                                            val newRooms = fireStore.collection("rooms").document()
-                                            newRooms.set(data)
-                                            db.roomInfoQueriesHelper.addRoomInfo(title, description,newRooms.id)
+                                            FireStoreHelper.addRoomInfo(
+                                                title, description
+                                            ) { id ->
+                                                db.roomInfoQueriesHelper.addRoomInfo(title, description, id)
+                                            }
                                             show = false
                                         } else {
                                             Toast.makeText(context,"title이 비어있습니다.",Toast.LENGTH_SHORT).show()
@@ -93,7 +100,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                    AnimatedVisibility(selectedRoomId != 0L) {
+                    AnimatedVisibility(selectedRoomId.isNotEmpty()) {
                         Column() {
                             RaidView(
                                 db,

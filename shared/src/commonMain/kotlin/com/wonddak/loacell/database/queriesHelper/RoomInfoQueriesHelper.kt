@@ -15,18 +15,15 @@ class RoomInfoQueriesHelper(
         return queries.selectAll().asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun getRoomInfoById(id:Long) :RoomInfo {
-        if (id <= 0L) {
-            return RoomInfo(0,"","","")
-        }
+    fun getRoomInfoById(id:String) :RoomInfo {
         return queries.selectById(id).executeAsOne()
     }
 
     fun addRoomInfo(title: String, description: String,uniqueId:String) {
-        queries.insertRoomInfo(null, title, description,uniqueId)
+        queries.insertRoomInfo(uniqueId, title, description)
     }
 
-    fun deleteRoomInfo(roomId: Long) {
+    fun deleteRoomInfo(roomId: String) {
         queries.deleteById(roomId)
     }
 }

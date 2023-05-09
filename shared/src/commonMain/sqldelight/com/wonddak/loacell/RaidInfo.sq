@@ -3,13 +3,13 @@ import com.wonddak.loacell.database.const.RaidType;
 
 CREATE TABLE RaidInfo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  roomId INTEGER NOT NULL,
+  roomId TEXT NOT NULL,
   title TEXT NOT NULL,
   type Text AS RaidType,
   Difficulty INTEGER AS Difficulty,
   maxPerson INTEGER NOT NULL,
   minLevel INTEGER NOT NULL,
-  FOREIGN KEY(roomId) REFERENCES RoomInfo(id) ON DELETE CASCADE
+  FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE
 );
 
 selectByRoomId:

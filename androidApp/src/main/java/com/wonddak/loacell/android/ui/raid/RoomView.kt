@@ -25,11 +25,11 @@ import com.wonddak.loacell.RoomInfo
 @Composable
 fun RoomView(
     roomList: List<RoomInfo>,
-    showRoomInfo:(roomId:Long) -> Unit = {}
+    showRoomInfo:(roomId:String) -> Unit = {}
 ) {
     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
         items(roomList) { roomInfo ->
-            RoomInfoRow(roomInfo) { showRoomInfo(roomInfo.id) }
+            RoomInfoRow(roomInfo) { showRoomInfo(roomInfo.uniqueId) }
             Divider()
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -40,9 +40,9 @@ fun RoomView(
 @Composable
 fun RoomViewPreview() {
     val testList: List<RoomInfo> = listOf(
-        RoomInfo(1, "test1", "여기는 1 이다.",""),
-        RoomInfo(2, "test2", "여기는 2 이다.",""),
-        RoomInfo(3, "test3", "여기는 3 이다.",""),
+        RoomInfo("!2312312", "test1", "여기는 1 이다."),
+        RoomInfo("%4534534534", "test2", "여기는 2 이다."),
+        RoomInfo("#$534534534", "test3", "여기는 3 이다."),
     )
     RoomView(testList)
 }

@@ -1,21 +1,20 @@
 CREATE TABLE RoomInfo (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  uniqueId TEXT NOT NULL PRIMARY KEY,
   title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  uniqueId TEXT NOT NULL
+  description TEXT NOT NULL
 );
 
 insertRoomInfo:
-INSERT INTO RoomInfo VALUES (?,?,?,?);
+INSERT INTO RoomInfo VALUES (?,?,?);
 
 selectAll:
 SELECT * FROM RoomInfo;
 
 selectById:
-SELECT * FROM RoomInfo WHERE id = ?;
+SELECT * FROM RoomInfo WHERE uniqueId = ?;
 
 lastInsertRowId:
 SELECT last_insert_rowid();
 
 deleteById:
-DELETE FROM RoomInfo WHERE id = ?;
+DELETE FROM RoomInfo WHERE uniqueId = ?;

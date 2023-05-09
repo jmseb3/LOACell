@@ -13,15 +13,12 @@ import kotlinx.coroutines.flow.flow
 class RaidInfoQueriesHelper(
     private val queries: RaidInfoQueries
 ) {
-    fun getALlByRoomId(roomId: Long): Flow<List<RaidInfo>> {
-        if (roomId <= 0L) {
-            return flow { emit(emptyList()) }
-        }
+    fun getALlByRoomId(roomId: String): Flow<List<RaidInfo>> {
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
     fun addRaidInfo(
-        roomId: Long,
+        roomId: String,
         title: String,
         type: RaidType,
         difficulty: Difficulty,
