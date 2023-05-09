@@ -9,8 +9,14 @@ CREATE TABLE UserInfo (
 insertUserInfo:
 INSERT INTO UserInfo VALUES (?,?,?,?);
 
+upadteRepresentativeCharacter:
+UPDATE UserInfo SET representativeCharacter = ?  WHERE  userId =?;
+
 lastInsertRowId:
 SELECT last_insert_rowid();
 
 selectByRoomId:
 SELECT * FROM UserInfo WHERE roomId = ?;
+
+deleteUserById:
+DELETE FROM UserInfo WHERE  userId =?;

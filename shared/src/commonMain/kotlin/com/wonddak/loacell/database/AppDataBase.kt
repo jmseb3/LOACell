@@ -13,7 +13,10 @@ import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.transform
 
 class AppDataBase(driverFactory: DriverFactory) {
     private val driver = driverFactory.createDriver()
@@ -89,6 +92,14 @@ class AppDataBase(driverFactory: DriverFactory) {
         }
         return true
     }
+    fun updateUserRepresentativeCharacter(
+        userId: Long,
+        representativeCharacter: String
+    ) {
+        database.userInfoQueries.upadteRepresentativeCharacter(
+            representativeCharacter, userId
+        )
+    }
 
     fun getUsersByRoomId(roomId: Long): Flow<List<UserInfo>> {
         return database.userInfoQueries.selectByRoomId(roomId).asFlow()
@@ -97,7 +108,34 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     fun getCharacters(userId: Long): Flow<List<Character>> {
         return database.characterQueries.selectByuserId(userId).asFlow()
-            .mapToList(Dispatchers.Main)
+            .mapToList(Dispatchers.Main).transform {
+                emit(it.sortedByDescending { it.level.replace(",", "").toFloat()  })
+            }
+    }
+
+    suspend fun updateUserCharacters(roomId: Long) : Flow<String> = flow{
+        database.userInfoQueries.selectByRoomId(roomId).executeAsList().forEach { userInfo ->
+            val characterList = api.getCharacterInfo(userInfo.representativeCharacter)
+            emit(userInfo.name)
+            database.transaction {
+                characterList.forEach { characterInfo ->
+                    database.characterQueries.insertCharacterInfo(
+                        characterInfo.characterName,
+                        userInfo.userId,
+                        characterInfo.serverName,
+                        characterInfo.characterClassName,
+                        characterInfo.itemMaxLevel
+                    )
+                }
+            }
+            delay(500)
+        }
+        delay(1_000)
+        emit("finish")
+    }
+
+    fun deleteUserById(userId: Long) {
+        database.userInfoQueries.deleteUserById(userId)
     }
 
 }

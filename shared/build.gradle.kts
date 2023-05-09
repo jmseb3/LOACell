@@ -47,8 +47,6 @@ kotlin {
                 implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqlDelightVersion")
 
-
-
             }
         }
         val commonTest by getting {
@@ -93,7 +91,6 @@ android {
     compileSdk = 33
     defaultConfig {
         minSdk = 30
-        targetSdk = 33
     }
 }
 
