@@ -98,20 +98,23 @@ class FireStoreUpdateService : Service() {
                             val userName = it.id
                             val representativeCharacter =
                                 it.data!!["representativeCharacter"] as String
-                            //이미 값이 있는 경우
-                            if (userName in userList) {
-                                //업데이트
-                                db.updateUserRepresentativeCharacter(
-                                    userName,
-                                    roomId,
-                                    representativeCharacter
-                                )
-                                userList.remove(userName)
-                            } else {
-                                //없는 경우 추가
-                                db.addUser(userName, roomId, representativeCharacter)
+                            val show = it.data?.get("show") as Boolean? ?: false
+                            if (show) {
+                                //이미 값이 있는 경우
+                                if (userName in userList) {
+                                    //업데이트
+                                    db.updateUserRepresentativeCharacter(
+                                        userName,
+                                        roomId,
+                                        representativeCharacter
+                                    )
+                                    userList.remove(userName)
+                                } else {
+                                    //없는 경우 추가
+                                    db.addUser(userName, roomId, representativeCharacter)
+                                }
+                                observeUserCharacters(roomId,userName)
                             }
-                            observeUserCharacters(roomId,userName)
                         }
                         // 동작이 끝난후 남아있다면
                         userList.forEach { name ->
@@ -167,10 +170,10 @@ class FireStoreUpdateService : Service() {
                                 level
                             )
                         }
-                        // 동작이 끝난후 남아있다면
-                        characterList.forEach { name ->
-                            db.deleteCharacter(name, nowRoomId)
-                        }
+                    }
+                    // 동작이 끝난후 남아있다면
+                    characterList.forEach { name ->
+                        db.deleteCharacter(name, nowRoomId)
                     }
                 } else {
                     Log.d(TAG, "Current data: null")

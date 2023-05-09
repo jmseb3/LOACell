@@ -36,6 +36,7 @@ object FireStoreHelper {
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
             userData["timeStamp"] = FieldValue.serverTimestamp()
+            userData["show"] = true
             fs.collection("rooms")
                 .document(roomId)
                 .collection("users")
@@ -65,5 +66,15 @@ object FireStoreHelper {
                         }
                 }
         }
+    }
+
+    fun deleteUser(
+        roomId: String,
+        userName: String,
+    ){
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("users")
+            .document(userName).update("show",false)
     }
 }

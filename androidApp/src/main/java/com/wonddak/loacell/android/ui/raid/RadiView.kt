@@ -61,6 +61,9 @@ fun RaidView(
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
         .collectAsState(initial = emptyList())
 
+    val userList by db.getUsersByRoomId(roomInfo.uniqueId)
+        .collectAsState(initial = emptyList())
+
     val context = LocalContext.current
 
     var showAddRaidSheet by remember {
@@ -166,11 +169,25 @@ fun RaidView(
                             }
                         }
                     }
-                    val userList by db.getUsersByRoomId(roomInfo.uniqueId)
-                        .collectAsState(initial = emptyList())
                     LazyColumn {
                         items(userList) { user ->
-                            UserInfoCard(db = db, user = user, roomId = roomInfo.uniqueId)
+                            val characters by db.getCharacters(user.name, roomInfo.uniqueId)
+                                .collectAsState(initial = emptyList())
+                            UserInfoCard(
+                                name = user.name,
+                                representativeCharacter = user.representativeCharacter,
+                                characters = characters,
+                                { name ->
+                                    db.updateUserRepresentativeCharacter(
+                                        user.name,
+                                        roomInfo.uniqueId,
+                                        name
+                                    )
+                                },
+                                {
+                                    FireStoreHelper.deleteUser(roomInfo.uniqueId, user.name)
+                                }
+                            )
                         }
                     }
                 }

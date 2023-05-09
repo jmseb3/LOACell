@@ -18,17 +18,19 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.database.AppDataBase
 
 @Composable
 fun UserInfoCard(
-    db: AppDataBase,
-    roomId:String,
-    user: UserInfo
+    name :String,
+    representativeCharacter :String,
+    characters : List<Character>,
+    editCharacter :(name:String)  -> Unit,
+    deleteUser :() -> Unit
 ) {
 
-    val characters by db.getCharacters(user.name,roomId).collectAsState(initial = emptyList())
-    var showCharacters by rememberSaveable {
+    var showCharacters by remember {
         mutableStateOf(false)
     }
     var showMore by remember {
@@ -51,7 +53,7 @@ fun UserInfoCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { showCharacters = !showCharacters },
-                text = "${user.name} - ${user.representativeCharacter}",
+                text = "$name - $representativeCharacter",
                 textAlign = TextAlign.Center
             )
             AnimatedVisibility(visible = showCharacters) {
@@ -97,10 +99,10 @@ fun UserInfoCard(
 
     if (openCharacterEditDialog) {
         EditCharacterDialog(
-            user = user,
+            representativeCharacter = representativeCharacter,
             characters = characters,
             confirm = { name ->
-                db.updateUserRepresentativeCharacter(user.name, roomId,name)
+                editCharacter(name)
                 openCharacterEditDialog = false
             },
             dismiss = {
@@ -110,10 +112,11 @@ fun UserInfoCard(
     }
     if (openCharacterDeleteDialog) {
         DeleteCharacterDialog(
-            user = user,
-            characters = characters,
+            name = name,
             confirm = {
-                db.deleteUserName(user.name,roomId)
+                deleteUser()
+
+                openCharacterDeleteDialog = false
             },
             dismiss = {
                 openCharacterDeleteDialog = false
@@ -125,13 +128,13 @@ fun UserInfoCard(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditCharacterDialog(
-    user: UserInfo,
+    representativeCharacter: String,
     characters: List<Character>,
     confirm: (name: String) -> Unit,
     dismiss: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(user.representativeCharacter) }
+    var selectedText by remember { mutableStateOf(representativeCharacter) }
 
     AlertDialog(
         onDismissRequest = dismiss,
@@ -182,7 +185,7 @@ fun EditCharacterDialog(
                 onClick = {
                     confirm(selectedText)
                 },
-                enabled = (user.representativeCharacter != selectedText)
+                enabled = (representativeCharacter != selectedText)
             ) {
                 Text("변경")
             }
@@ -200,8 +203,7 @@ fun EditCharacterDialog(
 
 @Composable
 fun DeleteCharacterDialog(
-    user: UserInfo,
-    characters: List<Character>,
+    name: String,
     confirm: () -> Unit,
     dismiss: () -> Unit
 ) {
@@ -213,7 +215,7 @@ fun DeleteCharacterDialog(
         },
         text = {
             Column() {
-                Text(text = "${user.name}님 의 정보를 삭제 하시겠습니까?")
+                Text(text = "${name}님 의 정보를 삭제 하시겠습니까?")
             }
         },
         confirmButton = {
