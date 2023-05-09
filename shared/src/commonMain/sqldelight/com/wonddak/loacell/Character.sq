@@ -15,7 +15,8 @@ VALUES (?,?,?,?,?,?);
 selectByuserId:
 SELECT * FROM Character WHERE username = ? AND roomId =?;
 
-checkAlreadyExist:
-SELECT EXISTS (
-SELECT name FROM  Character WHERE name =?
-);
+updateCharacterInfo:
+UPDATE Character SET server = ?, className =?, level =? WHERE name =? AND roomId = ?;
+
+deleteUserByName:
+DELETE FROM Character WHERE  name =? AND roomId =?;

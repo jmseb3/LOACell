@@ -13,9 +13,7 @@ import com.wonddak.loacell.database.const.RaidType
 import com.wonddak.loacell.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.database.queriesHelper.RoomInfoQueriesHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
 
 class AppDataBase(driverFactory: DriverFactory) {
@@ -85,8 +83,40 @@ class AppDataBase(driverFactory: DriverFactory) {
         roomId: String,
         representativeCharacter: String
     ) {
-        database.userInfoQueries.upadteRepresentativeCharacter(
-            representativeCharacter, userName ,roomId
+        database.userInfoQueries.updateRepresentativeCharacter(
+            representativeCharacter, userName, roomId
+        )
+    }
+
+    fun addCharacter(
+        name: String,
+        userName: String,
+        roomId: String,
+        server: String,
+        className: String,
+        level: String
+    ) {
+        database.characterQueries.insertCharacterInfo(
+            name,
+            userName,
+            roomId,
+            server, className, level
+        )
+    }
+
+    fun updateUserCharacterInfo(
+        name: String,
+        roomId: String,
+        server: String,
+        className: String,
+        level: String
+    ) {
+        database.characterQueries.updateCharacterInfo(
+            server,
+            className,
+            level,
+            name,
+            roomId
         )
     }
 
@@ -100,37 +130,23 @@ class AppDataBase(driverFactory: DriverFactory) {
     }
 
 
-    fun getCharacters(user:String,roomId: String): Flow<List<Character>> {
-        return database.characterQueries.selectByuserId(user,roomId).asFlow()
+    fun getCharacters(user: String, roomId: String): Flow<List<Character>> {
+        return database.characterQueries.selectByuserId(user, roomId).asFlow()
             .mapToList(Dispatchers.Main).transform {
                 emit(it.sortedByDescending { it.level.replace(",", "").toFloat() })
             }
     }
 
-    suspend fun updateUserCharacters(roomId: String): Flow<String> = flow {
-        database.userInfoQueries.selectByRoomId(roomId).executeAsList().forEach { userInfo ->
-            val characterList = api.getCharacterInfo(userInfo.representativeCharacter)
-            emit(userInfo.name)
-            database.transaction {
-                characterList.forEach { characterInfo ->
-                    database.characterQueries.insertCharacterInfo(
-                        characterInfo.characterName,
-                        userInfo.name,
-                        roomId,
-                        characterInfo.serverName,
-                        characterInfo.characterClassName,
-                        characterInfo.itemMaxLevel
-                    )
-                }
-            }
-            delay(500)
-        }
-        delay(1_000)
-        emit("finish")
+    fun getCharactersValue(user: String, roomId: String): List<Character> {
+        return database.characterQueries.selectByuserId(user, roomId).executeAsList()
     }
 
-    fun deleteUserById(user:String,roomId: String) {
-        database.userInfoQueries.deleteUserById(user,roomId)
+    fun deleteUserName(user: String, roomId: String) {
+        database.userInfoQueries.deleteUserById(user, roomId)
+    }
+
+    fun deleteCharacter(characterName: String, roomId: String) {
+        database.characterQueries.deleteUserByName(characterName, roomId)
     }
 
 }

@@ -113,7 +113,7 @@ fun UserInfoCard(
             user = user,
             characters = characters,
             confirm = {
-                db.deleteUserById(user.name,roomId)
+                db.deleteUserName(user.name,roomId)
             },
             dismiss = {
                 openCharacterDeleteDialog = false

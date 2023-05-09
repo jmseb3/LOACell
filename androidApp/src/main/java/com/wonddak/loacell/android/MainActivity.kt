@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android
 
+import android.app.Notification
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -33,6 +34,7 @@ import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
+import com.wonddak.loacell.android.util.NotificationUtil
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.DriverFactory
@@ -45,10 +47,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
-        Intent(this,FireStoreUpdateService::class.java).let {
-            //TODO Add notification Channel
-            startForegroundService(it)
-        }
+        startForegroundService(Intent(this,FireStoreUpdateService::class.java))
 
         setContent {
             MainContent() {

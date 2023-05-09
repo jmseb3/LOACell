@@ -158,10 +158,10 @@ fun RaidView(
                         ) {
                             scope.launch {
                                 showLoadingProgress = true
-                                db.updateUserCharacters(roomId = roomInfo.uniqueId).collect {
-                                    showLoadingProgressText = it
-                                    // TODO update Last update Time
-                                }
+//                                db.updateUserCharacters(roomId = roomInfo.uniqueId).collect {
+//                                    showLoadingProgressText = it
+//                                    // TODO update Last update Time
+//                                }
                                 showLoadingProgress = false
                             }
                         }

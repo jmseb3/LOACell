@@ -9,7 +9,7 @@ CREATE TABLE UserInfo (
 insertUserInfo:
 INSERT INTO UserInfo VALUES (?,?,?);
 
-upadteRepresentativeCharacter:
+updateRepresentativeCharacter:
 UPDATE UserInfo SET representativeCharacter = ?  WHERE name =? AND roomId = ?;
 
 lastInsertRowId:
