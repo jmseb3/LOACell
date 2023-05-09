@@ -1,18 +1,19 @@
 CREATE TABLE Character (
   name TEXT NOT NULL PRIMARY KEY,
-  userId INTEGER NOT NULL ,
+  username TEXT NOT NULL ,
+  roomId TEXT NOT NULL,
   server TEXT NOT NULL,
   className TEXT NOT NULL,
   level TEXT NOT NULL,
-  FOREIGN KEY(userId) REFERENCES UserInfo(userId) ON DELETE CASCADE
+  FOREIGN KEY(username,roomId) REFERENCES UserInfo(name,roomId) ON DELETE CASCADE
 );
 
 insertCharacterInfo:
 INSERT OR REPLACE INTO Character
-VALUES (?,?,?,?,?);
+VALUES (?,?,?,?,?,?);
 
 selectByuserId:
-SELECT * FROM Character WHERE userId = ?;
+SELECT * FROM Character WHERE username = ? AND roomId =?;
 
 checkAlreadyExist:
 SELECT EXISTS (

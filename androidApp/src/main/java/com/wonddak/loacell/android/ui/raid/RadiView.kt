@@ -36,6 +36,7 @@ import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
@@ -169,7 +170,7 @@ fun RaidView(
                         .collectAsState(initial = emptyList())
                     LazyColumn {
                         items(userList) { user ->
-                            UserInfoCard(db = db, user = user)
+                            UserInfoCard(db = db, user = user, roomId = roomInfo.uniqueId)
                         }
                     }
                 }

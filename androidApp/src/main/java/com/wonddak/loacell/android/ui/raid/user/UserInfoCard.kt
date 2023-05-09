@@ -23,10 +23,11 @@ import com.wonddak.loacell.database.AppDataBase
 @Composable
 fun UserInfoCard(
     db: AppDataBase,
+    roomId:String,
     user: UserInfo
 ) {
 
-    val characters by db.getCharacters(user.userId).collectAsState(initial = emptyList())
+    val characters by db.getCharacters(user.name,roomId).collectAsState(initial = emptyList())
     var showCharacters by rememberSaveable {
         mutableStateOf(false)
     }
@@ -99,7 +100,7 @@ fun UserInfoCard(
             user = user,
             characters = characters,
             confirm = { name ->
-                db.updateUserRepresentativeCharacter(user.userId, name)
+                db.updateUserRepresentativeCharacter(user.name, roomId,name)
                 openCharacterEditDialog = false
             },
             dismiss = {
@@ -112,7 +113,7 @@ fun UserInfoCard(
             user = user,
             characters = characters,
             confirm = {
-                db.deleteUserById(user.userId)
+                db.deleteUserById(user.name,roomId)
             },
             dismiss = {
                 openCharacterDeleteDialog = false

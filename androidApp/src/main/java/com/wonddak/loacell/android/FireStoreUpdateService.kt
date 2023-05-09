@@ -76,10 +76,33 @@ class FireStoreUpdateService : Service() {
                     }
 
                     if (value != null) {
+                        Log.i(TAG, "Listen Users")
+                        // 현재 방에 있는 유저 목록 가져옴
+                        val userList =
+                            db.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
+
+                        // 이름 조회..
                         value.documents.forEach {
-                            val user = it.id
-                            val representativeCharacter = it.data!!["representativeCharacter"] as String
-                            db.addUser(roomId, user, representativeCharacter)
+                            val userName = it.id
+                            val representativeCharacter =
+                                it.data!!["representativeCharacter"] as String
+                            //이미 값이 있는 경우
+                            if (userName in userList) {
+                                //업데이트
+                                db.updateUserRepresentativeCharacter(
+                                    userName,
+                                    roomId,
+                                    representativeCharacter
+                                )
+                                userList.remove(userName)
+                            } else {
+                                //없는 경우 추가
+                                db.addUser(userName, roomId, representativeCharacter)
+                            }
+                        }
+                        // 동작이 끝난후 남아있다면
+                        userList.forEach { name ->
+                            db.deleteUserById(name,roomId)
                         }
                     } else {
                         Log.d(TAG, "Current data: null")

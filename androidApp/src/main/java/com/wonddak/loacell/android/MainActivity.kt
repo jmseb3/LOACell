@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -44,6 +45,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
+        Intent(this,FireStoreUpdateService::class.java).let {
+            //TODO Add notification Channel
+            startForegroundService(it)
+        }
+
         setContent {
             MainContent() {
 
@@ -101,12 +107,14 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     AnimatedVisibility(selectedRoomId.isNotEmpty()) {
-                        Column() {
-                            RaidView(
-                                db,
-                                selectedRoomId
-                            ) {
-                                loaCellViewModel.hideRoomInfo()
+                        if (selectedRoomId.isNotEmpty()) {
+                            Column() {
+                                RaidView(
+                                    db,
+                                    selectedRoomId
+                                ) {
+                                    loaCellViewModel.hideRoomInfo()
+                                }
                             }
                         }
                     }

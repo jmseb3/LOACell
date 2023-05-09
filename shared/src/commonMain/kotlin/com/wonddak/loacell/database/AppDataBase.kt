@@ -68,25 +68,25 @@ class AppDataBase(driverFactory: DriverFactory) {
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
 
     fun addUser(
-        roomId: String,
         userString: String,
+        roomId: String,
         representativeCharacter: String
     ) {
         database.userInfoQueries.insertUserInfo(
-            null,
-            roomId,
             userString,
+            roomId,
             representativeCharacter
         )
     }
 
 
     fun updateUserRepresentativeCharacter(
-        userId: Long,
+        userName: String,
+        roomId: String,
         representativeCharacter: String
     ) {
         database.userInfoQueries.upadteRepresentativeCharacter(
-            representativeCharacter, userId
+            representativeCharacter, userName ,roomId
         )
     }
 
@@ -95,8 +95,13 @@ class AppDataBase(driverFactory: DriverFactory) {
             .mapToList(Dispatchers.Main)
     }
 
-    fun getCharacters(userId: Long): Flow<List<Character>> {
-        return database.characterQueries.selectByuserId(userId).asFlow()
+    fun getUsersByRoomIdValue(roomId: String): List<UserInfo> {
+        return database.userInfoQueries.selectByRoomId(roomId).executeAsList()
+    }
+
+
+    fun getCharacters(user:String,roomId: String): Flow<List<Character>> {
+        return database.characterQueries.selectByuserId(user,roomId).asFlow()
             .mapToList(Dispatchers.Main).transform {
                 emit(it.sortedByDescending { it.level.replace(",", "").toFloat() })
             }
@@ -110,7 +115,8 @@ class AppDataBase(driverFactory: DriverFactory) {
                 characterList.forEach { characterInfo ->
                     database.characterQueries.insertCharacterInfo(
                         characterInfo.characterName,
-                        userInfo.userId,
+                        userInfo.name,
+                        roomId,
                         characterInfo.serverName,
                         characterInfo.characterClassName,
                         characterInfo.itemMaxLevel
@@ -123,8 +129,8 @@ class AppDataBase(driverFactory: DriverFactory) {
         emit("finish")
     }
 
-    fun deleteUserById(userId: Long) {
-        database.userInfoQueries.deleteUserById(userId)
+    fun deleteUserById(user:String,roomId: String) {
+        database.userInfoQueries.deleteUserById(user,roomId)
     }
 
 }
