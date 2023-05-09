@@ -185,7 +185,9 @@ fun RaidView(
                                     )
                                 },
                                 {
-                                    FireStoreHelper.deleteUser(roomInfo.uniqueId, user.name)
+                                    FireStoreHelper.deleteUser(roomInfo.uniqueId, user.name) {
+                                        db.deleteUserName(user.name,roomInfo.uniqueId)
+                                    }
                                 }
                             )
                         }
