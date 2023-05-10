@@ -52,6 +52,7 @@ fun AddRaidSheet() {
                 },
             ) {
                 OutlinedTextField(
+                    modifier = Modifier.menuAnchor(),
                     value = nowType.toKorString(),
                     onValueChange = {},
                     readOnly = true,

@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.raid.user
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -121,6 +123,7 @@ fun EditCharacterDialog(
     var selectedText by remember { mutableStateOf(representativeCharacter) }
 
     AlertDialog(
+        containerColor = Color.White,
         onDismissRequest = dismiss,
         title = {
             Text(text = "대표 캐릭터 변경")
@@ -132,7 +135,8 @@ fun EditCharacterDialog(
                     expanded = !expanded
                 }
             ) {
-                TextField(
+                OutlinedTextField(
+                    modifier = Modifier.menuAnchor(),
                     value = selectedText,
                     onValueChange = {},
                     readOnly = true,
@@ -143,7 +147,7 @@ fun EditCharacterDialog(
                 )
 
                 ExposedDropdownMenu(
-                    modifier = Modifier.height(200.dp),
+                    modifier = Modifier.height(200.dp).background(Color.White),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
@@ -158,7 +162,7 @@ fun EditCharacterDialog(
                             onClick = {
                                 selectedText = item
                                 expanded = false
-                            }
+                            },
                         )
                     }
                 }
