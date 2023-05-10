@@ -156,7 +156,13 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     fun getCharacter(characterName: String) : Flow<Character> {
         return database.characterQueries.getCharacterInfo(characterName).asFlow().mapToOne(Dispatchers.Main)
-
+    }
+    fun getCharacterValue(characterName: String) : Character? {
+        return try {
+            database.characterQueries.getCharacterInfo(characterName).executeAsOne()
+        } catch (e:Exception) {
+            null
+        }
     }
 
     fun updateCharacter(

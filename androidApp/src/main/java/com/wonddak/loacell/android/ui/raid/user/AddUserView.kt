@@ -122,6 +122,7 @@ fun AddUserView(
 
                             val characterResult = LostArkApi().getCharacterInfo(characterName)
                             characterResult.onSuccess {list ->
+                                FireStoreHelper.addCharacters(list)
                                 FireStoreHelper.addUser(
                                     roomId = roomId,
                                     name = user,

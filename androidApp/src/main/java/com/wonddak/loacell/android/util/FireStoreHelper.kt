@@ -7,6 +7,11 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wonddak.loacell.api.model.CharacterInfo
+import com.wonddak.loacell.database.AppDataBase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object FireStoreHelper {
 
@@ -39,7 +44,6 @@ object FireStoreHelper {
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
             userData["characterList"] = characterList.map { it.characterName }
-            userData["show"] = true
             fs.collection("rooms")
                 .document(roomId)
                 .collection("users")
@@ -50,9 +54,6 @@ object FireStoreHelper {
                             if (it.exists()) {
                                 userRoom.update(userData)
                                     .addOnSuccessListener {
-                                        characterList.forEach {
-                                            addCharacter(it)
-                                        }
                                         successAction()
                                     }
                                     .addOnFailureListener { e ->
@@ -62,9 +63,6 @@ object FireStoreHelper {
                             } else {
                                 userRoom.set(userData)
                                     .addOnSuccessListener {
-                                        characterList.forEach {
-                                            addCharacter(it)
-                                        }
                                         successAction()
                                     }
                                     .addOnFailureListener { e ->
@@ -100,24 +98,19 @@ object FireStoreHelper {
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("users")
-            .document(userName).let { userNameDoc ->
-                userNameDoc.get()
-                    .addOnSuccessListener {
-                        if (it.exists()) {
-                            userNameDoc.update("show", false)
-                                .addOnSuccessListener {
-                                    successAction()
-                                }
-                        }
-                    }
-                    .addOnFailureListener {
-
-                    }
+            .document(userName)
+            .delete()
+            .addOnSuccessListener {
+                successAction()
             }
-
     }
 
-    fun addCharacter(
+    fun addCharacters(
+        characterList: List<CharacterInfo>
+    ) {
+        characterList.forEach { addCharacter(it) }
+    }
+    private fun addCharacter(
         character: CharacterInfo
     ) {
         Firebase.firestore.let { fs ->
@@ -140,8 +133,6 @@ object FireStoreHelper {
                                     .addOnFailureListener {
                                         it.printStackTrace()
                                     }
-                            } else {
-
                             }
                         } else {
                             characterRoom.set(data)
@@ -155,6 +146,78 @@ object FireStoreHelper {
                     }
             }
         }
+    }
+
+    fun observeUsers(
+        roomId: String,
+        db:AppDataBase
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("users")
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.w("JWH", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                if (value != null) {
+                    Log.i("JWH", "Listen Users")
+                    // 현재 방에 있는 유저 목록 가져옴
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val dbUserList = db.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
+                        // 이름 조회..
+                        withContext(Dispatchers.IO) {
+                            value.documents.forEach {
+                                val userName = it.id
+                                Log.i("JWH", "Listen Users == $userName")
+
+                                val representativeCharacter =
+                                    it.data!!["representativeCharacter"] as String
+                                val characterList = it.data!!["characterList"] as List<String>
+
+                                //1 캐릭터 정보 업데이트
+                                launch {
+                                    characterList.forEach {characterName ->
+                                        observeCharacters(characterName) {className,level,server ->
+                                            db.updateCharacter(characterName, server, className, level)
+                                        }
+                                    }
+                                }
+                                //2. 유저정보 업데이트
+                                launch {
+                                    //이미 값이 있는 경우
+                                    if (userName in dbUserList) {
+                                        //업데이트
+                                        db.updateUserInfo(
+                                            userName,
+                                            characterList,
+                                            roomId,
+                                            representativeCharacter
+                                        )
+                                        dbUserList.remove(userName)
+                                    } else {
+                                        //없는 경우 추가
+                                        db.addUser(
+                                            userName,
+                                            roomId,
+                                            representativeCharacter,
+                                            characterList
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        // 동작이 끝난후 남아있다면
+                        dbUserList.forEach { name ->
+                            db.deleteUserName(name, roomId)
+                        }
+                    }
+                } else {
+                    Log.d("JWH", "Current data: null")
+                }
+            }
     }
 
     fun observeCharacters(

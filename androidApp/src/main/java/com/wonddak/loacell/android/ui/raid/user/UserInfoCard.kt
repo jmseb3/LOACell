@@ -71,7 +71,9 @@ fun UserInfoCard(
                     }
 
                     Divider()
-                    user.characterList.forEach { UserInfoCharacters(db,it) }
+                    user.characterList.map { db.getCharacterValue(it) }.forEach {character ->
+                        character?.let { UserInfoCharacters(it) }
+                    }
                 }
             }
         }

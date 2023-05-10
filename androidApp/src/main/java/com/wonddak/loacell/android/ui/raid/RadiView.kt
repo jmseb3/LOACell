@@ -1,7 +1,5 @@
 package com.wonddak.loacell.android.ui.raid
 
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,8 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
@@ -43,15 +39,8 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
 import com.wonddak.loacell.android.util.FireStoreHelper
-import com.wonddak.loacell.api.LostArkApi
-import com.wonddak.loacell.api.onError
-import com.wonddak.loacell.api.onException
-import com.wonddak.loacell.api.onSuccess
 import com.wonddak.loacell.database.AppDataBase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun RaidView(
@@ -64,7 +53,7 @@ fun RaidView(
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
         .collectAsState(initial = emptyList())
 
-    val context = LocalContext.current
+    FireStoreHelper.observeUsers(selectedRoomId,db)
 
     var showAddRaidSheet by remember {
         mutableStateOf(false)
@@ -207,75 +196,6 @@ fun RaidUsersView(
     refreshAction: () -> Unit
 ) {
     val userList by db.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
-
-    Firebase.firestore.collection("rooms")
-        .document(roomId)
-        .collection("users")
-        .addSnapshotListener { value, error ->
-            if (error != null) {
-                Log.w("JWH", "Listen failed.", error)
-                return@addSnapshotListener
-            }
-
-            if (value != null) {
-                Log.i("JWH", "Listen Users")
-                // 현재 방에 있는 유저 목록 가져옴
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val dbUserList = db.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
-                    // 이름 조회..
-                    withContext(Dispatchers.IO) {
-                        value.documents.forEach {
-                            val userName = it.id
-                            Log.i("JWH", "Listen Users == $userName")
-
-                            val representativeCharacter =
-                                it.data!!["representativeCharacter"] as String
-                            val characterList = it.data!!["characterList"] as List<String>
-                            launch {
-                                characterList.forEach {characterName ->
-                                    FireStoreHelper.observeCharacters(characterName) {className,level,server ->
-                                        db.updateCharacter(characterName, server, className, level)
-                                    }
-                                }
-                            }
-                            launch {
-                                val show = it.data?.get("show") as Boolean? ?: false
-                                if (show) {
-                                    //이미 값이 있는 경우
-                                    if (userName in dbUserList) {
-                                        //업데이트
-                                        db.updateUserInfo(
-                                            userName,
-                                            characterList,
-                                            roomId,
-                                            representativeCharacter
-                                        )
-                                        dbUserList.remove(userName)
-                                    } else {
-                                        //없는 경우 추가
-                                        db.addUser(
-                                            userName,
-                                            roomId,
-                                            representativeCharacter,
-                                            characterList
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 동작이 끝난후 남아있다면
-                    dbUserList.forEach { name ->
-                        db.deleteUserName(name, roomId)
-                    }
-                }
-            } else {
-                Log.d("JWH", "Current data: null")
-            }
-        }
-
     Column() {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly
