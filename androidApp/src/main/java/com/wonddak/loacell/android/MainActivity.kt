@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
-        startForegroundService(Intent(this,FireStoreUpdateService::class.java))
 
         setContent {
             MainContent() {
@@ -72,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 db.roomInfoQueriesHelper.addRoomInfo(
                                     "123",
                                     "456",
-                                    "kYdq2AE19rTMI8yDymdB"
+                                    "hxQlFNqieMviWhQPp4HL"
                                 )
                             }) {
                                 Text(text = "ADD_TestRoom")

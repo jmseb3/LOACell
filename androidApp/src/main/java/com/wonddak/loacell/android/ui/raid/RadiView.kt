@@ -36,7 +36,6 @@ import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
@@ -46,9 +45,10 @@ import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.api.LostArkApi
 import com.wonddak.loacell.database.AppDataBase
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RaidView(
@@ -59,9 +59,6 @@ fun RaidView(
     val scope = rememberCoroutineScope()
     val roomInfo = db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
-        .collectAsState(initial = emptyList())
-
-    val userList by db.getUsersByRoomId(roomInfo.uniqueId)
         .collectAsState(initial = emptyList())
 
     val context = LocalContext.current
@@ -148,50 +145,19 @@ fun RaidView(
                 }
 
                 1 -> {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        MyIconButton(
-                            SharedRes.images.add
-                        ) {
-                            showAddUserSheet = true
-                        }
-                        MyIconButton(
-                            SharedRes.images.refresh
-                        ) {
-                            scope.launch {
-                                showLoadingProgress = true
-//                                db.updateUserCharacters(roomId = roomInfo.uniqueId).collect {
-//                                    showLoadingProgressText = it
-//                                    // TODO update Last update Time
-//                                }
-                                showLoadingProgress = false
-                            }
-                        }
-                    }
-                    LazyColumn {
-                        items(userList) { user ->
-                            val characters by db.getCharacters(user.name, roomInfo.uniqueId)
-                                .collectAsState(initial = emptyList())
-                            UserInfoCard(
-                                name = user.name,
-                                representativeCharacter = user.representativeCharacter,
-                                characters = characters,
-                                { name ->
-                                    db.updateUserRepresentativeCharacter(
-                                        user.name,
-                                        roomInfo.uniqueId,
-                                        name
-                                    )
-                                },
-                                {
-                                    FireStoreHelper.deleteUser(roomInfo.uniqueId, user.name) {
-                                        db.deleteUserName(user.name,roomInfo.uniqueId)
-                                    }
-                                }
-                            )
-                        }
-                    }
+                   RaidUsersView(
+                       db = db,
+                       roomId = roomInfo.uniqueId,
+                       addAction = {
+                           showAddUserSheet = true
+                       },
+                       refreshAction = {
+                           scope.launch {
+                               showLoadingProgress = true
+                               showLoadingProgress = false
+                           }
+                       }
+                   )
                 }
             }
         }
@@ -235,19 +201,120 @@ fun RaidView(
                         else -> {
                             scope.launch {
                                 val list = LostArkApi().getCharacterInfo(characterName)
-                                FireStoreHelper.addUserAndCharacterInfo(
-                                    roomInfo.uniqueId,
-                                    user,
-                                    characterName,
-                                    list
-                                ) {
-
-                                }
+                                FireStoreHelper.addUser(
+                                    roomId = roomInfo.uniqueId,
+                                    name = user,
+                                    representativeCharacter = characterName,
+                                    characterList = list
+                                )
                             }
                             showAddUserSheet = false
                         }
                     }
                 }
+            }
+        }
+    }
+}
+@Composable
+fun RaidUsersView(
+    db :AppDataBase,
+    roomId : String,
+    addAction : () -> Unit,
+    refreshAction: () -> Unit
+) {
+    val userList by db.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
+
+    Firebase.firestore.collection("rooms")
+        .document(roomId)
+        .collection("users")
+        .addSnapshotListener { value, error ->
+            if (error != null) {
+                Log.w("JWH", "Listen failed.", error)
+                return@addSnapshotListener
+            }
+
+            if (value != null) {
+                Log.i("JWH", "Listen Users")
+                // 현재 방에 있는 유저 목록 가져옴
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val dbUserList = db.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
+                    // 이름 조회..
+                    withContext(Dispatchers.IO) {
+                        value.documents.forEach {
+                            val userName = it.id
+                            Log.i("JWH", "Listen Users == $userName")
+
+                            val representativeCharacter =
+                                it.data!!["representativeCharacter"] as String
+                            val characterList = it.data!!["characterList"] as List<String>
+                            launch {
+                                characterList.forEach {characterName ->
+                                    FireStoreHelper.observeCharacters(characterName) {className,level,server ->
+                                        db.updateCharacter(characterName, server, className, level)
+                                    }
+                                }
+                            }
+                            launch {
+                                val show = it.data?.get("show") as Boolean? ?: false
+                                if (show) {
+                                    //이미 값이 있는 경우
+                                    if (userName in dbUserList) {
+                                        //업데이트
+                                        db.updateUserInfo(
+                                            userName,
+                                            characterList,
+                                            roomId,
+                                            representativeCharacter
+                                        )
+                                        dbUserList.remove(userName)
+                                    } else {
+                                        //없는 경우 추가
+                                        db.addUser(
+                                            userName,
+                                            roomId,
+                                            representativeCharacter,
+                                            characterList
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // 동작이 끝난후 남아있다면
+                    dbUserList.forEach { name ->
+                        db.deleteUserName(name, roomId)
+                    }
+                }
+            } else {
+                Log.d("JWH", "Current data: null")
+            }
+        }
+
+    Column() {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            MyIconButton(
+                SharedRes.images.add
+            ) {
+                addAction()
+            }
+            MyIconButton(
+                SharedRes.images.refresh
+            ) {
+                refreshAction()
+            }
+        }
+        LazyColumn {
+            items(userList) { userInfo ->
+                UserInfoCard(
+                    db,
+                    roomId,
+                    userInfo
+                )
             }
         }
     }

@@ -1,19 +1,23 @@
+import kotlin.String;
+import kotlin.collections.List;
+
 CREATE TABLE UserInfo (
   name TEXT NOT NULL,
   roomId TEXT NOT NULL,
-  representativeCharacter Text NOT NULL ,
+  representativeCharacter Text NOT NULL,
+  characterList TEXT AS List<String> NOT NULL,
   FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE,
   PRIMARY KEY(name,roomId)
 );
 
 insertUserInfo:
-INSERT INTO UserInfo VALUES (?,?,?);
+INSERT OR REPLACE INTO UserInfo VALUES (?,?,?,?);
+
+updateUserInfo:
+UPDATE UserInfo SET representativeCharacter = ?,characterList=? WHERE name =? AND roomId = ?;
 
 updateRepresentativeCharacter:
-UPDATE UserInfo SET representativeCharacter = ?  WHERE name =? AND roomId = ?;
-
-lastInsertRowId:
-SELECT last_insert_rowid();
+UPDATE UserInfo SET representativeCharacter = ? WHERE name =? AND roomId = ?;
 
 selectByRoomId:
 SELECT * FROM UserInfo WHERE roomId = ?;

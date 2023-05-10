@@ -23,17 +23,12 @@ import com.wonddak.loacell.database.AppDataBase
 
 @Composable
 fun UserInfoCard(
-    name :String,
-    representativeCharacter :String,
-    characters : List<Character>,
-    editCharacter :(name:String)  -> Unit,
-    deleteUser :() -> Unit
+    db :AppDataBase,
+    roomId :String,
+    user:UserInfo,
 ) {
 
     var showCharacters by remember {
-        mutableStateOf(false)
-    }
-    var showMore by remember {
         mutableStateOf(false)
     }
     var openCharacterEditDialog by remember { mutableStateOf(false) }
@@ -53,7 +48,7 @@ fun UserInfoCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { showCharacters = !showCharacters },
-                text = "$name - $representativeCharacter",
+                text = "${user.name} - ${user.representativeCharacter}",
                 textAlign = TextAlign.Center
             )
             AnimatedVisibility(visible = showCharacters) {
@@ -76,22 +71,7 @@ fun UserInfoCard(
                     }
 
                     Divider()
-                    if (characters.size <= 6) {
-                        characters.forEach { UserInfoCharacters(it) }
-                    } else {
-                        if (showMore) {
-                            characters.forEach { UserInfoCharacters(it) }
-                        } else {
-                            characters.subList(0, 6).forEach { UserInfoCharacters(it) }
-                        }
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { showMore = !showMore },
-                            text = if (showMore) "닫기" else "더보기 (${characters.size - 6})",
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    user.characterList.forEach { UserInfoCharacters(db,it) }
                 }
             }
         }
@@ -99,10 +79,14 @@ fun UserInfoCard(
 
     if (openCharacterEditDialog) {
         EditCharacterDialog(
-            representativeCharacter = representativeCharacter,
-            characters = characters,
+            representativeCharacter = user.representativeCharacter,
+            characters = user.characterList,
             confirm = { name ->
-                editCharacter(name)
+                FireStoreHelper.updateUserCharacter(
+                    roomId,
+                    user.name,
+                    name
+                )
                 openCharacterEditDialog = false
             },
             dismiss = {
@@ -112,10 +96,11 @@ fun UserInfoCard(
     }
     if (openCharacterDeleteDialog) {
         DeleteCharacterDialog(
-            name = name,
+            name = user.name,
             confirm = {
-                deleteUser()
-
+                FireStoreHelper.deleteUser(roomId, user.name) {
+                    db.deleteUserName(user.name,roomId)
+                }
                 openCharacterDeleteDialog = false
             },
             dismiss = {
@@ -129,7 +114,7 @@ fun UserInfoCard(
 @Composable
 fun EditCharacterDialog(
     representativeCharacter: String,
-    characters: List<Character>,
+    characters: List<String>,
     confirm: (name: String) -> Unit,
     dismiss: () -> Unit
 ) {
@@ -163,7 +148,7 @@ fun EditCharacterDialog(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    characters.map { it.name }.forEach { item ->
+                    characters.forEach { item ->
                         DropdownMenuItem(
                             content = {
                                 Text(

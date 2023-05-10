@@ -2,7 +2,6 @@ package com.wonddak.loacell.android.viewModel
 
 
 import androidx.lifecycle.ViewModel
-import com.wonddak.loacell.android.FireStoreUpdateService
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class LoaCellViewModel : ViewModel() {
@@ -12,7 +11,6 @@ class LoaCellViewModel : ViewModel() {
 
     fun showRoomInfo(roomId:String) {
         _roomId.value = roomId
-        FireStoreUpdateService.setRoomId(roomId)
     }
 
     fun hideRoomInfo() {
