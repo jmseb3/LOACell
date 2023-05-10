@@ -90,17 +90,6 @@ class AppDataBase(driverFactory: DriverFactory) {
         )
     }
 
-
-    fun updateUserRepresentativeCharacter(
-        userName: String,
-        roomId: String,
-        representativeCharacter: String,
-    ) {
-        database.userInfoQueries.updateRepresentativeCharacter(
-            representativeCharacter,userName, roomId
-        )
-    }
-
     fun updateUserInfo(
         userName: String,
         characterList : List<String>,
@@ -110,34 +99,6 @@ class AppDataBase(driverFactory: DriverFactory) {
     ) {
         database.userInfoQueries.updateUserInfo(
             representativeCharacter,characterList,userName, roomId
-        )
-    }
-
-    fun addCharacter(
-        name: String,
-        server: String,
-        className: String,
-        level: String
-    ) {
-        database.characterQueries.insertCharacterInfo(
-            name,
-            server,
-            className,
-            level
-        )
-    }
-
-    fun updateUserCharacterInfo(
-        name: String,
-        server: String,
-        className: String,
-        level: String
-    ) {
-        database.characterQueries.updateCharacterInfo(
-            server,
-            className,
-            level,
-            name,
         )
     }
 
