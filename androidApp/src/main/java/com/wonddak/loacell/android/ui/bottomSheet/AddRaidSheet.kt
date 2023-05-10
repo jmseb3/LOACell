@@ -2,7 +2,6 @@ package com.wonddak.loacell.android.ui.bottomSheet
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,23 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.ExposedDropdownMenuDefaults
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonColors
-import androidx.compose.material.RadioButtonDefaults
-import androidx.compose.material.RangeSlider
-import androidx.compose.material.Slider
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.database.const.Difficulty
 import com.wonddak.loacell.database.const.RaidType
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRaidSheet() {
     BaseSheet(title = "레이드 정보 추가") {
@@ -83,7 +67,7 @@ fun AddRaidSheet() {
                 ) {
                     RaidType.values().forEach { item ->
                         DropdownMenuItem(
-                            content = {
+                            text = {
                                 Text(
                                     text = item.toKorString(),
                                     fontWeight = if (nowType == item) FontWeight.Bold else FontWeight.Normal

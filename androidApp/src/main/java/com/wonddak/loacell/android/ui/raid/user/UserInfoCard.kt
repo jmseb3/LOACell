@@ -5,16 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.Character
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.MyIconButton
@@ -112,7 +109,7 @@ fun UserInfoCard(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCharacterDialog(
     representativeCharacter: String,
@@ -152,7 +149,7 @@ fun EditCharacterDialog(
                 ) {
                     characters.forEach { item ->
                         DropdownMenuItem(
-                            content = {
+                            text = {
                                 Text(
                                     text = item,
                                     fontWeight = if (selectedText == item) FontWeight.Bold else FontWeight.Normal

@@ -1,9 +1,6 @@
 package com.wonddak.loacell.android
 
-import android.app.Notification
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,10 +9,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,9 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
@@ -34,11 +30,9 @@ import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
-import com.wonddak.loacell.android.util.NotificationUtil
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.DriverFactory
-import java.util.Date
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -127,14 +121,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
     content: @Composable () -> Unit
 ) {
     MyApplicationTheme() {
-        val scaffoldState = rememberScaffoldState()
+        val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
-            scaffoldState = scaffoldState
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
         ) {
             Column(
                 modifier = Modifier
