@@ -53,8 +53,10 @@ class LostArkApi {
     }
 
     @Throws(Throwable::class)
-    suspend fun getCharacterInfo(characterName: String): List<CharacterInfo> {
-        return httpClient.get("characters/${characterName.encodeURLPath()}/siblings").body()
+    suspend fun getCharacterInfo(characterName: String): ApiResult<List<CharacterInfo>> {
+        return httpClient.safeRequest {
+            url.path("characters/${characterName.encodeURLPath()}/siblings")
+        }
     }
 
     @Throws(Throwable::class)

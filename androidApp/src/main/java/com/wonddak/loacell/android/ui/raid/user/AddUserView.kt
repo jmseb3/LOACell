@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.raid.user
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.android.util.FireStoreHelper
+import com.wonddak.loacell.api.LostArkApi
+import com.wonddak.loacell.api.onError
+import com.wonddak.loacell.api.onException
+import com.wonddak.loacell.api.onSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,7 +35,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddUserView(
     modifier: Modifier = Modifier,
-    addAction: suspend (user: String, characterName :String) -> Unit
+    roomId:String,
+    addAction: () -> Unit
 ) {
     Column(
         modifier = modifier.padding(10.dp)
@@ -37,8 +44,11 @@ fun AddUserView(
         var characterName by remember {
             mutableStateOf("")
         }
-
         var user by remember {
+            mutableStateOf("")
+        }
+
+        var errorMsg by remember {
             mutableStateOf("")
         }
         val scope = rememberCoroutineScope()
@@ -83,8 +93,14 @@ fun AddUserView(
                     }
                 )
                 Spacer(modifier = Modifier.height(5.dp))
+                if (errorMsg.isNotEmpty()) {
+                    Text(text = errorMsg)
+                }
                 if (showProgress) {
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
                         CircularProgressIndicator()
                     }
@@ -93,12 +109,33 @@ fun AddUserView(
                 OutlinedButton(
                     onClick = {
                         scope.launch {
+                            errorMsg = ""
+                            if (user.isEmpty()) {
+                                errorMsg = "유저 이름이 비어있습니다."
+                                return@launch
+                            }
+                            if (characterName.isEmpty()){
+                                errorMsg = "캐릭터 이름이 비어있습니다."
+                                return@launch
+                            }
                             showProgress = true
-                            addAction(
-                                user.replace("/n",""),
-                                characterName.replace("/n","")
-                            )
-                            delay(1_000L)
+
+                            val characterResult = LostArkApi().getCharacterInfo(characterName)
+                            characterResult.onSuccess {list ->
+                                FireStoreHelper.addUser(
+                                    roomId = roomId,
+                                    name = user,
+                                    representativeCharacter = characterName,
+                                    characterList = list
+                                )
+                                addAction()
+                            }
+                            characterResult.onError { code, message ->
+                                errorMsg = "$message($code)"
+                            }
+                            characterResult.onException {
+                                errorMsg = it.message ?: "exception"
+                            }
                             showProgress = false
                         }
                     },

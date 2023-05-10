@@ -44,6 +44,9 @@ import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.api.LostArkApi
+import com.wonddak.loacell.api.onError
+import com.wonddak.loacell.api.onException
+import com.wonddak.loacell.api.onSuccess
 import com.wonddak.loacell.database.AppDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -188,29 +191,9 @@ fun RaidView(
         ) {
             BaseSheet(title = "유저 정보 추가") {
                 AddUserView(
-                ) { user, characterName ->
-                    when {
-                        user.isEmpty() -> {
-                            Toast.makeText(context, "유저 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
-                        }
-
-                        characterName.isEmpty() -> {
-                            Toast.makeText(context, "캐릭터 이름이 비어있습니다.", Toast.LENGTH_SHORT).show()
-                        }
-
-                        else -> {
-                            scope.launch {
-                                val list = LostArkApi().getCharacterInfo(characterName)
-                                FireStoreHelper.addUser(
-                                    roomId = roomInfo.uniqueId,
-                                    name = user,
-                                    representativeCharacter = characterName,
-                                    characterList = list
-                                )
-                            }
-                            showAddUserSheet = false
-                        }
-                    }
+                    roomId = roomInfo.uniqueId
+                ) {
+                    showAddUserSheet = false
                 }
             }
         }
