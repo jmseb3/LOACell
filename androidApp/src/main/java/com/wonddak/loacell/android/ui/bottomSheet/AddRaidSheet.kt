@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -87,42 +88,46 @@ fun AddRaidSheet() {
                 }
             }
 
-            //난이도
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                radioOptions.forEach { difficulty ->
-                    val selected = difficulty == nowDifficulty
-                    val enabled = nowType.accessibleDifficulty().contains(difficulty)
+                RaidSheetHeaderText(text = "난이도 선택")
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    radioOptions.forEach { difficulty ->
+                        val selected = difficulty == nowDifficulty
+                        val enabled = nowType.accessibleDifficulty().contains(difficulty)
 
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .selectable(
-                                selected = selected,
-                                onClick = {
-                                    nowDifficulty = difficulty
-                                }
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = selected,
-                            enabled = enabled,
-                            onClick = { nowDifficulty = difficulty },
-                            colors = RadioButtonDefaults.colors(
-                                //TODO Match Theme Color
-                                selectedColor = Color(0xFF6200EE)
-                            )
-                        )
-                        Text(
-                            text = difficulty.toKorString(),
+                        Row(
                             modifier = Modifier
-                                .padding(start = 6.dp)
-                                .fillMaxWidth(),
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (enabled) Color.Black else Color.Gray
-                        )
+                                .weight(1f)
+                                .selectable(
+                                    selected = selected,
+                                    onClick = {
+                                        nowDifficulty = difficulty
+                                    }
+                                ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selected,
+                                enabled = enabled,
+                                onClick = { nowDifficulty = difficulty },
+                                colors = RadioButtonDefaults.colors(
+                                    //TODO Match Theme Color
+                                    selectedColor = Color(0xFF6200EE)
+                                )
+                            )
+                            Text(
+                                text = difficulty.toKorString(),
+                                modifier = Modifier
+                                    .padding(start = 6.dp)
+                                    .fillMaxWidth(),
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (enabled) Color.Black else Color.Gray
+                            )
+                        }
                     }
                 }
             }
@@ -161,11 +166,14 @@ fun AddRaidSheet() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center
                 ) {
                     RaidSheetHeaderText(text = "관문 선택")
-                    Row() {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         CheckBoxRow(
+                            modifier = Modifier.weight(1f),
                             text = "1~2",
                             value = checked1,
                             enabled = nowDifficulty != Difficulty.Hell,
@@ -179,6 +187,7 @@ fun AddRaidSheet() {
                                 checked1 = value
                             })
                         CheckBoxRow(
+                            modifier = Modifier.weight(1f),
                             text = "3~4",
                             value = checked2,
                             enabled = nowDifficulty != Difficulty.Hell,
@@ -192,6 +201,7 @@ fun AddRaidSheet() {
                                 checked2 = value
                             })
                         CheckBoxRow(
+                            modifier = Modifier.weight(1f),
                             text = "5~6",
                             value = checked3,
                             enabled = true,
@@ -205,14 +215,23 @@ fun AddRaidSheet() {
                                 checked3 = value
                             })
                     }
-                    Text(text = "${startGateNumber * 2 -1} ~ ${endGateNumber * 2} 관문")
+                    Text(text = "${startGateNumber * 2 - 1} ~ ${endGateNumber * 2} 관문")
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
 
+            var inputMinLevel by remember {
+                mutableStateOf(0)
             }
+            val minLevel = nowType.getMinLevel(nowDifficulty,endGateNumber)
+
+            Column() {
+                RaidSheetHeaderText(text = "입장 레벨")
+                Text(text = minLevel.toString())
+                AnimatedVisibility(visible = minLevel == 0 ) {
+
+                }
+            }
+
         }
 
     }
@@ -220,21 +239,26 @@ fun AddRaidSheet() {
 
 @Composable
 fun RaidSheetHeaderText(text: String) {
-    Text(
-        text = text,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.SemiBold
-    )
+    Column() {
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
 }
 
 @Composable
 fun CheckBoxRow(
+    modifier: Modifier = Modifier,
     text: String,
     value: Boolean,
     enabled: Boolean,
     onClick: (value: Boolean) -> Unit
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
@@ -242,9 +266,13 @@ fun CheckBoxRow(
             enabled = enabled,
             onCheckedChange = onClick
         )
-        Text(
-            text = text
-        )
+        ClickableText(
+            text = AnnotatedString(text),
+            onClick = {
+                if (enabled) {
+                    onClick(!value)
+                }
+            })
     }
 }
 
