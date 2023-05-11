@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
@@ -129,7 +130,8 @@ fun MainContent(
     MyApplicationTheme() {
         val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            containerColor = Color.White
         ) {
             Column(
                 modifier = Modifier
