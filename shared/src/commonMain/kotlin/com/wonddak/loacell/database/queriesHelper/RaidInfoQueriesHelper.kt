@@ -4,11 +4,8 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
-import com.wonddak.loacell.database.const.Difficulty
-import com.wonddak.loacell.database.const.RaidType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class RaidInfoQueriesHelper(
     private val queries: RaidInfoQueries
@@ -17,18 +14,18 @@ class RaidInfoQueriesHelper(
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun addRaidInfo(
-        roomId: String,
-        title: String,
-        type: RaidType,
-        difficulty: Difficulty,
-        maxPerson :Long,
-        minLevel :Long
-    ) {
-        queries.insertRaidInfo(null, roomId, title, type,difficulty,maxPerson,minLevel)
-    }
+//    fun addRaidInfo(
+//        raidId:String,
+//        roomId: String,
+//        title: String,
+//        type: RaidType,
+//        difficulty: Difficulty,
+//        gateNumber :Long,
+//    ) {
+//        queries.insertRaidInfo(raidId, roomId, title, type,difficulty,gateNumber,false)
+//    }
 
-    fun delete(id:Long) {
+    fun delete(id:String) {
         queries.delete(id)
     }
 }

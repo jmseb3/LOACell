@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +25,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.database.const.Difficulty
 import com.wonddak.loacell.database.const.RaidType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddRaidSheet() {
+fun AddRaidSheet(
+    roomId:String,
+    successAction :() -> Unit
+) {
     BaseSheet(title = "레이드 정보 추가") {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -65,11 +70,13 @@ fun AddRaidSheet() {
                 )
 
                 ExposedDropdownMenu(
+                    modifier = Modifier.background(Color.White),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
                     RaidType.values().forEach { item ->
                         DropdownMenuItem(
+                            modifier = Modifier.background(Color.White),
                             text = {
                                 Text(
                                     text = item.toKorString(),
@@ -89,7 +96,7 @@ fun AddRaidSheet() {
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
             ) {
                 RaidSheetHeaderText(text = "난이도 선택")
                 Row(
@@ -165,7 +172,8 @@ fun AddRaidSheet() {
                 }
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
                 ) {
                     RaidSheetHeaderText(text = "관문 선택")
                     Row(
@@ -215,21 +223,49 @@ fun AddRaidSheet() {
                                 checked3 = value
                             })
                     }
-                    Text(text = "${startGateNumber * 2 - 1} ~ ${endGateNumber * 2} 관문")
                 }
             }
 
-            var inputMinLevel by remember {
-                mutableStateOf(0)
-            }
-            val minLevel = nowType.getMinLevel(nowDifficulty,endGateNumber)
-
-            Column() {
-                RaidSheetHeaderText(text = "입장 레벨")
-                Text(text = minLevel.toString())
-                AnimatedVisibility(visible = minLevel == 0 ) {
-
+            val minLevel = nowType.getMinLevel(nowDifficulty, endGateNumber)
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    RaidSheetHeaderText(text = "입장 레벨")
+                    Text(text = if (minLevel == 0) "제한 없음" else minLevel.toString())
                 }
+                Column(
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    RaidSheetHeaderText(text = "입장 인원")
+                    Text(text = nowType.maxPerson.toString())
+                }
+            }
+
+            var errorMsg by remember {
+                mutableStateOf("")
+            }
+            AnimatedVisibility(visible = errorMsg.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = errorMsg
+                )
+            }
+
+            OutlinedButton(
+                onClick = {
+                    FireStoreHelper.addRaidInfo(
+                        roomId,
+                        nowType,
+                        nowDifficulty,
+                        endGateNumber,
+                        {e -> errorMsg = e.message ?: "unknown error"},
+                        successAction
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "추가")
             }
 
         }
@@ -279,5 +315,5 @@ fun CheckBoxRow(
 @Preview
 @Composable
 fun AddRaidSheetPreview() {
-    AddRaidSheet()
+    AddRaidSheet("123") { }
 }

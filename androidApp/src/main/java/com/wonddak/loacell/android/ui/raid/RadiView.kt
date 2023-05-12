@@ -163,7 +163,9 @@ fun RaidView(
             onDismissRequest = { showAddRaidSheet = false },
             properties = BottomSheetDialogProperties(dismissWithAnimation = true),
         ) {
-            AddRaidSheet()
+            AddRaidSheet(roomInfo.uniqueId) {
+                showAddRaidSheet = false
+            }
         }
     }
 

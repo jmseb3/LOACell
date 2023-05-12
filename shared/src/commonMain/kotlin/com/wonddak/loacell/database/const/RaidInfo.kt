@@ -9,7 +9,7 @@ enum class RaidType(val maxPerson :Int) {
     ILLIALAN(8),
     KAYANGEL(4),
     IVORYTOWER(4),
-    ETC(0);
+    ETC(8);
 
     fun toKorString(): String {
         return when (this) {

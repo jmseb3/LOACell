@@ -1,14 +1,16 @@
 import com.wonddak.loacell.database.const.Difficulty;
 import com.wonddak.loacell.database.const.RaidType;
+import kotlin.Boolean;
 
 CREATE TABLE RaidInfo (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  raidId TEXT NOT NULL PRIMARY KEY,
   roomId TEXT NOT NULL,
   title TEXT NOT NULL,
   type Text AS RaidType,
   Difficulty INTEGER AS Difficulty,
-  maxPerson INTEGER NOT NULL,
-  minLevel INTEGER NOT NULL,
+  startGateNumber INTEGER NOT NULL,
+  endFateNumber INTEGER NOT NULL,
+  isFinish INTEGER AS Boolean NOT NULL,
   FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE
 );
 
@@ -16,7 +18,7 @@ selectByRoomId:
 SELECT * FROM RaidInfo WHERE roomId = ?;
 
 insertRaidInfo:
-INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?);
+INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?);
 
 delete:
-DELETE FROM RaidInfo WHERE id =?;
+DELETE FROM RaidInfo WHERE raidId =?;

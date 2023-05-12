@@ -1,13 +1,12 @@
 package com.wonddak.loacell.android.util
 
 import android.util.Log
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wonddak.loacell.api.model.CharacterInfo
 import com.wonddak.loacell.database.AppDataBase
+import com.wonddak.loacell.database.const.Difficulty
+import com.wonddak.loacell.database.const.RaidType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,6 +101,32 @@ object FireStoreHelper {
             .delete()
             .addOnSuccessListener {
                 successAction()
+            }
+    }
+
+    fun addRaidInfo(
+        roomId: String,
+        type: RaidType,
+        difficulty: Difficulty,
+        gateNumber: Int,
+        failAction:(e:Exception) -> Unit ={},
+        successAction: () -> Unit
+    ) {
+        val data = HashMap<String, Any>()
+        data["title"] = "test"
+        data["type"] = type.toString()
+        data["difficulty"] = difficulty.toString()
+        data["gateNumber"] = gateNumber
+        data["isFinish"] = false
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("raidInfo")
+            .document().set(data)
+            .addOnSuccessListener {
+                successAction()
+            }
+            .addOnFailureListener { e->
+                failAction(e)
             }
     }
 
