@@ -9,7 +9,7 @@ CREATE TABLE RaidInfo (
   type Text AS RaidType,
   Difficulty INTEGER AS Difficulty,
   startGateNumber INTEGER NOT NULL,
-  endFateNumber INTEGER NOT NULL,
+  endGateNumber INTEGER NOT NULL,
   isFinish INTEGER AS Boolean NOT NULL,
   FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE
 );
@@ -21,7 +21,7 @@ insertRaidInfo:
 INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?);
 
 upadteRaidInfo:
-UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endFateNumber =?,isFinish =? WHERE raidId =? AND  roomId =?;
+UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? WHERE raidId =? AND  roomId =?;
 
 delete:
 DELETE FROM RaidInfo WHERE raidId =? AND roomId =?;

@@ -93,4 +93,17 @@ enum class RaidType(val maxPerson :Int) {
             ETC -> 0
         }
     }
+
+    fun getMaxGate() :Int{
+        return when (this) {
+            VALTAN -> 2
+            VYKAS -> 3
+            KOUKU -> 3
+            ABRELSHUD -> 6
+            ILLIALAN -> 3
+            KAYANGEL -> 4
+            IVORYTOWER -> 4
+            ETC -> 0
+        }
+    }
 }

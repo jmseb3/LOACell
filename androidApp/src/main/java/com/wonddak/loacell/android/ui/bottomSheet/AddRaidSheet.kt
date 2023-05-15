@@ -258,8 +258,8 @@ fun AddRaidSheet(
                         roomId,
                         nowType,
                         nowDifficulty,
-                        startGateNumber,
-                        endGateNumber,
+                        if(nowType == RaidType.ABRELSHUD) startGateNumber else 1,
+                        if(nowType == RaidType.ABRELSHUD) endGateNumber else nowType.getMaxGate(),
                         {e -> errorMsg = e.message ?: "unknown error"},
                         successAction
                     )
