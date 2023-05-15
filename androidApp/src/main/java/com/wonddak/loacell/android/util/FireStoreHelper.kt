@@ -7,6 +7,8 @@ import com.wonddak.loacell.api.model.CharacterInfo
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.const.Difficulty
 import com.wonddak.loacell.database.const.RaidType
+import com.wonddak.loacell.database.const.convertDifficulty
+import com.wonddak.loacell.database.const.convertType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,15 +110,17 @@ object FireStoreHelper {
         roomId: String,
         type: RaidType,
         difficulty: Difficulty,
-        gateNumber: Int,
+        startGateNumber: Int,
+        endGateNumber: Int,
         failAction:(e:Exception) -> Unit ={},
         successAction: () -> Unit
     ) {
         val data = HashMap<String, Any>()
         data["title"] = "test"
-        data["type"] = type.toString()
-        data["difficulty"] = difficulty.toString()
-        data["gateNumber"] = gateNumber
+        data["type"] = type.name
+        data["difficulty"] = difficulty.name
+        data["startGateNumber"] = startGateNumber
+        data["endGateNumber"] = endGateNumber
         data["isFinish"] = false
         Firebase.firestore.collection("rooms")
             .document(roomId)
@@ -195,11 +199,12 @@ object FireStoreHelper {
                         withContext(Dispatchers.IO) {
                             value.documents.forEach {
                                 val userName = it.id
-                                Log.i("JWH", "Listen Users == $userName")
 
                                 val representativeCharacter =
                                     it.data!!["representativeCharacter"] as String
                                 val characterList = it.data!!["characterList"] as List<String>
+                                Log.i("JWH", "Listen Users == $userName")
+                                Log.i("JWH", characterList.joinToString("|"))
 
                                 //1 캐릭터 정보 업데이트
                                 launch {
@@ -253,11 +258,10 @@ object FireStoreHelper {
             .document(characterName)
             .addSnapshotListener { value, error ->
                 if (error != null) {
-                    Log.w("JWH", "Listen failed.", error)
+                    Log.w("JWH", "Characters Listen failed.", error)
                     return@addSnapshotListener
                 }
                 if (value != null) {
-                    Log.d("JWH", "Listen characters == $characterName ${value.data.toString()}")
                     value.data?.let { data ->
                         val className = data["className"] as String
                         val level = data["level"] as String
@@ -268,6 +272,80 @@ object FireStoreHelper {
                     }
                 } else {
                     Log.d("JWH", "Listen characters value null")
+                }
+            }
+    }
+
+    fun observeRaid(
+        roomId: String,
+        db: AppDataBase
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("raidInfo")
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.w("JWH", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                if (value != null) {
+                    Log.i("JWH", "Listen raidInfo")
+                    // 현재 있는 레이드 정보를 가져옴
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val dbRaidList = db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }.toMutableSet()
+                        Log.i("JWH",dbRaidList.toString())
+                        // 레이드 id 조회..
+                        withContext(Dispatchers.IO) {
+                            value.documents.forEach {
+                                val raidId = it.id
+                                Log.i("JWH", "Listen raidId : $raidId")
+
+                                val title = it.data!!["title"] as String
+                                val typeString = it.data!!["type"] as String
+                                val difficultyString = it.data!!["difficulty"] as String
+                                val startGateNumber = it.data!!["startGateNumber"] as Long
+                                val endGateNumber = it.data!!["endGateNumber"] as Long
+                                val isFinish = it.data!!["isFinish"] as Boolean
+
+
+                                //이미 값이 있는 경우
+                                if (raidId in dbRaidList) {
+                                    //업데이트
+                                    db.raidInfoQueriesHelper.updateRaidInfo(
+                                        raidId,
+                                        roomId,
+                                        title,
+                                        typeString.convertType(),
+                                        difficultyString.convertDifficulty(),
+                                        startGateNumber,
+                                        endGateNumber,
+                                        isFinish
+                                    )
+                                    dbRaidList.remove(raidId)
+                                } else {
+                                    //없는 경우 추가
+                                    db.raidInfoQueriesHelper.addRaidInfo(
+                                        raidId,
+                                        roomId,
+                                        title,
+                                        typeString.convertType(),
+                                        difficultyString.convertDifficulty(),
+                                        startGateNumber,
+                                        endGateNumber
+                                    )
+                                }
+
+                            }
+                        }
+
+                        // 동작이 끝난후 남아있다면
+                        dbRaidList.forEach { name ->
+                            db.raidInfoQueriesHelper.delete(name,roomId)
+                        }
+                    }
+                } else {
+                    Log.d("JWH", "Current data: null")
                 }
             }
     }

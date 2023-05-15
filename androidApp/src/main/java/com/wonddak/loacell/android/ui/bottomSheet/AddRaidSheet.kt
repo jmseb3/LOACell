@@ -258,6 +258,7 @@ fun AddRaidSheet(
                         roomId,
                         nowType,
                         nowDifficulty,
+                        startGateNumber,
                         endGateNumber,
                         {e -> errorMsg = e.message ?: "unknown error"},
                         successAction

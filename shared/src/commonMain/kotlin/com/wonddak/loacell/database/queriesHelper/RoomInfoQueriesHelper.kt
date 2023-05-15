@@ -15,7 +15,7 @@ class RoomInfoQueriesHelper(
         return queries.selectAll().asFlow().mapToList(Dispatchers.Main)
     }
 
-    fun getRoomInfoById(id:String) :RoomInfo {
+    fun getRoomInfoById(id:String) : RoomInfo {
         return queries.selectById(id).executeAsOne()
     }
 

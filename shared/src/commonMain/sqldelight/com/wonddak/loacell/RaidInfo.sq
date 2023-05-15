@@ -20,5 +20,8 @@ SELECT * FROM RaidInfo WHERE roomId = ?;
 insertRaidInfo:
 INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?);
 
+upadteRaidInfo:
+UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endFateNumber =?,isFinish =? WHERE raidId =? AND  roomId =?;
+
 delete:
-DELETE FROM RaidInfo WHERE raidId =?;
+DELETE FROM RaidInfo WHERE raidId =? AND roomId =?;

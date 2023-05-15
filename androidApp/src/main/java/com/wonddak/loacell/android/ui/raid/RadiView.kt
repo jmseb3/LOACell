@@ -37,7 +37,6 @@ import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.database.AppDataBase
 import kotlinx.coroutines.launch
 
@@ -51,8 +50,6 @@ fun RaidView(
     val roomInfo = db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
         .collectAsState(initial = emptyList())
-
-    FireStoreHelper.observeUsers(selectedRoomId,db)
 
     var showAddRaidSheet by remember {
         mutableStateOf(false)

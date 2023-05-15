@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
@@ -34,6 +35,7 @@ import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.DriverFactory
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -42,6 +44,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
+        lifecycleScope.launch {
+            loaCellViewModel.roomId.collect { selectedRoomId ->
+                if (selectedRoomId.isNotEmpty()) {
+                    FireStoreHelper.observeUsers(selectedRoomId, db)
+                    FireStoreHelper.observeRaid(selectedRoomId, db)
+                }
+            }
+        }
 
         setContent {
             MainContent() {
@@ -83,16 +93,24 @@ class MainActivity : ComponentActivity() {
                                     onDismissRequest = { show = false },
                                     properties = BottomSheetDialogProperties(dismissWithAnimation = true),
                                 ) {
-                                    AddRoomSheet() {title, description ->
+                                    AddRoomSheet() { title, description ->
                                         if (title.isNotEmpty()) {
                                             FireStoreHelper.addRoomInfo(
                                                 title, description
                                             ) { id ->
-                                                db.roomInfoQueriesHelper.addRoomInfo(title, description, id)
+                                                db.roomInfoQueriesHelper.addRoomInfo(
+                                                    title,
+                                                    description,
+                                                    id
+                                                )
                                             }
                                             show = false
                                         } else {
-                                            Toast.makeText(context,"title이 비어있습니다.",Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                "title이 비어있습니다.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                                 }
