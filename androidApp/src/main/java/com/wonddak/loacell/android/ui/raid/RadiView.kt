@@ -1,177 +1,105 @@
 package com.wonddak.loacell.android.ui.raid
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.zIndex
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
-import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
 import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
+import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
-import kotlinx.coroutines.launch
 
 @Composable
 fun RaidView(
     db: AppDataBase,
-    selectedRoomId: String,
-    backAction: () -> Unit
+    loaCellViewModel: LoaCellViewModel
 ) {
     val scope = rememberCoroutineScope()
+
+    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val roomInfo = db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
         .collectAsState(initial = emptyList())
 
-    var showAddRaidSheet by remember {
-        mutableStateOf(false)
-    }
-    var showAddUserSheet by remember {
-        mutableStateOf(false)
+    BackHandler(!loaCellViewModel.showRaidAdd && !loaCellViewModel.showUserAdd) {
+        loaCellViewModel.hideRoomInfo()
     }
 
-    var showLoadingProgress by remember {
-        mutableStateOf(false)
-    }
-    var showLoadingProgressText by remember {
-        mutableStateOf("")
-    }
-    BackHandler(!showAddUserSheet && !showAddRaidSheet) {
-        backAction()
-    }
 
-    Box {
-        if (showLoadingProgress) {
-            val interactionSource = MutableInteractionSource()
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Gray.copy(0.6f))
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) {
-
-                    }
-                    .zIndex(1f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Text(text = "SelectRoomId : ${roomInfo.uniqueId}")
+        Text(text = "title : ${roomInfo.title}")
+        Text(text = "description : ${roomInfo.description}")
+        Divider()
+        val titles = listOf("Raid", "User")
+        TabRow(selectedTabIndex = loaCellViewModel.tabState) {
+            titles.forEachIndexed { index, title ->
+                Tab(
+                    text = { Text(title) },
+                    selected = loaCellViewModel.tabState == index,
+                    onClick = { loaCellViewModel.tabState = index }
                 )
-                if (showLoadingProgressText.isNotEmpty()) {
-                    Text(text = "${showLoadingProgressText}님의 정보를 업데이트 중입니다.")
-                }
             }
         }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(0f)
-        ) {
-            OutlinedButton(onClick = { backAction() }) {
-                Text(text = "BACK")
-            }
-
-            Text(text = "SelectRoomId : ${roomInfo.uniqueId}")
-            Text(text = "title : ${roomInfo.title}")
-            Text(text = "description : ${roomInfo.description}")
-            Divider()
-            var tabState by remember { mutableStateOf(0) }
-            val titles = listOf("Raid", "User")
-            TabRow(selectedTabIndex = tabState) {
-                titles.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = tabState == index,
-                        onClick = { tabState = index }
-                    )
-                }
-            }
-            when (tabState) {
-                0 -> {
-                    MyIconButton(
-                        SharedRes.images.add
-                    ) {
-                        showAddRaidSheet = true
-                    }
-                    LazyColumn {
-                        items(raidInfoList) { raidInfo ->
-                            RaidItemRow(raidInfo)
-                        }
+        when (loaCellViewModel.tabState) {
+            0 -> {
+                LazyColumn {
+                    items(raidInfoList) { raidInfo ->
+                        RaidItemRow(raidInfo)
                     }
                 }
+            }
 
-                1 -> {
-                   RaidUsersView(
-                       db = db,
-                       roomId = roomInfo.uniqueId,
-                       addAction = {
-                           showAddUserSheet = true
-                       },
-                       refreshAction = {
-                           scope.launch {
-                               showLoadingProgress = true
-                               showLoadingProgress = false
-                           }
-                       }
-                   )
-                }
+            1 -> {
+                RaidUsersView(
+                    db = db,
+                    roomId = roomInfo.uniqueId
+                )
             }
         }
     }
 
-
-    if (showAddRaidSheet) {
+    if (loaCellViewModel.showRaidAdd) {
         BackHandler(true) {
-            showAddRaidSheet = false
+            loaCellViewModel.hideRaidDialog()
         }
         BottomSheetDialog(
-            onDismissRequest = { showAddRaidSheet = false },
+            onDismissRequest = { loaCellViewModel.hideRaidDialog() },
             properties = BottomSheetDialogProperties(dismissWithAnimation = true),
         ) {
             AddRaidSheet(roomInfo.uniqueId) {
-                showAddRaidSheet = false
+                loaCellViewModel.hideRaidDialog()
             }
         }
     }
 
-    if (showAddUserSheet) {
+    if (loaCellViewModel.showUserAdd) {
         BackHandler(true) {
-            showAddUserSheet = false
+            loaCellViewModel.hideUserDialog()
         }
         BottomSheetDialog(
-            onDismissRequest = { showAddUserSheet = false },
+            onDismissRequest = {
+                loaCellViewModel.hideUserDialog()
+            },
             properties = BottomSheetDialogProperties(
                 dismissWithAnimation = true,
             ),
@@ -180,35 +108,21 @@ fun RaidView(
                 AddUserView(
                     roomId = roomInfo.uniqueId
                 ) {
-                    showAddUserSheet = false
+                    loaCellViewModel.hideUserDialog()
+
                 }
             }
         }
     }
 }
+
 @Composable
 fun RaidUsersView(
-    db :AppDataBase,
-    roomId : String,
-    addAction : () -> Unit,
-    refreshAction: () -> Unit
+    db: AppDataBase,
+    roomId: String
 ) {
     val userList by db.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
     Column() {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            MyIconButton(
-                SharedRes.images.add
-            ) {
-                addAction()
-            }
-            MyIconButton(
-                SharedRes.images.refresh
-            ) {
-                refreshAction()
-            }
-        }
         LazyColumn {
             items(userList) { userInfo ->
                 UserInfoCard(
@@ -224,5 +138,9 @@ fun RaidUsersView(
 
 @Composable
 fun RaidItemRow(raidInfo: RaidInfo) {
-    Text(text = raidInfo.type.toString())
+    Row() {
+        Text(text = raidInfo.type!!.toKorString())
+        Text(text = raidInfo.Difficulty!!.toKorString())
+        Text(text = raidInfo.title)
+    }
 }
