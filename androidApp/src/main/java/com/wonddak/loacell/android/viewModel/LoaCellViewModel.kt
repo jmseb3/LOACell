@@ -1,16 +1,17 @@
 package com.wonddak.loacell.android.viewModel
 
 
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.wonddak.loacell.android.LoaCellApp
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class LoaCellViewModel : ViewModel() {
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
-
 
     fun showRoomInfo(roomId:String) {
         tabState = 0
@@ -20,14 +21,25 @@ class LoaCellViewModel : ViewModel() {
     fun hideRoomInfo() {
         _roomId.value = ""
     }
+    val user = LoaCellApp.user
 
     var showRoomAdd by mutableStateOf(false)
+    var showUserAdd by mutableStateOf(false)
+    var showRaidAdd by mutableStateOf(false)
+    var showSetting by mutableStateOf(false)
+
+    fun clearAllStatus() {
+        showRoomAdd = false
+        showUserAdd = false
+        showRaidAdd = false
+        showSetting = false
+        hideRoomInfo()
+    }
     fun showRoomDialog() {
         if (roomId.value.isEmpty()) {
             showRoomAdd = true
         }
     }
-    var showRaidAdd by mutableStateOf(false)
     fun showRaidDialog() {
         if (roomId.value.isNotEmpty()) {
             showRaidAdd = true
@@ -36,9 +48,6 @@ class LoaCellViewModel : ViewModel() {
     fun hideRaidDialog() {
         showRaidAdd = false
     }
-
-    var showUserAdd by mutableStateOf(false)
-
     fun showUserDialog() {
         if (roomId.value.isNotEmpty()) {
             showUserAdd = true

@@ -29,9 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.loacell.android.ui.SettingView
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
+import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
 import com.wonddak.loacell.android.util.FireStoreHelper
@@ -83,85 +83,102 @@ fun MainContent(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-
+    val user by loaCellViewModel.user.collectAsState(null)
     MyApplicationTheme() {
         val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             containerColor = Color.White,
             bottomBar = {
-                MyBottomAppBar(loaCellViewModel)
+                if (user!=null) {
+                    MyBottomAppBar(loaCellViewModel)
+                }
             },
             topBar = {
-                MyTopAppBar(loaCellViewModel = loaCellViewModel)
+                if (user!=null) {
+                    MyTopAppBar(loaCellViewModel = loaCellViewModel)
+                }
             }
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                val roomList by db.roomInfoQueriesHelper.getALl()
-                    .collectAsState(initial = emptyList())
+            if (user == null){
+                LoginView()
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                ) {
+                    val roomList by db.roomInfoQueriesHelper.getALl()
+                        .collectAsState(initial = emptyList())
 
-                Column(Modifier.fillMaxSize()) {
-                    AnimatedVisibility(selectedRoomId.isEmpty()) {
-                        Column() {
-                            var show by remember {
-                                mutableStateOf(false)
-                            }
-                            OutlinedButton(onClick = {
-                                db.roomInfoQueriesHelper.addRoomInfo(
-                                    "123",
-                                    "456",
-                                    "hxQlFNqieMviWhQPp4HL"
-                                )
-                            }) {
-                                Text(text = "ADD_TestRoom")
-                            }
-                            RoomView(
-                                roomList = roomList,
-                                showRoomInfo = { roomId ->
-                                    loaCellViewModel.showRoomInfo(roomId)
-                                }
-                            )
-                        }
-                    }
-                    AnimatedVisibility(selectedRoomId.isNotEmpty()) {
-                        if (selectedRoomId.isNotEmpty()) {
-                            Column() {
-                                RaidView(
-                                    db,
-                                    loaCellViewModel
-                                )
-                            }
-                        }
-                    }
-                }
-                val context = LocalContext.current
-                if (loaCellViewModel.showRoomAdd) {
-                    BottomSheetDialog(
-                        onDismissRequest = { loaCellViewModel.showRoomAdd = false },
-                        properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-                    ) {
-                        AddRoomSheet() { title, description ->
-                            if (title.isNotEmpty()) {
-                                FireStoreHelper.addRoomInfo(
-                                    title, description
-                                ) { id ->
-                                    db.roomInfoQueriesHelper.addRoomInfo(
-                                        title,
-                                        description,
-                                        id
+                    if (loaCellViewModel.showSetting) {
+                        SettingView(loaCellViewModel)
+                    } else {
+                        Column(Modifier.fillMaxSize()) {
+                            AnimatedVisibility(selectedRoomId.isEmpty()) {
+                                Column() {
+                                    if (BuildConfig.DEBUG) {
+                                        val roomInfos by db.roomInfoQueriesHelper.getALl().collectAsState(
+                                            initial = emptyList()
+                                        )
+                                        val testId ="hxQlFNqieMviWhQPp4HL"
+                                        if (!roomInfos.map { it.uniqueId }.contains(testId)) {
+                                            OutlinedButton(onClick = {
+                                                db.roomInfoQueriesHelper.addRoomInfo(
+                                                    "123",
+                                                    "456",
+                                                    "hxQlFNqieMviWhQPp4HL"
+                                                )
+                                            }) {
+                                                Text(text = "ADD_TestRoom")
+                                            }
+                                        }
+                                    }
+                                    RoomView(
+                                        roomList = roomList,
+                                        showRoomInfo = { roomId ->
+                                            loaCellViewModel.showRoomInfo(roomId)
+                                        }
                                     )
                                 }
-                                loaCellViewModel.showRoomAdd = false
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "title이 비어있습니다.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            }
+                            AnimatedVisibility(selectedRoomId.isNotEmpty()) {
+                                if (selectedRoomId.isNotEmpty()) {
+                                    Column() {
+                                        RaidView(
+                                            db,
+                                            loaCellViewModel
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    val context = LocalContext.current
+                    if (loaCellViewModel.showRoomAdd) {
+                        BottomSheetDialog(
+                            onDismissRequest = { loaCellViewModel.showRoomAdd = false },
+                            properties = BottomSheetDialogProperties(dismissWithAnimation = true),
+                        ) {
+                            AddRoomSheet() { title, description ->
+                                if (title.isNotEmpty()) {
+                                    FireStoreHelper.addRoomInfo(
+                                        title, description
+                                    ) { id ->
+                                        db.roomInfoQueriesHelper.addRoomInfo(
+                                            title,
+                                            description,
+                                            id
+                                        )
+                                    }
+                                    loaCellViewModel.showRoomAdd = false
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "title이 비어있습니다.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
                     }
@@ -199,7 +216,10 @@ fun MyBottomAppBar(
 
         },
         actions = {
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(
+                onClick = { loaCellViewModel.showSetting = true},
+                enabled = !loaCellViewModel.showSetting
+            ) {
                 Icon(Icons.Filled.Settings, contentDescription = null)
             }
         },
@@ -218,8 +238,16 @@ fun MyTopAppBar(
             
         },
         navigationIcon = {
-            AnimatedVisibility(selectedRoomId.isNotEmpty()) {
-                IconButton(onClick = { loaCellViewModel.hideRoomInfo() }) {
+            AnimatedVisibility(selectedRoomId.isNotEmpty() || loaCellViewModel.showSetting) {
+                IconButton(onClick = {
+                    loaCellViewModel.apply {
+                        if (showSetting) {
+                            showSetting = false
+                        } else {
+                            hideRoomInfo()
+                        }
+                    }
+                }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = null)
                 }
             }

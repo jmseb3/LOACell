@@ -2,16 +2,20 @@ package com.wonddak.loacell.android.ui.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,16 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
+import com.wonddak.loacell.android.roboto
 import com.wonddak.loacell.android.util.LoginHelper
 
 @Composable
-fun LoginView(
-    loginHelper: LoginHelper,
-) {
+fun LoginView() {
+    val context = LocalContext.current
+    val loginHelper = LoginHelper(context)
+
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
@@ -36,40 +43,25 @@ fun LoginView(
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth(0.6f)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
-        val modifier = Modifier
-            .height(40.dp)
-            .fillMaxWidth()
-        LoginButton(
-            modifier,
-            {
+        GoogleLoginButton(
+            action = {
                 loginHelper.requestGoogleLogin { intent ->
                     googleLoginLauncher.launch(intent)
                 }
             }
-        ) {
-            Box(
-                modifier.padding(horizontal = 8.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.btn_google),
-                    contentDescription = null,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                )
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "SIGN IN WITH GOOGLE",
-                    fontSize = 14.sp
-                )
-            }
-        }
-        LoginButton(
-            modifier,
-            { loginHelper.requestAnonymousLogin() }
-        ) {
-            Text(text = "로그인 하지 않기")
-        }
+        )
+//        LoginButton(
+//            action = { loginHelper.requestAnonymousLogin() }
+//        ) {
+//            Text(
+//                text = "로그인 하지 않기",
+//                color = Color.Black
+//            )
+//        }
     }
 }
 
@@ -79,24 +71,47 @@ fun LoginView(
     showSystemUi = true
 )
 fun LoginViewPreview() {
-    val context = LocalContext.current
-    LoginView(LoginHelper((context)))
+    LoginView()
 }
 
 @Composable
-fun LoginButton(
-    modifier: Modifier = Modifier,
+fun GoogleLoginButton(
     action: () -> Unit = {},
-    content: @Composable () -> Unit = {}
 ) {
-    Button(
-        onClick = { action() },
-        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-        modifier = modifier,
+    Card(
+        modifier = Modifier
+            .wrapContentWidth()
+            .height(40.dp)
+            .clickable {
+                action()
+            },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 3.dp
+        ),
         shape = RoundedCornerShape(5.dp),
-        contentPadding = PaddingValues(0.dp)
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+            contentColor = Color.White
+        )
     ) {
-        content()
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.btn_google),
+                contentDescription = "SignInButton",
+                tint = Color.Unspecified
+            )
+            Text(
+                text = "Sign in with Google",
+                fontSize = 14.sp,
+                color = Color.Black.copy(alpha = 0.54f),
+                fontFamily = roboto,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
     }
-
 }
