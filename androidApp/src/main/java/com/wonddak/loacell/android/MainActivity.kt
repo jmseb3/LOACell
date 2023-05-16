@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -95,9 +99,9 @@ fun MainContent(
                 }
             },
             topBar = {
-//                if (user!=null) {
-//                    MyTopAppBar(loaCellViewModel = loaCellViewModel)
-//                }
+                if (user!=null) {
+                    MyTopAppBar(loaCellViewModel = loaCellViewModel)
+                }
             }
         ) {
             if (user == null){
@@ -197,6 +201,7 @@ fun MyBottomAppBar(
     BottomAppBar(
         floatingActionButton = {
             SmallFloatingActionButton(
+                content = { Icon(Icons.Filled.Add, null) },
                 onClick = {
                     if (selectedRoomId.isEmpty()) {
                         loaCellViewModel.showRoomDialog()
@@ -209,35 +214,12 @@ fun MyBottomAppBar(
                     }
                 },
                 containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp)
-            ) {
-                Icon(Icons.Filled.Add, null)
-            }
-
+                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
+            )
         },
         actions = {
-            AnimatedVisibility(selectedRoomId.isNotEmpty() || loaCellViewModel.showSetting) {
-                IconButton(onClick = {
-                    loaCellViewModel.apply {
-                        if (showSetting) {
-                            showSetting = false
-                        } else {
-                            hideRoomInfo()
-                        }
-                    }
-                }) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = null)
-                }
-            }
-            AnimatedVisibility(!loaCellViewModel.showSetting) {
-                IconButton(
-                    onClick = { loaCellViewModel.showSetting = true},
-                    enabled = !loaCellViewModel.showSetting
-                ) {
-                    Icon(Icons.Filled.Settings, contentDescription = null)
-                }
-            }
-           
+
+
         },
     )
 }
@@ -251,10 +233,23 @@ fun MyTopAppBar(
     TopAppBar(
         title = {},
         actions = {
-            
+            AnimatedVisibility(
+                !loaCellViewModel.showSetting
+            ) {
+                IconButton(
+                    onClick = { loaCellViewModel.showSetting = true},
+                    enabled = !loaCellViewModel.showSetting
+                ) {
+                    Icon(Icons.Filled.Settings, contentDescription = null)
+                }
+            }
         },
         navigationIcon = {
-            AnimatedVisibility(selectedRoomId.isNotEmpty() || loaCellViewModel.showSetting) {
+            AnimatedVisibility(
+                selectedRoomId.isNotEmpty() || loaCellViewModel.showSetting,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 IconButton(onClick = {
                     loaCellViewModel.apply {
                         if (showSetting) {
