@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -41,8 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.SettingView
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
+import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.raid.RaidView
 import com.wonddak.loacell.android.ui.raid.RoomView
@@ -94,17 +97,17 @@ fun MainContent(
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             containerColor = Color.White,
             bottomBar = {
-                if (user!=null) {
+                if (user != null) {
                     MyBottomAppBar(loaCellViewModel)
                 }
             },
             topBar = {
-                if (user!=null) {
+                if (user != null) {
                     MyTopAppBar(loaCellViewModel = loaCellViewModel)
                 }
             }
         ) {
-            if (user == null){
+            if (user == null) {
                 LoginView()
             } else {
                 Column(
@@ -122,10 +125,11 @@ fun MainContent(
                             AnimatedVisibility(selectedRoomId.isEmpty()) {
                                 Column() {
                                     if (BuildConfig.DEBUG) {
-                                        val roomInfos by db.roomInfoQueriesHelper.getALl().collectAsState(
-                                            initial = emptyList()
-                                        )
-                                        val testId ="hxQlFNqieMviWhQPp4HL"
+                                        val roomInfos by db.roomInfoQueriesHelper.getALl()
+                                            .collectAsState(
+                                                initial = emptyList()
+                                            )
+                                        val testId = "hxQlFNqieMviWhQPp4HL"
                                         if (!roomInfos.map { it.uniqueId }.contains(testId)) {
                                             OutlinedButton(onClick = {
                                                 db.roomInfoQueriesHelper.addRoomInfo(
@@ -218,7 +222,27 @@ fun MyBottomAppBar(
             )
         },
         actions = {
+            AnimatedVisibility(
+                selectedRoomId.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                MyIconButton(
+                    imageResource = SharedRes.images.room,
+                    enabled = loaCellViewModel.tabState != 0
+                ) { loaCellViewModel.tabState = 0 }
+            }
+            AnimatedVisibility(
+                selectedRoomId.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
 
+                MyIconButton(
+                    imageResource = SharedRes.images.person,
+                    enabled = loaCellViewModel.tabState != 1
+                ) { loaCellViewModel.tabState = 1 }
+            }
 
         },
     )
@@ -237,7 +261,7 @@ fun MyTopAppBar(
                 !loaCellViewModel.showSetting
             ) {
                 IconButton(
-                    onClick = { loaCellViewModel.showSetting = true},
+                    onClick = { loaCellViewModel.showSetting = true },
                     enabled = !loaCellViewModel.showSetting
                 ) {
                     Icon(Icons.Filled.Settings, contentDescription = null)

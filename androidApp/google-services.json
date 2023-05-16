@@ -22,7 +22,15 @@
           }
         },
         {
-          "client_id": "631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com",
+          "client_id": "631976126032-jchk9ifhhdlficb17sppj29c71m7641p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wonddak.loacell.android",
+            "certificate_hash": "19d220ff61f0645b0e6bf525622d0303a243e9b5"
+          }
+        },
+        {
+          "client_id": "631976126032-irbd74fnojv8hae9gntgki36hkecqqkq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com",
+              "client_id": "631976126032-irbd74fnojv8hae9gntgki36hkecqqkq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

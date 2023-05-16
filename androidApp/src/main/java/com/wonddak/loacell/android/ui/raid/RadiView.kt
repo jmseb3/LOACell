@@ -67,16 +67,6 @@ fun RaidView(
         Text(text = "title : ${roomInfo.title}")
         Text(text = "description : ${roomInfo.description}")
         Divider()
-        val titles = listOf("Raid", "User")
-        TabRow(selectedTabIndex = loaCellViewModel.tabState) {
-            titles.forEachIndexed { index, title ->
-                Tab(
-                    text = { Text(title) },
-                    selected = loaCellViewModel.tabState == index,
-                    onClick = { loaCellViewModel.tabState = index }
-                )
-            }
-        }
         when (loaCellViewModel.tabState) {
             0 -> {
                 LazyColumn(
@@ -178,7 +168,9 @@ fun RaidItemRow(raidInfo: RaidInfo) {
                     .size(size)
                     .clip(rShape)
             )
-            Column() {
+            Column(
+                modifier = Modifier.padding(5.dp)
+            ) {
                 val headerText = "${raidInfo.type!!.toKorString()} - ${raidInfo.Difficulty!!.toKorString()}"
                 Text(
                     text = raidInfo.title,
