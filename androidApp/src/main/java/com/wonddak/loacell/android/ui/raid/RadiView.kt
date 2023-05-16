@@ -25,8 +25,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.loacell.RaidInfo
@@ -177,9 +179,13 @@ fun RaidItemRow(raidInfo: RaidInfo) {
                     .clip(rShape)
             )
             Column() {
-                Text(text = raidInfo.type!!.toKorString())
-                Text(text = raidInfo.Difficulty!!.toKorString())
-                Text(text = raidInfo.title)
+                val headerText = "${raidInfo.type!!.toKorString()} - ${raidInfo.Difficulty!!.toKorString()}"
+                Text(
+                    text = raidInfo.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = headerText)
             }
         }
     }

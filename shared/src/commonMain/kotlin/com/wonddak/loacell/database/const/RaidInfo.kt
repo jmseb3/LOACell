@@ -1,5 +1,7 @@
 package com.wonddak.loacell.database.const
 
+import com.wonddak.loacell.RaidInfo
+
 
 enum class RaidType(val maxPerson :Int) {
     VALTAN(8),
@@ -106,4 +108,8 @@ enum class RaidType(val maxPerson :Int) {
             ETC -> 0
         }
     }
+}
+
+fun RaidInfo.getMinLevel():Int {
+    return this.type!!.getMinLevel(this.Difficulty!!,this.endGateNumber.toInt())
 }
