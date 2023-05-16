@@ -95,9 +95,9 @@ fun MainContent(
                 }
             },
             topBar = {
-                if (user!=null) {
-                    MyTopAppBar(loaCellViewModel = loaCellViewModel)
-                }
+//                if (user!=null) {
+//                    MyTopAppBar(loaCellViewModel = loaCellViewModel)
+//                }
             }
         ) {
             if (user == null){
@@ -216,12 +216,28 @@ fun MyBottomAppBar(
 
         },
         actions = {
-            IconButton(
-                onClick = { loaCellViewModel.showSetting = true},
-                enabled = !loaCellViewModel.showSetting
-            ) {
-                Icon(Icons.Filled.Settings, contentDescription = null)
+            AnimatedVisibility(selectedRoomId.isNotEmpty() || loaCellViewModel.showSetting) {
+                IconButton(onClick = {
+                    loaCellViewModel.apply {
+                        if (showSetting) {
+                            showSetting = false
+                        } else {
+                            hideRoomInfo()
+                        }
+                    }
+                }) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                }
             }
+            AnimatedVisibility(!loaCellViewModel.showSetting) {
+                IconButton(
+                    onClick = { loaCellViewModel.showSetting = true},
+                    enabled = !loaCellViewModel.showSetting
+                ) {
+                    Icon(Icons.Filled.Settings, contentDescription = null)
+                }
+            }
+           
         },
     )
 }
