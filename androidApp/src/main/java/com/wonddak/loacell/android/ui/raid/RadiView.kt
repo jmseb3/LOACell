@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.raid
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,17 +16,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +35,10 @@ import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.raid.user.AddUserView
-import com.wonddak.loacell.android.ui.raid.user.UserInfoCard
+import com.wonddak.loacell.android.ui.raid.user.DeleteCharacterDialog
+import com.wonddak.loacell.android.ui.raid.user.EditCharacterDialog
+import com.wonddak.loacell.android.ui.raid.user.UserInfoCharacters
+import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.database.const.Difficulty
@@ -47,8 +49,6 @@ fun RaidView(
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val scope = rememberCoroutineScope()
-
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val roomInfo = db.roomInfoQueriesHelper.getRoomInfoById(selectedRoomId)
     val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(selectedRoomId)
@@ -82,7 +82,8 @@ fun RaidView(
             1 -> {
                 RaidUsersView(
                     db = db,
-                    roomId = roomInfo.uniqueId
+                    roomId = roomInfo.uniqueId,
+                    loaCellViewModel = loaCellViewModel
                 )
             }
         }
@@ -129,19 +130,78 @@ fun RaidView(
 @Composable
 fun RaidUsersView(
     db: AppDataBase,
-    roomId: String
+    roomId: String,
+    loaCellViewModel: LoaCellViewModel
 ) {
     val userList by db.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
     Column() {
-        LazyColumn {
-            items(userList) { userInfo ->
-                UserInfoCard(
-                    db,
-                    roomId,
-                    userInfo
-                )
+        if (loaCellViewModel.focusUserInfo == null) {
+            LazyColumn {
+                items(userList) { userInfo ->
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { loaCellViewModel.setNowUserInfo(userInfo) },
+                            text = "${userInfo.name} - ${userInfo.representativeCharacter}",
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
+        } else {
+            BackHandler() {
+                loaCellViewModel.clearFocusItem()
+            }
+            loaCellViewModel.apply {
+                focusUserInfo?.let {user ->
+                    LazyColumn {
+                        items(user.characterList.map { db.getCharacterValue(it) }) { character ->
+                            character?.let { UserInfoCharacters(it) }
+                        }
+                    }
+                    if (openCharacterEditDialog) {
+                        EditCharacterDialog(
+                            representativeCharacter = user.representativeCharacter,
+                            characters = user.characterList,
+                            confirm = { name ->
+                                FireStoreHelper.updateUserCharacter(
+                                    roomId,
+                                    user.name,
+                                    name
+                                )
+                                openCharacterEditDialog = false
+                            },
+                            dismiss = {
+                                openCharacterEditDialog = false
+                            }
+                        )
+                    }
+                    if (openCharacterDeleteDialog) {
+                        DeleteCharacterDialog(
+                            name = user.name,
+                            confirm = {
+                                FireStoreHelper.deleteUser(roomId, user.name) {
+                                    db.deleteUserName(user.name,roomId)
+                                }
+                                loaCellViewModel.clearFocusItem()
+                                openCharacterDeleteDialog = false
+                            },
+                            dismiss = {
+                                openCharacterDeleteDialog = false
+                            }
+                        )
+                    }
+                }
+            }
+
         }
+
     }
 }
 
@@ -171,7 +231,8 @@ fun RaidItemRow(raidInfo: RaidInfo) {
             Column(
                 modifier = Modifier.padding(5.dp)
             ) {
-                val headerText = "${raidInfo.type!!.toKorString()} - ${raidInfo.Difficulty!!.toKorString()}"
+                val headerText =
+                    "${raidInfo.type!!.toKorString()} - ${raidInfo.Difficulty!!.toKorString()}"
                 Text(
                     text = raidInfo.title,
                     fontSize = 18.sp,

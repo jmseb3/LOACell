@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,7 +20,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,11 +33,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
@@ -202,50 +202,63 @@ fun MyBottomAppBar(
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
 
-    BottomAppBar(
-        floatingActionButton = {
-            SmallFloatingActionButton(
-                content = { Icon(Icons.Filled.Add, null) },
-                onClick = {
-                    if (selectedRoomId.isEmpty()) {
-                        loaCellViewModel.showRoomDialog()
-                    } else {
-                        if (loaCellViewModel.tabState == 0) {
-                            loaCellViewModel.showRaidAdd = true
-                        } else if (loaCellViewModel.tabState == 1) {
-                            loaCellViewModel.showUserAdd = true
+    loaCellViewModel.apply {
+        BottomAppBar(
+            floatingActionButton = {
+                SmallFloatingActionButton(
+                    content = {
+                        if (focusUserInfo != null) {
+                            Icon(
+                                painter = painterResource(id = SharedRes.images.delete.drawableResId),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        } else {
+                            Icon(Icons.Filled.Add, null)
+                        }
+                    },
+                    onClick = {
+                        bottomAddAction()
+                    },
+                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
+                )
+            },
+            actions = {
+                val showLevel1 =
+                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (loaCellViewModel.focusRaidInfo == null)
+                val showLevel2User = (focusUserInfo != null)
+                val showLevel2Raid = (focusRaidInfo != null)
+                AnimatedVisibility(
+                    showLevel1,
+                ) {
+                    Row() {
+                        MyIconButton(
+                            imageResource = SharedRes.images.room,
+                            enabled = tabState != 0
+                        ) { loaCellViewModel.setTabStatus(0)}
+                        MyIconButton(
+                            imageResource = SharedRes.images.person,
+                            enabled = tabState != 1
+                        ) { loaCellViewModel.setTabStatus(1) }
+                    }
+
+                }
+                AnimatedVisibility(
+                    showLevel2User,
+                ) {
+                    Row() {
+                        IconButton(onClick = { clearFocusItem() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                        }
+                        MyIconButton(SharedRes.images.change_person) {
+                            openCharacterEditDialog = true
                         }
                     }
-                },
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
-            )
-        },
-        actions = {
-            AnimatedVisibility(
-                selectedRoomId.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                MyIconButton(
-                    imageResource = SharedRes.images.room,
-                    enabled = loaCellViewModel.tabState != 0
-                ) { loaCellViewModel.tabState = 0 }
-            }
-            AnimatedVisibility(
-                selectedRoomId.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-
-                MyIconButton(
-                    imageResource = SharedRes.images.person,
-                    enabled = loaCellViewModel.tabState != 1
-                ) { loaCellViewModel.tabState = 1 }
-            }
-
-        },
-    )
+                }
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -274,15 +287,11 @@ fun MyTopAppBar(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                IconButton(onClick = {
-                    loaCellViewModel.apply {
-                        if (showSetting) {
-                            showSetting = false
-                        } else {
-                            hideRoomInfo()
-                        }
-                    }
-                }) {
+                IconButton(
+                    onClick = {
+                        loaCellViewModel.topBackAction()
+                    },
+                ) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = null)
                 }
             }
