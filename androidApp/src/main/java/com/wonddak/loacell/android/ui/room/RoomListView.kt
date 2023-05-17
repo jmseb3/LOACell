@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.raid
+package com.wonddak.loacell.android.ui.room
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RoomInfo
 
 @Composable
-fun RoomView(
+fun RooListView(
     roomList: List<RoomInfo>,
     showRoomInfo:(roomId:String) -> Unit = {}
 ) {
@@ -44,7 +44,7 @@ fun RoomViewPreview() {
         RoomInfo("%4534534534", "test2", "여기는 2 이다."),
         RoomInfo("#$534534534", "test3", "여기는 3 이다."),
     )
-    RoomView(testList)
+    RooListView(testList)
 }
 
 @Composable

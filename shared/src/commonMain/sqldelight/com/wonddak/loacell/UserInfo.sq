@@ -22,5 +22,8 @@ UPDATE UserInfo SET representativeCharacter = ? WHERE name =? AND roomId = ?;
 selectByRoomId:
 SELECT * FROM UserInfo WHERE roomId = ?;
 
+selectByName:
+SELECT * FROM UserInfo WHERE roomId = ? AND name=?;
+
 deleteUserById:
 DELETE FROM UserInfo WHERE  name =? AND roomId =?;

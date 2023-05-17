@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.raid.user
+package com.wonddak.loacell.android.ui.room.user
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

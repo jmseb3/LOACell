@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,6 +12,9 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 fun SettingView(
     loaCellViewModel: LoaCellViewModel
 ) {
+    BackHandler() {
+        loaCellViewModel.showSetting = false
+    }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
