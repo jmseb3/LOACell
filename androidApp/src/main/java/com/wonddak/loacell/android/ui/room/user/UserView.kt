@@ -26,13 +26,14 @@ import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.database.AppDataBase
 
+//room화면에서 user리스트 화면
 @Composable
 fun UserView(
     db: AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val userList by db.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
+    val userList by db.userInfoQueriesHelper.getUsersByRoomId(roomId).collectAsState(initial = emptyList())
     val focusUserName by loaCellViewModel.focusUserName.collectAsState()
 
     Box() {
@@ -57,59 +58,69 @@ fun UserView(
             }
         }
         if (focusUserName.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-            ) {
-                BackHandler() {
-                    loaCellViewModel.clearFocusItem()
-                }
-                val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
+            FocusUserView(db, roomId, loaCellViewModel)
+        }
+    }
+}
 
-                loaCellViewModel.apply {
-                    userInfo?.let { userInfo ->
-                        Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
-                        Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
-                        Divider()
-                        LazyColumn {
-                            items(userInfo.characterList.map { db.getCharacterValue(it) }) { character ->
-                                character?.let { UserInfoCharacters(it) }
-                            }
-                        }
-                        if (openCharacterEditDialog) {
-                            EditCharacterDialog(
-                                representativeCharacter = userInfo.representativeCharacter,
-                                characters = userInfo.characterList,
-                                confirm = { name ->
-                                    FireStoreHelper.updateUserCharacter(
-                                        roomId,
-                                        userInfo.name,
-                                        name
-                                    )
-                                    openCharacterEditDialog = false
-                                },
-                                dismiss = {
-                                    openCharacterEditDialog = false
-                                }
-                            )
-                        }
-                        if (openCharacterDeleteDialog) {
-                            DeleteCharacterDialog(
-                                name = userInfo.name,
-                                confirm = {
-                                    FireStoreHelper.deleteUser(roomId, userInfo.name) {
-                                        db.deleteUserName(userInfo.name, roomId)
-                                    }
-                                    loaCellViewModel.clearFocusItem()
-                                    openCharacterDeleteDialog = false
-                                },
-                                dismiss = {
-                                    openCharacterDeleteDialog = false
-                                }
-                            )
-                        }
+//유저를 선택했을때 보여질 화면
+@Composable
+fun FocusUserView(
+    db: AppDataBase,
+    roomId: String,
+    loaCellViewModel: LoaCellViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        BackHandler() {
+            loaCellViewModel.clearFocusItem()
+        }
+        val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
+
+        loaCellViewModel.apply {
+            userInfo?.let { userInfo ->
+                Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
+                Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
+                Divider()
+                LazyColumn {
+                    items(userInfo.characterList.map { db.characterInfoQueriesHelper.getCharacterValue(it) }) { character ->
+                        character?.let { UserInfoCharacters(it) }
                     }
+                }
+                if (openCharacterEditDialog) {
+                    EditCharacterDialog(
+                        representativeCharacter = userInfo.representativeCharacter,
+                        characters = userInfo.characterList,
+                        confirm = { name ->
+                            FireStoreHelper.updateUserCharacter(
+                                roomId,
+                                userInfo.name,
+                                name
+                            )
+                            openCharacterEditDialog = false
+                        },
+                        dismiss = {
+                            openCharacterEditDialog = false
+                        }
+                    )
+                }
+                if (openCharacterDeleteDialog) {
+                    DeleteCharacterDialog(
+                        name = userInfo.name,
+                        confirm = {
+                            FireStoreHelper.deleteUser(roomId, userInfo.name) {
+                                db.userInfoQueriesHelper.deleteUserName(userInfo.name, roomId)
+                            }
+                            loaCellViewModel.clearFocusItem()
+                            openCharacterDeleteDialog = false
+                        },
+                        dismiss = {
+                            openCharacterDeleteDialog = false
+                        }
+                    )
                 }
             }
         }

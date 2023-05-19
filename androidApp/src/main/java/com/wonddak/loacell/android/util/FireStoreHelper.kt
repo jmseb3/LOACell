@@ -194,7 +194,7 @@ object FireStoreHelper {
                     Log.i("JWH", "Listen Users")
                     // 현재 방에 있는 유저 목록 가져옴
                     CoroutineScope(Dispatchers.IO).launch {
-                        val dbUserList = db.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
+                        val dbUserList = db.userInfoQueriesHelper.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
                         // 이름 조회..
                         withContext(Dispatchers.IO) {
                             value.documents.forEach {
@@ -210,7 +210,7 @@ object FireStoreHelper {
                                 launch {
                                     characterList.forEach {characterName ->
                                         observeCharacters(characterName) {className,level,server ->
-                                            db.updateCharacter(characterName, server, className, level)
+                                            db.characterInfoQueriesHelper.updateCharacter(characterName, server, className, level)
                                         }
                                     }
                                 }
@@ -219,7 +219,7 @@ object FireStoreHelper {
                                     //이미 값이 있는 경우
                                     if (userName in dbUserList) {
                                         //업데이트
-                                        db.updateUserInfo(
+                                        db.userInfoQueriesHelper.updateUserInfo(
                                             userName,
                                             characterList,
                                             roomId,
@@ -228,7 +228,7 @@ object FireStoreHelper {
                                         dbUserList.remove(userName)
                                     } else {
                                         //없는 경우 추가
-                                        db.addUser(
+                                        db.userInfoQueriesHelper.addUser(
                                             userName,
                                             roomId,
                                             representativeCharacter,
@@ -241,7 +241,7 @@ object FireStoreHelper {
 
                         // 동작이 끝난후 남아있다면
                         dbUserList.forEach { name ->
-                            db.deleteUserName(name, roomId)
+                            db.userInfoQueriesHelper.deleteUserName(name, roomId)
                         }
                     }
                 } else {

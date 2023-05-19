@@ -244,6 +244,15 @@ fun MyBottomAppBar(
                         }
                     }
                 }
+                AnimatedVisibility(
+                    showLevel2Raid,
+                ) {
+                    Row() {
+                        IconButton(onClick = { clearFocusItem() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                        }
+                    }
+                }
             },
         )
     }

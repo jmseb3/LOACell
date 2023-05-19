@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.util.FireStoreHelper
@@ -43,10 +44,15 @@ class LoaCellViewModel(
     private var _focusRaidId = MutableStateFlow("")
     val focusRaidId get() = _focusRaidId
 
+    private var _raidInfo :MutableStateFlow<RaidInfo?> = MutableStateFlow(null)
+    val raidInfo get() = _raidInfo
+
     private var userInfoJob : Job? = null
+    private var raidInfoJob : Job? = null
     private var roomInfoJob : Job? = null
     init {
         viewModelScope.launch {
+            //room 정보 갱신
             launch {
                 roomId.collect {id ->
                     if (id.isNotEmpty()) {
@@ -64,6 +70,7 @@ class LoaCellViewModel(
                     }
                 }
             }
+            //선택된 유저 정보 갱신
             launch {
                 focusUserName.combine(roomId) { name, id ->
                     Pair(name,id)
@@ -73,7 +80,7 @@ class LoaCellViewModel(
 
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
-                            dataBase.getUsersByName(id,name).collect {
+                            dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
                                 _userInfo.value = it
                                 Log.i("JWH-ttt",it.toString())
                             }
@@ -81,6 +88,26 @@ class LoaCellViewModel(
                     } else {
                         userInfoJob?.cancel()
                         _userInfo.value = null
+                    }
+                }
+            }
+            //선택된 레이드 정보 갱신
+            launch {
+                focusRaidId.combine(roomId) {raidId,roomId ->
+                    Pair(raidId,roomId)
+                }.collect {
+                    val raidId = it.first
+                    val roomId = it.second
+                    if (raidId.isNotEmpty() && roomId.isNotEmpty()) {
+                        raidInfoJob = launch {
+//                            dataBase.getUsersByName(id,name).collect {
+//                                _raidInfo.value = it
+//                                Log.i("JWH-ttt",it.toString())
+//                            }
+                        }
+                    } else {
+                        raidInfoJob?.cancel()
+                        _raidInfo.value = null
                     }
                 }
             }

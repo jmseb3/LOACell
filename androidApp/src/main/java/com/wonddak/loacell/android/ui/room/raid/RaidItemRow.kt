@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.room.raid
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,13 +25,18 @@ import com.wonddak.loacell.database.const.Difficulty
 import com.wonddak.loacell.database.const.RaidType
 
 @Composable
-fun RaidItemRow(raidInfo: RaidInfo) {
+fun RaidItemRow(
+    raidInfo: RaidInfo,
+    onClick:() -> Unit
+) {
     val size = 100.dp
     val rShape = RoundedCornerShape(10.dp)
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(size),
+            .height(size)
+            .clickable { onClick() }
+        ,
         shape = rShape
     ) {
         Row(
@@ -76,5 +82,5 @@ fun RaidItemRowPreview() {
         endGateNumber = 3L,
         isFinish = false
     )
-    RaidItemRow(raidInfo)
+    RaidItemRow(raidInfo) {}
 }
