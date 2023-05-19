@@ -13,6 +13,7 @@ import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.database.AppDataBase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
@@ -51,26 +52,28 @@ class LoaCellViewModel(
                         _roomInfo.value = dataBase.roomInfoQueriesHelper.getRoomInfoById(id)
                         FireStoreHelper.observeUsers(id, dataBase)
                         FireStoreHelper.observeRaid(id, dataBase)
-
-                        launch {
-                            focusUserName.collect {name ->
-                                Log.i("JWH-ffName",name)
-                                if (name.isNotEmpty()) {
-                                    userInfoJob = launch {
-                                        dataBase.getUsersByName(id,name).collect {
-                                            _userInfo.value = it
-                                            Log.i("JWH-ttt",it.toString())
-                                        }
-                                    }
-                                } else {
-                                    userInfoJob?.cancel()
-                                    _userInfo.value = null
-                                }
-                            }
-                        }
-
                     } else {
                         _roomInfo.value = null
+                    }
+                }
+            }
+            launch {
+                focusUserName.combine(roomId) { name, id ->
+                    Pair(name,id)
+                }.collect {
+                    val name = it.first
+                    val id = it.second
+
+                    if (id.isNotEmpty() && name.isNotEmpty()) {
+                        userInfoJob = launch {
+                            dataBase.getUsersByName(id,name).collect {
+                                _userInfo.value = it
+                                Log.i("JWH-ttt",it.toString())
+                            }
+                        }
+                    } else {
+                        userInfoJob?.cancel()
+                        _userInfo.value = null
                     }
                 }
             }
@@ -150,9 +153,6 @@ class LoaCellViewModel(
         hideAllDialog()
         tabState = value
     }
-
-    var showRoomInfo by mutableStateOf(false)
-
 
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {

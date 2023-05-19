@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -269,16 +268,6 @@ fun MyTopAppBar(
         },
         actions = {
             Row() {
-                AnimatedVisibility(
-                    selectedRoomId.isNotEmpty()
-                ) {
-                    IconButton(onClick = { loaCellViewModel.showRoomInfo = !loaCellViewModel.showRoomInfo }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Info, contentDescription = null,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
                 IconButton(
                     onClick = { loaCellViewModel.showSetting = true },
                     enabled = !loaCellViewModel.showSetting

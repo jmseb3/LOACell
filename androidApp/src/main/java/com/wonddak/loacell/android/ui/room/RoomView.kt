@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.ui.room
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -23,7 +23,7 @@ fun RoomView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val roomInfo by loaCellViewModel.roomInfo.collectAsState()
-    BackHandler(!loaCellViewModel.showRaidAdd && !loaCellViewModel.showUserAdd && !loaCellViewModel.showRoomInfo) {
+    BackHandler(!loaCellViewModel.showRaidAdd && !loaCellViewModel.showUserAdd) {
         loaCellViewModel.hideRoomInfo()
     }
 
@@ -33,7 +33,6 @@ fun RoomView(
     ) {
         roomInfo?.let {roomInfo ->
             RoomTitleView(loaCellViewModel = loaCellViewModel, roomInfo = roomInfo)
-            Divider()
             when (loaCellViewModel.tabState) {
                 0 -> {
                     RaidView(
@@ -62,12 +61,8 @@ fun RoomTitleView(
 ) {
     val focusUserName by loaCellViewModel.focusUserName.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
-    val showRoomInfo = loaCellViewModel.showRoomInfo
 
-    if(focusRaidId.isEmpty() && focusUserName.isEmpty() && showRoomInfo) {
-        BackHandler() {
-            loaCellViewModel.showRoomInfo = false
-        }
+    AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = roomInfo.description,
@@ -77,19 +72,7 @@ fun RoomTitleView(
                 text = roomInfo.uniqueId,
                 modifier = Modifier
             )
-        }
-    }else if (focusRaidId.isNotEmpty()) {
-        Column() {
-
-        }
-    } else if(focusUserName.isNotEmpty()) {
-        val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
-        userInfo?.let { userInfo ->
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
-                Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
-            }
+            Divider()
         }
     }
-
 }
