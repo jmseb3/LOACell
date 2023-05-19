@@ -4,17 +4,22 @@ import com.wonddak.sharedapi.armories.EquipmentItem
 import com.wonddak.sharedapi.armories.ProfilesItem
 import com.wonddak.sharedapi.model.CharacterInfo
 import com.wonddak.sharedapi.resource.Armories
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.plugins.resources.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.util.*
-import io.ktor.utils.io.charsets.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.plugins.resources.Resources
+import io.ktor.client.plugins.resources.get
+import io.ktor.client.request.headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.URLProtocol
+import io.ktor.http.encodeURLPath
+import io.ktor.http.path
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 class LostArkApi {
@@ -52,19 +57,16 @@ class LostArkApi {
         }
     }
 
-    @Throws(Throwable::class)
     suspend fun getCharacterInfo(characterName: String): ApiResult<List<CharacterInfo>> {
         return httpClient.safeRequest {
             url.path("characters/${characterName.encodeURLPath()}/siblings")
         }
     }
 
-    @Throws(Throwable::class)
     suspend fun getArmoriesProfiles(characterName: String): ProfilesItem {
         return httpClient.get(Armories.Character.Profiles(Armories.Character(characterName = characterName))).body()
     }
 
-    @Throws(Throwable::class)
     suspend fun getArmoriesEquipment(characterName: String): List<EquipmentItem> {
         return httpClient.get(Armories.Character.Equipment(Armories.Character(characterName = characterName))).body()
     }
