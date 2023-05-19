@@ -44,15 +44,22 @@ class LoaCellViewModel(
     val focusRaidId get() = _focusRaidId
 
     private var userInfoJob : Job? = null
+    private var roomInfoJob : Job? = null
     init {
         viewModelScope.launch {
             launch {
                 roomId.collect {id ->
                     if (id.isNotEmpty()) {
-                        _roomInfo.value = dataBase.roomInfoQueriesHelper.getRoomInfoById(id)
-                        FireStoreHelper.observeUsers(id, dataBase)
-                        FireStoreHelper.observeRaid(id, dataBase)
+                        roomInfoJob = launch {
+                            FireStoreHelper.observeRoomInfo(id, dataBase)
+                            FireStoreHelper.observeUsers(id, dataBase)
+                            FireStoreHelper.observeRaid(id, dataBase)
+                            dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
+                                _roomInfo.value =  it
+                            }
+                        }
                     } else {
+                        roomInfoJob?.cancel()
                         _roomInfo.value = null
                     }
                 }
@@ -120,26 +127,9 @@ class LoaCellViewModel(
 
     var openCharacterEditDialog by mutableStateOf(false)
     var openCharacterDeleteDialog by mutableStateOf(false)
-    fun showRoomDialog() {
-        if (roomId.value.isEmpty()) {
-            showRoomAdd = true
-        }
-    }
-
-    fun showRaidDialog() {
-        if (roomId.value.isNotEmpty()) {
-            showRaidAdd = true
-        }
-    }
 
     fun hideRaidDialog() {
         showRaidAdd = false
-    }
-
-    fun showUserDialog() {
-        if (roomId.value.isNotEmpty()) {
-            showUserAdd = true
-        }
     }
 
     fun hideUserDialog() {
@@ -156,15 +146,19 @@ class LoaCellViewModel(
 
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {
-            showRoomDialog()
+            Log.i("JWH-B","11-Room")
+            showRoomAdd = true
         } else {
             if (focusUserName.value.isNotEmpty()) {
+                Log.i("JWH-B","22--Focus User")
                 openCharacterDeleteDialog = true
                 return
             }
             if (tabState == 0) {
+                Log.i("JWH-B","33- ShowRaid")
                 showRaidAdd = true
             } else if (tabState == 1) {
+                Log.i("JWH-B","44-- ShowUser")
                 showUserAdd = true
             }
         }

@@ -250,6 +250,34 @@ object FireStoreHelper {
             }
     }
 
+    fun observeRoomInfo(
+        roomId: String,
+        db:AppDataBase
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.w("JWH", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                if (value != null) {
+                    Log.i("JWH", "Listen RoomInfo")
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        value.data?.let {
+                            val title = it["title"] as String
+                            val description = it["description"] as String
+                            db.roomInfoQueriesHelper.updateRoomInfo(title,description,roomId)
+                        }
+                    }
+                } else {
+                    Log.d("JWH", "Current data: null")
+                }
+            }
+    }
+
     fun observeCharacters(
         characterName: String,
         successAction: (className: String, level: String, server: String) -> Unit

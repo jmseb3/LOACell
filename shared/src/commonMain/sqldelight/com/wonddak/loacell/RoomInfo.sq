@@ -13,8 +13,8 @@ SELECT * FROM RoomInfo;
 selectById:
 SELECT * FROM RoomInfo WHERE uniqueId = ?;
 
-lastInsertRowId:
-SELECT last_insert_rowid();
+updateInfo:
+UPDATE RoomInfo SET title =?, description =? WHERE uniqueId =?;
 
 deleteById:
 DELETE FROM RoomInfo WHERE uniqueId = ?;

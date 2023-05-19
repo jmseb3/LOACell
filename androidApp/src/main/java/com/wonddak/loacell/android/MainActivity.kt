@@ -116,16 +116,16 @@ fun MainContent(
                                         .collectAsState(
                                             initial = emptyList()
                                         )
-                                    val testId = "hxQlFNqieMviWhQPp4HL"
+                                    val testId = "testRoom"
                                     if (!roomInfos.map { it.uniqueId }.contains(testId)) {
                                         OutlinedButton(onClick = {
                                             db.roomInfoQueriesHelper.addRoomInfo(
-                                                "123",
-                                                "456",
-                                                "hxQlFNqieMviWhQPp4HL"
+                                                "",
+                                                "",
+                                                "testRoom"
                                             )
                                         }) {
-                                            Text(text = "ADD_TestRoom")
+                                            Text(text = "ADD TestRoom")
                                         }
                                     }
                                 }
