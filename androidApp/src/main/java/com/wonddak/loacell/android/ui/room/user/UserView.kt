@@ -73,6 +73,7 @@ fun FocusUserView(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .clickable {  }
     ) {
         BackHandler() {
             loaCellViewModel.clearFocusItem()

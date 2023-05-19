@@ -14,13 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.android.R
+import com.wonddak.loacell.getImg
 import com.wonddak.loacell.getRaidText
 import com.wonddak.loacell.makeGateText
 import com.wonddak.loacell.model.Difficulty
@@ -46,13 +47,26 @@ fun RaidItemRow(
                 .fillMaxWidth()
                 .height(size)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.valtan),
-                contentDescription = null,
-                Modifier
-                    .size(size)
-                    .clip(rShape)
-            )
+            val imgSrc = raidInfo.getImg()
+            if (imgSrc != null) {
+                Image(
+                    painter = painterResource(id = imgSrc.drawableResId),
+                    contentDescription = null,
+                    Modifier
+                        .size(size)
+                        .clip(rShape)
+                )
+            } else {
+                Image(
+                    bitmap = ImageBitmap(100,100),
+                    contentDescription = null,
+                    Modifier
+                        .size(size)
+                        .clip(rShape)
+                )
+
+            }
+
             Column(
                 modifier = Modifier.padding(5.dp)
             ) {

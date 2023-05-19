@@ -1,6 +1,7 @@
 package com.wonddak.loacell
 
 import com.wonddak.loacell.model.RaidType
+import dev.icerock.moko.resources.ImageResource
 
 fun RaidInfo.getMinLevel(): Int {
     return this.type!!.getMinLevel(this.Difficulty!!, this.endGateNumber.toInt())
@@ -25,7 +26,18 @@ fun RaidInfo.makeGateText(): String {
         }
 
         else -> {
-            "1 ~ ${this.type!!.getMaxGate()}관문"
+            "1 ~ ${this.type!!.getMaxGate()} 관문"
+        }
+    }
+}
+
+fun RaidInfo.getImg(): ImageResource? {
+    return when (this.type!!) {
+        RaidType.VALTAN -> {
+            SharedRes.images.valtan
+        }
+        else -> {
+            null
         }
     }
 }

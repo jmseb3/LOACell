@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.room.raid
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
@@ -25,7 +27,7 @@ import com.wonddak.loacell.makeGateText
 
 @Composable
 fun RaidView(
-    db: com.wonddak.loacell.AppDataBase,
+    db: AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -58,7 +60,7 @@ fun RaidView(
 
 @Composable
 fun FocusRaidView(
-    db: com.wonddak.loacell.AppDataBase,
+    db: AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -66,6 +68,7 @@ fun FocusRaidView(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .clickable {  }
     ) {
         BackHandler() {
             loaCellViewModel.clearFocusItem()
