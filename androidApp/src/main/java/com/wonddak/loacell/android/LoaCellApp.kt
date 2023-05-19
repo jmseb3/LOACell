@@ -14,8 +14,8 @@ class LoaCellApp : Application() {
 
         fun updateUser(user: FirebaseUser?) {
             _user.value = null
-            Log.i("Login",user?.email.toString())
             _user.value = user
+            Log.i("Login",user?.email.toString())
         }
     }
 

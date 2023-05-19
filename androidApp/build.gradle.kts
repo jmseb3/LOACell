@@ -6,14 +6,14 @@ plugins {
 }
 
 android {
-    namespace = "com.wonddak.loacell.android"
-    compileSdk = 33
+    namespace = AppConfig.Android.packageName
+    compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
-        applicationId = "com.wonddak.loacell.android"
-        minSdk = 30
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = AppConfig.Android.packageName
+        minSdk = AppConfig.Android.minSdk
+        targetSdk = AppConfig.Android.targetSdk
+        versionCode =  AppConfig.versionCode
+        versionName = AppConfig.version
 
         vectorDrawables.useSupportLibrary = true
 
@@ -22,7 +22,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
+        kotlinCompilerExtensionVersion = AppConfig.Android.kotlinCompilerExtensionVersion
     }
     packagingOptions {
         resources {
@@ -38,31 +38,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 dependencies {
-    implementation(project(":shared"))
-    implementation(project(":sharedResources"))
-    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+    implementation(project(Modules.shared))
 
+    val composeBom = platform(Dependencies.Android.Compose.Bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation(Dependencies.Android.Compose.UIPreview)
+    debugImplementation(Dependencies.Android.Compose.UITooling)
+    implementation(Dependencies.Android.Compose.Material3)
+    implementation(Dependencies.Android.Compose.Activity)
+    implementation(Dependencies.Android.Compose.BottomDialog)
 
-    implementation("com.holix.android:bottomsheetdialog-compose:1.2.1")
-
-    implementation(platform("com.google.firebase:firebase-bom:31.5.0"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
-
+    implementation(platform(Dependencies.Android.Firebase.Bom))
+    implementation(Dependencies.Android.Firebase.Analytics)
+    implementation(Dependencies.Android.Firebase.Crashlytics)
+    implementation(Dependencies.Android.Firebase.Firestore)
+    implementation(Dependencies.Android.Firebase.Auth)
+    implementation(Dependencies.Android.Firebase.AuthGoogle)
 }

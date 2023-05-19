@@ -1,0 +1,20 @@
+CREATE TABLE RoomInfo (
+  uniqueId TEXT NOT NULL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL
+);
+
+insertRoomInfo:
+INSERT INTO RoomInfo VALUES (?,?,?);
+
+selectAll:
+SELECT * FROM RoomInfo;
+
+selectById:
+SELECT * FROM RoomInfo WHERE uniqueId = ?;
+
+updateInfo:
+UPDATE RoomInfo SET title =?, description =? WHERE uniqueId =?;
+
+deleteById:
+DELETE FROM RoomInfo WHERE uniqueId = ?;

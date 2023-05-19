@@ -1,0 +1,30 @@
+import com.wonddak.loacell.model.Difficulty;
+import com.wonddak.loacell.model.RaidType;
+import kotlin.Boolean;
+
+CREATE TABLE RaidInfo (
+  raidId TEXT NOT NULL PRIMARY KEY,
+  roomId TEXT NOT NULL,
+  title TEXT NOT NULL,
+  type Text AS RaidType,
+  Difficulty INTEGER AS Difficulty,
+  startGateNumber INTEGER NOT NULL,
+  endGateNumber INTEGER NOT NULL,
+  isFinish INTEGER AS Boolean NOT NULL,
+  FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE
+);
+
+selectByRoomId:
+SELECT * FROM RaidInfo WHERE roomId = ?;
+
+selectByRaidId:
+SELECT * FROM RaidInfo WHERE roomId = ? AND raidId=?;
+
+insertRaidInfo:
+INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?);
+
+upadteRaidInfo:
+UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? WHERE raidId =? AND  roomId =?;
+
+delete:
+DELETE FROM RaidInfo WHERE raidId =? AND roomId =?;

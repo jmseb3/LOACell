@@ -10,10 +10,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.SharedRes
 
 @Composable
 fun MyApplicationTheme(
@@ -35,7 +37,7 @@ fun MyApplicationTheme(
     }
     val typography = Typography(
         bodyLarge = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = roboto,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp
         )
@@ -53,3 +55,11 @@ fun MyApplicationTheme(
         content = content
     )
 }
+
+val roboto = FontFamily(
+    Font(SharedRes.fonts.Roboto.thin.fontResourceId, FontWeight.Thin),
+    Font(SharedRes.fonts.Roboto.regular.fontResourceId, FontWeight.Normal),
+    Font(SharedRes.fonts.Roboto.medium.fontResourceId, FontWeight.Medium),
+    Font(SharedRes.fonts.Roboto.bold.fontResourceId, FontWeight.Bold),
+    Font(SharedRes.fonts.Roboto.black.fontResourceId, FontWeight.Black)
+)

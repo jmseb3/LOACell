@@ -7,24 +7,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.google.firebase.auth.FirebaseUser
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.LoginHelper
+import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @Composable
 fun LoginInfoView(
-    user : FirebaseUser?,
-    loginHelper: LoginHelper
+    loaCellViewModel: LoaCellViewModel
 ) {
-    val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        loginHelper.registerAnonymousToGoogle(result)
-    }
-    AnimatedVisibility(visible = user!= null) {
+    val context = LocalContext.current
+    val loginHelper = LoginHelper(context)
+    val user by LoaCellApp.user.collectAsState(null)
+    AnimatedVisibility(visible = user != null) {
         Column() {
             Text(text = user?.email.toString())
             Text(text = user?.uid.toString())
             if (user?.isAnonymous == true) {
+                val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult()
+                ) { result ->
+                    loginHelper.registerAnonymousToGoogle(result)
+                }
                 OutlinedButton(onClick = {
                     loginHelper.requestGoogleLogin {
                         anonymousToGoogleLoginLauncher.launch(it)
@@ -33,7 +39,12 @@ fun LoginInfoView(
                     Text(text = "Google과 연동")
                 }
             }
-            OutlinedButton(onClick = { loginHelper.signOut() }) {
+            OutlinedButton(
+                onClick = {
+                    loginHelper.signOut()
+                    loaCellViewModel.clearAllStatus()
+                }
+            ) {
                 Text(text = "LogOut")
             }
         }

@@ -362,13 +362,18 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/../../shared/build/cocoapods/framework\"",
-					"$(inherited)",
-					"\"${PODS_ROOT}/../../sharedResources/build/cocoapods/framework\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-framework",
+					"\"shared\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wonddak.loacell.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -389,13 +394,18 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/../../shared/build/cocoapods/framework\"",
-					"$(inherited)",
-					"\"${PODS_ROOT}/../../sharedResources/build/cocoapods/framework\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-framework",
+					"\"shared\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wonddak.loacell.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
