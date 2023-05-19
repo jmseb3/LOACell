@@ -5,8 +5,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
-import com.wonddak.loacell.model.convertDifficulty
-import com.wonddak.loacell.model.convertType
+import com.wonddak.loacell.convertDifficulty
+import com.wonddak.loacell.convertType
 import com.wonddak.sharedapi.model.CharacterInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

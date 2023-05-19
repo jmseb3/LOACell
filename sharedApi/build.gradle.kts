@@ -5,17 +5,8 @@ plugins {
     kotlin("plugin.serialization") version "1.8.10"
 }
 
-val ktorVersion = "2.2.1"
-
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
+    android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -24,7 +15,7 @@ kotlin {
         summary = "shared api"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
         framework {
             baseName = "sharedApi"
         }
@@ -34,11 +25,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-resources:$ktorVersion")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation(Dependencies.KMM.Ktor.Core)
+                implementation(Dependencies.KMM.Ktor.Resources)
+                implementation(Dependencies.KMM.Ktor.Logging)
+                implementation(Dependencies.KMM.Ktor.ContentNegotiation)
+                implementation(Dependencies.KMM.Ktor.Serialization)
             }
         }
         val commonTest by getting {
@@ -48,7 +39,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation(Dependencies.KMM.Ktor.Android)
             }
         }
         val androidUnitTest by getting
@@ -61,7 +52,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation(Dependencies.KMM.Ktor.Ios)
             }
         }
         val iosX64Test by getting
@@ -77,9 +68,9 @@ kotlin {
 }
 
 android {
-    namespace = "com.wonddak.loacell"
-    compileSdk = 33
+    namespace = AppConfig.Android.packageName
+    compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
-        minSdk = 30
+        minSdk = AppConfig.Android.minSdk
     }
 }

@@ -5,13 +5,7 @@ plugins {
 }
 
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
+    android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -20,14 +14,14 @@ kotlin {
         summary = "shared Module"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
             linkerOpts.add("-lsqlite3")
-            export(project(":sharedApi"))
-            export(project(":sharedResources"))
-            export(project(":sharedDatabase"))
+            export(project(Modules.api))
+            export(project(Modules.resources))
+            export(project(Modules.database))
             transitiveExport = true
         }
     }
@@ -35,9 +29,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":sharedApi"))
-                api(project(":sharedResources"))
-                api(project(":sharedDatabase"))
+                api(project(Modules.api))
+                api(project(Modules.resources))
+                api(project(Modules.database))
             }
         }
         val commonTest by getting {
@@ -69,9 +63,9 @@ kotlin {
 }
 
 android {
-    namespace = "com.wonddak.loacell"
-    compileSdk = 33
+    namespace = AppConfig.Android.packageName
+    compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
-        minSdk = 30
+        minSdk = AppConfig.Android.minSdk
     }
 }

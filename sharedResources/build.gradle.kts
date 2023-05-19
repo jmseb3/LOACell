@@ -4,16 +4,8 @@ plugins {
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
 }
-val mokoResourceVersion ="0.22.0"
-
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
+    android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -22,7 +14,7 @@ kotlin {
         summary = "share Resources "
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
         framework {
             baseName = "sharedResources"
             isStatic = true
@@ -32,14 +24,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("dev.icerock.moko:resources:$mokoResourceVersion")
+                api(Dependencies.KMM.MOKO.Core)
             }
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
+        val commonTest by getting
         val androidMain by getting
         val androidUnitTest by getting
         val iosX64Main by getting
@@ -64,10 +52,10 @@ kotlin {
 }
 
 android {
-    namespace = "com.wonddak.loacell"
-    compileSdk = 33
+    namespace = AppConfig.Android.packageName
+    compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
-        minSdk = 30
+        minSdk = AppConfig.Android.minSdk
     }
 }
 

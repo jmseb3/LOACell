@@ -1,4 +1,7 @@
-package com.wonddak.loacell.model
+package com.wonddak.loacell
+
+import com.wonddak.loacell.model.Difficulty
+import com.wonddak.loacell.model.RaidType
 
 fun String.convertType(): RaidType {
     RaidType.values().forEach {

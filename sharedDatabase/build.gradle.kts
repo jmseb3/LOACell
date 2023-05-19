@@ -2,20 +2,11 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("app.cash.sqldelight") version "2.0.0-alpha05"
+    id("app.cash.sqldelight") version Versions.Dependencies.KMM.SQLDelightVersion
 }
 
-val sqlDelightVersion = "2.0.0-alpha05"
-
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
+    android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -24,7 +15,7 @@ kotlin {
         summary = "share db"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
         framework {
             baseName = "sharedDatabase"
         }
@@ -34,8 +25,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-                implementation("app.cash.sqldelight:primitive-adapters:$sqlDelightVersion")
-                implementation("app.cash.sqldelight:coroutines-extensions:$sqlDelightVersion")
+                implementation(Dependencies.KMM.SQLDelight.Adapter)
+                implementation(Dependencies.KMM.SQLDelight.Coroutine)
             }
         }
         val commonTest by getting {
@@ -45,7 +36,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("app.cash.sqldelight:android-driver:$sqlDelightVersion")
+                implementation(Dependencies.KMM.SQLDelight.Android)
             }
         }
         val androidUnitTest by getting
@@ -55,7 +46,7 @@ kotlin {
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation("app.cash.sqldelight:native-driver:$sqlDelightVersion")
+                implementation(Dependencies.KMM.SQLDelight.Ios)
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
@@ -74,17 +65,17 @@ kotlin {
 }
 
 android {
-    namespace = "com.wonddak.loacell"
-    compileSdk = 33
+    namespace = AppConfig.Android.packageName
+    compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
-        minSdk = 30
+        minSdk = AppConfig.Android.minSdk
     }
 }
 
 sqldelight {
     databases {
-        create("Database") {
-            packageName.set("com.wonddak.loacell")
+        create(AppConfig.databaseName) {
+            packageName.set(AppConfig.group)
         }
     }
 }
