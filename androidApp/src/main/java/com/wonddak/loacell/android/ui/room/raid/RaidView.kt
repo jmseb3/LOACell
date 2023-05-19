@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.getMaxParty
-import com.wonddak.loacell.model.getRaidText
-import com.wonddak.loacell.model.makeGateText
+import com.wonddak.loacell.getMaxParty
+import com.wonddak.loacell.getRaidText
+import com.wonddak.loacell.makeGateText
 
 @Composable
 fun RaidView(

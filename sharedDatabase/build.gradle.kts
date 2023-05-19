@@ -65,7 +65,7 @@ kotlin {
 }
 
 android {
-    namespace = AppConfig.Android.packageName
+    namespace = AppConfig.Shared.database
     compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
         minSdk = AppConfig.Android.minSdk
@@ -75,7 +75,7 @@ android {
 sqldelight {
     databases {
         create(AppConfig.databaseName) {
-            packageName.set(AppConfig.group)
+            packageName.set(AppConfig.loaCellgroup)
         }
     }
 }

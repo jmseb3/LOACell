@@ -63,7 +63,7 @@ kotlin {
 }
 
 android {
-    namespace = AppConfig.Android.packageName
+    namespace = AppConfig.loaCellgroup
     compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
         minSdk = AppConfig.Android.minSdk

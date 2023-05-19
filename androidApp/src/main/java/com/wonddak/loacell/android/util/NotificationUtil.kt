@@ -1,11 +1,9 @@
 package com.wonddak.loacell.android.util
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import androidx.core.app.NotificationCompat
 
 object NotificationUtil {
     const val channelId = "LoaCell_fs_ch"

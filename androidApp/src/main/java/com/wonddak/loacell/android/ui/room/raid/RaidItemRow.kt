@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.R
+import com.wonddak.loacell.getRaidText
+import com.wonddak.loacell.makeGateText
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
-import com.wonddak.loacell.model.getRaidText
-import com.wonddak.loacell.model.makeGateText
 
 @Composable
 fun RaidItemRow(
