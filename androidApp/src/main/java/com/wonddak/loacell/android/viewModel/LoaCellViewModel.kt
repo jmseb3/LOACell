@@ -168,6 +168,8 @@ class LoaCellViewModel(
         tabState = value
     }
 
+    var showLoading by mutableStateOf(false)
+
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {
             Log.i("JWH-B","11-Room")

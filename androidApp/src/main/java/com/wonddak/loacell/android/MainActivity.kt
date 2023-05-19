@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -52,6 +53,7 @@ import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
+import com.wonddak.loacell.checkTimeOver
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -186,7 +188,7 @@ fun MyBottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val focusUserName by loaCellViewModel.focusUserName.collectAsState()
+    val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
     loaCellViewModel.apply {
@@ -194,7 +196,7 @@ fun MyBottomAppBar(
             floatingActionButton = {
                 SmallFloatingActionButton(
                     content = {
-                        if (focusUserName.isNotEmpty()) {
+                        if (focusUserInfo != null) {
                             Icon(
                                 painter = painterResource(id = SharedRes.images.delete.drawableResId),
                                 contentDescription = null,
@@ -213,8 +215,7 @@ fun MyBottomAppBar(
             },
             actions = {
                 val showLevel1 =
-                    selectedRoomId.isNotEmpty() && (focusUserName.isEmpty()) && (focusRaidId.isEmpty())
-                val showLevel2User = (focusUserName.isNotEmpty())
+                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidId.isEmpty())
                 val showLevel2Raid = (focusRaidId.isNotEmpty())
                 AnimatedVisibility(
                     showLevel1,
@@ -232,14 +233,22 @@ fun MyBottomAppBar(
 
                 }
                 AnimatedVisibility(
-                    showLevel2User,
+                    focusUserInfo != null
                 ) {
-                    Row() {
-                        IconButton(onClick = { clearFocusItem() }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = null)
-                        }
-                        MyIconButton(SharedRes.images.change_person) {
-                            openCharacterEditDialog = true
+                    focusUserInfo?.let {
+                        Row() {
+                            IconButton(onClick = { clearFocusItem() }) {
+                                Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                            }
+                            MyIconButton(SharedRes.images.change_person) {
+                                openCharacterEditDialog = true
+                            }
+                            MyIconButton(
+                                SharedRes.images.refresh,
+                                enabled = it.checkTimeOver(System.currentTimeMillis())
+                            ) {
+                                showLoading = true
+                            }
                         }
                     }
                 }

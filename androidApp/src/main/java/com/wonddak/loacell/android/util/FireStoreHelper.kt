@@ -3,6 +3,7 @@ package com.wonddak.loacell.android.util
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.wonddak.loacell.AppDataBase
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.convertDifficulty
@@ -44,6 +45,7 @@ object FireStoreHelper {
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
             userData["characterList"] = characterList.map { it.characterName }
+            userData["timeStamp"] = System.currentTimeMillis()
             fs.collection("rooms")
                 .document(roomId)
                 .collection("users")
@@ -156,7 +158,8 @@ object FireStoreHelper {
                     .addOnSuccessListener {
                         if (it.exists()) {
                             val lastTime = it.data!!["timeStamp"] as Long
-                            if (lastTime + 3_600L * 1_000L > nowTime) {
+                            // 30분 이상 지나야 갱신 허용
+                            if (lastTime + 1_800L * 1_000L >= nowTime) {
                                 characterRoom.update(data)
                                     .addOnFailureListener {
                                         it.printStackTrace()
@@ -179,7 +182,7 @@ object FireStoreHelper {
     //현재 들어간 roomId의 정보를 갱신
     fun observeRoomInfo(
         roomId: String,
-        db: com.wonddak.loacell.AppDataBase
+        db: AppDataBase
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)
@@ -208,7 +211,7 @@ object FireStoreHelper {
     //현재 들어간 roomId의 유저 정보들을 갱신
     fun observeUsers(
         roomId: String,
-        db: com.wonddak.loacell.AppDataBase
+        db: AppDataBase
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)
@@ -232,6 +235,7 @@ object FireStoreHelper {
                                 val representativeCharacter =
                                     it.data!!["representativeCharacter"] as String
                                 val characterList = it.data!!["characterList"] as List<String>
+                                val timeStamp = it.data!!["timeStamp"] as Long
                                 Log.i("JWH", "Listen Users == $userName")
                                 Log.i("JWH", characterList.joinToString("|"))
 
@@ -252,7 +256,8 @@ object FireStoreHelper {
                                             userName,
                                             characterList,
                                             roomId,
-                                            representativeCharacter
+                                            representativeCharacter,
+                                            timeStamp
                                         )
                                         dbUserList.remove(userName)
                                     } else {
@@ -261,7 +266,8 @@ object FireStoreHelper {
                                             userName,
                                             roomId,
                                             representativeCharacter,
-                                            characterList
+                                            characterList,
+                                            timeStamp
                                         )
                                     }
                                 }
@@ -308,7 +314,7 @@ object FireStoreHelper {
     //현재 들어간 roomId의 레이드 정보들을 갱신
     fun observeRaid(
         roomId: String,
-        db: com.wonddak.loacell.AppDataBase
+        db: AppDataBase
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)

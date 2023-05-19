@@ -6,15 +6,16 @@ CREATE TABLE UserInfo (
   roomId TEXT NOT NULL,
   representativeCharacter Text NOT NULL,
   characterList TEXT AS List<String> NOT NULL,
+  timeStamp INTEGER,
   FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE,
   PRIMARY KEY(name,roomId)
 );
 
 insertUserInfo:
-INSERT OR REPLACE INTO UserInfo VALUES (?,?,?,?);
+INSERT OR REPLACE INTO UserInfo VALUES (?,?,?,?,?);
 
 updateUserInfo:
-UPDATE UserInfo SET representativeCharacter = ?,characterList=? WHERE name =? AND roomId = ?;
+UPDATE UserInfo SET representativeCharacter = ?,characterList=?,timeStamp =? WHERE name =? AND roomId = ?;
 
 updateRepresentativeCharacter:
 UPDATE UserInfo SET representativeCharacter = ? WHERE name =? AND roomId = ?;

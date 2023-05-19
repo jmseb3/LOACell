@@ -124,9 +124,14 @@ fun AddUserView(
                                     roomId = roomId,
                                     name = user,
                                     representativeCharacter = characterName,
-                                    characterList = list
-                                )
-                                addAction()
+                                    characterList = list,
+                                    failAction = {e ->
+                                        errorMsg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
+                                    }
+                                ) {
+                                    addAction()
+                                }
+
                             }
                             characterResult.onError { code, message ->
                                 errorMsg = "$message($code)"

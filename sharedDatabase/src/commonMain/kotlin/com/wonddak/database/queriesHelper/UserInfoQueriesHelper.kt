@@ -15,25 +15,27 @@ class UserInfoQueriesHelper(
         userString: String,
         roomId: String,
         representativeCharacter: String,
-        characterList : List<String>
+        characterList: List<String>,
+        timeStamp: Long
     ) {
         queries.insertUserInfo(
             userString,
             roomId,
             representativeCharacter,
-            characterList
+            characterList,
+            timeStamp
         )
     }
 
     fun updateUserInfo(
         userName: String,
-        characterList : List<String>,
+        characterList: List<String>,
         roomId: String,
-        representativeCharacter: String
-
+        representativeCharacter: String,
+        timeStamp: Long
     ) {
         queries.updateUserInfo(
-            representativeCharacter,characterList,userName, roomId
+            representativeCharacter, characterList, timeStamp, userName, roomId
         )
     }
 
@@ -42,8 +44,8 @@ class UserInfoQueriesHelper(
             .mapToList(Dispatchers.Main)
     }
 
-    fun getUsersByName(roomId: String,userName:String): Flow<UserInfo> {
-        return queries.selectByName(roomId,userName).asFlow()
+    fun getUsersByName(roomId: String, userName: String): Flow<UserInfo> {
+        return queries.selectByName(roomId, userName).asFlow()
             .mapToOne(Dispatchers.Main)
     }
 
