@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.util.FireStoreHelper
-import com.wonddak.loacell.database.const.Difficulty
-import com.wonddak.loacell.database.const.RaidType
+import com.wonddak.loacell.model.Difficulty
+import com.wonddak.loacell.model.RaidType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

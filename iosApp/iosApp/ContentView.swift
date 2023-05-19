@@ -34,12 +34,12 @@ extension ContentView {
         init() {
             updateInfo()
         }
-        
+
         func updateInfo() {
             lostarkApi.getCharacterInfo(characterName: "아이오에스티떡상가즈아") { itemList,error in
                 DispatchQueue.main.async {
                     if let itemList = itemList {
-                        self.characterList = itemList
+                        prin
                     } else {
                         self.text = error?.localizedDescription ?? "error"
                     }

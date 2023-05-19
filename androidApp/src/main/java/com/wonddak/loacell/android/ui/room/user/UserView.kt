@@ -24,12 +24,11 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.database.AppDataBase
 
 //room화면에서 user리스트 화면
 @Composable
 fun UserView(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -66,7 +65,7 @@ fun UserView(
 //유저를 선택했을때 보여질 화면
 @Composable
 fun FocusUserView(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {

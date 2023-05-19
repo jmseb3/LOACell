@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.SettingView
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
@@ -51,8 +52,6 @@ import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
-import com.wonddak.loacell.database.AppDataBase
-import com.wonddak.loacell.database.DriverFactory
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
-        val db = AppDataBase(DriverFactory(this))
+        val db = com.wonddak.loacell.AppDataBase(DriverFactory(this))
 
         loaCellViewModel = ViewModelProvider(
             this,
@@ -81,7 +80,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
@@ -102,7 +101,7 @@ fun MainContent(
                     .fillMaxSize()
                     .padding(it)
             ) {
-                val roomList by db.roomInfoQueriesHelper.getALl()
+                val roomList by db.roomInfoQueriesHelper.getAll()
                     .collectAsState(initial = emptyList())
 
                 if (loaCellViewModel.showSetting) {
@@ -112,7 +111,7 @@ fun MainContent(
                         AnimatedVisibility(selectedRoomId.isEmpty()) {
                             Column() {
                                 if (BuildConfig.DEBUG) {
-                                    val roomInfos by db.roomInfoQueriesHelper.getALl()
+                                    val roomInfos by db.roomInfoQueriesHelper.getAll()
                                         .collectAsState(
                                             initial = emptyList()
                                         )

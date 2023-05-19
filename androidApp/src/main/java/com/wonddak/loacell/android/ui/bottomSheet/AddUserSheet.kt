@@ -21,10 +21,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.android.util.FireStoreHelper
-import com.wonddak.loacell.api.LostArkApi
-import com.wonddak.loacell.api.onError
-import com.wonddak.loacell.api.onException
-import com.wonddak.loacell.api.onSuccess
+import com.wonddak.sharedapi.LostArkApi
+import com.wonddak.sharedapi.onError
+import com.wonddak.sharedapi.onException
+import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.launch
 
 

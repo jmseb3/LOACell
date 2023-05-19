@@ -10,18 +10,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.database.AppDataBase
+import com.wonddak.loacell.model.getMaxParty
+import com.wonddak.loacell.model.getRaidText
+import com.wonddak.loacell.model.makeGateText
 
 @Composable
 fun RaidView(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -54,7 +58,7 @@ fun RaidView(
 
 @Composable
 fun FocusRaidView(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -66,5 +70,19 @@ fun FocusRaidView(
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
+        val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
+        raidInfo?.let { raidInfo ->
+            val maxParty = raidInfo.getMaxParty()
+            Column() {
+                Text(text = raidInfo.title)
+                Text(text = raidInfo.getRaidText())
+                Text(text = raidInfo.makeGateText())
+            }
+        }
     }
+}
+
+@Composable
+fun SinglePartyView(){
+
 }

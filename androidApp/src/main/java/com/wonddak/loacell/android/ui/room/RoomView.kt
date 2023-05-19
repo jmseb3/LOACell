@@ -20,11 +20,10 @@ import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.user.AddUserView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.database.AppDataBase
 
 @Composable
 fun RoomView(
-    db: AppDataBase,
+    db: com.wonddak.loacell.AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val roomInfo by loaCellViewModel.roomInfo.collectAsState()

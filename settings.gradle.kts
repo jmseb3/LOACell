@@ -16,4 +16,6 @@ dependencyResolutionManagement {
 rootProject.name = "Loacell"
 include(":androidApp")
 include(":shared")
+include(":sharedApi")
 include(":sharedResources")
+include(":sharedDatabase")

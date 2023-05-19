@@ -3,12 +3,11 @@ package com.wonddak.loacell.android.util
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.wonddak.loacell.api.model.CharacterInfo
-import com.wonddak.loacell.database.AppDataBase
-import com.wonddak.loacell.database.const.Difficulty
-import com.wonddak.loacell.database.const.RaidType
-import com.wonddak.loacell.database.const.convertDifficulty
-import com.wonddak.loacell.database.const.convertType
+import com.wonddak.loacell.model.Difficulty
+import com.wonddak.loacell.model.RaidType
+import com.wonddak.loacell.model.convertDifficulty
+import com.wonddak.loacell.model.convertType
+import com.wonddak.sharedapi.model.CharacterInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -177,9 +176,39 @@ object FireStoreHelper {
         }
     }
 
+    //현재 들어간 roomId의 정보를 갱신
+    fun observeRoomInfo(
+        roomId: String,
+        db: com.wonddak.loacell.AppDataBase
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.w("JWH", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                if (value != null) {
+                    Log.i("JWH", "Listen RoomInfo")
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        value.data?.let {
+                            val title = it["title"] as String
+                            val description = it["description"] as String
+                            db.roomInfoQueriesHelper.updateRoomInfo(title,description,roomId)
+                        }
+                    }
+                } else {
+                    Log.d("JWH", "Current data: null")
+                }
+            }
+    }
+
+    //현재 들어간 roomId의 유저 정보들을 갱신
     fun observeUsers(
         roomId: String,
-        db:AppDataBase
+        db: com.wonddak.loacell.AppDataBase
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)
@@ -249,35 +278,7 @@ object FireStoreHelper {
                 }
             }
     }
-
-    fun observeRoomInfo(
-        roomId: String,
-        db:AppDataBase
-    ) {
-        Firebase.firestore.collection("rooms")
-            .document(roomId)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    Log.w("JWH", "Listen failed.", error)
-                    return@addSnapshotListener
-                }
-
-                if (value != null) {
-                    Log.i("JWH", "Listen RoomInfo")
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        value.data?.let {
-                            val title = it["title"] as String
-                            val description = it["description"] as String
-                            db.roomInfoQueriesHelper.updateRoomInfo(title,description,roomId)
-                        }
-                    }
-                } else {
-                    Log.d("JWH", "Current data: null")
-                }
-            }
-    }
-
+    //현재 들어간 roomId의 유저 정보들의 캐릭터 정보를 갱신
     fun observeCharacters(
         characterName: String,
         successAction: (className: String, level: String, server: String) -> Unit
@@ -304,9 +305,10 @@ object FireStoreHelper {
             }
     }
 
+    //현재 들어간 roomId의 레이드 정보들을 갱신
     fun observeRaid(
         roomId: String,
-        db: AppDataBase
+        db: com.wonddak.loacell.AppDataBase
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)

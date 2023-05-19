@@ -11,14 +11,13 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.util.FireStoreHelper
-import com.wonddak.loacell.database.AppDataBase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
-    dataBase: AppDataBase
+    dataBase: com.wonddak.loacell.AppDataBase
 ) : ViewModel() {
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
@@ -74,15 +73,14 @@ class LoaCellViewModel(
             launch {
                 focusUserName.combine(roomId) { name, id ->
                     Pair(name,id)
-                }.collect {
-                    val name = it.first
-                    val id = it.second
+                }.collect { pair ->
+                    val name = pair.first
+                    val id = pair.second
 
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
                             dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
                                 _userInfo.value = it
-                                Log.i("JWH-ttt",it.toString())
                             }
                         }
                     } else {
@@ -95,15 +93,14 @@ class LoaCellViewModel(
             launch {
                 focusRaidId.combine(roomId) {raidId,roomId ->
                     Pair(raidId,roomId)
-                }.collect {
-                    val raidId = it.first
-                    val roomId = it.second
+                }.collect { pair ->
+                    val raidId = pair.first
+                    val roomId = pair.second
                     if (raidId.isNotEmpty() && roomId.isNotEmpty()) {
                         raidInfoJob = launch {
-//                            dataBase.getUsersByName(id,name).collect {
-//                                _raidInfo.value = it
-//                                Log.i("JWH-ttt",it.toString())
-//                            }
+                            dataBase.raidInfoQueriesHelper.getRaidInfoById(roomId,raidId).collect {
+                                _raidInfo.value = it
+                            }
                         }
                     } else {
                         raidInfoJob?.cancel()

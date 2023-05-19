@@ -21,8 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.R
-import com.wonddak.loacell.database.const.Difficulty
-import com.wonddak.loacell.database.const.RaidType
+import com.wonddak.loacell.model.Difficulty
+import com.wonddak.loacell.model.RaidType
+import com.wonddak.loacell.model.getRaidText
+import com.wonddak.loacell.model.makeGateText
 
 @Composable
 fun RaidItemRow(
@@ -54,14 +56,13 @@ fun RaidItemRow(
             Column(
                 modifier = Modifier.padding(5.dp)
             ) {
-                val headerText =
-                    "${raidInfo.type!!.toKorString()} - ${raidInfo.Difficulty!!.toKorString()}"
                 Text(
                     text = raidInfo.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = headerText)
+                Text(text = raidInfo.getRaidText())
+                Text(text = raidInfo.makeGateText())
             }
         }
     }

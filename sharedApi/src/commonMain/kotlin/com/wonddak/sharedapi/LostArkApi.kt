@@ -1,0 +1,72 @@
+package com.wonddak.sharedapi
+
+import com.wonddak.sharedapi.armories.EquipmentItem
+import com.wonddak.sharedapi.armories.ProfilesItem
+import com.wonddak.sharedapi.model.CharacterInfo
+import com.wonddak.sharedapi.resource.Armories
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.plugins.resources.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.util.*
+import io.ktor.utils.io.charsets.*
+import kotlinx.serialization.json.Json
+
+class LostArkApi {
+    companion object {
+        const val API_KEY =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAxOTg4MzgifQ.PaE7BfPP2E7kl94kIEs4xHJ6jfZrH6URxNTGSUQbRNROiysUzPfIIVazL5sS3KZ80ry29nvQh8ZbnjHOT1OrwazZNqfu7u5vQweb3hhyBSbV2lCKsgkBA3ruZclvAoYV8rIokKb2QpRSHkDO0vicRyhFR7QtYal-3_NkZ2XW56Qq6pssMTerRbIBA4KtiWAm2gSaLraDJeizrS7v7C3ou5lkUpZic_5PefIIyRS9bDDRJq2N1PkVh9ASLoYVnKgXlBCNmDONAhUDg1hsxTGh00lExQCI6KSGNpYGkpi4YtaOPnhNyFBbC-1d4byozg1WyTjSMIXLlUqsyhRSWYFylw"
+        const val API_BASE = "developer-lostark.game.onstove.com"
+    }
+
+
+    private val httpClient = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+        install(Resources)
+        install(Logging) {
+            logger = Logger.SIMPLE
+            level = LogLevel.HEADERS
+        }
+        expectSuccess = true
+        defaultRequest {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = API_BASE
+            }
+            headers {
+                append(HttpHeaders.Accept, "application/json")
+                append(HttpHeaders.ContentType, "application/json")
+                append("authorization", "bearer $API_KEY")
+            }
+        }
+    }
+
+    @Throws(Throwable::class)
+    suspend fun getCharacterInfo(characterName: String): ApiResult<List<CharacterInfo>> {
+        return httpClient.safeRequest {
+            url.path("characters/${characterName.encodeURLPath()}/siblings")
+        }
+    }
+
+    @Throws(Throwable::class)
+    suspend fun getArmoriesProfiles(characterName: String): ProfilesItem {
+        return httpClient.get(Armories.Character.Profiles(Armories.Character(characterName = characterName))).body()
+    }
+
+    @Throws(Throwable::class)
+    suspend fun getArmoriesEquipment(characterName: String): List<EquipmentItem> {
+        return httpClient.get(Armories.Character.Equipment(Armories.Character(characterName = characterName))).body()
+    }
+
+}

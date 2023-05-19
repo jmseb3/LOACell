@@ -19,15 +19,13 @@ kotlin {
     iosSimulatorArm64()
 
     cocoapods {
-        summary = "Some description for the Shared Module"
+        summary = "share Resources "
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
         ios.deploymentTarget = "14.1"
         framework {
             baseName = "sharedResources"
             isStatic = true
-            export("dev.icerock.moko:resources:0.22.0")
-            export("dev.icerock.moko:graphics:0.9.0")
         }
     }
     
@@ -66,7 +64,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.wonddak.sharedresources"
+    namespace = "com.wonddak.loacell"
     compileSdk = 33
     defaultConfig {
         minSdk = 30
