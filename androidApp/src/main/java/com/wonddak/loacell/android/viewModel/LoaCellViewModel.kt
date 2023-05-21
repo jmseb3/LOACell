@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.FireStoreHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -115,6 +116,7 @@ class LoaCellViewModel(
     fun setNowUserInfo(userName: String) {
         hideAllDialog()
         clearFocusItem()
+        showLoading = false
         _focusUserName.value = userName
     }
 

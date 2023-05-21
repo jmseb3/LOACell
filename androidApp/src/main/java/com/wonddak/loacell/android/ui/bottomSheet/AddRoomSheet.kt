@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 fun AddRoomSheet(
     addAction: (title: String, description: String) -> Unit
 ) {
-    BaseSheet(title = "Room Info") {
+    BaseSheet(title = "방 만들기") {
         Column() {
             var title by remember {
                 mutableStateOf("")
@@ -41,8 +41,8 @@ fun AddRoomSheet(
             AddRoomTextField(
                 modifier = textFieldModifier,
                 text = title,
-                label = "Title",
-                placeHolder = "Input Room Title",
+                label = "제목",
+                placeHolder = "제목을 입력하세요.",
                 maxLine = 1,
                 maxLength = 10,
                 keyboardOptions = KeyboardOptions(
@@ -55,8 +55,8 @@ fun AddRoomSheet(
             AddRoomTextField(
                 modifier = textFieldModifier,
                 text = description,
-                label = "Description",
-                placeHolder = "Input Room Description",
+                label = "방 설명",
+                placeHolder = "방 설명을 입력하세요.",
                 maxLine = 3,
                 maxLength = 100,
                 keyboardOptions = KeyboardOptions(

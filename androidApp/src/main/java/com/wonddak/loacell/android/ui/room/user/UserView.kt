@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.AppDataBase
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -89,7 +90,7 @@ fun FocusUserView(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .clickable { }
+                    .noRippleClickable()
             ) {
                 BackHandler() {
                     loaCellViewModel.clearFocusItem()
@@ -160,7 +161,11 @@ fun FocusUserView(
                         representativeCharacter = userInfo.representativeCharacter,
                         characterList = list,
                         failAction = {e ->
-                            msg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
+                            launch {
+                                msg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
+                                delay(3_000L)
+                                loaCellViewModel.showLoading = false
+                            }
                         }
                     ) {
                         loaCellViewModel.showLoading = false
