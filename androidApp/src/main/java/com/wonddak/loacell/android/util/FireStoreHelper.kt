@@ -3,7 +3,7 @@ package com.wonddak.loacell.android.util
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.wonddak.loacell.AppDataBase
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.convertDifficulty
@@ -123,6 +123,8 @@ object FireStoreHelper {
         data["startGateNumber"] = startGateNumber
         data["endGateNumber"] = endGateNumber
         data["isFinish"] = false
+        data["party1"] = listOf("","","","")
+        data["party2"] = listOf("","","","")
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
@@ -343,7 +345,8 @@ object FireStoreHelper {
                                 val startGateNumber = it.data!!["startGateNumber"] as Long
                                 val endGateNumber = it.data!!["endGateNumber"] as Long
                                 val isFinish = it.data!!["isFinish"] as Boolean
-
+                                val party1 = it.data!!["party1"] as List<String>
+                                val party2 = it.data!!["party2"] as List<String>
 
                                 //이미 값이 있는 경우
                                 if (raidId in dbRaidList) {
@@ -356,7 +359,9 @@ object FireStoreHelper {
                                         difficultyString.convertDifficulty(),
                                         startGateNumber,
                                         endGateNumber,
-                                        isFinish
+                                        isFinish,
+                                        party1,
+                                        party2
                                     )
                                     dbRaidList.remove(raidId)
                                 } else {
@@ -368,7 +373,9 @@ object FireStoreHelper {
                                         typeString.convertType(),
                                         difficultyString.convertDifficulty(),
                                         startGateNumber,
-                                        endGateNumber
+                                        endGateNumber,
+                                        party1,
+                                        party2
                                     )
                                 }
 

@@ -1,6 +1,5 @@
 package com.wonddak.loacell.android.ui.room.user
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.AppDataBase
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView

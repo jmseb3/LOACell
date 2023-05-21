@@ -1,6 +1,10 @@
-package com.wonddak.loacell
+package com.wonddak.database
 
 import app.cash.sqldelight.ColumnAdapter
+import com.wonddak.loacell.Database
+import com.wonddak.loacell.DriverFactory
+import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.queriesHelper.CharacterInfoQueriesHelper
@@ -58,7 +62,9 @@ class AppDataBase(driverFactory: DriverFactory) {
         driver = driver,
         RaidInfoAdapter = RaidInfo.Adapter(
             typeAdapter = raidTypeAdapter,
-            DifficultyAdapter = difficultyTypeAdapter
+            DifficultyAdapter = difficultyTypeAdapter,
+            party1characterListAdapter = stringListAdapter,
+            party2characterListAdapter = stringListAdapter
         ),
         UserInfoAdapter = UserInfo.Adapter(
             characterListAdapter = stringListAdapter

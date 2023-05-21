@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +23,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.SettingView
@@ -62,7 +61,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
-        val db = com.wonddak.loacell.AppDataBase(DriverFactory(this))
+        val db = AppDataBase(DriverFactory(this))
 
         loaCellViewModel = ViewModelProvider(
             this,
@@ -83,7 +82,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
-    db: com.wonddak.loacell.AppDataBase,
+    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
@@ -191,14 +190,14 @@ fun MyBottomAppBar(
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
-    val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
+    val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
 
     loaCellViewModel.apply {
         BottomAppBar(
             floatingActionButton = {
                 SmallFloatingActionButton(
                     content = {
-                        if (focusUserInfo != null) {
+                        if (focusUserInfo != null || focusRaidInfo != null) {
                             Icon(
                                 painter = painterResource(id = SharedRes.images.delete.drawableResId),
                                 contentDescription = null,
@@ -217,8 +216,7 @@ fun MyBottomAppBar(
             },
             actions = {
                 val showLevel1 =
-                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidId.isEmpty())
-                val showLevel2Raid = (focusRaidId.isNotEmpty())
+                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidInfo == null)
                 AnimatedVisibility(
                     showLevel1,
                 ) {
@@ -255,7 +253,7 @@ fun MyBottomAppBar(
                     }
                 }
                 AnimatedVisibility(
-                    showLevel2Raid,
+                    focusRaidInfo != null
                 ) {
                     Row() {
                         IconButton(onClick = { clearFocusItem() }) {
@@ -274,10 +272,16 @@ fun MyTopAppBar(
     loaCellViewModel: LoaCellViewModel,
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+    val focusRaidId by loaCellViewModel.focusRaidId.collectAsState("")
     TopAppBar(
         title = {
             if (loaCellViewModel.showSetting) {
                 Text(text = "설정")
+            } else if (focusRaidId.isNotEmpty()) {
+                val raidInfo by loaCellViewModel.raidInfo.collectAsState()
+                raidInfo?.let { raidInfo ->
+                    Text(text = raidInfo.title)
+                }
             } else if (selectedRoomId.isNotEmpty()) {
                 val roomInfo by loaCellViewModel.roomInfo.collectAsState()
                 roomInfo?.let { roomInfo ->

@@ -34,6 +34,8 @@ class RaidInfoQueriesHelper(
         difficulty: Difficulty,
         startGateNumber: Long,
         endGateNumber: Long,
+        party1 : List<String>,
+        party2 : List<String>
     ) {
         queries.insertRaidInfo(
             raidId,
@@ -43,7 +45,9 @@ class RaidInfoQueriesHelper(
             difficulty,
             startGateNumber,
             endGateNumber,
-            false
+            false,
+            party1,
+            party2
         )
     }
 
@@ -55,17 +59,21 @@ class RaidInfoQueriesHelper(
         difficulty: Difficulty,
         startGateNumber: Long,
         endGateNumber: Long,
-        isFinish: Boolean
+        isFinish: Boolean,
+        party1 : List<String>,
+        party2 : List<String>
     ) {
-        queries.upadteRaidInfo(
+        queries.updateRaidInfo(
             title,
             type,
             difficulty,
             startGateNumber,
             endGateNumber,
             isFinish,
+            party1,
+            party2,
             raidId,
-            roomId,
+            roomId
         )
     }
 

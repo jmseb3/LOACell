@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
@@ -23,7 +24,7 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @Composable
 fun RoomView(
-    db: com.wonddak.loacell.AppDataBase,
+    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val roomInfo by loaCellViewModel.roomInfo.collectAsState()

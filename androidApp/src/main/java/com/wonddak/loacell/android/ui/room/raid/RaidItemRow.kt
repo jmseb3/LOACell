@@ -95,7 +95,9 @@ fun RaidItemRowPreview() {
         Difficulty = Difficulty.Normal,
         startGateNumber = 1L,
         endGateNumber = 3L,
-        isFinish = false
+        isFinish = false,
+        party1characterList = emptyList(),
+        party2characterList = emptyList()
     )
     RaidItemRow(raidInfo) {}
 }

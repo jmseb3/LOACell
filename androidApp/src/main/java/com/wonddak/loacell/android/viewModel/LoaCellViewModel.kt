@@ -7,10 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.FireStoreHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
-    dataBase: com.wonddak.loacell.AppDataBase
+    dataBase: AppDataBase
 ) : ViewModel() {
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
@@ -153,6 +153,7 @@ class LoaCellViewModel(
 
     var openCharacterEditDialog by mutableStateOf(false)
     var openCharacterDeleteDialog by mutableStateOf(false)
+    var openRaidUserDeleteDialog by mutableStateOf(false)
 
     fun hideRaidDialog() {
         showRaidAdd = false
@@ -180,6 +181,11 @@ class LoaCellViewModel(
             if (focusUserName.value.isNotEmpty()) {
                 Log.i("JWH-B","22--Focus User")
                 openCharacterDeleteDialog = true
+                return
+            }
+            if (focusRaidId.value.isNotEmpty()) {
+                Log.i("JWH-B","33--Focus Raid")
+                openRaidUserDeleteDialog = true
                 return
             }
             if (tabState == 0) {
