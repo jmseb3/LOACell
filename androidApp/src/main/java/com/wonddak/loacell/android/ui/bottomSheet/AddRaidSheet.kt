@@ -82,7 +82,7 @@ fun AddRaidSheet(
             }
         },
         errorMsg = errorMsg,
-        updateErrorMsg = {errorMsg = it}
+        updateErrorMsg = { errorMsg = it }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

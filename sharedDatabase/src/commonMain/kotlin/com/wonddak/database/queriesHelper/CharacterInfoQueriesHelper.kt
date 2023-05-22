@@ -16,7 +16,7 @@ class CharacterInfoQueriesHelper(
     fun getCharacterValueFlow(userInfo: UserInfo): Flow<List<Character>> {
         return getCharacterValueFlow(userInfo.characterList,userInfo.representativeCharacter)
     }
-    fun getCharacterValueFlow(characterNames: List<String>,representativeCharacter:String = ""): Flow<List<Character>> {
+    private fun getCharacterValueFlow(characterNames: List<String>, representativeCharacter:String = ""): Flow<List<Character>> {
         return queries.getCharacterInfos(characterNames).asFlow().mapToList(Dispatchers.Main)
             .transform { list ->
                 val sortByLevelList = list.sortedByDescending { it.level.replace(",", "").toFloat() }.toMutableList()

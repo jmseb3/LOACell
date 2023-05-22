@@ -149,6 +149,37 @@ object FireStoreHelper {
             }
     }
 
+    fun updateRaidUser(
+        roomId: String,
+        raidId: String,
+        partyIndex :Int,
+        partyList :List<String>,
+        successAction: () -> Unit
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("raidInfo")
+            .document(raidId).let{ raidRef ->
+                when (partyIndex) {
+                    1 -> {
+                        raidRef.update("party1",partyList)
+                            .addOnSuccessListener {
+                                successAction()
+                            }
+                    }
+                    2 -> {
+                        raidRef.update("party2",partyList)
+                            .addOnSuccessListener {
+                                successAction()
+                            }
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+    }
+
     fun deleteRaidInfo(
         roomId: String,
         raidId: String,
@@ -274,7 +305,7 @@ object FireStoreHelper {
                                 val characterNameList = characterList.map { it.id }
                                 val timeStamp = it.data!!["timeStamp"] as Long
                                 Log.i("JWH", "Listen Users == $userName")
-                                Log.i("JWH", characterList.joinToString("|"))
+                                Log.i("JWH", characterNameList.joinToString("|"))
                                 launch {
                                     characterList.forEach { documentReference ->
                                         val characterName = documentReference.id

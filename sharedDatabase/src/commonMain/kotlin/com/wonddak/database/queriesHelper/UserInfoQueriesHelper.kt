@@ -52,17 +52,22 @@ class UserInfoQueriesHelper(
         return queries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
             .transform {
-                val filter = it.filter { userInfo ->
-                    var result = true
-                    for (name in nameList) {
-                        if (userInfo.characterList.contains(name)) {
-                            result = false
-                            break
+                try {
+                    val filter = it.filter { userInfo ->
+                        var result = true
+                        for (name in nameList) {
+                            if (userInfo.characterList.contains(name)) {
+                                result = false
+                                break
+                            }
                         }
+                        result
                     }
-                    result
+                    emit(filter)
+                }catch (e:Exception) {
+                    println("JWH $e")
+                    emit(emptyList())
                 }
-                emit(filter)
             }
     }
 

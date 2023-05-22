@@ -21,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,7 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
+import com.wonddak.loacell.getPartyList
 import com.wonddak.loacell.getRaidText
 import com.wonddak.loacell.makeGateText
 
@@ -77,6 +81,7 @@ fun FocusRaidView(
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,12 +93,31 @@ fun FocusRaidView(
         }
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
         val context = LocalContext.current
+        var focusIndex by remember {
+            mutableStateOf(-1)
+        }
+        var focusPartyIndex by remember {
+            mutableStateOf(0)
+        }
         raidInfo?.let { raidInfo ->
+            val allUserList by db.userInfoQueriesHelper.getUsersByRoomIdFilterCharacter(
+                roomId,
+                raidInfo.getPartyList()
+            ).collectAsState(initial = emptyList())
+
             Column() {
                 Text(text = raidInfo.getRaidText())
                 Text(text = raidInfo.makeGateText())
             }
-            PartyView(raidInfo, loaCellViewModel)
+            PartyView(raidInfo) { index, partyIndex ->
+                focusIndex = index
+                focusPartyIndex = partyIndex
+                loaCellViewModel.showRaidUserAdd()
+                if (allUserList.isEmpty()) {
+                    Toast.makeText(context,"추가 가능한 인원이 없습니다.",Toast.LENGTH_SHORT).show()
+                    loaCellViewModel.hideRaidUserAdd()
+                }
+            }
             loaCellViewModel.apply {
                 if (openRaidDeleteDialog) {
                     DeleteRaidDialog(
@@ -115,17 +139,40 @@ fun FocusRaidView(
                         }
                     )
                 }
-                loaCellViewModel.apply {
-                    if (openRaidUserAddDialog) {
-                        AddRaidUserSheet(
-                            roomId = roomId, loaCellViewModel,
-                            db = db,
-                            onDismissRequest = {
-                                hideRaidDialog()
-                            }
-                        ) {
+                if (openRaidUserAddDialog && allUserList.isNotEmpty()) {
+                    val partyList = when (focusPartyIndex) {
+                        2 -> {
+                            raidInfo.party2characterList
+                        }
+
+                        1 -> {
+                            raidInfo.party1characterList
+                        }
+
+                        else -> {
+                            emptyList()
+                        }
+                    }
+                    AddRaidUserSheet(
+                        allUserList = allUserList,
+                        db = db,
+                        onDismissRequest = {
                             hideRaidUserAdd()
                         }
+                    ) { character ->
+                        val partyTemp = partyList.toMutableList()
+                        partyTemp[focusIndex] = character.name
+                        FireStoreHelper.updateRaidUser(
+                            roomId,
+                            raidInfo.raidId,
+                            focusPartyIndex,
+                            partyTemp
+                        ) {
+                            focusIndex = -1
+                            focusPartyIndex = 0
+                            hideRaidUserAdd()
+                        }
+
                     }
                 }
             }
@@ -136,23 +183,33 @@ fun FocusRaidView(
 @Composable
 fun PartyView(
     raidInfo: RaidInfo,
-    loaCellViewModel: LoaCellViewModel
+    openAction: (index: Int, partyIndex: Int) -> Unit
 ) {
     val maxParty = raidInfo.getMaxParty()
 
     Column() {
-        RaidPartyView(list = raidInfo.party1characterList, loaCellViewModel)
+        RaidPartyView(
+            list = raidInfo.party1characterList
+        ) { index ->
+            openAction(index, 1)
+        }
         if (maxParty == 2) {
             Divider()
-            RaidPartyView(list = raidInfo.party2characterList, loaCellViewModel)
+            RaidPartyView(
+                list = raidInfo.party2characterList
+            )
+            { index ->
+                openAction(index, 2)
+            }
         }
     }
+
 }
 
 @Composable
 fun RaidPartyView(
     list: List<String>,
-    loaCellViewModel: LoaCellViewModel,
+    openAction: (index: Int) -> Unit
 ) {
     Card(
         border = BorderStroke(1.dp, Color.Black),
@@ -163,19 +220,21 @@ fun RaidPartyView(
         ) {
             list.forEachIndexed { index, name ->
                 RaidUserView(name = name) {
-                    loaCellViewModel.showRaidUserAdd(index, list)
+                    openAction(index)
                 }
             }
         }
     }
-
 }
 
 @Composable
 fun RaidUserView(name: String, addAction: () -> Unit) {
+    val modifier = Modifier
+        .fillMaxWidth()
+        .height(40.dp)
     if (name.isEmpty()) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -186,7 +245,7 @@ fun RaidUserView(name: String, addAction: () -> Unit) {
         }
     } else {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

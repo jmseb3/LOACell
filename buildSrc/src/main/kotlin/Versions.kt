@@ -1,6 +1,6 @@
 object Versions {
     object Project {
-        const val Kotlin = "1.8.0"
+        const val Kotlin = "1.8.10"
         const val Gradle = "7.4.1"
     }
 
@@ -20,8 +20,8 @@ object Versions {
             object Compose {
                 const val bomVersion = "2023.01.00"
                 const val activity = "1.7.1"
-                const val bottomDialog = "1.2.1"
             }
+
             object Firebase {
                 const val bomVersion = "31.5.0"
                 const val googleAuth = "20.5.0"

@@ -173,17 +173,8 @@ class LoaCellViewModel(
     var openRaidUserAddDialog by mutableStateOf(false)
         private set
 
-    var raidUserIndex by mutableStateOf(0)
-        private set
-    var raidFocusList :List<String> by mutableStateOf(emptyList())
-        private set
-    fun showRaidUserAdd(
-        index:Int,
-        list :List<String>
-    ) {
+    fun showRaidUserAdd() {
         openRaidUserAddDialog = true
-        raidUserIndex = index
-        raidFocusList = list
     }
 
     fun hideRaidUserAdd() {
