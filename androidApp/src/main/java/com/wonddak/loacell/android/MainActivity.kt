@@ -26,9 +26,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -84,6 +86,30 @@ fun MainContent(
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     LoaCellTheme() {
         val snackBarHostState = remember { SnackbarHostState() }
+        loaCellViewModel.apply {
+            LaunchedEffect(snackBarMessage) {
+                snackBarMessage.let {
+                    // show가 true일때만 실행됩니다.
+                    if (it.show) {
+                        val snackBarResult = snackBarHostState.showSnackbar(
+                            it.message,
+                            it.actionLabel,
+                            false,
+                            it.duration
+                        )
+                        when (snackBarResult) {
+                            SnackbarResult.Dismissed -> {
+                                resetSnackBar()
+                            }
+                            SnackbarResult.ActionPerformed -> {
+                                it.performAction()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Scaffold(
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
 //            containerColor = Color.White,

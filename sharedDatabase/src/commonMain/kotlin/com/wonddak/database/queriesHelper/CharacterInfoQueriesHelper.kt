@@ -40,6 +40,10 @@ class CharacterInfoQueriesHelper(
         return queries.getCharacterInfos(characterNames).executeAsList()
     }
 
+    fun characterName(characterName: String): Character? {
+        return queries.getCharacterInfo(characterName).executeAsOneOrNull()
+    }
+
     fun updateCharacter(
         characterName: String,
         server: String,

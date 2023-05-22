@@ -14,13 +14,16 @@ import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.util.FireStoreHelper
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
     dataBase: AppDataBase
-) : ViewModel() {
+) : SnackBarController() {
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
 
@@ -45,10 +48,14 @@ class LoaCellViewModel(
     private var _focusRaidId = MutableStateFlow("")
     val focusRaidId get() = _focusRaidId
 
+    private var _raidInfoList : MutableStateFlow<List<RaidInfo>> = MutableStateFlow(emptyList())
+    val raidInfoList get() = _raidInfoList
+
     private var _raidInfo :MutableStateFlow<RaidInfo?> = MutableStateFlow(null)
     val raidInfo get() = _raidInfo
 
     private var userInfoJob : Job? = null
+    private var raidListInfoJob : Job? = null
     private var raidInfoJob : Job? = null
     private var roomInfoJob : Job? = null
 
@@ -69,12 +76,19 @@ class LoaCellViewModel(
                                 _roomInfo.value =  it
                             }
                         }
+                        raidListInfoJob = launch {
+                            dataBase.raidInfoQueriesHelper.getALlByRoomId(id).collect {
+                                _raidInfoList.value = it
+                            }
+                        }
                     } else {
                         roomInfoJob?.cancel()
+                        raidListInfoJob?.cancel()
                         observeRoom?.remove()
                         observeUser?.remove()
                         observeRaid?.remove()
                         _roomInfo.value = null
+                        _raidInfoList.value = emptyList()
                     }
                 }
             }
@@ -148,14 +162,13 @@ class LoaCellViewModel(
     //region dialog status
     var showRoomAdd by mutableStateOf(false)
     var showUserAdd by mutableStateOf(false)
-        private set
     var showRaidAdd by mutableStateOf(false)
         private set
     var showSetting by mutableStateOf(false)
     fun hideAllDialog() {
         showRoomAdd = false
-        showUserAdd = false
-        showRaidAdd = false
+        hideUserDialog()
+        hideRaidDialog()
         showSetting = false
     }
 
@@ -173,6 +186,9 @@ class LoaCellViewModel(
     var openRaidUserAddDialog by mutableStateOf(false)
         private set
 
+    var openRaidUserDeleteDialog by mutableStateOf(false)
+        private set
+
     fun showRaidUserAdd() {
         openRaidUserAddDialog = true
     }
@@ -181,7 +197,13 @@ class LoaCellViewModel(
         openRaidUserAddDialog = false
     }
 
+    fun showRaidUserDelete() {
+        openRaidUserDeleteDialog = true
+    }
 
+    fun hideRaidUserDelete() {
+        openRaidUserDeleteDialog = false
+    }
 
     // endregion
 

@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
@@ -39,7 +42,6 @@ import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
-import com.wonddak.loacell.getPartyList
 import com.wonddak.loacell.getRaidText
 import com.wonddak.loacell.makeGateText
 
@@ -50,9 +52,7 @@ fun RaidView(
     loaCellViewModel: LoaCellViewModel
 ) {
 
-    val raidInfoList by db.raidInfoQueriesHelper.getALlByRoomId(roomId)
-        .collectAsState(initial = emptyList())
-
+    val raidInfoList by loaCellViewModel.raidInfoList.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
     Box() {
@@ -97,29 +97,64 @@ fun FocusRaidView(
         var focusIndex by remember {
             mutableStateOf(-1)
         }
-        var focusPartyIndex by remember {
-            mutableStateOf(0)
+        var characterList :List<Character?> by remember {
+            mutableStateOf(emptyList())
+        }
+        LaunchedEffect(raidInfo) {
+            raidInfo?.let { info ->
+                val maxParty = info.getMaxParty()
+                val characters = mutableListOf<Character?>()
+                characters.addAll(info.party1characterList.map {
+                    db.characterInfoQueriesHelper.characterName(
+                        it
+                    )
+                })
+
+                if (maxParty == 2) {
+                    characters.addAll(info.party2characterList.map {
+                        db.characterInfoQueriesHelper.characterName(
+                            it
+                        )
+                    })
+                }
+                characterList = characters
+            }
         }
         raidInfo?.let { raidInfo ->
-            val allUserList by db.userInfoQueriesHelper.getUsersByRoomIdFilterCharacter(
+            val allUserList by db.getUsersByRoomIdFilterCharacterAndType(
                 roomId,
-                raidInfo.getPartyList()
+                raidInfo
             ).collectAsState(initial = emptyList())
 
             Column() {
                 Text(text = raidInfo.getRaidText())
                 Text(text = raidInfo.makeGateText())
             }
-            PartyView(raidInfo) { index, partyIndex ->
-                focusIndex = index
-                focusPartyIndex = partyIndex
-                loaCellViewModel.showRaidUserAdd()
-                if (allUserList.isEmpty()) {
-                    Toast.makeText(context,"추가 가능한 인원이 없습니다.",Toast.LENGTH_SHORT).show()
-                    loaCellViewModel.hideRaidUserAdd()
-                }
-            }
+
             loaCellViewModel.apply {
+
+                RaidPartyView(
+                    characterList,
+                    openAction = {index ->
+                        if (allUserList.isEmpty()) {
+                            showSnackBar(
+                                message = "추가 가능한 인원이 없습니다.",
+                                label ="이동",
+                            ) {
+                                clearFocusItem()
+                                setTabStatus(1)
+                                showUserAdd = true
+                            }
+                        } else {
+                            focusIndex = index
+                            showRaidUserAdd()
+                        }
+                    },
+                    deleteAction = { index ->
+                        focusIndex = index
+                        showRaidUserDelete()
+                    }
+                )
                 if (openRaidDeleteDialog) {
                     DeleteRaidDialog(
                         confirm = {
@@ -141,87 +176,57 @@ fun FocusRaidView(
                     )
                 }
                 if (openRaidUserAddDialog && allUserList.isNotEmpty()) {
-                    val partyList = when (focusPartyIndex) {
-                        2 -> {
-                            raidInfo.party2characterList
-                        }
-
-                        1 -> {
-                            raidInfo.party1characterList
-                        }
-
-                        else -> {
-                            emptyList()
-                        }
-                    }
                     AddRaidUserSheet(
+                        raidInfo = raidInfo,
                         allUserList = allUserList,
                         db = db,
                         onDismissRequest = {
                             hideRaidUserAdd()
                         }
                     ) { character ->
-                        val partyTemp = partyList.toMutableList()
-                        partyTemp[focusIndex] = character.name
+                        val partyIndex = focusIndex / 4
+                        val tempList = if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                        val partyTemp = tempList.toMutableList()
+                        partyTemp[focusIndex % 4] = character.name
+
                         FireStoreHelper.updateRaidUser(
                             roomId,
                             raidInfo.raidId,
-                            focusPartyIndex,
+                            partyIndex + 1,
                             partyTemp
                         ) {
                             focusIndex = -1
-                            focusPartyIndex = 0
                             hideRaidUserAdd()
                         }
 
                     }
                 }
-            }
-        }
-    }
-}
 
-@Composable
-fun PartyView(
-    raidInfo: RaidInfo,
-    openAction: (index: Int, partyIndex: Int) -> Unit
-) {
-    val maxParty = raidInfo.getMaxParty()
-
-    Column() {
-        RaidPartyView(
-            list = raidInfo.party1characterList
-        ) { index ->
-            openAction(index, 1)
-        }
-        if (maxParty == 2) {
-            Divider()
-            RaidPartyView(
-                list = raidInfo.party2characterList
-            )
-            { index ->
-                openAction(index, 2)
-            }
-        }
-    }
-
-}
-
-@Composable
-fun RaidPartyView(
-    list: List<String>,
-    openAction: (index: Int) -> Unit
-) {
-    Card(
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 5.dp)
-        ) {
-            list.forEachIndexed { index, name ->
-                RaidUserView(name = name) {
-                    openAction(index)
+                if (openRaidUserDeleteDialog) {
+                    val partyIndex = focusIndex / 4
+                    val tempList =
+                        if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                    val partyTemp = tempList.toMutableList()
+                    partyTemp[focusIndex % 4] = ""
+                    DeleteRaidUserDialog(
+                        confirm = {
+                            FireStoreHelper.deleteRaidUserInfo(
+                                roomId,
+                                raidInfo.raidId,
+                                partyIndex = partyIndex +1,
+                                partyList = partyTemp,
+                                failAction = { e ->
+                                    Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            ) {
+                                hideRaidUserDelete()
+                            }
+                        },
+                        dismiss = {
+                            hideRaidUserDelete()
+                        }
+                    )
                 }
             }
         }
@@ -229,28 +234,48 @@ fun RaidPartyView(
 }
 
 @Composable
-fun RaidUserView(name: String, addAction: () -> Unit) {
-    val modifier = Modifier
-        .fillMaxWidth()
-        .height(40.dp)
-    if (name.isEmpty()) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "캐릭터를 추가해주세요")
-            MyIconButton(SharedRes.images.add) {
-                addAction()
+fun RaidPartyView(
+    list: List<Character?>,
+    openAction: (index: Int) -> Unit,
+    deleteAction: (index: Int) -> Unit,
+) {
+    Card(
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
+    ) {
+        LazyColumn(modifier = Modifier.padding(5.dp)) {
+            itemsIndexed(list) {index, item ->
+                val modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+
+                if (index == 4) {
+                    Divider()
+                }
+                if (item == null) {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "캐릭터를 추가해주세요")
+                        MyIconButton(SharedRes.images.add) {
+                            openAction(index)
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = item.name)
+                        MyIconButton(SharedRes.images.delete) {
+                            deleteAction(index)
+                        }
+                    }
+                }
             }
-        }
-    } else {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "$name")
         }
     }
 }

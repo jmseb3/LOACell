@@ -20,3 +20,19 @@ fun DeleteRaidDialog(
         }
     }
 }
+
+@Composable
+fun DeleteRaidUserDialog(
+    confirm: () -> Unit,
+    dismiss: () -> Unit
+) {
+    DeleteDialog(
+        title = "레이드 유저 정보 삭제",
+        confirm =  confirm,
+        dismiss = dismiss
+    ) {
+        Column() {
+            Text(text = "유저 정보를 삭제 하시겠습니까?")
+        }
+    }
+}

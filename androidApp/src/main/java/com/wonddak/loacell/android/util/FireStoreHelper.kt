@@ -163,24 +163,10 @@ object FireStoreHelper {
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
-            .document(raidId).let{ raidRef ->
-                when (partyIndex) {
-                    1 -> {
-                        raidRef.update("party1",partyList)
-                            .addOnSuccessListener {
-                                successAction()
-                            }
-                    }
-                    2 -> {
-                        raidRef.update("party2",partyList)
-                            .addOnSuccessListener {
-                                successAction()
-                            }
-                    }
-                    else -> {
-
-                    }
-                }
+            .document(raidId).
+            update("party$partyIndex",partyList)
+            .addOnSuccessListener {
+                successAction()
             }
     }
 
@@ -195,6 +181,26 @@ object FireStoreHelper {
             .collection("raidInfo")
             .document(raidId)
             .delete()
+            .addOnSuccessListener {
+                successAction()
+            }
+            .addOnFailureListener {e ->
+                failAction(e)
+            }
+    }
+    fun deleteRaidUserInfo(
+        roomId: String,
+        raidId: String,
+        partyIndex: Int,
+        partyList :List<String>,
+        failAction: (e:Exception) -> Unit,
+        successAction: () -> Unit
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("raidInfo")
+            .document(raidId)
+            .update("party$partyIndex",partyList)
             .addOnSuccessListener {
                 successAction()
             }

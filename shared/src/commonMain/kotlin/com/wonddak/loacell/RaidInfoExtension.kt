@@ -41,10 +41,3 @@ fun RaidInfo.getImg(): ImageResource? {
         }
     }
 }
-
-fun RaidInfo.getPartyList(): List<String> {
-    val result = mutableListOf<String>()
-    result.addAll(this.party1characterList.filter { it.isNotEmpty() })
-    result.addAll(this.party2characterList.filter { it.isNotEmpty() })
-    return  result
-}

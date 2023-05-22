@@ -45,32 +45,6 @@ class UserInfoQueriesHelper(
             .mapToList(Dispatchers.Main)
     }
 
-    fun getUsersByRoomIdFilterCharacter(
-        roomId: String,
-        nameList: List<String>
-    ): Flow<List<UserInfo>> {
-        return queries.selectByRoomId(roomId).asFlow()
-            .mapToList(Dispatchers.Main)
-            .transform {
-                try {
-                    val filter = it.filter { userInfo ->
-                        var result = true
-                        for (name in nameList) {
-                            if (userInfo.characterList.contains(name)) {
-                                result = false
-                                break
-                            }
-                        }
-                        result
-                    }
-                    emit(filter)
-                }catch (e:Exception) {
-                    println("JWH $e")
-                    emit(emptyList())
-                }
-            }
-    }
-
     fun getUsersByName(roomId: String, userName: String): Flow<UserInfo?> {
         return queries.selectByName(roomId, userName).asFlow()
             .mapToOneOrNull(Dispatchers.Main)
