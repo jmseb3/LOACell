@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.room.user
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
@@ -83,6 +85,7 @@ fun FocusUserView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
+    val context = LocalContext.current
     userInfo?.let { userInfo ->
         Box {
             Column(
@@ -100,7 +103,7 @@ fun FocusUserView(
                     Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
                     Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
                     Divider()
-                    UserInfoCharacters(userInfo.characterList,db)
+                    UserInfoCharacters(userInfo.characterList, db)
                     if (openCharacterEditDialog) {
                         EditCharacterDialog(
                             representativeCharacter = userInfo.representativeCharacter,
@@ -122,11 +125,16 @@ fun FocusUserView(
                         DeleteCharacterDialog(
                             name = userInfo.name,
                             confirm = {
-                                FireStoreHelper.deleteUser(roomId, userInfo.name) {
-                                    db.userInfoQueriesHelper.deleteUserName(userInfo.name, roomId)
+                                FireStoreHelper.deleteUser(
+                                    roomId,
+                                    userInfo.name,
+                                    failAction = { e ->
+                                        Toast.makeText(context,e.localizedMessage,Toast.LENGTH_SHORT).show()
+                                    }
+                                ) {
+                                    loaCellViewModel.clearFocusItem()
+                                    openCharacterDeleteDialog = false
                                 }
-                                loaCellViewModel.clearFocusItem()
-                                openCharacterDeleteDialog = false
                             },
                             dismiss = {
                                 openCharacterDeleteDialog = false
@@ -143,7 +151,8 @@ fun FocusUserView(
 
         LaunchedEffect(loaCellViewModel.showLoading) {
             if (loaCellViewModel.showLoading) {
-                val characterResult = LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
+                val characterResult =
+                    LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
                 characterResult.onSuccess { list ->
                     FireStoreHelper.addCharacters(list)
                     FireStoreHelper.addUser(
@@ -151,7 +160,7 @@ fun FocusUserView(
                         name = userInfo.name,
                         representativeCharacter = userInfo.representativeCharacter,
                         characterList = list,
-                        failAction = {e ->
+                        failAction = { e ->
                             launch {
                                 msg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
                                 delay(3_000L)

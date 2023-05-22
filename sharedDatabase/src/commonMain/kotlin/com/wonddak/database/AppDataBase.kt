@@ -2,6 +2,7 @@ package com.wonddak.database
 
 import app.cash.sqldelight.ColumnAdapter
 import com.wonddak.database.queriesHelper.CharacterInfoQueriesHelper
+import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.DriverFactory
@@ -9,7 +10,6 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
-import com.wonddak.loacell.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.loacell.queriesHelper.RoomInfoQueriesHelper
 
 class AppDataBase(driverFactory: DriverFactory) {

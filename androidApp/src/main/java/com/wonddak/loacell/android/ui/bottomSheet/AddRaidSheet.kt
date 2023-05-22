@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +53,25 @@ fun AddRaidSheet(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            var title by remember {
+                mutableStateOf("")
+            }
+            val textFieldModifier = Modifier
+                .fillMaxWidth()
+            AddRoomTextField(
+                modifier = textFieldModifier,
+                text = title,
+                label = "제목",
+                placeHolder = "제목을 입력하세요.",
+                maxLine = 1,
+                maxLength = 10,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                textChange = {
+                    title = it
+                }
+            )
             //타입
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -59,7 +80,7 @@ fun AddRaidSheet(
                 },
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.menuAnchor(),
+                    modifier = textFieldModifier.menuAnchor().padding(horizontal = 10.dp),
                     value = nowType.toKorString(),
                     onValueChange = {},
                     readOnly = true,
@@ -256,6 +277,7 @@ fun AddRaidSheet(
                 onClick = {
                     FireStoreHelper.addRaidInfo(
                         roomId,
+                        title,
                         nowType,
                         nowDifficulty,
                         if(nowType == RaidType.ABRELSHUD) startGateNumber else 1,

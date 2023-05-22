@@ -1,8 +1,8 @@
-package com.wonddak.loacell.queriesHelper
+package com.wonddak.database.queriesHelper
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
 import com.wonddak.loacell.model.Difficulty
@@ -21,9 +21,9 @@ class RaidInfoQueriesHelper(
         return queries.selectByRoomId(roomId).executeAsList()
     }
 
-    fun getRaidInfoById(roomId: String,raidId: String): Flow<RaidInfo> {
+    fun getRaidInfoById(roomId: String,raidId: String): Flow<RaidInfo?> {
         return queries.selectByRaidId(roomId,raidId).asFlow()
-            .mapToOne(Dispatchers.Main)
+            .mapToOneOrNull(Dispatchers.Main)
     }
 
     fun addRaidInfo(

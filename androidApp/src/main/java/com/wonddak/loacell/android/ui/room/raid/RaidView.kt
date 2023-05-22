@@ -1,8 +1,8 @@
 package com.wonddak.loacell.android.ui.room.raid
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
@@ -30,6 +30,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
 import com.wonddak.loacell.getRaidText
@@ -84,6 +85,7 @@ fun FocusRaidView(
             loaCellViewModel.clearFocusItem()
         }
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
+        val context = LocalContext.current
         raidInfo?.let { raidInfo ->
             val maxParty = raidInfo.getMaxParty()
             Column() {
@@ -95,6 +97,28 @@ fun FocusRaidView(
             } else {
                 MultiplePartyView(raidInfo)
             }
+            loaCellViewModel.apply {
+                if (openRaidDeleteDialog) {
+                DeleteRaidDialog(
+                    confirm = {
+                        FireStoreHelper.deleteRaidInfo(
+                            roomId,
+                            raidInfo.raidId,
+                            failAction = { e ->
+                                Toast.makeText(context,e.localizedMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        ) {
+                            clearFocusItem()
+                            openRaidDeleteDialog = false
+                        }
+                    },
+                    dismiss = {
+                        openRaidDeleteDialog = false
+                    }
+                )
+            }
+            }
+
         }
     }
 }

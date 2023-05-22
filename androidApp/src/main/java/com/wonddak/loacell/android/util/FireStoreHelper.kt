@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 
 object FireStoreHelper {
 
+    //region room
     fun addRoomInfo(
         title: String,
         description: String,
@@ -33,7 +34,9 @@ object FireStoreHelper {
             }
         }
     }
+    //endregion
 
+    //region User
     fun addUser(
         roomId: String,
         name: String,
@@ -96,6 +99,7 @@ object FireStoreHelper {
     fun deleteUser(
         roomId: String,
         userName: String,
+        failAction: (e:Exception) -> Unit,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms")
@@ -106,10 +110,16 @@ object FireStoreHelper {
             .addOnSuccessListener {
                 successAction()
             }
+            .addOnFailureListener {e ->
+                failAction(e)
+            }
     }
+    //endregion
 
+    //region Raid
     fun addRaidInfo(
         roomId: String,
+        title: String,
         type: RaidType,
         difficulty: Difficulty,
         startGateNumber: Int,
@@ -118,7 +128,7 @@ object FireStoreHelper {
         successAction: () -> Unit
     ) {
         val data = HashMap<String, Any>()
-        data["title"] = "test"
+        data["title"] = title
         data["type"] = type.name
         data["difficulty"] = difficulty.name
         data["startGateNumber"] = startGateNumber
@@ -138,6 +148,25 @@ object FireStoreHelper {
             }
     }
 
+    fun deleteRaidInfo(
+        roomId: String,
+        raidId: String,
+        failAction: (e:Exception) -> Unit,
+        successAction: () -> Unit
+    ) {
+        Firebase.firestore.collection("rooms")
+            .document(roomId)
+            .collection("raidInfo")
+            .document(raidId)
+            .delete()
+            .addOnSuccessListener {
+                successAction()
+            }
+            .addOnFailureListener {e ->
+                failAction(e)
+            }
+    }
+    //endregion
     fun addCharacters(
         characterList: List<CharacterInfo>
     ) {

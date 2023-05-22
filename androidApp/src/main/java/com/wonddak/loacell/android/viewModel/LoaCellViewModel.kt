@@ -90,7 +90,7 @@ class LoaCellViewModel(
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
                             dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
-                                it.characterList.forEach { name ->
+                                it?.characterList?.forEach { name ->
                                     observeCharacter.add(FireStoreHelper.observeCharacter(name,dataBase))
                                 }
                                 _userInfo.value = it
@@ -167,7 +167,7 @@ class LoaCellViewModel(
 
     var openCharacterEditDialog by mutableStateOf(false)
     var openCharacterDeleteDialog by mutableStateOf(false)
-    var openRaidUserDeleteDialog by mutableStateOf(false)
+    var openRaidDeleteDialog by mutableStateOf(false)
 
     fun hideRaidDialog() {
         showRaidAdd = false
@@ -199,7 +199,7 @@ class LoaCellViewModel(
             }
             if (focusRaidId.value.isNotEmpty()) {
                 Log.i("JWH-B","33--Focus Raid")
-                openRaidUserDeleteDialog = true
+                openRaidDeleteDialog = true
                 return
             }
             if (tabState == 0) {

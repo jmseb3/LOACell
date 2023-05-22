@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.android.ui.common.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +47,9 @@ fun EditCharacterDialog(
                 )
 
                 ExposedDropdownMenu(
-                    modifier = Modifier.height(200.dp).background(Color.White),
+                    modifier = Modifier
+                        .height(200.dp)
+                        .background(Color.White),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
@@ -94,33 +97,13 @@ fun DeleteCharacterDialog(
     confirm: () -> Unit,
     dismiss: () -> Unit
 ) {
-
-    AlertDialog(
-        onDismissRequest = dismiss,
-        title = {
-            Text(text = "유저 정보 삭제")
-        },
-        text = {
-            Column() {
-                Text(text = "${name}님 의 정보를 삭제 하시겠습니까?")
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    confirm()
-                },
-            ) {
-                Text("삭제")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = dismiss
-            ) {
-                Text("취소")
-            }
-        },
-        shape = RoundedCornerShape(24.dp)
-    )
+    DeleteDialog(
+        title = "유저 정보 삭제",
+        confirm = confirm,
+        dismiss = dismiss
+    ) {
+        Column() {
+            Text(text = "${name}님 의 정보를 삭제 하시겠습니까?")
+        }
+    }
 }
