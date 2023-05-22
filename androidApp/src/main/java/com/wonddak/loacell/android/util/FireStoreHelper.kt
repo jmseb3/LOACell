@@ -1,13 +1,14 @@
 package com.wonddak.loacell.android.util
 
 import android.util.Log
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.convertDifficulty
 import com.wonddak.loacell.convertType
+import com.wonddak.loacell.model.Difficulty
+import com.wonddak.loacell.model.RaidType
 import com.wonddak.sharedapi.model.CharacterInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -113,7 +114,7 @@ object FireStoreHelper {
         difficulty: Difficulty,
         startGateNumber: Int,
         endGateNumber: Int,
-        failAction:(e:Exception) -> Unit ={},
+        failAction: (e: Exception) -> Unit = {},
         successAction: () -> Unit
     ) {
         val data = HashMap<String, Any>()
@@ -123,8 +124,8 @@ object FireStoreHelper {
         data["startGateNumber"] = startGateNumber
         data["endGateNumber"] = endGateNumber
         data["isFinish"] = false
-        data["party1"] = listOf("","","","")
-        data["party2"] = listOf("","","","")
+        data["party1"] = listOf("", "", "", "")
+        data["party2"] = listOf("", "", "", "")
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
@@ -132,7 +133,7 @@ object FireStoreHelper {
             .addOnSuccessListener {
                 successAction()
             }
-            .addOnFailureListener { e->
+            .addOnFailureListener { e ->
                 failAction(e)
             }
     }
@@ -142,6 +143,7 @@ object FireStoreHelper {
     ) {
         characterList.forEach { addCharacter(it) }
     }
+
     private fun addCharacter(
         character: CharacterInfo
     ) {
@@ -185,8 +187,8 @@ object FireStoreHelper {
     fun observeRoomInfo(
         roomId: String,
         db: AppDataBase
-    ) {
-        Firebase.firestore.collection("rooms")
+    ): ListenerRegistration {
+        return Firebase.firestore.collection("rooms")
             .document(roomId)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -201,7 +203,7 @@ object FireStoreHelper {
                         value.data?.let {
                             val title = it["title"] as String
                             val description = it["description"] as String
-                            db.roomInfoQueriesHelper.updateRoomInfo(title,description,roomId)
+                            db.roomInfoQueriesHelper.updateRoomInfo(title, description, roomId)
                         }
                     }
                 } else {
@@ -214,8 +216,8 @@ object FireStoreHelper {
     fun observeUsers(
         roomId: String,
         db: AppDataBase
-    ) {
-        Firebase.firestore.collection("rooms")
+    ): ListenerRegistration {
+        return Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("users")
             .addSnapshotListener { value, error ->
@@ -228,7 +230,9 @@ object FireStoreHelper {
                     Log.i("JWH", "Listen Users")
                     // 현재 방에 있는 유저 목록 가져옴
                     CoroutineScope(Dispatchers.IO).launch {
-                        val dbUserList = db.userInfoQueriesHelper.getUsersByRoomIdValue(roomId).map { it.name }.toMutableSet()
+                        val dbUserList =
+                            db.userInfoQueriesHelper.getUsersByRoomIdValue(roomId).map { it.name }
+                                .toMutableSet()
                         // 이름 조회..
                         withContext(Dispatchers.IO) {
                             value.documents.forEach {
@@ -240,38 +244,26 @@ object FireStoreHelper {
                                 val timeStamp = it.data!!["timeStamp"] as Long
                                 Log.i("JWH", "Listen Users == $userName")
                                 Log.i("JWH", characterList.joinToString("|"))
-
-                                //1 캐릭터 정보 업데이트
-                                launch {
-                                    characterList.forEach {characterName ->
-                                        observeCharacters(characterName) {className,level,server ->
-                                            db.characterInfoQueriesHelper.updateCharacter(characterName, server, className, level)
-                                        }
-                                    }
-                                }
-                                //2. 유저정보 업데이트
-                                launch {
-                                    //이미 값이 있는 경우
-                                    if (userName in dbUserList) {
-                                        //업데이트
-                                        db.userInfoQueriesHelper.updateUserInfo(
-                                            userName,
-                                            characterList,
-                                            roomId,
-                                            representativeCharacter,
-                                            timeStamp
-                                        )
-                                        dbUserList.remove(userName)
-                                    } else {
-                                        //없는 경우 추가
-                                        db.userInfoQueriesHelper.addUser(
-                                            userName,
-                                            roomId,
-                                            representativeCharacter,
-                                            characterList,
-                                            timeStamp
-                                        )
-                                    }
+                                //이미 값이 있는 경우
+                                if (userName in dbUserList) {
+                                    //업데이트
+                                    db.userInfoQueriesHelper.updateUserInfo(
+                                        userName,
+                                        characterList,
+                                        roomId,
+                                        representativeCharacter,
+                                        timeStamp
+                                    )
+                                    dbUserList.remove(userName)
+                                } else {
+                                    //없는 경우 추가
+                                    db.userInfoQueriesHelper.addUser(
+                                        userName,
+                                        roomId,
+                                        representativeCharacter,
+                                        characterList,
+                                        timeStamp
+                                    )
                                 }
                             }
                         }
@@ -286,12 +278,13 @@ object FireStoreHelper {
                 }
             }
     }
+
     //현재 들어간 roomId의 유저 정보들의 캐릭터 정보를 갱신
-    fun observeCharacters(
+    fun observeCharacter(
         characterName: String,
-        successAction: (className: String, level: String, server: String) -> Unit
-    ) {
-        Firebase.firestore.collection("characters")
+        db: AppDataBase
+    ) :ListenerRegistration{
+        return Firebase.firestore.collection("characters")
             .document(characterName)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -303,8 +296,12 @@ object FireStoreHelper {
                         val className = data["className"] as String
                         val level = data["level"] as String
                         val server = data["server"] as String
-                        successAction(
-                            className, level, server
+                        Log.d("JWH", "Listen characters value :$characterName")
+                        db.characterInfoQueriesHelper.updateCharacter(
+                            characterName,
+                            server,
+                            className,
+                            level
                         )
                     }
                 } else {
@@ -317,8 +314,8 @@ object FireStoreHelper {
     fun observeRaid(
         roomId: String,
         db: AppDataBase
-    ) {
-        Firebase.firestore.collection("rooms")
+    ): ListenerRegistration {
+        return Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
             .addSnapshotListener { value, error ->
@@ -331,8 +328,10 @@ object FireStoreHelper {
                     Log.i("JWH", "Listen raidInfo")
                     // 현재 있는 레이드 정보를 가져옴
                     CoroutineScope(Dispatchers.IO).launch {
-                        val dbRaidList = db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }.toMutableSet()
-                        Log.i("JWH",dbRaidList.toString())
+                        val dbRaidList =
+                            db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }
+                                .toMutableSet()
+                        Log.i("JWH", dbRaidList.toString())
                         // 레이드 id 조회..
                         withContext(Dispatchers.IO) {
                             value.documents.forEach {
@@ -384,7 +383,7 @@ object FireStoreHelper {
 
                         // 동작이 끝난후 남아있다면
                         dbRaidList.forEach { name ->
-                            db.raidInfoQueriesHelper.delete(name,roomId)
+                            db.raidInfoQueriesHelper.delete(name, roomId)
                         }
                     }
                 } else {

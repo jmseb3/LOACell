@@ -100,15 +100,7 @@ fun FocusUserView(
                     Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
                     Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
                     Divider()
-                    LazyColumn {
-                        items(userInfo.characterList.map {
-                            db.characterInfoQueriesHelper.getCharacterValue(
-                                it
-                            )
-                        }) { character ->
-                            character?.let { UserInfoCharacters(it) }
-                        }
-                    }
+                    UserInfoCharacters(userInfo.characterList,db)
                     if (openCharacterEditDialog) {
                         EditCharacterDialog(
                             representativeCharacter = userInfo.representativeCharacter,

@@ -1,4 +1,4 @@
-package com.wonddak.loacell.queriesHelper;
+package com.wonddak.database.queriesHelper;
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList

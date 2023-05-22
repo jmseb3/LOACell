@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.ListenerRegistration
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
@@ -50,22 +51,30 @@ class LoaCellViewModel(
     private var userInfoJob : Job? = null
     private var raidInfoJob : Job? = null
     private var roomInfoJob : Job? = null
+
+    private var observeRoom : ListenerRegistration? = null
+    private var observeUser : ListenerRegistration? = null
+    private var observeCharacter : MutableList<ListenerRegistration> = mutableListOf()
+    private var observeRaid : ListenerRegistration? = null
     init {
         viewModelScope.launch {
             //room 정보 갱신
             launch {
                 roomId.collect {id ->
                     if (id.isNotEmpty()) {
+                        observeRoom = FireStoreHelper.observeRoomInfo(id, dataBase)
+                        observeUser = FireStoreHelper.observeUsers(id, dataBase)
+                        observeRaid = FireStoreHelper.observeRaid(id, dataBase)
                         roomInfoJob = launch {
-                            FireStoreHelper.observeRoomInfo(id, dataBase)
-                            FireStoreHelper.observeUsers(id, dataBase)
-                            FireStoreHelper.observeRaid(id, dataBase)
                             dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
                                 _roomInfo.value =  it
                             }
                         }
                     } else {
                         roomInfoJob?.cancel()
+                        observeRoom?.remove()
+                        observeUser?.remove()
+                        observeRaid?.remove()
                         _roomInfo.value = null
                     }
                 }
@@ -81,11 +90,16 @@ class LoaCellViewModel(
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
                             dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
+                                it.characterList.forEach { name ->
+                                    observeCharacter.add(FireStoreHelper.observeCharacter(name,dataBase))
+                                }
                                 _userInfo.value = it
                             }
                         }
                     } else {
                         userInfoJob?.cancel()
+                        observeCharacter.forEach { it.remove() }
+                        observeCharacter.clear()
                         _userInfo.value = null
                     }
                 }

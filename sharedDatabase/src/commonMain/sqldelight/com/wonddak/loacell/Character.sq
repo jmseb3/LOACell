@@ -12,6 +12,9 @@ VALUES (?,?,?,?);
 getCharacterInfo:
 SELECT * FROM Character WHERE name = ?;
 
+getCharacterInfos:
+SELECT * FROM Character WHERE name IN ?;
+
 updateCharacterInfo:
 UPDATE Character SET server = ?, className =?, level =? WHERE name =?;
 
