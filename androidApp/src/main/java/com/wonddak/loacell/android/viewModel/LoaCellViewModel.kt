@@ -54,7 +54,6 @@ class LoaCellViewModel(
 
     private var observeRoom : ListenerRegistration? = null
     private var observeUser : ListenerRegistration? = null
-    private var observeCharacter : MutableList<ListenerRegistration> = mutableListOf()
     private var observeRaid : ListenerRegistration? = null
     init {
         viewModelScope.launch {
@@ -90,16 +89,11 @@ class LoaCellViewModel(
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
                             dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
-                                it?.characterList?.forEach { name ->
-                                    observeCharacter.add(FireStoreHelper.observeCharacter(name,dataBase))
-                                }
                                 _userInfo.value = it
                             }
                         }
                     } else {
                         userInfoJob?.cancel()
-                        observeCharacter.forEach { it.remove() }
-                        observeCharacter.clear()
                         _userInfo.value = null
                     }
                 }
@@ -165,10 +159,6 @@ class LoaCellViewModel(
         showSetting = false
     }
 
-    var openCharacterEditDialog by mutableStateOf(false)
-    var openCharacterDeleteDialog by mutableStateOf(false)
-    var openRaidDeleteDialog by mutableStateOf(false)
-
     fun hideRaidDialog() {
         showRaidAdd = false
     }
@@ -176,6 +166,32 @@ class LoaCellViewModel(
     fun hideUserDialog() {
         showUserAdd = false
     }
+
+    var openCharacterEditDialog by mutableStateOf(false)
+    var openCharacterDeleteDialog by mutableStateOf(false)
+    var openRaidDeleteDialog by mutableStateOf(false)
+    var openRaidUserAddDialog by mutableStateOf(false)
+        private set
+
+    var raidUserIndex by mutableStateOf(0)
+        private set
+    var raidFocusList :List<String> by mutableStateOf(emptyList())
+        private set
+    fun showRaidUserAdd(
+        index:Int,
+        list :List<String>
+    ) {
+        openRaidUserAddDialog = true
+        raidUserIndex = index
+        raidFocusList = list
+    }
+
+    fun hideRaidUserAdd() {
+        openRaidUserAddDialog = false
+    }
+
+
+
     // endregion
 
     var tabState by mutableStateOf(0)

@@ -7,6 +7,7 @@ import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.UserInfoQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.transform
 
 class UserInfoQueriesHelper(
     private val queries: UserInfoQueries
@@ -42,6 +43,27 @@ class UserInfoQueriesHelper(
     fun getUsersByRoomId(roomId: String): Flow<List<UserInfo>> {
         return queries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
+    }
+
+    fun getUsersByRoomIdFilterCharacter(
+        roomId: String,
+        nameList: List<String>
+    ): Flow<List<UserInfo>> {
+        return queries.selectByRoomId(roomId).asFlow()
+            .mapToList(Dispatchers.Main)
+            .transform {
+                val filter = it.filter { userInfo ->
+                    var result = true
+                    for (name in nameList) {
+                        if (userInfo.characterList.contains(name)) {
+                            result = false
+                            break
+                        }
+                    }
+                    result
+                }
+                emit(filter)
+            }
     }
 
     fun getUsersByName(roomId: String, userName: String): Flow<UserInfo?> {

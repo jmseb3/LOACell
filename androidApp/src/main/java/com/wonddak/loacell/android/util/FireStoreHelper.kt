@@ -1,6 +1,7 @@
 package com.wonddak.loacell.android.util
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -48,7 +49,7 @@ object FireStoreHelper {
         Firebase.firestore.let { fs ->
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
-            userData["characterList"] = characterList.map { it.characterName }
+            userData["characterList"] = characterList.map { Firebase.firestore.collection("characters").document(it.characterName) }
             userData["timeStamp"] = System.currentTimeMillis()
             fs.collection("rooms")
                 .document(roomId)
@@ -269,30 +270,60 @@ object FireStoreHelper {
 
                                 val representativeCharacter =
                                     it.data!!["representativeCharacter"] as String
-                                val characterList = it.data!!["characterList"] as List<String>
+                                val characterList = it.data!!["characterList"] as List<DocumentReference>
+                                val characterNameList = characterList.map { it.id }
                                 val timeStamp = it.data!!["timeStamp"] as Long
                                 Log.i("JWH", "Listen Users == $userName")
                                 Log.i("JWH", characterList.joinToString("|"))
-                                //이미 값이 있는 경우
-                                if (userName in dbUserList) {
-                                    //업데이트
-                                    db.userInfoQueriesHelper.updateUserInfo(
-                                        userName,
-                                        characterList,
-                                        roomId,
-                                        representativeCharacter,
-                                        timeStamp
-                                    )
-                                    dbUserList.remove(userName)
-                                } else {
-                                    //없는 경우 추가
-                                    db.userInfoQueriesHelper.addUser(
-                                        userName,
-                                        roomId,
-                                        representativeCharacter,
-                                        characterList,
-                                        timeStamp
-                                    )
+                                launch {
+                                    characterList.forEach { documentReference ->
+                                        val characterName = documentReference.id
+                                        documentReference.addSnapshotListener {value, error ->
+                                            if (error != null) {
+                                                Log.w("JWH", "Characters Listen failed.", error)
+                                                return@addSnapshotListener
+                                            }
+                                            if (value != null) {
+                                                value.data?.let { data ->
+                                                    val className = data["className"] as String
+                                                    val level = data["level"] as String
+                                                    val server = data["server"] as String
+                                                    Log.d("JWH", "Listen characters value :$characterName")
+                                                    db.characterInfoQueriesHelper.updateCharacter(
+                                                        characterName,
+                                                        server,
+                                                        className,
+                                                        level
+                                                    )
+                                                }
+                                            } else {
+                                                Log.d("JWH", "Listen characters value null")
+                                            }
+                                        }
+                                    }
+                                }
+                                launch {
+                                    //이미 값이 있는 경우
+                                    if (userName in dbUserList) {
+                                        //업데이트
+                                        db.userInfoQueriesHelper.updateUserInfo(
+                                            userName,
+                                            characterNameList,
+                                            roomId,
+                                            representativeCharacter,
+                                            timeStamp
+                                        )
+                                        dbUserList.remove(userName)
+                                    } else {
+                                        //없는 경우 추가
+                                        db.userInfoQueriesHelper.addUser(
+                                            userName,
+                                            roomId,
+                                            representativeCharacter,
+                                            characterNameList,
+                                            timeStamp
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -304,37 +335,6 @@ object FireStoreHelper {
                     }
                 } else {
                     Log.d("JWH", "Current data: null")
-                }
-            }
-    }
-
-    //현재 들어간 roomId의 유저 정보들의 캐릭터 정보를 갱신
-    fun observeCharacter(
-        characterName: String,
-        db: AppDataBase
-    ) :ListenerRegistration{
-        return Firebase.firestore.collection("characters")
-            .document(characterName)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    Log.w("JWH", "Characters Listen failed.", error)
-                    return@addSnapshotListener
-                }
-                if (value != null) {
-                    value.data?.let { data ->
-                        val className = data["className"] as String
-                        val level = data["level"] as String
-                        val server = data["server"] as String
-                        Log.d("JWH", "Listen characters value :$characterName")
-                        db.characterInfoQueriesHelper.updateCharacter(
-                            characterName,
-                            server,
-                            className,
-                            level
-                        )
-                    }
-                } else {
-                    Log.d("JWH", "Listen characters value null")
                 }
             }
     }

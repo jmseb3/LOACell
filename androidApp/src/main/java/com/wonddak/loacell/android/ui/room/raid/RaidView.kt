@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.room.raid
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -87,74 +91,89 @@ fun FocusRaidView(
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
         val context = LocalContext.current
         raidInfo?.let { raidInfo ->
-            val maxParty = raidInfo.getMaxParty()
             Column() {
                 Text(text = raidInfo.getRaidText())
                 Text(text = raidInfo.makeGateText())
             }
-            if (maxParty == 1) {
-                SinglePartyView(raidInfo)
-            } else {
-                MultiplePartyView(raidInfo)
-            }
+            PartyView(raidInfo,loaCellViewModel)
             loaCellViewModel.apply {
                 if (openRaidDeleteDialog) {
-                DeleteRaidDialog(
-                    confirm = {
-                        FireStoreHelper.deleteRaidInfo(
-                            roomId,
-                            raidInfo.raidId,
-                            failAction = { e ->
-                                Toast.makeText(context,e.localizedMessage, Toast.LENGTH_SHORT).show()
+                    DeleteRaidDialog(
+                        confirm = {
+                            FireStoreHelper.deleteRaidInfo(
+                                roomId,
+                                raidInfo.raidId,
+                                failAction = { e ->
+                                    Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            ) {
+                                clearFocusItem()
+                                openRaidDeleteDialog = false
                             }
-                        ) {
-                            clearFocusItem()
+                        },
+                        dismiss = {
                             openRaidDeleteDialog = false
                         }
-                    },
-                    dismiss = {
-                        openRaidDeleteDialog = false
+                    )
+                }
+                loaCellViewModel.apply {
+                    if (openRaidUserAddDialog) {
+                        BottomSheetDialog(
+                            onDismissRequest = { hideRaidUserAdd() },
+                            properties = BottomSheetDialogProperties(dismissWithAnimation = true),
+                        ) {
+                            AddRaidUserSheet(roomId = roomId,loaCellViewModel,db) {
+                                hideRaidUserAdd()
+                            }
+                        }
                     }
-                )
+                }
             }
-            }
-
         }
     }
 }
 
 @Composable
-fun SinglePartyView(
-    raidInfo: RaidInfo
+fun PartyView(
+    raidInfo: RaidInfo,
+    loaCellViewModel: LoaCellViewModel
 ) {
+    val maxParty = raidInfo.getMaxParty()
+
     Column() {
-        RaidPartyView(list = raidInfo.party1characterList)
+        RaidPartyView(list = raidInfo.party1characterList,loaCellViewModel)
+        if (maxParty == 2) {
+            Divider()
+            RaidPartyView(list = raidInfo.party2characterList,loaCellViewModel)
+        }
     }
 }
-
-@Composable
-fun MultiplePartyView(raidInfo: RaidInfo) {
-    Column {
-        RaidPartyView(list = raidInfo.party1characterList)
-        Divider()
-        RaidPartyView(list = raidInfo.party2characterList)
-    }
-}
-
 
 @Composable
 fun RaidPartyView(
-    list: List<String>
+    list: List<String>,
+    loaCellViewModel: LoaCellViewModel,
 ) {
-    Column() {
-        list.forEachIndexed { index, name ->
-            RaidUserView(name = name, index = index)
+    Card(
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 5.dp)
+        ) {
+            list.forEachIndexed { index, name ->
+                RaidUserView(name = name) {
+                    loaCellViewModel.showRaidUserAdd(index,list)
+                }
+            }
         }
     }
+
 }
 
 @Composable
-fun RaidUserView(name: String, index: Int) {
+fun RaidUserView(name: String, addAction: () -> Unit) {
     if (name.isEmpty()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -163,6 +182,7 @@ fun RaidUserView(name: String, index: Int) {
         ) {
             Text(text = "캐릭터를 추가해주세요")
             MyIconButton(SharedRes.images.add) {
+                addAction()
             }
         }
     } else {
@@ -174,15 +194,4 @@ fun RaidUserView(name: String, index: Int) {
             Text(text = "$name")
         }
     }
-}
-
-@Composable
-@Preview
-fun RaidUserViewPreview() {
-    Column {
-        RaidUserView("아이스크림",0)
-        Divider()
-        RaidUserView(name = "",1)
-    }
-
 }
