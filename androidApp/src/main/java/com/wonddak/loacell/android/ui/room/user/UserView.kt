@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -100,14 +99,17 @@ fun FocusUserView(
 
                 loaCellViewModel.apply {
 
-                    Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
-                    Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
-                    Divider()
-                    UserInfoCharacters(userInfo.characterList, db)
+                    val characterList by db.characterInfoQueriesHelper.getCharacterValueFlow(userInfo).collectAsState(
+                        initial = emptyList()
+                    )
+//                    Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
+//                    Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
+//                    Divider()
+                    UserInfoCharacters(characterList,userInfo.representativeCharacter)
                     if (openCharacterEditDialog) {
                         EditCharacterDialog(
                             representativeCharacter = userInfo.representativeCharacter,
-                            characters = userInfo.characterList,
+                            characters = characterList,
                             confirm = { name ->
                                 FireStoreHelper.updateUserCharacter(
                                     roomId,

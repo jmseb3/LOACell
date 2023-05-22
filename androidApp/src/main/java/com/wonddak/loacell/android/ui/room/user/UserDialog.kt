@@ -9,13 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.android.ui.common.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCharacterDialog(
     representativeCharacter: String,
-    characters: List<String>,
+    characters: List<Character>,
     confirm: (name: String) -> Unit,
     dismiss: () -> Unit
 ) {
@@ -57,12 +58,12 @@ fun EditCharacterDialog(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = item,
-                                    fontWeight = if (selectedText == item) FontWeight.Bold else FontWeight.Normal
+                                    text = item.name,
+                                    fontWeight = if (selectedText == item.name) FontWeight.Bold else FontWeight.Normal
                                 )
                             },
                             onClick = {
-                                selectedText = item
+                                selectedText = item.name
                                 expanded = false
                             },
                         )

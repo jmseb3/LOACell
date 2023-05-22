@@ -5,27 +5,30 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.Character
 
 @Composable
 fun UserInfoCharacter(
-    character : Character
+    character : Character,
+    representativeCharacter :String
 ) {
+    val doBold = representativeCharacter == character.name
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.dp)
     ) {
-        Text(text = character.name)
+        Text(
+            text = character.name,
+            fontWeight = if (doBold) FontWeight.Bold else FontWeight.Normal
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,20 +43,20 @@ fun UserInfoCharacter(
                 modifier = modifier
             )
         }
-        Divider()
     }
 }
 @Composable
 fun UserInfoCharacters(
-    characterNameList :List<String>,
-    db :AppDataBase,
+    characterList: List<Character>,
+    representativeCharacter :String
 ) {
-    val characterList by db.characterInfoQueriesHelper.getCharacterValueFlow(characterNameList).collectAsState(
-        initial = emptyList()
-    )
+
     LazyColumn {
-        items(characterList) { character ->
-            UserInfoCharacter(character)
+        itemsIndexed(characterList) { index,character ->
+            UserInfoCharacter(character,representativeCharacter)
+            if (index != characterList.size -1) {
+                Divider()
+            }
         }
     }
 }
