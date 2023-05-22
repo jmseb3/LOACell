@@ -43,7 +43,7 @@ object Dependencies {
                 "androidx.compose:compose-bom:${Versions.Dependencies.Android.Compose.bomVersion}"
             const val UIPreview = "androidx.compose.ui:ui-tooling-preview"
             const val UITooling = "androidx.compose.ui:ui-tooling"
-            const val Material3 = "androidx.compose.material3:material3:1.1.0"
+            const val Material3 = "androidx.compose.material3:material3:1.2.0-alpha01"
             const val Activity =
                 "androidx.activity:activity-compose:${Versions.Dependencies.Android.Compose.activity}"
 

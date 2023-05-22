@@ -1,15 +1,10 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,29 +13,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRoomSheet(
+    onDismissRequest: () -> Unit,
     addAction: (title: String, description: String) -> Unit
 ) {
-    BaseSheet(title = "방 만들기") {
+    var title by remember {
+        mutableStateOf("")
+    }
+
+    var description by remember {
+        mutableStateOf("")
+    }
+
+    var errorMsg by remember {
+        mutableStateOf("")
+    }
+
+    BaseSheet(
+        title = "방 만들기",
+        onDismissRequest = onDismissRequest,
+        buttonClickAction = {
+            if (title.isNotEmpty()) {
+                addAction(title, description)
+            } else {
+                errorMsg = "제목이 비어있습니다."
+            }
+
+        },
+        errorMsg =  errorMsg,
+        updateErrorMsg = {errorMsg = it}
+    ) {
         Column() {
-            var title by remember {
-                mutableStateOf("")
-            }
-
-            var description by remember {
-                mutableStateOf("")
-            }
             val focusManager = LocalFocusManager.current
-
             val textFieldModifier = Modifier
                 .fillMaxWidth()
-            AddRoomTextField(
+            LengthLimitTextField(
                 modifier = textFieldModifier,
                 text = title,
                 label = "제목",
@@ -54,7 +66,7 @@ fun AddRoomSheet(
                     title = it
                 }
             )
-            AddRoomTextField(
+            LengthLimitTextField(
                 modifier = textFieldModifier,
                 text = description,
                 label = "방 설명",
@@ -64,73 +76,15 @@ fun AddRoomSheet(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions {
-                    focusManager.clearFocus()
-                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
                 textChange = {
                     description = it
                 }
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedButton(
-                onClick = {
-                    addAction(title, description)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = "ADD")
-            }
         }
     }
-}
-
-@Composable
-fun AddRoomTextField(
-    modifier: Modifier,
-    text: String,
-    label: String,
-    placeHolder: String,
-    maxLine: Int,
-    maxLength: Int,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(),
-    keyboardActions: KeyboardActions = KeyboardActions(),
-    textChange: (text: String) -> Unit
-) {
-
-    Column(
-        modifier = modifier.padding(10.dp),
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "${text.length}/$maxLength",
-            textAlign = TextAlign.End
-        )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = text,
-            onValueChange = {
-                if (it.length <= maxLength) {
-                    textChange(it)
-                } else {
-
-                }
-            },
-            label = {
-                Text(text = label)
-            },
-            placeholder = {
-                Text(text = placeHolder)
-            },
-            maxLines = maxLine,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AddRoomSheetPreview() {
-    AddRoomSheet(addAction = { _, _ -> })
 }

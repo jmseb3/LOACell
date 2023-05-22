@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -39,8 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.SharedRes
@@ -152,30 +149,19 @@ fun MainContent(
                 }
                 val context = LocalContext.current
                 if (loaCellViewModel.showRoomAdd) {
-                    BottomSheetDialog(
-                        onDismissRequest = { loaCellViewModel.showRoomAdd = false },
-                        properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-                    ) {
-                        AddRoomSheet() { title, description ->
-                            if (title.isNotEmpty()) {
-                                FireStoreHelper.addRoomInfo(
-                                    title, description
-                                ) { id ->
-                                    db.roomInfoQueriesHelper.addRoomInfo(
-                                        title,
-                                        description,
-                                        id
-                                    )
-                                }
-                                loaCellViewModel.showRoomAdd = false
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "title이 비어있습니다.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                    AddRoomSheet(
+                        onDismissRequest = { loaCellViewModel.showRoomAdd = false }
+                    ) { title, description ->
+                        FireStoreHelper.addRoomInfo(
+                            title, description
+                        ) { id ->
+                            db.roomInfoQueriesHelper.addRoomInfo(
+                                title,
+                                description,
+                                id
+                            )
                         }
+                        loaCellViewModel.showRoomAdd = false
                     }
                 }
             }

@@ -11,14 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
-import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
+import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
 import com.wonddak.loacell.android.ui.room.raid.RaidView
-import com.wonddak.loacell.android.ui.room.user.AddUserView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
@@ -57,37 +54,24 @@ fun RoomView(
             }
 
             if (loaCellViewModel.showRaidAdd) {
-                BackHandler(true) {
-                    loaCellViewModel.hideRaidDialog()
-                }
-                BottomSheetDialog(
-                    onDismissRequest = { loaCellViewModel.hideRaidDialog() },
-                    properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-                ) {
-                    AddRaidSheet(roomInfo.uniqueId) {
+                AddRaidSheet(
+                    roomInfo.uniqueId,
+                    onDismissRequest = {
                         loaCellViewModel.hideRaidDialog()
                     }
+                ) {
+                    loaCellViewModel.hideRaidDialog()
                 }
             }
 
             if (loaCellViewModel.showUserAdd) {
-                BackHandler(true) {
-                    loaCellViewModel.hideUserDialog()
-                }
-                BottomSheetDialog(
+                AddUserSheet(
+                    roomId = roomInfo.uniqueId,
                     onDismissRequest = {
                         loaCellViewModel.hideUserDialog()
-                    },
-                    properties = BottomSheetDialogProperties(
-                        dismissWithAnimation = true,
-                    ),
-                ) {
-                    BaseSheet(title = "유저 정보 추가") {
-                        AddUserView(roomId = roomInfo.uniqueId) {
-                            loaCellViewModel.hideUserDialog()
-
-                        }
                     }
+                ) {
+                    loaCellViewModel.hideUserDialog()
                 }
             }
         }

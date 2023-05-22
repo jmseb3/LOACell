@@ -26,8 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
@@ -95,7 +93,7 @@ fun FocusRaidView(
                 Text(text = raidInfo.getRaidText())
                 Text(text = raidInfo.makeGateText())
             }
-            PartyView(raidInfo,loaCellViewModel)
+            PartyView(raidInfo, loaCellViewModel)
             loaCellViewModel.apply {
                 if (openRaidDeleteDialog) {
                     DeleteRaidDialog(
@@ -119,13 +117,14 @@ fun FocusRaidView(
                 }
                 loaCellViewModel.apply {
                     if (openRaidUserAddDialog) {
-                        BottomSheetDialog(
-                            onDismissRequest = { hideRaidUserAdd() },
-                            properties = BottomSheetDialogProperties(dismissWithAnimation = true),
-                        ) {
-                            AddRaidUserSheet(roomId = roomId,loaCellViewModel,db) {
-                                hideRaidUserAdd()
+                        AddRaidUserSheet(
+                            roomId = roomId, loaCellViewModel,
+                            db = db,
+                            onDismissRequest = {
+                                hideRaidDialog()
                             }
+                        ) {
+                            hideRaidUserAdd()
                         }
                     }
                 }
@@ -142,10 +141,10 @@ fun PartyView(
     val maxParty = raidInfo.getMaxParty()
 
     Column() {
-        RaidPartyView(list = raidInfo.party1characterList,loaCellViewModel)
+        RaidPartyView(list = raidInfo.party1characterList, loaCellViewModel)
         if (maxParty == 2) {
             Divider()
-            RaidPartyView(list = raidInfo.party2characterList,loaCellViewModel)
+            RaidPartyView(list = raidInfo.party2characterList, loaCellViewModel)
         }
     }
 }
@@ -164,7 +163,7 @@ fun RaidPartyView(
         ) {
             list.forEachIndexed { index, name ->
                 RaidUserView(name = name) {
-                    loaCellViewModel.showRaidUserAdd(index,list)
+                    loaCellViewModel.showRaidUserAdd(index, list)
                 }
             }
         }

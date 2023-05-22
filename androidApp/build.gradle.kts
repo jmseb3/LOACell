@@ -51,7 +51,7 @@ dependencies {
     debugImplementation(Dependencies.Android.Compose.UITooling)
     implementation(Dependencies.Android.Compose.Material3)
     implementation(Dependencies.Android.Compose.Activity)
-    implementation(Dependencies.Android.Compose.BottomDialog)
+//    implementation(Dependencies.Android.Compose.BottomDialog)
 
     implementation(platform(Dependencies.Android.Firebase.Bom))
     implementation(Dependencies.Android.Firebase.Analytics)

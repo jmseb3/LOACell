@@ -24,10 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
@@ -35,32 +34,62 @@ import com.wonddak.loacell.model.RaidType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRaidSheet(
-    roomId:String,
-    successAction :() -> Unit
+    roomId: String,
+    onDismissRequest: () -> Unit,
+    successAction: () -> Unit
 ) {
-    BaseSheet(title = "레이드 정보 추가") {
+    var expanded by remember { mutableStateOf(false) }
+    var nowType: RaidType by remember {
+        mutableStateOf(RaidType.VALTAN)
+    }
+    var nowDifficulty: Difficulty by remember {
+        mutableStateOf(Difficulty.Normal)
+    }
+    val radioOptions = Difficulty.values()
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    var title by remember {
+        mutableStateOf("")
+    }
+    val textFieldModifier = Modifier
+        .fillMaxWidth()
+
+    var startGateNumber by remember { mutableStateOf(1) }
+    var endGateNumber by remember { mutableStateOf(1) }
+
+    var errorMsg by remember {
+        mutableStateOf("")
+    }
+
+    BaseSheet(
+        title = "레이드 정보 추가",
+        onDismissRequest = onDismissRequest,
+        buttonClickAction = {
+            if (title.isNotEmpty()) {
+                FireStoreHelper.addRaidInfo(
+                    roomId,
+                    title,
+                    nowType,
+                    nowDifficulty,
+                    if (nowType == RaidType.ABRELSHUD) startGateNumber else 1,
+                    if (nowType == RaidType.ABRELSHUD) endGateNumber else nowType.getMaxGate(),
+                    { e -> errorMsg = e.message ?: "unknown error" },
+                    successAction
+                )
+            } else {
+                errorMsg = "제목을 입력해주세요."
+            }
+        },
+        errorMsg = errorMsg,
+        updateErrorMsg = {errorMsg = it}
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var expanded by remember { mutableStateOf(false) }
-            var nowType: RaidType by remember {
-                mutableStateOf(RaidType.VALTAN)
-            }
-            var nowDifficulty: Difficulty by remember {
-                mutableStateOf(Difficulty.Normal)
-            }
-            val radioOptions = Difficulty.values()
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            var title by remember {
-                mutableStateOf("")
-            }
-            val textFieldModifier = Modifier
-                .fillMaxWidth()
-            AddRoomTextField(
-                modifier = textFieldModifier,
+            LengthLimitTextField(
+                modifier = textFieldModifier.padding(10.dp),
                 text = title,
                 label = "제목",
                 placeHolder = "제목을 입력하세요.",
@@ -81,7 +110,9 @@ fun AddRaidSheet(
                 },
             ) {
                 OutlinedTextField(
-                    modifier = textFieldModifier.menuAnchor().padding(horizontal = 10.dp),
+                    modifier = textFieldModifier
+                        .menuAnchor()
+                        .padding(horizontal = 10.dp),
                     value = nowType.toKorString(),
                     onValueChange = {},
                     readOnly = true,
@@ -118,7 +149,9 @@ fun AddRaidSheet(
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             ) {
                 RaidSheetHeaderText(text = "난이도 선택")
                 Row(
@@ -161,8 +194,6 @@ fun AddRaidSheet(
                 }
             }
 
-            var startGateNumber by remember { mutableStateOf(1) }
-            var endGateNumber by remember { mutableStateOf(1) }
             AnimatedVisibility(visible = nowType == RaidType.ABRELSHUD) {
                 var checked1 by remember { mutableStateOf(true) }
                 var checked2 by remember { mutableStateOf(false) }
@@ -249,57 +280,29 @@ fun AddRaidSheet(
             }
 
             val minLevel = nowType.getMinLevel(nowDifficulty, endGateNumber)
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     RaidSheetHeaderText(text = "입장 레벨")
                     Text(text = if (minLevel == 0) "제한 없음" else minLevel.toString())
                 }
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     RaidSheetHeaderText(text = "입장 인원")
                     Text(text = nowType.maxPerson.toString())
                 }
             }
-
-            var errorMsg by remember {
-                mutableStateOf("")
-            }
-            AnimatedVisibility(visible = errorMsg.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = errorMsg,
-                    textAlign = TextAlign.Center,
-                    color = Color.Red
-                )
-            }
-
-            OutlinedButton(
-                onClick = {
-                    if (title.isNotEmpty()) {
-                        FireStoreHelper.addRaidInfo(
-                            roomId,
-                            title,
-                            nowType,
-                            nowDifficulty,
-                            if(nowType == RaidType.ABRELSHUD) startGateNumber else 1,
-                            if(nowType == RaidType.ABRELSHUD) endGateNumber else nowType.getMaxGate(),
-                            {e -> errorMsg = e.message ?: "unknown error"},
-                            successAction
-                        )
-                    }else {
-                        errorMsg = "제목을 입력해주세요."
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "추가")
-            }
-
         }
-
     }
 }
 
@@ -340,10 +343,4 @@ fun CheckBoxRow(
                 }
             })
     }
-}
-
-@Preview
-@Composable
-fun AddRaidSheetPreview() {
-    AddRaidSheet("123") { }
 }
