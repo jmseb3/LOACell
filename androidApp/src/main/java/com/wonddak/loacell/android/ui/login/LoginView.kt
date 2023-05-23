@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,26 +53,16 @@ fun LoginView() {
                 }
             }
         )
-//        LoginButton(
-//            action = { loginHelper.requestAnonymousLogin() }
-//        ) {
-//            Text(
-//                text = "로그인 하지 않기",
-//                color = Color.Black
-//            )
-//        }
+        OutlinedButton(
+            onClick = { loginHelper.requestAnonymousLogin() }
+        ) {
+            Text(
+                text = "로그인 하지 않고 계속",
+                color = Color.Black
+            )
+        }
     }
 }
-
-@Composable
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-fun LoginViewPreview() {
-    LoginView()
-}
-
 @Composable
 fun GoogleLoginButton(
     action: () -> Unit = {},

@@ -22,13 +22,17 @@ object FireStoreHelper {
     fun addRoomInfo(
         title: String,
         description: String,
+        owner :String,
         successAction: (id: String) -> Unit
     ) {
         Firebase.firestore.let { fs ->
             val data = HashMap<String, Any>()
             data["title"] = title
             data["description"] = description
-            data["timeStamp"] = System.currentTimeMillis()
+            data["owner"] = owner
+            data["enterUsers"] = emptyList<String>()
+            data["AnonymousUsers"] = emptyList<String>()
+            data["enterPassword"] = ""
             val newRooms = fs.collection("rooms").document()
             newRooms.set(data).addOnSuccessListener {
                 successAction(newRooms.id)
