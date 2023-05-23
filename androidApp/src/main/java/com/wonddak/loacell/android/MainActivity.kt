@@ -163,6 +163,7 @@ fun MainContent(
 //                        loaCellViewModel.showRoomAdd = false
 //                    }
                     RoomEnterDialog(
+                        confirm = {},
                         dismiss = { loaCellViewModel.showRoomAdd = false}
                     )
                 }
