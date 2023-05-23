@@ -33,7 +33,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -46,6 +45,7 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
+import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -83,11 +83,11 @@ fun MainContent(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    MyApplicationTheme() {
+    LoaCellTheme() {
         val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-            containerColor = Color.White,
+//            containerColor = Color.White,
             bottomBar = {
                 MyBottomAppBar(loaCellViewModel)
             },

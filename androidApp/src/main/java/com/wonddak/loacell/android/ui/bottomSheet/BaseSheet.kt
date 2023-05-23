@@ -43,7 +43,6 @@ fun BaseSheet(
     }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        containerColor = Color.White,
         sheetState = sheetState,
         dragHandle = null
     ) {

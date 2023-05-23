@@ -2,7 +2,6 @@ package com.wonddak.loacell.android.ui.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
-import com.wonddak.loacell.android.roboto
+import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
 
 @Composable
@@ -45,7 +44,6 @@ fun LoginView() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
     ) {
         GoogleLoginButton(
             action = {
@@ -90,8 +88,6 @@ fun GoogleLoginButton(
         ),
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.White
         )
     ) {
         Row(

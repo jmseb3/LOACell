@@ -1,12 +1,10 @@
 package com.wonddak.loacell.android.ui.room.user
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
@@ -24,7 +22,6 @@ fun EditCharacterDialog(
     var selectedText by remember { mutableStateOf(representativeCharacter) }
 
     AlertDialog(
-        containerColor = Color.White,
         onDismissRequest = dismiss,
         title = {
             Text(text = "대표 캐릭터 변경")
@@ -49,8 +46,7 @@ fun EditCharacterDialog(
 
                 ExposedDropdownMenu(
                     modifier = Modifier
-                        .height(200.dp)
-                        .background(Color.White),
+                        .height(200.dp),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {

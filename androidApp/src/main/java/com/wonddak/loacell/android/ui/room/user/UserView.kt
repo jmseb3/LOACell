@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
+import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.sharedapi.LostArkApi
@@ -90,7 +90,7 @@ fun FocusUserView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(md_theme_light_background)
                     .noRippleClickable()
             ) {
                 BackHandler() {

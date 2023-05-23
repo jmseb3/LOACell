@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -123,13 +122,11 @@ fun AddRaidSheet(
                 )
 
                 ExposedDropdownMenu(
-                    modifier = Modifier.background(Color.White),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
                     RaidType.values().forEach { item ->
                         DropdownMenuItem(
-                            modifier = Modifier.background(Color.White),
                             text = {
                                 Text(
                                     text = item.toKorString(),

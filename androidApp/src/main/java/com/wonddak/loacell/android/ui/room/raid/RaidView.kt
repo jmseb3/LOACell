@@ -35,6 +35,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
@@ -85,7 +86,7 @@ fun FocusRaidView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(md_theme_light_background)
             .noRippleClickable() { }
     ) {
         BackHandler() {
