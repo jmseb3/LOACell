@@ -41,12 +41,11 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.SettingView
-import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.room.RooListView
+import com.wonddak.loacell.android.ui.room.RoomEnterDialog
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
@@ -149,20 +148,23 @@ fun MainContent(
                 }
                 val context = LocalContext.current
                 if (loaCellViewModel.showRoomAdd) {
-                    AddRoomSheet(
-                        onDismissRequest = { loaCellViewModel.showRoomAdd = false }
-                    ) { title, description ->
-                        FireStoreHelper.addRoomInfo(
-                            title, description
-                        ) { id ->
-                            db.roomInfoQueriesHelper.addRoomInfo(
-                                title,
-                                description,
-                                id
-                            )
-                        }
-                        loaCellViewModel.showRoomAdd = false
-                    }
+//                    AddRoomSheet(
+//                        onDismissRequest = { loaCellViewModel.showRoomAdd = false }
+//                    ) { title, description ->
+//                        FireStoreHelper.addRoomInfo(
+//                            title, description
+//                        ) { id ->
+//                            db.roomInfoQueriesHelper.addRoomInfo(
+//                                title,
+//                                description,
+//                                id
+//                            )
+//                        }
+//                        loaCellViewModel.showRoomAdd = false
+//                    }
+                    RoomEnterDialog(
+                        dismiss = { loaCellViewModel.showRoomAdd = false}
+                    )
                 }
             }
         }
