@@ -5,24 +5,21 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.FireStoreHelper
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
-    dataBase: AppDataBase
+    private val dataBase: AppDataBase
 ) : SnackBarController() {
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
@@ -135,6 +132,13 @@ class LoaCellViewModel(
     }
 
 
+    var syncData by mutableStateOf(false)
+
+    fun signOut() {
+        clearAllStatus()
+        dataBase.clearAll()
+    }
+
     fun setNowUserInfo(userName: String) {
         hideAllDialog()
         clearFocusItem()
@@ -153,58 +157,32 @@ class LoaCellViewModel(
         _focusUserName.value = ""
     }
 
-
     fun clearAllStatus() {
         hideAllDialog()
         hideRoomInfo()
     }
 
     //region dialog status
+    var showRoomDialog by mutableStateOf(false)
     var showRoomAdd by mutableStateOf(false)
+    var showRoomEnter by mutableStateOf(false)
     var showUserAdd by mutableStateOf(false)
     var showRaidAdd by mutableStateOf(false)
-        private set
     var showSetting by mutableStateOf(false)
     fun hideAllDialog() {
+        showRoomDialog = false
         showRoomAdd = false
-        hideUserDialog()
-        hideRaidDialog()
-        showSetting = false
-    }
-
-    fun hideRaidDialog() {
-        showRaidAdd = false
-    }
-
-    fun hideUserDialog() {
+        showRoomEnter = false
         showUserAdd = false
+        showRaidAdd = false
+        showSetting = false
     }
 
     var openCharacterEditDialog by mutableStateOf(false)
     var openCharacterDeleteDialog by mutableStateOf(false)
     var openRaidDeleteDialog by mutableStateOf(false)
     var openRaidUserAddDialog by mutableStateOf(false)
-        private set
-
     var openRaidUserDeleteDialog by mutableStateOf(false)
-        private set
-
-    fun showRaidUserAdd() {
-        openRaidUserAddDialog = true
-    }
-
-    fun hideRaidUserAdd() {
-        openRaidUserAddDialog = false
-    }
-
-    fun showRaidUserDelete() {
-        openRaidUserDeleteDialog = true
-    }
-
-    fun hideRaidUserDelete() {
-        openRaidUserDeleteDialog = false
-    }
-
     // endregion
 
     var tabState by mutableStateOf(0)
@@ -218,8 +196,13 @@ class LoaCellViewModel(
 
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {
-            Log.i("JWH-B","11-Room")
-            showRoomAdd = true
+            LoaCellApp.user.value?.let { userInfo ->
+                if (userInfo.isAnonymous) {
+                    showRoomEnter = true
+                } else {
+                    showRoomDialog = true
+                }
+            }
         } else {
             if (focusUserName.value.isNotEmpty()) {
                 Log.i("JWH-B","22--Focus User")

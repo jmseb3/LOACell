@@ -165,7 +165,7 @@ fun FocusUserView(
                         failAction = { e ->
                             launch {
                                 msg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
-                                delay(3_000L)
+                                delay(1_500L)
                                 loaCellViewModel.showLoading = false
                             }
                         }
@@ -174,13 +174,17 @@ fun FocusUserView(
                     }
                 }
                 characterResult.onError { code, message ->
-                    msg = "$message($code)"
-                    delay(3_000L)
+                    msg = if (code == 503) {
+                        "현재 로스트아크 서버가 점검중입니다."
+                    } else {
+                        "$message($code)"
+                    }
+                    delay(1_500L)
                     loaCellViewModel.showLoading = false
                 }
                 characterResult.onException {
                     msg = it.message ?: "exception"
-                    delay(3_000L)
+                    delay(1_500L)
                     loaCellViewModel.showLoading = false
                 }
             }

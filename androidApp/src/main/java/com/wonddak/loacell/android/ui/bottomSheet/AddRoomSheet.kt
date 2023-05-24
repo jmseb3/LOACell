@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,17 +15,20 @@ import androidx.compose.ui.text.input.ImeAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRoomSheet(
     onDismissRequest: () -> Unit,
-    addAction: (title: String, description: String) -> Unit
+    addAction: (title: String, description: String, password: String) -> Unit
 ) {
     var title by remember {
         mutableStateOf("")
     }
 
     var description by remember {
+        mutableStateOf("")
+    }
+
+    var password by remember {
         mutableStateOf("")
     }
 
@@ -38,15 +40,18 @@ fun AddRoomSheet(
         title = "방 만들기",
         onDismissRequest = onDismissRequest,
         buttonClickAction = {
-            if (title.isNotEmpty()) {
-                addAction(title, description)
-            } else {
+            if (title.isEmpty()) {
                 errorMsg = "제목이 비어있습니다."
+                return@BaseSheet
             }
-
+            if (password.length != 6) {
+                errorMsg = "입장 패스워드는 6자리로 입력해주세요"
+                return@BaseSheet
+            }
+            addAction(title, description, password)
         },
-        errorMsg =  errorMsg,
-        updateErrorMsg = {errorMsg = it}
+        errorMsg = errorMsg,
+        updateErrorMsg = { errorMsg = it }
     ) {
         Column() {
             val focusManager = LocalFocusManager.current
@@ -64,6 +69,20 @@ fun AddRoomSheet(
                 ),
                 textChange = {
                     title = it
+                }
+            )
+            LengthLimitTextField(
+                modifier = textFieldModifier,
+                text = password,
+                label = "방 입장 비밀번호",
+                placeHolder = "비밀번호를 입력하세요.",
+                maxLine = 1,
+                maxLength = 6,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                textChange = {
+                    password = it
                 }
             )
             LengthLimitTextField(

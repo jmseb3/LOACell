@@ -20,3 +20,6 @@ UPDATE Character SET server = ?, className =?, level =? WHERE name =?;
 
 deleteUserByName:
 DELETE FROM Character WHERE  name =?;
+
+deleteAll:
+DELETE FROM Character;

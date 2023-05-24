@@ -33,7 +33,7 @@ interface LoginHelperFunction {
     /**
      * 발생된 결과로부터 토큰을 firebase에 등록한다.
      */
-    fun registerGoogleToken(result: ActivityResult)
+    fun registerGoogleToken(result: ActivityResult,otherAction: () -> Unit)
 
     /**
      * 익명 로그인시도를 한다.
@@ -139,13 +139,15 @@ class LoginHelper(
     }
 
     override fun registerGoogleToken(
-        result: ActivityResult
+        result: ActivityResult,
+        otherAction : () -> Unit
     ) {
         registerToken(result) { firebaseCredential ->
             auth.signInWithCredential(firebaseCredential)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful)
                         updateUserInfo()
+                        otherAction()
                 }
 
         }

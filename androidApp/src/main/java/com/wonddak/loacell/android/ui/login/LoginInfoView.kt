@@ -2,7 +2,6 @@ package com.wonddak.loacell.android.ui.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -21,11 +20,19 @@ fun LoginInfoView(
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
     val user by LoaCellApp.user.collectAsState(null)
-    AnimatedVisibility(visible = user != null) {
+    user?.let { userInfo ->
         Column() {
-            Text(text = user?.email.toString())
-            Text(text = user?.uid.toString())
-            if (user?.isAnonymous == true) {
+            Text(text = userInfo.uid)
+            if (!userInfo.isAnonymous) {
+                OutlinedButton(
+                    onClick = {
+                        loginHelper.signOut()
+                        loaCellViewModel.signOut()
+                    }
+                ) {
+                    Text(text = "로그아웃")
+                }
+            } else{
                 val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult()
                 ) { result ->
@@ -38,14 +45,6 @@ fun LoginInfoView(
                 }) {
                     Text(text = "Google과 연동")
                 }
-            }
-            OutlinedButton(
-                onClick = {
-                    loginHelper.signOut()
-                    loaCellViewModel.clearAllStatus()
-                }
-            ) {
-                Text(text = "LogOut")
             }
         }
     }

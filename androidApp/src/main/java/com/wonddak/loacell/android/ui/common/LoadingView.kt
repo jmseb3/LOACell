@@ -14,10 +14,11 @@ import com.wonddak.loacell.android.noRippleClickable
 
 @Composable
 fun LoadingView(
-    info :String = ""
+    info :String = "",
+    color :Color = Color.White
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.Gray.copy(0.5f)).noRippleClickable(),
+        modifier = Modifier.fillMaxSize().background(color).noRippleClickable(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

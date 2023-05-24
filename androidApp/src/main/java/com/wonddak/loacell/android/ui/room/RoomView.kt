@@ -57,10 +57,10 @@ fun RoomView(
                 AddRaidSheet(
                     roomInfo.uniqueId,
                     onDismissRequest = {
-                        loaCellViewModel.hideRaidDialog()
+                        loaCellViewModel.showRaidAdd = false
                     }
                 ) {
-                    loaCellViewModel.hideRaidDialog()
+                    loaCellViewModel.showRaidAdd = false
                 }
             }
 
@@ -68,10 +68,10 @@ fun RoomView(
                 AddUserSheet(
                     roomId = roomInfo.uniqueId,
                     onDismissRequest = {
-                        loaCellViewModel.hideUserDialog()
+                        loaCellViewModel.showUserAdd = false
                     }
                 ) {
-                    loaCellViewModel.hideUserDialog()
+                    loaCellViewModel.showUserAdd = false
                 }
             }
         }

@@ -147,12 +147,12 @@ fun FocusRaidView(
                             }
                         } else {
                             focusIndex = index
-                            showRaidUserAdd()
+                            openRaidUserAddDialog = true
                         }
                     },
                     deleteAction = { index ->
                         focusIndex = index
-                        showRaidUserDelete()
+                        openRaidUserDeleteDialog = true
                     }
                 )
                 if (openRaidDeleteDialog) {
@@ -181,7 +181,7 @@ fun FocusRaidView(
                         allUserList = allUserList,
                         db = db,
                         onDismissRequest = {
-                            hideRaidUserAdd()
+                            openRaidUserAddDialog = false
                         }
                     ) { character ->
                         val partyIndex = focusIndex / 4
@@ -196,7 +196,7 @@ fun FocusRaidView(
                             partyTemp
                         ) {
                             focusIndex = -1
-                            hideRaidUserAdd()
+                            openRaidUserAddDialog = false
                         }
 
                     }
@@ -220,11 +220,11 @@ fun FocusRaidView(
                                         .show()
                                 }
                             ) {
-                                hideRaidUserDelete()
+                                openRaidUserDeleteDialog = false
                             }
                         },
                         dismiss = {
-                            hideRaidUserDelete()
+                            openRaidUserDeleteDialog = false
                         }
                     )
                 }

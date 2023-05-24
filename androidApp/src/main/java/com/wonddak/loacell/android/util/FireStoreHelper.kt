@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.util
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -17,12 +18,51 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object FireStoreHelper {
+    fun syncRoomInfo(
+        userId: String,
+        db: AppDataBase,
+        failAction: (e: Exception) -> Unit,
+        successAction: () -> Unit
+    ) {
+        Firebase.firestore.collection("rooms").where(
+            Filter.or(
+                Filter.equalTo("owner", userId),
+                Filter.arrayContains("anonymousUser", userId),
+                Filter.arrayContains("editableUser", userId),
+                Filter.arrayContains("enterUser", userId)
+            )
+        ).get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val uniqueId = document.id
+                    val title = document.data["title"] as String
+                    val description = document.data["description"] as String
+                    val owner = document.data["owner"] as String
+
+                    Log.d("JWH", "${document.id} => ${document.data}")
+
+                    db.roomInfoQueriesHelper.addRoomInfo(
+                        title = title,
+                        description = description,
+                        uniqueId = uniqueId,
+                        owner = owner
+                    )
+                }
+                successAction()
+            }
+            .addOnFailureListener { exception ->
+                Log.w("JWH", "Error getting documents: ", exception)
+                failAction(exception)
+            }
+
+    }
 
     //region room
     fun addRoomInfo(
         title: String,
         description: String,
-        owner :String,
+        password: String,
+        owner: String,
         successAction: (id: String) -> Unit
     ) {
         Firebase.firestore.let { fs ->
@@ -30,9 +70,10 @@ object FireStoreHelper {
             data["title"] = title
             data["description"] = description
             data["owner"] = owner
-            data["enterUsers"] = emptyList<String>()
-            data["AnonymousUsers"] = emptyList<String>()
-            data["enterPassword"] = ""
+            data["editableUser"] = emptyList<String>()
+            data["enterUser"] = emptyList<String>()
+            data["anonymousUser"] = emptyList<String>()
+            data["enterPassword"] = password
             val newRooms = fs.collection("rooms").document()
             newRooms.set(data).addOnSuccessListener {
                 successAction(newRooms.id)
@@ -53,7 +94,9 @@ object FireStoreHelper {
         Firebase.firestore.let { fs ->
             val userData = HashMap<String, Any>()
             userData["representativeCharacter"] = representativeCharacter
-            userData["characterList"] = characterList.map { Firebase.firestore.collection("characters").document(it.characterName) }
+            userData["characterList"] = characterList.map {
+                Firebase.firestore.collection("characters").document(it.characterName)
+            }
             userData["timeStamp"] = System.currentTimeMillis()
             fs.collection("rooms")
                 .document(roomId)
@@ -104,7 +147,7 @@ object FireStoreHelper {
     fun deleteUser(
         roomId: String,
         userName: String,
-        failAction: (e:Exception) -> Unit,
+        failAction: (e: Exception) -> Unit,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms")
@@ -115,7 +158,7 @@ object FireStoreHelper {
             .addOnSuccessListener {
                 successAction()
             }
-            .addOnFailureListener {e ->
+            .addOnFailureListener { e ->
                 failAction(e)
             }
     }
@@ -156,15 +199,14 @@ object FireStoreHelper {
     fun updateRaidUser(
         roomId: String,
         raidId: String,
-        partyIndex :Int,
-        partyList :List<String>,
+        partyIndex: Int,
+        partyList: List<String>,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
-            .document(raidId).
-            update("party$partyIndex",partyList)
+            .document(raidId).update("party$partyIndex", partyList)
             .addOnSuccessListener {
                 successAction()
             }
@@ -173,7 +215,7 @@ object FireStoreHelper {
     fun deleteRaidInfo(
         roomId: String,
         raidId: String,
-        failAction: (e:Exception) -> Unit,
+        failAction: (e: Exception) -> Unit,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms")
@@ -184,30 +226,32 @@ object FireStoreHelper {
             .addOnSuccessListener {
                 successAction()
             }
-            .addOnFailureListener {e ->
+            .addOnFailureListener { e ->
                 failAction(e)
             }
     }
+
     fun deleteRaidUserInfo(
         roomId: String,
         raidId: String,
         partyIndex: Int,
-        partyList :List<String>,
-        failAction: (e:Exception) -> Unit,
+        partyList: List<String>,
+        failAction: (e: Exception) -> Unit,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms")
             .document(roomId)
             .collection("raidInfo")
             .document(raidId)
-            .update("party$partyIndex",partyList)
+            .update("party$partyIndex", partyList)
             .addOnSuccessListener {
                 successAction()
             }
-            .addOnFailureListener {e ->
+            .addOnFailureListener { e ->
                 failAction(e)
             }
     }
+
     //endregion
     fun addCharacters(
         characterList: List<CharacterInfo>
@@ -274,7 +318,13 @@ object FireStoreHelper {
                         value.data?.let {
                             val title = it["title"] as String
                             val description = it["description"] as String
-                            db.roomInfoQueriesHelper.updateRoomInfo(title, description, roomId)
+                            val owner = it["owner"] as String
+                            db.roomInfoQueriesHelper.updateRoomInfo(
+                                title,
+                                description,
+                                owner,
+                                roomId
+                            )
                         }
                     }
                 } else {
@@ -311,7 +361,8 @@ object FireStoreHelper {
 
                                 val representativeCharacter =
                                     it.data!!["representativeCharacter"] as String
-                                val characterList = it.data!!["characterList"] as List<DocumentReference>
+                                val characterList =
+                                    it.data!!["characterList"] as List<DocumentReference>
                                 val characterNameList = characterList.map { it.id }
                                 val timeStamp = it.data!!["timeStamp"] as Long
                                 Log.i("JWH", "Listen Users == $userName")
@@ -319,7 +370,7 @@ object FireStoreHelper {
                                 launch {
                                     characterList.forEach { documentReference ->
                                         val characterName = documentReference.id
-                                        documentReference.addSnapshotListener {value, error ->
+                                        documentReference.addSnapshotListener { value, error ->
                                             if (error != null) {
                                                 Log.w("JWH", "Characters Listen failed.", error)
                                                 return@addSnapshotListener
@@ -329,7 +380,10 @@ object FireStoreHelper {
                                                     val className = data["className"] as String
                                                     val level = data["level"] as String
                                                     val server = data["server"] as String
-                                                    Log.d("JWH", "Listen characters value :$characterName")
+                                                    Log.d(
+                                                        "JWH",
+                                                        "Listen characters value :$characterName"
+                                                    )
                                                     db.characterInfoQueriesHelper.updateCharacter(
                                                         characterName,
                                                         server,

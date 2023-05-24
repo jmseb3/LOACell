@@ -24,22 +24,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
+import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @Composable
-fun LoginView() {
+fun LoginView(loaCellViewModel: LoaCellViewModel) {
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
 
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        loginHelper.registerGoogleToken(result)
+        loginHelper.registerGoogleToken(result) {
+            loaCellViewModel.syncData = true
+        }
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
