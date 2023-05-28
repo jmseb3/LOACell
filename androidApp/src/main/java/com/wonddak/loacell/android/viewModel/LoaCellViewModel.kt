@@ -34,50 +34,60 @@ class LoaCellViewModel(
         tabState = 0
         clearFocusItem()
     }
-    private var _roomInfo :MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
+
+    private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
     val roomInfo get() = _roomInfo
 
     private var _focusUserName = MutableStateFlow("")
     val focusUserName get() = _focusUserName
 
-    private var _userInfo :MutableStateFlow<UserInfo?> = MutableStateFlow(null)
+    private var _userInfo: MutableStateFlow<UserInfo?> = MutableStateFlow(null)
     val userInfo get() = _userInfo
     private var _focusRaidId = MutableStateFlow("")
     val focusRaidId get() = _focusRaidId
 
-    private var _raidInfoList : MutableStateFlow<List<RaidInfo>> = MutableStateFlow(emptyList())
+    private var _raidInfoList: MutableStateFlow<List<RaidInfo>> = MutableStateFlow(emptyList())
     val raidInfoList get() = _raidInfoList
 
-    private var _raidInfo :MutableStateFlow<RaidInfo?> = MutableStateFlow(null)
+    private var _raidInfo: MutableStateFlow<RaidInfo?> = MutableStateFlow(null)
     val raidInfo get() = _raidInfo
 
-    private var userInfoJob : Job? = null
-    private var raidListInfoJob : Job? = null
-    private var raidInfoJob : Job? = null
-    private var roomInfoJob : Job? = null
+    private var userInfoJob: Job? = null
+    private var raidListInfoJob: Job? = null
+    private var raidInfoJob: Job? = null
+    private var roomInfoJob: Job? = null
 
-    private var observeRoom : ListenerRegistration? = null
-    private var observeUser : ListenerRegistration? = null
-    private var observeRaid : ListenerRegistration? = null
+    private var observeRoom: ListenerRegistration? = null
+    private var observeUser: ListenerRegistration? = null
+    private var observeRaid: ListenerRegistration? = null
+
     init {
         viewModelScope.launch {
             //room 정보 갱신
             launch {
-                roomId.collect {id ->
+                roomId.collect { id ->
                     if (id.isNotEmpty()) {
-                        observeRoom = FireStoreHelper.observeRoomInfo(id, dataBase)
-                        observeUser = FireStoreHelper.observeUsers(id, dataBase)
-                        observeRaid = FireStoreHelper.observeRaid(id, dataBase)
-                        roomInfoJob = launch {
-                            dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
-                                _roomInfo.value =  it
+                        FireStoreHelper.checkExistRoomInfo(
+                            id,
+                            successAction = {
+                                observeRoom = FireStoreHelper.observeRoomInfo(id, dataBase)
+                                observeUser = FireStoreHelper.observeUsers(id, dataBase)
+                                observeRaid = FireStoreHelper.observeRaid(id, dataBase)
+                                roomInfoJob = launch {
+                                    dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
+                                        _roomInfo.value = it
+                                    }
+                                }
+                                raidListInfoJob = launch {
+                                    dataBase.raidInfoQueriesHelper.getALlByRoomId(id).collect {
+                                        _raidInfoList.value = it
+                                    }
+                                }
+                            },
+                            failAction = {
+                                showRoomEnterError = true
                             }
-                        }
-                        raidListInfoJob = launch {
-                            dataBase.raidInfoQueriesHelper.getALlByRoomId(id).collect {
-                                _raidInfoList.value = it
-                            }
-                        }
+                        )
                     } else {
                         roomInfoJob?.cancel()
                         raidListInfoJob?.cancel()
@@ -92,14 +102,14 @@ class LoaCellViewModel(
             //선택된 유저 정보 갱신
             launch {
                 focusUserName.combine(roomId) { name, id ->
-                    Pair(name,id)
+                    Pair(name, id)
                 }.collect { pair ->
                     val name = pair.first
                     val id = pair.second
 
                     if (id.isNotEmpty() && name.isNotEmpty()) {
                         userInfoJob = launch {
-                            dataBase.userInfoQueriesHelper.getUsersByName(id,name).collect {
+                            dataBase.userInfoQueriesHelper.getUsersByName(id, name).collect {
                                 _userInfo.value = it
                             }
                         }
@@ -111,14 +121,14 @@ class LoaCellViewModel(
             }
             //선택된 레이드 정보 갱신
             launch {
-                focusRaidId.combine(roomId) {raidId,roomId ->
-                    Pair(raidId,roomId)
+                focusRaidId.combine(roomId) { raidId, roomId ->
+                    Pair(raidId, roomId)
                 }.collect { pair ->
                     val raidId = pair.first
                     val roomId = pair.second
                     if (raidId.isNotEmpty() && roomId.isNotEmpty()) {
                         raidInfoJob = launch {
-                            dataBase.raidInfoQueriesHelper.getRaidInfoById(roomId,raidId).collect {
+                            dataBase.raidInfoQueriesHelper.getRaidInfoById(roomId, raidId).collect {
                                 _raidInfo.value = it
                             }
                         }
@@ -166,6 +176,7 @@ class LoaCellViewModel(
     var showRoomDialog by mutableStateOf(false)
     var showRoomAdd by mutableStateOf(false)
     var showRoomEnter by mutableStateOf(false)
+    var showRoomEnterError by mutableStateOf(false)
     var showUserAdd by mutableStateOf(false)
     var showRaidAdd by mutableStateOf(false)
     var showSetting by mutableStateOf(false)
@@ -173,6 +184,7 @@ class LoaCellViewModel(
         showRoomDialog = false
         showRoomAdd = false
         showRoomEnter = false
+        showRoomEnterError = false
         showUserAdd = false
         showRaidAdd = false
         showSetting = false
@@ -187,7 +199,8 @@ class LoaCellViewModel(
 
     var tabState by mutableStateOf(0)
         private set
-    fun setTabStatus(value:Int) {
+
+    fun setTabStatus(value: Int) {
         hideAllDialog()
         tabState = value
     }
@@ -205,20 +218,20 @@ class LoaCellViewModel(
             }
         } else {
             if (focusUserName.value.isNotEmpty()) {
-                Log.i("JWH-B","22--Focus User")
+                Log.i("JWH-B", "22--Focus User")
                 openCharacterDeleteDialog = true
                 return
             }
             if (focusRaidId.value.isNotEmpty()) {
-                Log.i("JWH-B","33--Focus Raid")
+                Log.i("JWH-B", "33--Focus Raid")
                 openRaidDeleteDialog = true
                 return
             }
             if (tabState == 0) {
-                Log.i("JWH-B","33- ShowRaid")
+                Log.i("JWH-B", "33- ShowRaid")
                 showRaidAdd = true
             } else if (tabState == 1) {
-                Log.i("JWH-B","44-- ShowUser")
+                Log.i("JWH-B", "44-- ShowUser")
                 showUserAdd = true
             }
         }

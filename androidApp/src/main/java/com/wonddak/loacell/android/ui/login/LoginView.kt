@@ -2,13 +2,16 @@ package com.wonddak.loacell.android.ui.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,9 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
+import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -44,34 +50,55 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
         }
     }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        GoogleLoginButton(
-            action = {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "안녕하세요 \n 레이드 관리를 도와주는 <LoaCell>입니다.",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        Column(
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            GoogleLoginButton(
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
                 loginHelper.requestGoogleLogin { intent ->
                     googleLoginLauncher.launch(intent)
                 }
             }
-        )
-        OutlinedButton(
-            onClick = { loginHelper.requestAnonymousLogin() }
-        ) {
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "로그인 하지 않고 계속",
-                color = Color.Black
+                color = Color.Black,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.noRippleClickable { loginHelper.requestAnonymousLogin() }.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
         }
     }
 }
+
 @Composable
 fun GoogleLoginButton(
+    modifier: Modifier = Modifier,
     action: () -> Unit = {},
 ) {
     Card(
-        modifier = Modifier
-            .wrapContentWidth()
+        modifier = modifier
             .height(40.dp)
             .clickable {
                 action()
@@ -81,13 +108,16 @@ fun GoogleLoginButton(
         ),
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
+            contentColor = Color.Black,
+            containerColor = Color.White
         )
     ) {
         Row(
-            modifier = Modifier,
+            modifier = Modifier.wrapContentWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             Icon(
                 painter = painterResource(id = R.drawable.btn_google),
                 contentDescription = "SignInButton",
@@ -101,6 +131,7 @@ fun GoogleLoginButton(
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

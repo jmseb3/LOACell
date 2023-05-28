@@ -32,7 +32,7 @@ fun DeleteRaidUserDialog(
         dismiss = dismiss
     ) {
         Column() {
-            Text(text = "유저 정보를 삭제 하시겠습니까?")
+            Text(text = "선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")
         }
     }
 }

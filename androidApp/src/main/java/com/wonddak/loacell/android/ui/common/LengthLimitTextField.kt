@@ -18,6 +18,7 @@ fun LengthLimitTextField(
     placeHolder: String,
     maxLine: Int,
     maxLength: Int,
+    enabled :Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     keyboardActions: KeyboardActions = KeyboardActions(),
     textChange: (text: String) -> Unit
@@ -48,6 +49,7 @@ fun LengthLimitTextField(
             maxLines = maxLine,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
+            enabled = enabled
         )
     }
 }

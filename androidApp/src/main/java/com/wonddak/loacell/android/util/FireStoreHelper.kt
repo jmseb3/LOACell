@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.util
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
@@ -57,6 +58,27 @@ object FireStoreHelper {
 
     }
 
+    fun checkExistRoomInfo(
+        roomId: String,
+        successAction: (password:String) -> Unit,
+        failAction: () -> Unit,
+    ) {
+        Firebase.firestore.collection("rooms").document(roomId).let { roomRef ->
+            roomRef.get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        successAction(it.data!!["enterPassword"] as String)
+                    } else {
+                        failAction()
+                    }
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                    failAction()
+                }
+        }
+    }
+
     //region room
     fun addRoomInfo(
         title: String,
@@ -78,6 +100,42 @@ object FireStoreHelper {
             newRooms.set(data).addOnSuccessListener {
                 successAction(newRooms.id)
             }
+        }
+    }
+
+    fun addUserToRoom(
+        roomId: String,
+        userId: String,
+        db :AppDataBase,
+        successAction: () -> Unit,
+        failAction: (e :Exception?) -> Unit,
+    ) {
+        Firebase.firestore.collection("rooms").document(roomId).let { roomRef ->
+            roomRef.update("enterUser", FieldValue.arrayUnion(userId))
+                .addOnSuccessListener {
+                    roomRef.get().addOnSuccessListener { document ->
+                        val title = document.data!!["title"] as String
+                        val description = document.data!!["description"] as String
+                        val owner = document.data!!["owner"] as String
+
+                        Log.d("JWH", "${document.id} => ${document.data}")
+
+                        db.roomInfoQueriesHelper.addRoomInfo(
+                            title = title,
+                            description = description,
+                            uniqueId = roomId,
+                            owner = owner
+                        )
+                        successAction()
+                    }.addOnFailureListener {
+                        failAction(it)
+                    }
+
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                    failAction(it)
+                }
         }
     }
     //endregion
@@ -370,13 +428,9 @@ object FireStoreHelper {
                                 launch {
                                     characterList.forEach { documentReference ->
                                         val characterName = documentReference.id
-                                        documentReference.addSnapshotListener { value, error ->
-                                            if (error != null) {
-                                                Log.w("JWH", "Characters Listen failed.", error)
-                                                return@addSnapshotListener
-                                            }
-                                            if (value != null) {
-                                                value.data?.let { data ->
+                                        documentReference.get().addOnSuccessListener { doc ->
+                                            if (doc != null) {
+                                                doc.data?.let { data ->
                                                     val className = data["className"] as String
                                                     val level = data["level"] as String
                                                     val server = data["server"] as String

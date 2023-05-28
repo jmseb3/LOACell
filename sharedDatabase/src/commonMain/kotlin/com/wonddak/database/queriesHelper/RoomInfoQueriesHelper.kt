@@ -29,6 +29,8 @@ class RoomInfoQueriesHelper(
     }
 
     fun deleteRoomInfo(roomId: String) {
-        queries.deleteById(roomId)
+        if (roomId.isNotEmpty()) {
+            queries.deleteById(roomId)
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.room.raid
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,15 +10,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.Character
@@ -44,7 +58,9 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.getMaxParty
 import com.wonddak.loacell.getRaidText
 import com.wonddak.loacell.makeGateText
+import com.wonddak.loacell.model.RaidType
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RaidView(
     db: AppDataBase,
@@ -55,12 +71,42 @@ fun RaidView(
     val raidInfoList by loaCellViewModel.raidInfoList.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
+    val raidTypes = RaidType.values()
+    var filterType: Array<RaidType> by remember {
+        mutableStateOf(raidTypes)
+    }
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
+            LazyRow(modifier = Modifier.fillMaxWidth()) {
+                items(raidTypes) { type ->
+                    val selected = filterType.contains(type)
+                    FilterChip(
+                        selected = selected,
+                        onClick = {
+                            val temp = filterType.toMutableList()
+                            if (selected) {
+                                temp.remove(type)
+                            } else {
+                                temp.add(type)
+                            }
+                            filterType = temp.toTypedArray()
+                        },
+                        label = {
+                            Text(
+                                text = type.toKorString(),
+                                modifier = Modifier.defaultMinSize(minWidth = 50.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
+            Divider()
             LazyColumn(
                 modifier = Modifier.padding(10.dp)
             ) {
-                items(raidInfoList) { raidInfo ->
+                items(raidInfoList.filter { filterType.contains(it.type) }) { raidInfo ->
                     RaidItemRow(raidInfo) {
                         loaCellViewModel.setNowRaidInfo(raidInfo.raidId)
                     }
@@ -97,7 +143,7 @@ fun FocusRaidView(
         var focusIndex by remember {
             mutableStateOf(-1)
         }
-        var characterList :List<Character?> by remember {
+        var characterList: List<Character?> by remember {
             mutableStateOf(emptyList())
         }
         LaunchedEffect(raidInfo) {
@@ -134,12 +180,13 @@ fun FocusRaidView(
             loaCellViewModel.apply {
 
                 RaidPartyView(
+                    db,
                     characterList,
-                    openAction = {index ->
+                    openAction = { index ->
                         if (allUserList.isEmpty()) {
                             showSnackBar(
                                 message = "추가 가능한 인원이 없습니다.",
-                                label ="이동",
+                                label = "이동",
                             ) {
                                 clearFocusItem()
                                 setTabStatus(1)
@@ -185,7 +232,8 @@ fun FocusRaidView(
                         }
                     ) { character ->
                         val partyIndex = focusIndex / 4
-                        val tempList = if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                        val tempList =
+                            if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
                         val partyTemp = tempList.toMutableList()
                         partyTemp[focusIndex % 4] = character.name
 
@@ -213,7 +261,7 @@ fun FocusRaidView(
                             FireStoreHelper.deleteRaidUserInfo(
                                 roomId,
                                 raidInfo.raidId,
-                                partyIndex = partyIndex +1,
+                                partyIndex = partyIndex + 1,
                                 partyList = partyTemp,
                                 failAction = { e ->
                                     Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT)
@@ -235,6 +283,7 @@ fun FocusRaidView(
 
 @Composable
 fun RaidPartyView(
+    db: AppDataBase,
     list: List<Character?>,
     openAction: (index: Int) -> Unit,
     deleteAction: (index: Int) -> Unit,
@@ -244,10 +293,10 @@ fun RaidPartyView(
         modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
     ) {
         LazyColumn(modifier = Modifier.padding(5.dp)) {
-            itemsIndexed(list) {index, item ->
+            itemsIndexed(list) { index, item ->
                 val modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp)
+                    .height(55.dp)
 
                 if (index == 4) {
                     Divider()
@@ -264,16 +313,40 @@ fun RaidPartyView(
                         }
                     }
                 } else {
-                    Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = item.name)
-                        MyIconButton(SharedRes.images.delete) {
-                            deleteAction(index)
+                    val character = db.characterInfoQueriesHelper.characterName(item.name)
+                    character?.let { info ->
+                        Row(
+                            modifier = modifier,
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                modifier.weight(5f)
+                            ) {
+                                Text(text = info.name)
+                                Row(
+                                    modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = info.className)
+                                    Text(text = info.level)
+                                }
+                            }
+                            IconButton(
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    deleteAction(index)
+                                },
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(size = 30.dp),
+                                    painter = painterResource(SharedRes.images.delete.drawableResId),
+                                    contentDescription = ""
+                                )
+                            }
                         }
                     }
+
                 }
             }
         }

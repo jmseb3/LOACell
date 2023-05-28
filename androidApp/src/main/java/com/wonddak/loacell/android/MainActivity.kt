@@ -48,7 +48,9 @@ import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
+import com.wonddak.loacell.android.ui.room.RoomActionDialog
 import com.wonddak.loacell.android.ui.room.RoomEnterDialog
+import com.wonddak.loacell.android.ui.room.RoomEnterErrorDialog
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.util.FireStoreHelper
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
     db: AppDataBase,
@@ -142,25 +145,6 @@ fun MainContent(
                             Column(Modifier.fillMaxSize()) {
                                 AnimatedVisibility(selectedRoomId.isEmpty()) {
                                     Column() {
-                                        if (BuildConfig.DEBUG) {
-                                            val roomInfos by db.roomInfoQueriesHelper.getAll()
-                                                .collectAsState(
-                                                    initial = emptyList()
-                                                )
-                                            val testId = "testRoom"
-                                            if (!roomInfos.map { it.uniqueId }.contains(testId)) {
-                                                OutlinedButton(onClick = {
-                                                    db.roomInfoQueriesHelper.addRoomInfo(
-                                                        "",
-                                                        "",
-                                                        "testRoom",
-                                                        ""
-                                                    )
-                                                }) {
-                                                    Text(text = "ADD TestRoom")
-                                                }
-                                            }
-                                        }
                                         RooListView(
                                             roomList = roomList,
                                             showRoomInfo = { roomId ->
@@ -183,7 +167,7 @@ fun MainContent(
                         }
                         loaCellViewModel.apply {
                             if (showRoomDialog) {
-                                RoomEnterDialog(
+                                RoomActionDialog(
                                     confirm = { status ->
                                         when (status) {
                                             1 -> showRoomEnter = true
@@ -212,15 +196,50 @@ fun MainContent(
                                     showRoomAdd = false
                                 }
                             }
+                            if (showRoomEnter) {
+                                RoomEnterDialog(
+                                    success = {roomId ->
+                                        FireStoreHelper.addUserToRoom(
+                                            roomId,
+                                            userInfo!!.uid,
+                                            db,
+                                            successAction = {
+                                                showRoomEnter = false
+                                            },
+                                            failAction =  {
+                                                showSnackBar(it?.message ?: "입장에 실패했습니다.")
+                                                showRoomEnter = false
+                                            }
+                                        )
+                                    },
+                                    dismiss = {
+                                        showRoomEnter = false
+                                    }
+                                )
+
+                            }
                         }
 
+                    }
+
+                    if (loaCellViewModel.showRoomEnterError) {
+                        RoomEnterErrorDialog(
+                            confirm = {
+                                db.roomInfoQueriesHelper.deleteRoomInfo(loaCellViewModel.roomId.value)
+                                loaCellViewModel.hideRoomInfo()
+                                loaCellViewModel.showRoomEnterError = false
+                            },
+                            dismiss = {
+                                loaCellViewModel.showRoomEnterError = false
+                            }
+                        )
                     }
                     if (loaCellViewModel.syncData) {
                         LaunchedEffect(loaCellViewModel.syncData) {
                             FireStoreHelper.syncRoomInfo(
                                 userInfo!!.uid,
                                 db,
-                                failAction = {e ->},
+                                failAction = { e -> },
                                 successAction = {
                                     loaCellViewModel.syncData = false
                                 }
@@ -340,6 +359,8 @@ fun MyTopAppBar(
                 roomInfo?.let { roomInfo ->
                     Text(text = roomInfo.title)
                 }
+            } else {
+                Text(text = "LoaCell")
             }
         },
         actions = {

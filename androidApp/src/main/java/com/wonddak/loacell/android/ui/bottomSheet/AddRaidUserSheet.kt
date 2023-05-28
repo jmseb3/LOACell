@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -169,6 +170,7 @@ fun AddRaidUserSheet(
                 }
             }
             Spacer(modifier = Modifier.height(5.dp))
+            Divider()
             selectedCharacter?.let {character ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -181,50 +183,5 @@ fun AddRaidUserSheet(
 
             }
         }
-
-//        var expanded by remember { mutableStateOf(false) }
-//        Column() {
-//            ExposedDropdownMenuBox(
-//                expanded = expanded,
-//                onExpandedChange = {
-//                    expanded = !expanded
-//                },
-//            ) {
-//                OutlinedTextField(
-//                    modifier = Modifier
-//                        .menuAnchor()
-//                        .padding(horizontal = 10.dp),
-//                    value = selectedUser?.name ?:"",
-//                    onValueChange = {},
-//                    readOnly = true,
-//                    label = {
-//                        Text(text = "사용자 선택")
-//                    },
-//                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-//                )
-//
-//                ExposedDropdownMenu(
-//                    modifier = Modifier.background(Color.White),
-//                    expanded = expanded,
-//                    onDismissRequest = { expanded = false }
-//                ) {
-//                    allUserList.forEach { item ->
-//                        DropdownMenuItem(
-//                            modifier = Modifier.background(Color.White),
-//                            text = {
-//                                Text(
-//                                    text = item.name,
-//                                    fontWeight = if (selectedUser == item) FontWeight.Bold else FontWeight.Normal
-//                                )
-//                            },
-//                            onClick = {
-//                                selectedUser = item
-//                                expanded = false
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//        }
     }
 }
