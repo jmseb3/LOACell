@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.android.util.FireStoreHelper
+import kotlinx.coroutines.delay
 
 @Composable
 fun RoomActionDialog(
@@ -142,7 +144,8 @@ fun RoomEnterErrorDialog(
 
 @Composable
 fun RoomEnterDialog(
-    success: (roomId:String) -> Unit,
+    nowEnterRoomList: List<String>,
+    success: (roomId: String) -> Unit,
     dismiss: () -> Unit,
 ) {
     var roomId by remember {
@@ -157,31 +160,35 @@ fun RoomEnterDialog(
     var enterPassword by remember {
         mutableStateOf("")
     }
+    LaunchedEffect(errorMsg) {
+        if (errorMsg.isNotEmpty()) {
+            delay(1_000L)
+            errorMsg = ""
+        }
+    }
     AlertDialog(
         modifier = Modifier.wrapContentHeight(),
         onDismissRequest = dismiss,
         title = {
-            Text(text = "입장하기")
+            Text(text = if (password.isEmpty()) "입장하기" else "비밀번호 입력")
         },
         text = {
             val focusManager = LocalFocusManager.current
             Column() {
-                AnimatedVisibility(visible = password.isEmpty()) {
-                    LengthLimitTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = roomId,
-                        label = "방 ID",
-                        placeHolder = "방 ID를 입력해주세요.",
-                        maxLine = 1,
-                        maxLength = 20,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next
-                        ),
-                        textChange = {
-                            roomId = it
-                        }
-                    )
-                }
+                LengthLimitTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = roomId,
+                    label = "방 ID",
+                    placeHolder = "방 ID를 입력해주세요.",
+                    maxLine = 1,
+                    maxLength = 20,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    ),
+                    textChange = {
+                        roomId = it
+                    }
+                )
                 AnimatedVisibility(visible = password.isNotEmpty()) {
                     LengthLimitTextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -199,10 +206,12 @@ fun RoomEnterDialog(
                         enabled = password.isNotEmpty()
                     )
                 }
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = errorMsg
-                )
+                AnimatedVisibility(errorMsg.isNotEmpty()) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = errorMsg
+                    )
+                }
             }
         },
         confirmButton = {
@@ -212,19 +221,23 @@ fun RoomEnterDialog(
                         if (roomId.isEmpty()) {
                             errorMsg = "ID를 입력해주세요."
                         } else {
-                            FireStoreHelper.checkExistRoomInfo(
-                                roomId,
-                                successAction = {
-                                    if (it.isEmpty()) {
-                                        success(roomId)
-                                    } else {
-                                        password = it
+                            if (nowEnterRoomList.contains(roomId)) {
+                                errorMsg = "이미 입장한 방입니다."
+                            } else {
+                                FireStoreHelper.checkExistRoomInfo(
+                                    roomId,
+                                    successAction = {
+                                        if (it.isEmpty()) {
+                                            success(roomId)
+                                        } else {
+                                            password = it
+                                        }
+                                    },
+                                    failAction = {
+                                        errorMsg = "방이 존재 하지 않습니다."
                                     }
-                                },
-                                failAction = {
-                                    errorMsg = "방이 존재 하지 않습니다."
-                                }
-                            )
+                                )
+                            }
                         }
                     } else {
                         if (password == enterPassword) {
@@ -239,11 +252,16 @@ fun RoomEnterDialog(
             }
         },
         dismissButton = {
-
+            TextButton(
+                onClick = dismiss
+            ) {
+                Text("취소")
+            }
         },
         shape = RoundedCornerShape(24.dp),
         properties = DialogProperties(
-            dismissOnClickOutside = false
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
         )
     )
 }

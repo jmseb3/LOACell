@@ -198,6 +198,7 @@ fun MainContent(
                             }
                             if (showRoomEnter) {
                                 RoomEnterDialog(
+                                    nowEnterRoomList = roomList.map { it.uniqueId },
                                     success = {roomId ->
                                         FireStoreHelper.addUserToRoom(
                                             roomId,
