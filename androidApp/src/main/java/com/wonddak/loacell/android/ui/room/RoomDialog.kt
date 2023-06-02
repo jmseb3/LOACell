@@ -1,6 +1,5 @@
 package com.wonddak.loacell.android.ui.room
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
@@ -162,12 +162,13 @@ fun RoomEnterDialog(
     }
     LaunchedEffect(errorMsg) {
         if (errorMsg.isNotEmpty()) {
-            delay(1_000L)
+            delay(2_000L)
             errorMsg = ""
         }
     }
+    val regex = Regex("[a-zA-Z0-9]+")
     AlertDialog(
-        modifier = Modifier.wrapContentHeight(),
+        modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
         onDismissRequest = dismiss,
         title = {
             Text(text = if (password.isEmpty()) "입장하기" else "비밀번호 입력")
@@ -186,7 +187,9 @@ fun RoomEnterDialog(
                         imeAction = ImeAction.Next
                     ),
                     textChange = {
-                        roomId = it
+                        if (it.isEmpty() || regex.matches(it)) {
+                            roomId = it
+                        }
                     }
                 )
                 AnimatedVisibility(visible = password.isNotEmpty()) {
@@ -201,7 +204,9 @@ fun RoomEnterDialog(
                             imeAction = ImeAction.Next
                         ),
                         textChange = {
-                            enterPassword = it
+                            if (it.isEmpty() || regex.matches(it)) {
+                                enterPassword = it
+                            }
                         },
                         enabled = password.isNotEmpty()
                     )
@@ -209,7 +214,8 @@ fun RoomEnterDialog(
                 AnimatedVisibility(errorMsg.isNotEmpty()) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = errorMsg
+                        text = errorMsg,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -247,8 +253,13 @@ fun RoomEnterDialog(
                         }
                     }
                 },
+                enabled = if (password.isEmpty()) {
+                    roomId.length == 20
+                } else {
+                    password.length == 6
+                }
             ) {
-                Text("입장하기")
+                Text(if (password.isEmpty()) "입장" else "확인")
             }
         },
         dismissButton = {
