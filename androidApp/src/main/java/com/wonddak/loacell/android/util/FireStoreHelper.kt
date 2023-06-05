@@ -3,7 +3,6 @@ package com.wonddak.loacell.android.util
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -13,6 +12,7 @@ import com.wonddak.loacell.convertType
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.sharedapi.model.CharacterInfo
+import com.wonddak.sharedfb.store.RoomHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,40 +22,22 @@ object FireStoreHelper {
     fun syncRoomInfo(
         userId: String,
         db: AppDataBase,
-        failAction: (e: Exception) -> Unit,
+        failAction: (error :String) -> Unit,
         successAction: () -> Unit
     ) {
-        Firebase.firestore.collection("rooms").where(
-            Filter.or(
-                Filter.equalTo("owner", userId),
-                Filter.arrayContains("anonymousUser", userId),
-                Filter.arrayContains("editableUser", userId),
-                Filter.arrayContains("enterUser", userId)
-            )
-        ).get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val uniqueId = document.id
-                    val title = document.data["title"] as String
-                    val description = document.data["description"] as String
-                    val owner = document.data["owner"] as String
-
-                    Log.d("JWH", "${document.id} => ${document.data}")
-
-                    db.roomInfoQueriesHelper.addRoomInfo(
-                        title = title,
-                        description = description,
-                        uniqueId = uniqueId,
-                        owner = owner
-                    )
-                }
-                successAction()
-            }
-            .addOnFailureListener { exception ->
-                Log.w("JWH", "Error getting documents: ", exception)
-                failAction(exception)
-            }
-
+        RoomHelper.syncInfo(
+            userId,
+            successAction = successAction,
+            successPerDocAction =  { id, roomInfo ->
+                db.roomInfoQueriesHelper.addRoomInfo(
+                    title = roomInfo.title,
+                    description = roomInfo.description,
+                    uniqueId = id,
+                    owner = roomInfo.owner
+                )
+            },
+            failAction = failAction
+        )
     }
 
     fun checkExistRoomInfo(

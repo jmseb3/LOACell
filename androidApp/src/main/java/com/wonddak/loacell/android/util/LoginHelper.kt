@@ -145,9 +145,10 @@ class LoginHelper(
         registerToken(result) { firebaseCredential ->
             auth.signInWithCredential(firebaseCredential)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful)
+                    if (task.isSuccessful) {
                         updateUserInfo()
                         otherAction()
+                    }
                 }
 
         }
