@@ -19,8 +19,11 @@ kotlin {
         version = "1.0"
         ios.deploymentTarget = "14.1"
         pod("FirebaseFirestore","~> 10.10.0")
+        pod("FirebaseFirestoreSwift","~> 10.10.0")
+        noPodspec()
         framework {
             baseName = "sharedFB"
+            isStatic = true
         }
     }
     
