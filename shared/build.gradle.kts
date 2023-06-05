@@ -22,7 +22,6 @@ kotlin {
             export(project(Modules.api))
             export(project(Modules.resources))
             export(project(Modules.database))
-            export(project(Modules.firebase))
             transitiveExport = true
         }
     }
@@ -33,7 +32,6 @@ kotlin {
                 api(project(Modules.api))
                 api(project(Modules.resources))
                 api(project(Modules.database))
-                api(project(Modules.firebase))
             }
         }
         val commonTest by getting {
