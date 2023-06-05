@@ -2,44 +2,40 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("dev.icerock.mobile.multiplatform-resources")
 }
+
+@OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
+    targetHierarchy.default()
+
     android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
     cocoapods {
-        summary = "share Resources"
+        summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
         ios.deploymentTarget = AppConfig.Ios.deploymentTarget
         framework {
-            baseName = "sharedResources"
-            isStatic = true
+            baseName = "sharedFirebase"
         }
     }
     
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Dependencies.KMM.MOKO.Core)
+                implementation("dev.gitlive:firebase-firestore:1.8.0")
             }
         }
     }
 }
 
 android {
-    namespace = AppConfig.Shared.resoureces
+    namespace = "com.wonddak.sharedfirebase"
     compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
         minSdk = AppConfig.Android.minSdk
     }
-}
-
-multiplatformResources {
-    multiplatformResourcesPackage = "com.wonddak.loacell" // required
-    multiplatformResourcesClassName = "SharedRes" // optional, default MR
-    iosBaseLocalizationRegion = "ko" // optional, default "en"
 }

@@ -1,6 +1,6 @@
 object Versions {
     object Project {
-        const val Kotlin = "1.8.10"
+        const val Kotlin = "1.8.21"
         const val Gradle = "7.4.1"
     }
 
