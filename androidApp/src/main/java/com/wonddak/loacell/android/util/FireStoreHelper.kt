@@ -12,7 +12,7 @@ import com.wonddak.loacell.convertType
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.sharedapi.model.CharacterInfo
-import com.wonddak.sharedfb.store.RoomHelper
+import com.wonddak.loacell.store.RoomHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

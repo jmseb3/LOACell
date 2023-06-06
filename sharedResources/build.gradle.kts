@@ -15,7 +15,6 @@ kotlin {
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
         ios.deploymentTarget = AppConfig.Ios.deploymentTarget
-        noPodspec()
         framework {
             baseName = "sharedResources"
             isStatic = true

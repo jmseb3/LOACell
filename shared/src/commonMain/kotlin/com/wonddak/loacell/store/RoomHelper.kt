@@ -1,4 +1,4 @@
-package com.wonddak.sharedfb.store
+package com.wonddak.loacell.store
 
 data class FBRoomInfo(
     val title: String = "",

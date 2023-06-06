@@ -1,4 +1,4 @@
-package com.wonddak.sharedfb.store
+package com.wonddak.loacell.store
 
 import cocoapods.FirebaseFirestore.*
 
@@ -9,7 +9,7 @@ actual object RoomHelper {
         failAction: (error : String) -> Unit,
         successAction: () -> Unit
     ) {
-        FIRFirestore.firestore().collectionGroupWithID(userId)
+        FIRFirestore.firestore().collectionWithPath("rooms")
             .queryWhereFilter(
                 FIRFilter.orFilterWithFilters(
                     listOf(

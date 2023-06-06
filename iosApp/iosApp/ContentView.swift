@@ -33,6 +33,13 @@ extension ContentView {
         let lostarkApi = LostArkApi()
         init() {
             updateInfo()
+            RoomHelper().syncInfo(userId: "GRCmCPcnHTdwrrpygQCcseAi9CA2") { id, fbRoom in
+                
+            } failAction: { error in
+                
+            } successAction: {
+                
+            }
         }
         
         func updateInfo() {

@@ -14,9 +14,6 @@ android {
         targetSdk = AppConfig.Android.targetSdk
         versionCode =  AppConfig.versionCode
         versionName = AppConfig.version
-
-        vectorDrawables.useSupportLibrary = true
-
     }
     buildFeatures {
         compose = true
