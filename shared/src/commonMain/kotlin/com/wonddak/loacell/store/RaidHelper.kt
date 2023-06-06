@@ -30,7 +30,12 @@ data class FBRaidInfo(
     }
 }
 
-expect object RaidHelper {
+object CommonRaidHelper {
+    private fun getRaidsRef(roomId: String): CommonCollection =
+        getFireStore().collection("rooms").document(roomId).collection("raidInfo")
+
+    private fun getRaidRef(roomId: String, raidId: String): CommonDocument =
+        getRaidsRef(roomId).document(raidId)
     //레이드 정보를 추가한다.
     fun add(
         roomId: String,
@@ -39,16 +44,37 @@ expect object RaidHelper {
         difficulty: Difficulty,
         startGateNumber: Int,
         endGateNumber: Int,
-        failAction: (e: String) -> Unit ,
+        failAction: (e: Error) -> Unit,
         successAction: () -> Unit
-    )
+    ) {
+        val fbRaidInfo = FBRaidInfo(
+            title = title,
+            type = type.name,
+            difficulty = difficulty.name,
+            startGateNumber = startGateNumber,
+            endGateNumber = endGateNumber
+        )
+        getRaidsRef(roomId).document()
+            .set(
+                fbRaidInfo.toMap() as Map<String, Any>,
+                successAction = successAction,
+                failAction = failAction
+            )
+
+    }
+
     //레이드 정보를 삭제한다.
     fun delete(
         roomId: String,
         raidId: String,
-        failAction: (e: String) -> Unit,
+        failAction: (e: Error) -> Unit,
         successAction: () -> Unit
-    )
+    ) {
+        getRaidRef(roomId, raidId).delete(
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
 
     // 파티 리스트를 업데이트 한다.
     fun updatePartList(
@@ -56,7 +82,14 @@ expect object RaidHelper {
         raidId: String,
         partyIndex: Int,
         partyList: List<String>,
-        failAction: (e: String) -> Unit,
+        failAction: (e: Error) -> Unit,
         successAction: () -> Unit
-    )
+    ) {
+        getRaidRef(roomId, raidId).update(
+            field = "party$partyIndex",
+            value = partyList,
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
 }
