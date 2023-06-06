@@ -14,7 +14,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +30,8 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.getLevel
-import com.wonddak.loacell.getMinLevel
+import com.wonddak.loacell.ext.getLevel
+import com.wonddak.loacell.ext.getMinLevel
 import kotlinx.coroutines.launch
 
 @Composable

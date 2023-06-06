@@ -1,4 +1,4 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.ext
 
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType

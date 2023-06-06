@@ -5,13 +5,14 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.wonddak.database.AppDataBase
 
 
 actual object RoomHelper {
     actual fun syncInfo(
         userId: String,
-        successPerDocAction: (id: String, roomInfo: FBRoomInfo) -> Unit,
-        failAction: (error :String) -> Unit,
+        db: AppDataBase,
+        failAction: (error: String) -> Unit,
         successAction: () -> Unit
     ) {
         Firebase.firestore.collection("rooms").where(
@@ -27,7 +28,12 @@ actual object RoomHelper {
                     val id = document.id
                     val fbRoomInfo = document.toObject<FBRoomInfo>()
                     Log.d("JWH", "$id => $fbRoomInfo")
-                    successPerDocAction(id,fbRoomInfo)
+                    db.roomInfoQueriesHelper.addRoomInfo(
+                        title = fbRoomInfo.title,
+                        description = fbRoomInfo.description,
+                        uniqueId = id,
+                        owner = fbRoomInfo.owner
+                    )
                 }
                 successAction()
             }

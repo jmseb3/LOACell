@@ -7,8 +7,8 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.convertDifficulty
-import com.wonddak.loacell.convertType
+import com.wonddak.loacell.ext.convertDifficulty
+import com.wonddak.loacell.ext.convertType
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.sharedapi.model.CharacterInfo
@@ -28,14 +28,7 @@ object FireStoreHelper {
         RoomHelper.syncInfo(
             userId,
             successAction = successAction,
-            successPerDocAction =  { id, roomInfo ->
-                db.roomInfoQueriesHelper.addRoomInfo(
-                    title = roomInfo.title,
-                    description = roomInfo.description,
-                    uniqueId = id,
-                    owner = roomInfo.owner
-                )
-            },
+            db = db,
             failAction = failAction
         )
     }

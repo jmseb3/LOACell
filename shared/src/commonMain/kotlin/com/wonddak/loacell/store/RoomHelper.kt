@@ -1,5 +1,7 @@
 package com.wonddak.loacell.store
 
+import com.wonddak.database.AppDataBase
+
 data class FBRoomInfo(
     val title: String = "",
     val description: String = "",
@@ -13,7 +15,7 @@ data class FBRoomInfo(
 expect object RoomHelper {
     fun syncInfo(
         userId: String,
-        successPerDocAction: (id: String, roomInfo: FBRoomInfo) -> Unit,
+        db: AppDataBase,
         failAction: (error: String) -> Unit,
         successAction: () -> Unit
     )
