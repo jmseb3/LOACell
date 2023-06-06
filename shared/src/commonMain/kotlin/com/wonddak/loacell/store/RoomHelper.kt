@@ -57,3 +57,44 @@ expect object RoomHelper {
     )
 
 }
+
+object CommonRoomHelper {
+    private fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms")
+    private fun getRoomRef(id: String): CommonDocument = getRoomsRef().document(id)
+
+    fun syncInfo(
+        userId: String,
+        db: AppDataBase,
+        failAction: (error: Error) -> Unit,
+        successAction: () -> Unit
+    ) {
+        getRoomsRef()
+            .where(
+                CommonFilter.or(
+                    CommonFilter.equalTo("owner", userId),
+                    CommonFilter.arrayContains("anonymousUser", userId),
+                    CommonFilter.arrayContains("editableUser", userId),
+                    CommonFilter.arrayContains("enterUser", userId),
+                )
+            ).get(
+                successAction = { querySnapshot ->
+                    querySnapshot.documents.forEach {document ->
+                        val id = document.id
+                        val data = document.data!!
+                        val title = data["title"] as String
+                        val description = data["description"] as String
+                        val owner = data["owner"] as String
+                        db.roomInfoQueriesHelper.addRoomInfo(
+                            title = title,
+                            description = description,
+                            uniqueId = id,
+                            owner = owner
+                        )
+                    }
+                    successAction()
+                },
+                failAction = failAction
+            )
+
+    }
+}

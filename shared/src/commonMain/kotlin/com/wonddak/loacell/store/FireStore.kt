@@ -17,6 +17,16 @@ expect class CommonCollection {
     fun document(): CommonDocument
     fun document(documentPath: String): CommonDocument
 
+    fun where(filter :CommonFilter) : CommonQuery
+}
+
+expect class CommonFilter {
+    companion object {
+        fun or(vararg filters:CommonFilter) : CommonFilter
+        fun equalTo(filed:String,value: Any) : CommonFilter
+        fun arrayContains(filed:String,value: Any) : CommonFilter
+    }
+
 }
 
 expect class CommonDocument {
@@ -46,4 +56,12 @@ expect class CommonDocumentSnapshot {
     val id: String
     val reference: CommonDocument
     val data : Map<String,Any>?
+}
+
+expect class CommonQuerySnapshot {
+    val documents : List<CommonDocumentSnapshot>
+}
+
+expect class CommonQuery {
+    fun get(successAction: (querySnapshot : CommonQuerySnapshot) -> Unit, failAction: (error :Error) -> Unit)
 }

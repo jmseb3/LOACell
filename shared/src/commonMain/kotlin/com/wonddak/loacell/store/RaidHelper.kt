@@ -16,21 +16,20 @@ data class FBRaidInfo(
     val party2: List<String> = List(4) { "" }
 
 ) {
-    fun toMap(): HashMap<Any?, Any> {
-        val data = HashMap<Any?, Any>()
-        data["title"] = title
-        data["type"] = type
-        data["difficulty"] = difficulty
-        data["startGateNumber"] = startGateNumber
-        data["endGateNumber"] = endGateNumber
-        data["finish"] = isFinish
-        data["party1"] = party1
-        data["party2"] = party2
-        return data
-    }
+    fun toMap() = mapOf(
+        "title" to title,
+        "type" to type,
+        "difficulty" to difficulty,
+        "startGateNumber" to startGateNumber,
+        "endGateNumber" to endGateNumber,
+        "endGateNumber" to endGateNumber,
+        "finish" to isFinish,
+        "party1" to party1,
+        "party2" to party2
+    )
 }
 
-object CommonRaidHelper {
+object RaidHelper {
     private fun getRaidsRef(roomId: String): CommonCollection =
         getFireStore().collection("rooms").document(roomId).collection("raidInfo")
 
@@ -56,7 +55,7 @@ object CommonRaidHelper {
         )
         getRaidsRef(roomId).document()
             .set(
-                fbRaidInfo.toMap() as Map<String, Any>,
+                fbRaidInfo.toMap(),
                 successAction = successAction,
                 failAction = failAction
             )

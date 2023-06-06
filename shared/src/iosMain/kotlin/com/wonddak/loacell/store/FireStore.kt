@@ -3,11 +3,15 @@ package com.wonddak.loacell.store
 import cocoapods.FirebaseFirestore.FIRCollectionReference
 import cocoapods.FirebaseFirestore.FIRDocumentReference
 import cocoapods.FirebaseFirestore.FIRDocumentSnapshot
+import cocoapods.FirebaseFirestore.FIRFilter
 import cocoapods.FirebaseFirestore.FIRFirestore
+import cocoapods.FirebaseFirestore.FIRQuery
+import cocoapods.FirebaseFirestore.FIRQueryDocumentSnapshot
+import cocoapods.FirebaseFirestore.FIRQuerySnapshot
 import platform.Foundation.NSError
 
-actual class Error(error: NSError) {
-    actual val errorMsg: String = error.localizedDescription
+actual class Error(error: NSError?) {
+    actual val errorMsg: String = error?.localizedDescription ?: "unknown error"
 
 }
 
@@ -29,6 +33,34 @@ actual class CommonCollection(
     actual fun document(): CommonDocument = CommonDocument(ref.documentWithAutoID())
     actual fun document(documentPath: String): CommonDocument =
         CommonDocument(ref.documentWithPath(documentPath))
+
+    actual fun where(filter: CommonFilter): CommonQuery {
+        return CommonQuery(ref.queryWhereFilter(filter.ref))
+    }
+}
+
+actual class CommonFilter(
+    val ref: FIRFilter
+) {
+    actual companion object {
+        actual fun equalTo(
+            filed: String,
+            value: Any
+        ): CommonFilter = CommonFilter(FIRFilter.filterWhereField(filed, isEqualTo = value))
+
+        actual fun arrayContains(
+            filed: String,
+            value: Any
+        ): CommonFilter = CommonFilter(FIRFilter.filterWhereField(filed, arrayContains = value))
+
+
+        actual fun or(vararg filters: CommonFilter): CommonFilter {
+            val convertFilter = filters.map { it.ref }
+            return CommonFilter(FIRFilter.orFilterWithFilters(convertFilter))
+        }
+
+    }
+
 }
 
 actual class CommonDocument(
@@ -125,5 +157,34 @@ actual class CommonDocumentSnapshot(
         get() = CommonDocument(ref.reference)
     actual val data: Map<String, Any>?
         get() = ref.data() as Map<String, Any>?
+
+}
+
+actual class CommonQuerySnapshot(
+    val ref: FIRQuerySnapshot
+) {
+    actual val documents: List<CommonDocumentSnapshot> = (ref.documents.filterIsInstance<FIRDocumentSnapshot>()).map { CommonDocumentSnapshot(it) }
+}
+
+actual class CommonQuery(
+    val ref : FIRQuery
+) {
+
+    actual fun get(
+        successAction: (querySnapshot: CommonQuerySnapshot) -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        ref.getDocumentsWithCompletion { firQuerySnapshot, nsError ->
+            if (nsError == null) {
+                if (firQuerySnapshot != null) {
+                    successAction(CommonQuerySnapshot(firQuerySnapshot))
+                } else {
+                    failAction(Error(null))
+                }
+            } else {
+                failAction(Error(nsError))
+            }
+        }
+    }
 
 }

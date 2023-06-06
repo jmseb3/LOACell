@@ -54,7 +54,7 @@ import com.wonddak.loacell.ext.getMaxParty
 import com.wonddak.loacell.ext.getRaidText
 import com.wonddak.loacell.ext.makeGateText
 import com.wonddak.loacell.model.RaidType
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.store.RaidHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -201,7 +201,7 @@ fun FocusRaidView(
                 if (openRaidDeleteDialog) {
                     DeleteRaidDialog(
                         confirm = {
-                            CommonRaidHelper.delete(
+                            RaidHelper.delete(
                                 roomId,
                                 raidInfo.raidId,
                                 failAction = { error ->
@@ -231,7 +231,7 @@ fun FocusRaidView(
                             if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
                         val partyTemp = tempList.toMutableList()
                         partyTemp[focusIndex % 4] = character.name
-                        CommonRaidHelper.updatePartList(
+                        RaidHelper.updatePartList(
                             roomId,
                             raidInfo.raidId,
                             partyIndex + 1,
@@ -256,7 +256,7 @@ fun FocusRaidView(
                     partyTemp[focusIndex % 4] = ""
                     DeleteRaidUserDialog(
                         confirm = {
-                            CommonRaidHelper.updatePartList(
+                            RaidHelper.updatePartList(
                                 roomId,
                                 raidInfo.raidId,
                                 partyIndex + 1,

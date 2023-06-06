@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.store.RaidHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +66,7 @@ fun AddRaidSheet(
         onDismissRequest = onDismissRequest,
         buttonClickAction = {
             if (title.isNotEmpty()) {
-                CommonRaidHelper.add(
+                RaidHelper.add(
                     roomId,
                     title,
                     nowType,

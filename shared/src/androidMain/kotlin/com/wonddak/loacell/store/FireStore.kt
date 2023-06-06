@@ -3,13 +3,17 @@ package com.wonddak.loacell.store
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-actual class Error(error :Exception?) {
-    actual val errorMsg :String = error?.localizedMessage ?: "unknown error"
+actual class Error(error: Exception?) {
+    actual val errorMsg: String = error?.localizedMessage ?: "unknown error"
 }
 
 actual fun getFireStore(): CommonFireStore = CommonFireStore(Firebase.firestore)
@@ -30,6 +34,34 @@ actual class CommonCollection(
 
     actual fun document(documentPath: String): CommonDocument =
         CommonDocument(ref.document(documentPath))
+
+    actual fun where(filter: CommonFilter) :CommonQuery{
+        return CommonQuery(ref.where(filter.ref))
+    }
+}
+
+actual class CommonFilter(
+    val ref: Filter
+) {
+    actual companion object {
+        actual fun equalTo(
+            filed: String,
+            value: Any
+        ): CommonFilter = CommonFilter(Filter.equalTo(filed, value))
+
+        actual fun arrayContains(
+            filed: String,
+            value: Any
+        ): CommonFilter = CommonFilter(Filter.arrayContains(filed, value))
+
+
+        actual fun or(vararg filters: CommonFilter): CommonFilter {
+            val convertFilter = filters.map { it.ref }.toTypedArray()
+            return CommonFilter(Filter.or(*convertFilter))
+        }
+
+    }
+
 }
 
 actual class CommonDocument(
@@ -49,7 +81,7 @@ actual class CommonDocument(
     actual fun set(
         data: Map<String, Any>,
         successAction: () -> Unit,
-        failAction: (error :Error) -> Unit
+        failAction: (error: Error) -> Unit
     ) {
         ref.set(data)
             .addOnSuccessListener {
@@ -64,14 +96,14 @@ actual class CommonDocument(
         ref.update(data)
     }
 
-    actual fun update(field : String , value :Any) {
-        ref.update(field,value)
+    actual fun update(field: String, value: Any) {
+        ref.update(field, value)
     }
 
     actual fun update(
         data: Map<String, Any>,
         successAction: () -> Unit,
-        failAction: (error :Error) -> Unit
+        failAction: (error: Error) -> Unit
     ) {
         ref.update(data)
             .addOnSuccessListener {
@@ -83,12 +115,12 @@ actual class CommonDocument(
     }
 
     actual fun update(
-        field : String ,
-        value :Any,
+        field: String,
+        value: Any,
         successAction: () -> Unit,
-        failAction: (error :Error) -> Unit
+        failAction: (error: Error) -> Unit
     ) {
-        ref.update(field,value)
+        ref.update(field, value)
             .addOnSuccessListener {
                 successAction()
             }
@@ -128,5 +160,30 @@ actual class CommonDocumentSnapshot(
         get() = CommonDocument(ref.reference)
 
     actual val data = ref.data as Map<String, Any>?
+
+}
+
+actual class CommonQuerySnapshot(
+    val ref: QuerySnapshot
+) {
+    actual val documents: List<CommonDocumentSnapshot> = ref.documents.map { CommonDocumentSnapshot(it) }
+}
+
+actual class CommonQuery(
+    val ref : Query
+) {
+
+    actual fun get(
+        successAction: (querySnapshot: CommonQuerySnapshot) -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        ref.get()
+            .addOnSuccessListener {
+                successAction(CommonQuerySnapshot(it))
+            }
+            .addOnFailureListener {
+                failAction(Error(it))
+            }
+    }
 
 }

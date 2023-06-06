@@ -56,6 +56,7 @@ import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 import com.wonddak.loacell.ext.checkTimeOver
+import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.RoomHelper
 
 class MainActivity : ComponentActivity() {
@@ -236,7 +237,7 @@ fun MainContent(
                     }
                     if (loaCellViewModel.syncData) {
                         LaunchedEffect(loaCellViewModel.syncData) {
-                            RoomHelper.syncInfo(
+                            CommonRoomHelper.syncInfo(
                                 userInfo!!.uid,
                                 db,
                                 failAction = {e ->},
