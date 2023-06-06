@@ -34,6 +34,7 @@ kotlin {
                 api(project(Modules.api))
                 api(project(Modules.resources))
                 api(project(Modules.database))
+                implementation("com.soywiz.korlibs.klock:klock:4.0.2")
             }
         }
         val commonTest by getting {

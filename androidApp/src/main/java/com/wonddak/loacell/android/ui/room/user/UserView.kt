@@ -30,8 +30,9 @@ import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.store.CharacterHelper
+import com.wonddak.loacell.store.UserHelper
 import com.wonddak.sharedapi.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
@@ -111,7 +112,7 @@ fun FocusUserView(
                             representativeCharacter = userInfo.representativeCharacter,
                             characters = characterList,
                             confirm = { name ->
-                                FireStoreHelper.updateUserCharacter(
+                                UserHelper.updateRepresentativeCharacter(
                                     roomId,
                                     userInfo.name,
                                     name
@@ -127,16 +128,17 @@ fun FocusUserView(
                         DeleteCharacterDialog(
                             name = userInfo.name,
                             confirm = {
-                                FireStoreHelper.deleteUser(
+                                UserHelper.delete(
                                     roomId,
                                     userInfo.name,
                                     failAction = { e ->
-                                        Toast.makeText(context,e.localizedMessage,Toast.LENGTH_SHORT).show()
+                                        showSnackBar(e)
+                                    },
+                                    successAction = {
+                                        loaCellViewModel.clearFocusItem()
+                                        openCharacterDeleteDialog = false
                                     }
-                                ) {
-                                    loaCellViewModel.clearFocusItem()
-                                    openCharacterDeleteDialog = false
-                                }
+                                )
                             },
                             dismiss = {
                                 openCharacterDeleteDialog = false
@@ -156,15 +158,15 @@ fun FocusUserView(
                 val characterResult =
                     LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
                 characterResult.onSuccess { list ->
-                    FireStoreHelper.addCharacters(list)
-                    FireStoreHelper.addUser(
+                    list.forEach { CharacterHelper.addOrUpdate(it,db) }
+                    UserHelper.add(
                         roomId = roomId,
                         name = userInfo.name,
                         representativeCharacter = userInfo.representativeCharacter,
                         characterList = list,
                         failAction = { e ->
                             launch {
-                                msg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
+                                msg = "서버 데이터 저장에 실패했습니다."
                                 delay(1_500L)
                                 loaCellViewModel.showLoading = false
                             }

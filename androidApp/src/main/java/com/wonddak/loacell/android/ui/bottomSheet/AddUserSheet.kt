@@ -21,8 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
-import com.wonddak.loacell.android.util.FireStoreHelper
+import com.wonddak.loacell.store.CharacterHelper
+import com.wonddak.loacell.store.UserHelper
 import com.wonddak.sharedapi.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
@@ -35,6 +37,7 @@ import kotlinx.coroutines.launch
 fun AddUserSheet(
     modifier: Modifier = Modifier,
     roomId: String,
+    db :AppDataBase,
     onDismissRequest: () -> Unit,
     addAction: () -> Unit
 ) {
@@ -71,19 +74,17 @@ fun AddUserSheet(
 
             val characterResult = LostArkApi().getCharacterInfo(characterName)
             characterResult.onSuccess { list ->
-                FireStoreHelper.addCharacters(list)
-                FireStoreHelper.addUser(
-                    roomId = roomId,
-                    name = user,
-                    representativeCharacter = characterName,
-                    characterList = list,
-                    failAction = { e ->
-                        errorMsg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
-                    }
-                ) {
-                    addAction()
+                list.forEach {
+                    CharacterHelper.addOrUpdate(it,db)
                 }
-
+                UserHelper.add(
+                    roomId,
+                    user,
+                    characterName,
+                    list,
+                    {error -> errorMsg = error},
+                    addAction
+                )
             }
             characterResult.onError { code, message ->
                 errorMsg = "$message($code)"

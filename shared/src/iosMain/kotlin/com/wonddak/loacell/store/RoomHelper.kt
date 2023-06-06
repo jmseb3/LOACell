@@ -2,15 +2,21 @@ package com.wonddak.loacell.store
 
 import cocoapods.FirebaseFirestore.*
 import com.wonddak.database.AppDataBase
+import platform.Foundation.NSError
 
 actual object RoomHelper {
+    private fun getRoomsRef(): FIRCollectionReference =
+        FIRFirestore.firestore().collectionWithPath("rooms")
+
+    private fun getRoomRef(id: String): FIRDocumentReference = getRoomsRef().documentWithPath(id)
+
     actual fun syncInfo(
         userId: String,
         db: AppDataBase,
         failAction: (error: String) -> Unit,
         successAction: () -> Unit
     ) {
-        FIRFirestore.firestore().collectionWithPath("rooms")
+        getRoomsRef()
             .queryWhereFilter(
                 FIRFilter.orFilterWithFilters(
                     listOf(
@@ -54,6 +60,68 @@ actual object RoomHelper {
                     }
                 }
             }
+    }
+
+    actual fun checkExist(
+        roomId: String,
+        successAction: (password: String) -> Unit,
+        failAction: () -> Unit
+    ) {
+        getRoomRef(roomId)
+            .getDocumentWithCompletion { firDocumentSnapshot, nsError ->
+                if (nsError != null) {
+                    failAction()
+                } else {
+                    if (firDocumentSnapshot?.exists == true) {
+                        successAction(firDocumentSnapshot.data()!!["enterPassword"] as String)
+                    } else {
+                        failAction()
+                    }
+                }
+            }
+    }
+
+    actual fun makeInfo(
+        title: String,
+        description: String,
+        password: String,
+        owner: String,
+        successAction: (id: String) -> Unit
+    ) {
+        val data = FBRoomInfo(
+            title = title,
+            description = description,
+            enterPassword = password,
+            owner = owner
+        ).toMap()
+        val ref = getRoomsRef().documentWithAutoID()
+
+        ref.setData(data) { err ->
+            if (err == null) {
+                successAction(ref.documentID)
+            }
+        }
+    }
+    actual fun updateUser(
+        roomId: String,
+        userId: String,
+        isAnonymous: Boolean,
+        successAction: () -> Unit,
+        failAction: (e: String?) -> Unit
+    ) {
+        val field = if (isAnonymous) "anonymousUser" else "enterUser"
+        val value = FIRFieldValue.fieldValueForArrayUnion(listOf(userId))
+
+        getRoomRef(roomId).updateData(
+            mapOf(field to value)
+        ) { err ->
+            if (err == null) {
+                successAction()
+            } else {
+                failAction(err.localizedDescription)
+            }
+
+        }
     }
 
 }

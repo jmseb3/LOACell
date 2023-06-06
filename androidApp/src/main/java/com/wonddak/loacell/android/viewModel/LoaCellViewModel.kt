@@ -12,7 +12,9 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.loacell.android.util.FireStoreHelper
+import com.wonddak.loacell.store.ListenerDoc
+import com.wonddak.loacell.store.ObserveHelper
+import com.wonddak.loacell.store.RoomHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -57,9 +59,9 @@ class LoaCellViewModel(
     private var raidInfoJob: Job? = null
     private var roomInfoJob: Job? = null
 
-    private var observeRoom: ListenerRegistration? = null
-    private var observeUser: ListenerRegistration? = null
-    private var observeRaid: ListenerRegistration? = null
+    private var observeRoom: ListenerDoc? = null
+    private var observeUser: ListenerDoc? = null
+    private var observeRaid: ListenerDoc? = null
 
     init {
         viewModelScope.launch {
@@ -67,12 +69,12 @@ class LoaCellViewModel(
             launch {
                 roomId.collect { id ->
                     if (id.isNotEmpty()) {
-                        FireStoreHelper.checkExistRoomInfo(
+                        RoomHelper.checkExist(
                             id,
                             successAction = {
-                                observeRoom = FireStoreHelper.observeRoomInfo(id, dataBase)
-                                observeUser = FireStoreHelper.observeUsers(id, dataBase)
-                                observeRaid = FireStoreHelper.observeRaid(id, dataBase)
+                                observeRoom = ObserveHelper.roomInfo(id,dataBase)
+                                observeUser = ObserveHelper.users(id,dataBase)
+                                observeRaid = ObserveHelper.raidInfo(id, dataBase)
                                 roomInfoJob = launch {
                                     dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
                                         _roomInfo.value = it

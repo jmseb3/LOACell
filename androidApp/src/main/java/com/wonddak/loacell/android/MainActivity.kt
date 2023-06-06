@@ -52,11 +52,11 @@ import com.wonddak.loacell.android.ui.room.RoomEnterDialog
 import com.wonddak.loacell.android.ui.room.RoomEnterErrorDialog
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 import com.wonddak.loacell.ext.checkTimeOver
+import com.wonddak.loacell.store.RoomHelper
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -182,7 +182,7 @@ fun MainContent(
                                     onDismissRequest = { showRoomAdd = false }
                                 ) { title, description, password ->
                                     val owner = userInfo!!.uid
-                                    FireStoreHelper.addRoomInfo(
+                                    RoomHelper.makeInfo(
                                         title, description, password, owner
                                     ) { id ->
                                         db.roomInfoQueriesHelper.addRoomInfo(
@@ -198,16 +198,16 @@ fun MainContent(
                             if (showRoomEnter) {
                                 RoomEnterDialog(
                                     nowEnterRoomList = roomList.map { it.uniqueId },
-                                    success = {roomId ->
-                                        FireStoreHelper.addUserToRoom(
+                                    success = { roomId ->
+                                        RoomHelper.updateUser(
                                             roomId,
                                             userInfo!!.uid,
-                                            db,
+                                            userInfo!!.isAnonymous,
                                             successAction = {
                                                 showRoomEnter = false
                                             },
-                                            failAction =  {
-                                                showSnackBar(it?.message ?: "입장에 실패했습니다.")
+                                            failAction = { error ->
+                                                showSnackBar(error ?: "입장에 실패했습니다.")
                                                 showRoomEnter = false
                                             }
                                         )
@@ -236,10 +236,10 @@ fun MainContent(
                     }
                     if (loaCellViewModel.syncData) {
                         LaunchedEffect(loaCellViewModel.syncData) {
-                            FireStoreHelper.syncRoomInfo(
+                            RoomHelper.syncInfo(
                                 userInfo!!.uid,
                                 db,
-                                failAction = { e -> },
+                                failAction = {e ->},
                                 successAction = {
                                     loaCellViewModel.syncData = false
                                 }

@@ -49,12 +49,12 @@ import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getMaxParty
 import com.wonddak.loacell.ext.getRaidText
 import com.wonddak.loacell.ext.makeGateText
 import com.wonddak.loacell.model.RaidType
+import com.wonddak.loacell.store.RaidHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -201,12 +201,11 @@ fun FocusRaidView(
                 if (openRaidDeleteDialog) {
                     DeleteRaidDialog(
                         confirm = {
-                            FireStoreHelper.deleteRaidInfo(
+                            RaidHelper.delete(
                                 roomId,
                                 raidInfo.raidId,
-                                failAction = { e ->
-                                    Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT)
-                                        .show()
+                                failAction = { error ->
+                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
                                 }
                             ) {
                                 clearFocusItem()
@@ -232,16 +231,19 @@ fun FocusRaidView(
                             if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
                         val partyTemp = tempList.toMutableList()
                         partyTemp[focusIndex % 4] = character.name
-
-                        FireStoreHelper.updateRaidUser(
+                        RaidHelper.updatePartList(
                             roomId,
                             raidInfo.raidId,
                             partyIndex + 1,
-                            partyTemp
+                            partyTemp,
+                            failAction = { error ->
+                                loaCellViewModel.showSnackBar("인원 추가에 실패했습니다.")
+                            }
                         ) {
                             focusIndex = -1
                             openRaidUserAddDialog = false
                         }
+
 
                     }
                 }
@@ -254,14 +256,13 @@ fun FocusRaidView(
                     partyTemp[focusIndex % 4] = ""
                     DeleteRaidUserDialog(
                         confirm = {
-                            FireStoreHelper.deleteRaidUserInfo(
+                            RaidHelper.updatePartList(
                                 roomId,
                                 raidInfo.raidId,
-                                partyIndex = partyIndex + 1,
-                                partyList = partyTemp,
-                                failAction = { e ->
-                                    Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT)
-                                        .show()
+                                partyIndex + 1,
+                                partyTemp,
+                                failAction = { error ->
+                                    showSnackBar("유저 삭제에 실패했습니다.")
                                 }
                             ) {
                                 openRaidUserDeleteDialog = false
