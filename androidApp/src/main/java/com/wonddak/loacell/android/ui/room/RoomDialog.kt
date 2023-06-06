@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.RoomHelper
 import kotlinx.coroutines.delay
 
@@ -230,7 +231,7 @@ fun RoomEnterDialog(
                             if (nowEnterRoomList.contains(roomId)) {
                                 errorMsg = "이미 입장한 방입니다."
                             } else {
-                                RoomHelper.checkExist(
+                                CommonRoomHelper.checkExist(
                                     roomId,
                                     successAction = { getPassword ->
                                         if (getPassword.isEmpty()) {

@@ -12,6 +12,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.ListenerDoc
 import com.wonddak.loacell.store.ObserveHelper
 import com.wonddak.loacell.store.RoomHelper
@@ -69,7 +70,7 @@ class LoaCellViewModel(
             launch {
                 roomId.collect { id ->
                     if (id.isNotEmpty()) {
-                        RoomHelper.checkExist(
+                        CommonRoomHelper.checkExist(
                             id,
                             successAction = {
                                 observeRoom = ObserveHelper.roomInfo(id,dataBase)

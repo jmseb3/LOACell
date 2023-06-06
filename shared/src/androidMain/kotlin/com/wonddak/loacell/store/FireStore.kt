@@ -146,6 +146,19 @@ actual class CommonDocument(
             }
     }
 
+    actual fun get(
+        successAction: (documentSnapshot: CommonDocumentSnapshot) -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        ref.get()
+            .addOnSuccessListener {
+                successAction(CommonDocumentSnapshot(it))
+            }
+            .addOnFailureListener {
+                failAction(com.wonddak.loacell.store.Error(it))
+            }
+    }
+
 
 }
 

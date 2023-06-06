@@ -143,6 +143,23 @@ actual class CommonDocument(
         }
     }
 
+    actual fun get(
+        successAction: (documentSnapshot: CommonDocumentSnapshot) -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        ref.getDocumentWithCompletion { firDocumentSnapshot, nsError ->
+            if (nsError == null) {
+                if (firDocumentSnapshot != null) {
+                    successAction(CommonDocumentSnapshot(firDocumentSnapshot))
+                } else {
+                    failAction(com.wonddak.loacell.store.Error(null))
+                }
+            } else {
+                failAction(com.wonddak.loacell.store.Error(nsError))
+            }
+        }
+    }
+
 
 }
 

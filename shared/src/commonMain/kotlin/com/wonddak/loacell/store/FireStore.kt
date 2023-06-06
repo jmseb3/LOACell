@@ -48,7 +48,10 @@ expect class CommonDocument {
     fun delete()
     fun delete(successAction: () -> Unit, failAction: (error :Error) -> Unit)
 
-//    suspend fun get() : CommonDocumentSnapshot
+    fun get(
+        successAction: (documentSnapshot: CommonDocumentSnapshot) -> Unit,
+        failAction: (error: Error) -> Unit
+    )
 }
 
 expect class CommonDocumentSnapshot {

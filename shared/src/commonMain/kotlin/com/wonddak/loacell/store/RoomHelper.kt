@@ -78,7 +78,7 @@ object CommonRoomHelper {
                 )
             ).get(
                 successAction = { querySnapshot ->
-                    querySnapshot.documents.forEach {document ->
+                    querySnapshot.documents.forEach { document ->
                         val id = document.id
                         val data = document.data!!
                         val title = data["title"] as String
@@ -96,5 +96,24 @@ object CommonRoomHelper {
                 failAction = failAction
             )
 
+    }
+
+    fun checkExist(
+        roomId: String,
+        successAction: (password: String) -> Unit,
+        failAction: () -> Unit
+    ) {
+        getRoomRef(roomId)
+            .get(
+                successAction = {
+                    if (it.exist) {
+                        successAction(it.data!!["enterPassword"] as String)
+                    } else {
+                        failAction()
+                    }
+
+                },
+                failAction = {failAction()}
+            )
     }
 }
