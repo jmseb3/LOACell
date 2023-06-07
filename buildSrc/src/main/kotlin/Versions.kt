@@ -8,8 +8,8 @@ object Versions {
     object Dependencies {
         //All multiplatform libraries
         object KMM {
-            const val SQLDelightVersion = "2.0.0-alpha05"
-            const val KotlinSerializationVersion = "1.8.10"
+            const val SQLDelightVersion = "2.0.0-rc01"
+            const val KotlinSerializationVersion = Versions.Project.Kotlin
             const val ktorVersion = "2.2.1"
             const val mokoVersion = "0.22.0"
         }

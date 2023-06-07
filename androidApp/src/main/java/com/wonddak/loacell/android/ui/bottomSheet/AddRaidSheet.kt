@@ -26,9 +26,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
-import com.wonddak.loacell.android.util.FireStoreHelper
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
+import com.wonddak.loacell.store.CommonRaidHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,14 +66,14 @@ fun AddRaidSheet(
         onDismissRequest = onDismissRequest,
         buttonClickAction = {
             if (title.isNotEmpty()) {
-                FireStoreHelper.addRaidInfo(
+                CommonRaidHelper.add(
                     roomId,
                     title,
                     nowType,
                     nowDifficulty,
                     if (nowType == RaidType.ABRELSHUD) startGateNumber else 1,
                     if (nowType == RaidType.ABRELSHUD) endGateNumber else nowType.getMaxGate(),
-                    { e -> errorMsg = e.message ?: "unknown error" },
+                    {e -> errorMsg = e.errorMsg},
                     successAction
                 )
             } else {

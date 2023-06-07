@@ -9,28 +9,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
-import com.wonddak.loacell.android.util.FireStoreHelper
+import com.wonddak.loacell.store.CommonCharacterHelper
+import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.launch
 
-
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddUserSheet(
     modifier: Modifier = Modifier,
@@ -71,19 +70,17 @@ fun AddUserSheet(
 
             val characterResult = LostArkApi().getCharacterInfo(characterName)
             characterResult.onSuccess { list ->
-                FireStoreHelper.addCharacters(list)
-                FireStoreHelper.addUser(
-                    roomId = roomId,
-                    name = user,
-                    representativeCharacter = characterName,
-                    characterList = list,
-                    failAction = { e ->
-                        errorMsg = e.localizedMessage ?: "서버 데이터 저장에 실패했습니다."
-                    }
-                ) {
-                    addAction()
+                list.forEach {
+                    CommonCharacterHelper.addOrUpdate(it)
                 }
-
+                CommonUserHelper.addOrUpdate(
+                    roomId,
+                    user,
+                    characterName,
+                    list,
+                    {error -> errorMsg = error},
+                    addAction
+                )
             }
             characterResult.onError { code, message ->
                 errorMsg = "$message($code)"

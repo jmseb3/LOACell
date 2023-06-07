@@ -21,9 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.getImg
-import com.wonddak.loacell.getRaidText
-import com.wonddak.loacell.makeGateText
+import com.wonddak.loacell.ext.getImg
+import com.wonddak.loacell.ext.getRaidText
+import com.wonddak.loacell.ext.makeGateText
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 

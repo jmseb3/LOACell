@@ -3,7 +3,6 @@ package com.wonddak.loacell.android.ui.login
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -85,7 +83,9 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 text = "로그인 하지 않고 계속",
                 color = Color.Black,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.noRippleClickable { loginHelper.requestAnonymousLogin() }.fillMaxWidth(),
+                modifier = Modifier
+                    .noRippleClickable { loginHelper.requestAnonymousLogin() }
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
         }
@@ -100,7 +100,7 @@ fun GoogleLoginButton(
     Card(
         modifier = modifier
             .height(40.dp)
-            .clickable {
+            .noRippleClickable {
                 action()
             },
         elevation = CardDefaults.cardElevation(

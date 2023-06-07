@@ -24,14 +24,18 @@ kotlin {
             export(project(Modules.database))
             transitiveExport = true
         }
-    }
+        pod("FirebaseFirestore","~> 10.10")
 
+    }
+    val coroutinesVersion = "1.6.4"
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(project(Modules.api))
                 api(project(Modules.resources))
                 api(project(Modules.database))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation("com.soywiz.korlibs.klock:klock:4.0.2")
             }
         }
         val commonTest by getting {
@@ -39,7 +43,12 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation(platform(Dependencies.Android.Firebase.Bom))
+                implementation(Dependencies.Android.Firebase.Firestore)
+            }
+        }
         val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
