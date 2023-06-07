@@ -33,11 +33,6 @@ data class FBRaidInfo(
 }
 
 object CommonRaidHelper {
-    private fun getRaidsRef(roomId: String): CommonCollection =
-        getFireStore().collection("rooms").document(roomId).collection("raidInfo")
-
-    private fun getRaidRef(roomId: String, raidId: String): CommonDocument =
-        getRaidsRef(roomId).document(raidId)
     //레이드 정보를 추가한다.
     fun add(
         roomId: String,
@@ -56,7 +51,7 @@ object CommonRaidHelper {
             startGateNumber = startGateNumber,
             endGateNumber = endGateNumber
         )
-        getRaidsRef(roomId).document()
+        RefHelper.getRaidsRef(roomId).document()
             .set(
                 fbRaidInfo.toMap(),
                 successAction = successAction,
@@ -72,7 +67,7 @@ object CommonRaidHelper {
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        getRaidRef(roomId, raidId).delete(
+        RefHelper.getRaidRef(roomId, raidId).delete(
             successAction = successAction,
             failAction = failAction
         )
@@ -87,7 +82,7 @@ object CommonRaidHelper {
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        getRaidRef(roomId, raidId).update(
+        RefHelper.getRaidRef(roomId, raidId).update(
             field = "party$partyIndex",
             value = partyList,
             successAction = successAction,
@@ -99,7 +94,7 @@ object CommonRaidHelper {
         roomId: String,
         db: AppDataBase
     ) : CommonListenerRegistration {
-        return getRaidsRef(roomId).getListenerRegistration(
+        return RefHelper.getRaidsRef(roomId).getListenerRegistration(
             successAction =  {value ->
                 val dbRaidList =
                     db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }

@@ -27,13 +27,14 @@ kotlin {
         pod("FirebaseFirestore","~> 10.10")
 
     }
-
+    val coroutinesVersion = "1.6.4"
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(project(Modules.api))
                 api(project(Modules.resources))
                 api(project(Modules.database))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                 implementation("com.soywiz.korlibs.klock:klock:4.0.2")
             }
         }

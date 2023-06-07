@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.room.user
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -156,9 +157,10 @@ fun FocusUserView(
             if (loaCellViewModel.showLoading) {
                 val characterResult =
                     LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
+                Log.i("JWH",characterResult.toString())
                 characterResult.onSuccess { list ->
-                    list.forEach { CommonCharacterHelper.addOrUpdate(it,db) }
-                    CommonUserHelper.add(
+                    list.forEach { CommonCharacterHelper.addOrUpdate(it) }
+                    CommonUserHelper.addOrUpdate(
                         roomId = roomId,
                         name = userInfo.name,
                         representativeCharacter = userInfo.representativeCharacter,

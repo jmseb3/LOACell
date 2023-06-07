@@ -23,6 +23,8 @@ expect class CommonCollection {
     ) : CommonListenerRegistration
 
     fun where(filter :CommonFilter) : CommonQuery
+    fun whereIn(filed: String,list:List<Any>): CommonQuery
+    fun whereIn(filed: CommonFieldPath,list:List<Any>): CommonQuery
 }
 
 expect class CommonFilter {
@@ -82,6 +84,12 @@ expect class CommonQuery {
 expect class CommonFieldValue{
     companion object {
         fun arrayUnion(vararg value :Any) : CommonFieldValue
+    }
+}
+
+expect class CommonFieldPath{
+    companion object {
+        fun documentId() : CommonFieldPath
     }
 }
 

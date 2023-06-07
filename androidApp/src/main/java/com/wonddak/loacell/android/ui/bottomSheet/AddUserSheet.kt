@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonCharacterHelper
 import com.wonddak.loacell.store.CommonUserHelper
@@ -35,7 +34,6 @@ import kotlinx.coroutines.launch
 fun AddUserSheet(
     modifier: Modifier = Modifier,
     roomId: String,
-    db :AppDataBase,
     onDismissRequest: () -> Unit,
     addAction: () -> Unit
 ) {
@@ -73,9 +71,9 @@ fun AddUserSheet(
             val characterResult = LostArkApi().getCharacterInfo(characterName)
             characterResult.onSuccess { list ->
                 list.forEach {
-                    CommonCharacterHelper.addOrUpdate(it,db)
+                    CommonCharacterHelper.addOrUpdate(it)
                 }
-                CommonUserHelper.add(
+                CommonUserHelper.addOrUpdate(
                     roomId,
                     user,
                     characterName,

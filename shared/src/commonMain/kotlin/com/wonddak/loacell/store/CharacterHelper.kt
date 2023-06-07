@@ -19,17 +19,15 @@ data class FBCharacter(
 
 }
 object CommonCharacterHelper {
-    private fun getCharacterRef(): CommonCollection = getFireStore().collection("characters")
     fun addOrUpdate(
         character: CharacterInfo,
-        db: AppDataBase
     ) {
         val data = FBCharacter(
             level = character.itemMaxLevel,
             server = character.serverName,
             className = character.characterClassName
         )
-        val characterRef = getCharacterRef().document(character.characterName)
+        val characterRef = RefHelper.getCharacterRef().document(character.characterName)
         characterRef.get(
             successAction = {
                 if (it.exist) {
@@ -40,12 +38,6 @@ object CommonCharacterHelper {
                 } else {
                     characterRef.set(data.toMap())
                 }
-                db.characterInfoQueriesHelper.updateCharacter(
-                    character.characterName,
-                    data.server,
-                    data.className,
-                    data.level
-                )
             },
             failAction = {
 
@@ -57,7 +49,7 @@ object CommonCharacterHelper {
         name: String,
         db: AppDataBase
     ) {
-        getCharacterRef().document(name).get(
+        RefHelper.getCharacterRef().document(name).get(
             successAction = {
                 if (it.exist) {
                     val className = it.data!!["className"] as String

@@ -3,11 +3,16 @@ package com.wonddak.loacell.store
 import com.wonddak.database.AppDataBase
 import com.wonddak.sharedapi.model.CharacterInfo
 import korlibs.time.DateTime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class FBUSerInfo(
     val representativeCharacter: String = "",
     val characterList: List<String> = emptyList(),
-    val timeStamp: Long = DateTime.now().milliseconds.toLong(),
+    val timeStamp: Long = DateTime.now().unixMillisLong
 ) {
     fun toMap() = mapOf<String, Any>(
         "representativeCharacter" to representativeCharacter,
@@ -15,20 +20,11 @@ data class FBUSerInfo(
         "timeStamp" to timeStamp
     )
 }
+
 object CommonUserHelper {
 
-    private fun getUsersRef(
-        roomId: String,
-    ): CommonCollection =
-        getFireStore().collection("rooms").document(roomId).collection("users")
-    private fun getUserDocRef(
-        roomId: String,
-        name: String
-    ): CommonDocument = getUsersRef(roomId).document(name)
-
-
     // 방에 유저정보를 추가한다.
-    fun add(
+    fun addOrUpdate(
         roomId: String,
         name: String,
         representativeCharacter: String,
@@ -40,17 +36,23 @@ object CommonUserHelper {
             representativeCharacter,
             characterList.map { it.characterName }
         )
-        val userRoom = getUserDocRef(roomId, name)
+        val userRoom = RefHelper.getUserDocRef(roomId, name)
 
         userRoom.get(
             successAction = {
                 if (it.exist) {
-                    failAction("이미 존재하는 이름입니다.")
+                    userRoom.update(
+                        data = fbUserInfo.toMap(),
+                        successAction = successAction,
+                        failAction = {err ->
+                            failAction(err.errorMsg)
+                        }
+                    )
                 } else {
                     userRoom.set(
                         data = fbUserInfo.toMap(),
                         successAction = successAction,
-                        failAction = {err ->
+                        failAction = { err ->
                             failAction(err.errorMsg)
                         }
                     )
@@ -69,8 +71,8 @@ object CommonUserHelper {
         name: String,
         representativeCharacter: String
     ) {
-        getUserDocRef(roomId,name)
-            .update("representativeCharacter",representativeCharacter)
+        RefHelper.getUserDocRef(roomId, name)
+            .update("representativeCharacter", representativeCharacter)
     }
 
     //유저 정보를 삭제한다.
@@ -80,64 +82,90 @@ object CommonUserHelper {
         failAction: (e: String) -> Unit,
         successAction: () -> Unit
     ) {
-        getUserDocRef(roomId,name)
+        RefHelper.getUserDocRef(roomId, name)
             .delete(
                 successAction = successAction,
-                failAction = {failAction(it.errorMsg)}
+                failAction = { failAction(it.errorMsg) }
             )
     }
 
     fun observe(
         roomId: String,
         db: AppDataBase
-    ) : CommonListenerRegistration {
-        return getUsersRef(roomId).getListenerRegistration(
-            successAction = {value ->
+    ): CommonListenerRegistration {
+        return RefHelper.getUsersRef(roomId).getListenerRegistration(
+            successAction = { value ->
                 val dbUserList =
                     db.userInfoQueriesHelper.getUsersByRoomIdValue(roomId).map { it.name }
                         .toMutableSet()
                 // 이름 조회..
-                value.documents.forEach {
-                    val userName = it.id
+                CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.IO) {
+                        value.documents.forEach {
+                            val userName = it.id
 
-                    val representativeCharacter =
-                        it.data!!["representativeCharacter"] as String
-                    val characterNameList =
-                        it.data!!["characterList"] as List<String>
-                    val timeStamp = it.data!!["timeStamp"] as Long
-                    println("JWH Listen Users == $userName")
-                    println("JWH ${characterNameList.joinToString("|")}")
+                            val representativeCharacter =
+                                it.data!!["representativeCharacter"] as String
+                            val characterNameList =
+                                it.data!!["characterList"] as List<String>
+                            val timeStamp = it.data!!["timeStamp"] as Long
+                            println("JWH Listen Users == $userName")
+                            println("JWH ${characterNameList.joinToString("|")}")
 
-                    //이미 값이 있는 경우
-                    if (userName in dbUserList) {
-                        //업데이트
-                        db.userInfoQueriesHelper.updateUserInfo(
-                            userName,
-                            characterNameList,
-                            roomId,
-                            representativeCharacter,
-                            timeStamp
-                        )
-                        dbUserList.remove(userName)
-                    } else {
-                        //없는 경우 추가
-                        db.userInfoQueriesHelper.addUser(
-                            userName,
-                            roomId,
-                            representativeCharacter,
-                            characterNameList,
-                            timeStamp
-                        )
+                            launch {
+                                RefHelper.getCharacterRef().whereIn(CommonFieldPath.documentId(),characterNameList).get(
+                                    successAction = {
+                                        it.documents.forEach {
+                                            val name = it.id
+                                            val className = it.data!!["className"] as String
+                                            val level = it.data!!["level"] as String
+                                            val server = it.data!!["server"] as String
+                                            db.characterInfoQueriesHelper.updateCharacter(
+                                                name,
+                                                server,
+                                                className,
+                                                level
+                                            )
+                                        }
+                                    },
+                                    failAction = {
+
+                                    }
+                                )
+                            }
+
+                            //이미 값이 있는 경우
+                            if (userName in dbUserList) {
+                                //업데이트
+                                db.userInfoQueriesHelper.updateUserInfo(
+                                    userName,
+                                    characterNameList,
+                                    roomId,
+                                    representativeCharacter,
+                                    timeStamp
+                                )
+                                dbUserList.remove(userName)
+                            } else {
+                                //없는 경우 추가
+                                db.userInfoQueriesHelper.addUser(
+                                    userName,
+                                    roomId,
+                                    representativeCharacter,
+                                    characterNameList,
+                                    timeStamp
+                                )
+                            }
+                        }
                     }
 
-                }
-
-                // 동작이 끝난후 남아있다면
-                dbUserList.forEach { name ->
-                    db.userInfoQueriesHelper.deleteUserName(name, roomId)
+                    // 동작이 끝난후 남아있다면
+                    dbUserList.forEach { name ->
+                        db.userInfoQueriesHelper.deleteUserName(name, roomId)
+                    }
                 }
             },
-            failAction = {
+            failAction =
+            {
                 println("JWH Fail with error : ${it?.errorMsg}")
             }
         )

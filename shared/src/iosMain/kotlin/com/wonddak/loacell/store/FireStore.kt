@@ -3,6 +3,7 @@ package com.wonddak.loacell.store
 import cocoapods.FirebaseFirestore.FIRCollectionReference
 import cocoapods.FirebaseFirestore.FIRDocumentReference
 import cocoapods.FirebaseFirestore.FIRDocumentSnapshot
+import cocoapods.FirebaseFirestore.FIRFieldPath
 import cocoapods.FirebaseFirestore.FIRFieldValue
 import cocoapods.FirebaseFirestore.FIRFilter
 import cocoapods.FirebaseFirestore.FIRFirestore
@@ -56,6 +57,20 @@ actual class CommonCollection(
 
     actual fun where(filter: CommonFilter): CommonQuery {
         return CommonQuery(ref.queryWhereFilter(filter.ref))
+    }
+
+    actual fun whereIn(
+        filed: String,
+        list: List<Any>
+    ): CommonQuery {
+        return  CommonQuery(ref.queryWhereField(filed,list))
+    }
+
+    actual fun whereIn(
+        filed: CommonFieldPath,
+        list: List<Any>
+    ): CommonQuery {
+        return  CommonQuery(ref.queryWhereFieldPath(filed.ref,list))
     }
 }
 
@@ -265,7 +280,14 @@ actual class CommonFieldValue(
             return CommonFieldValue(FIRFieldValue.fieldValueForArrayUnion(value.toList()))
         }
     }
+}
 
+actual class CommonFieldPath(
+    val ref : FIRFieldPath
+) {
+    actual companion object {
+        actual fun documentId(): CommonFieldPath = CommonFieldPath(FIRFieldPath.documentID())
+    }
 }
 
 actual class CommonListenerRegistration(

@@ -67,7 +67,6 @@ fun RoomView(
             if (loaCellViewModel.showUserAdd) {
                 AddUserSheet(
                     roomId = roomInfo.uniqueId,
-                    db = db,
                     onDismissRequest = {
                         loaCellViewModel.showUserAdd = false
                     }

@@ -3,6 +3,7 @@ package com.wonddak.loacell.store
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,6 +57,17 @@ actual class CommonCollection(
 
     actual fun where(filter: CommonFilter) :CommonQuery{
         return CommonQuery(ref.where(filter.ref))
+    }
+
+    actual fun whereIn(filed: String,list:List<Any>): CommonQuery {
+        return CommonQuery(ref.whereIn(filed,list))
+    }
+
+    actual fun whereIn(
+        filed: CommonFieldPath,
+        list: List<Any>
+    ): CommonQuery {
+        return CommonQuery(ref.whereIn(filed.ref,list))
     }
 }
 
@@ -262,7 +274,14 @@ actual class CommonFieldValue(
             return CommonFieldValue(FieldValue.arrayUnion(value))
         }
     }
+}
 
+actual class CommonFieldPath(
+    val ref : FieldPath
+) {
+    actual companion object {
+        actual fun documentId(): CommonFieldPath = CommonFieldPath(FieldPath.documentId())
+    }
 }
 
 actual class CommonListenerRegistration(

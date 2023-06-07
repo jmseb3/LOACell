@@ -22,17 +22,15 @@ data class FBRoomInfo(
     )
 }
 object CommonRoomHelper {
-    private fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms")
-    private fun getRoomRef(id: String): CommonDocument = getRoomsRef().document(id)
-    //로그인시 동기화를 위한 메서드
 
+    //로그인시 동기화를 위한 메서드
     fun syncInfo(
         userId: String,
         db: AppDataBase,
         failAction: (error: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        getRoomsRef()
+        RefHelper.getRoomsRef()
             .where(
                 CommonFilter.or(
                     CommonFilter.equalTo("owner", userId),
@@ -68,7 +66,7 @@ object CommonRoomHelper {
         successAction: (password: String) -> Unit,
         failAction: () -> Unit
     ) {
-        getRoomRef(roomId)
+        RefHelper.getRoomRef(roomId)
             .get(
                 successAction = {
                     if (it.exist) {
@@ -96,7 +94,7 @@ object CommonRoomHelper {
             enterPassword = password,
             owner = owner
         )
-        val ref = getRoomsRef().document()
+        val ref = RefHelper.getRoomsRef().document()
         ref.set(
             data.toMap(),
             successAction = {
@@ -117,7 +115,7 @@ object CommonRoomHelper {
         failAction: (e: Error) -> Unit
     ) {
         val field = if (isAnonymous) "anonymousUser" else "enterUser"
-        getRoomRef(roomId).update(
+        RefHelper.getRoomRef(roomId).update(
             field = field,
             value = CommonFieldValue.arrayUnion(userId),
             successAction = successAction,
@@ -129,7 +127,7 @@ object CommonRoomHelper {
         roomId: String,
         db:AppDataBase
     ) : CommonListenerRegistration {
-        return getRoomRef(roomId).getListenerRegistration(
+        return RefHelper.getRoomRef(roomId).getListenerRegistration(
             successAction =  {
                 it.data?.let { data ->
                     val title = data["title"] as String
