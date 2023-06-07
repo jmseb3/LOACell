@@ -16,22 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.Character
@@ -54,26 +44,23 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
-import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getMaxParty
 import com.wonddak.loacell.ext.getRaidText
 import com.wonddak.loacell.ext.makeGateText
-import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.store.CommonRaidHelper
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RaidView(
     db: AppDataBase, roomId: String, loaCellViewModel: LoaCellViewModel
 ) {
 
     val raidInfoList by loaCellViewModel.raidInfoList.collectAsState()
+    val userInfoList by loaCellViewModel.userInfoList.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
-    val raidTypes = RaidType.values()
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
             Row() {
@@ -101,11 +88,43 @@ fun RaidView(
                 2 -> raidInfoList.filter { !it.isFinish }
                 else -> raidInfoList
             }
-            val filterByType = filterByFinish.filter { loaCellViewModel.filterRaidType.contains(it.type)}
+            val filterByType =
+                filterByFinish.filter { loaCellViewModel.filterRaidType.contains(it.type) }
+
+            val filterByUser = if (loaCellViewModel.filterUser.isEmpty()) {
+                filterByType
+            } else {
+                filterByType.filter {
+                    val names = mutableListOf<String>()
+                    val filterUser = userInfoList.filter{ loaCellViewModel.filterUser.contains(it.name) }
+                    it.party1characterList.forEach { character ->
+                        if (character.isNotEmpty()) {
+                            for (userInfo in filterUser) {
+                                if (userInfo.characterList.contains(character)) {
+                                    names.add(userInfo.name)
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    it.party2characterList.forEach { character ->
+                        if (character.isNotEmpty()) {
+                            for (userInfo in filterUser) {
+                                if (userInfo.characterList.contains(character)) {
+                                    names.add(userInfo.name)
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    names.sorted() == loaCellViewModel.filterUser.sorted()
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier.padding(10.dp)
             ) {
-                items(filterByType) { raidInfo ->
+                items(filterByUser) { raidInfo ->
                     RaidItemRow(raidInfo) {
                         loaCellViewModel.setNowRaidInfo(raidInfo.raidId)
                     }
@@ -118,78 +137,7 @@ fun RaidView(
         }
         loaCellViewModel.apply {
             if (showRaidFilter) {
-                BaseSheet(title = "필터 설정",
-                    onDismissRequest = { showRaidFilter = false }) {
-                    Column {
-                        Text(text = "레이드 종류")
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            content = {
-                                items(raidTypes) { type ->
-                                    val selected = filterRaidType.contains(type)
-                                    FilterChip(
-                                        selected = selected,
-                                        onClick = {
-                                            val temp = filterRaidType.toMutableList()
-                                            if (selected) {
-                                                temp.remove(type)
-                                            } else {
-                                                temp.add(type)
-                                            }
-                                            filterRaidType = temp.toTypedArray()
-                                        },
-                                        label = {
-                                            Text(
-                                                text = type.toKorString(),
-                                                modifier = Modifier.fillMaxWidth(),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        },
-                                        colors = FilterChipDefaults.filterChipColors()
-                                    )
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Divider()
-                        Text(text = "완료 여부")
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            listOf(0,1,2).forEach { finish ->
-                                val selected =filterFinish == finish
-
-                                Row(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .selectable(
-                                            selected = selected,
-                                            onClick = { filterFinish = finish }
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = selected,
-                                        onClick = { filterFinish = finish  },
-                                        colors = RadioButtonDefaults.colors()
-                                    )
-                                    Text(
-                                        text = when (finish) {
-                                            1 -> "완료"
-                                            2 -> "미완료"
-                                            else -> "전체"
-                                        },
-                                        modifier = Modifier
-                                            .padding(start = 6.dp)
-                                            .fillMaxWidth(),
-                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                FilterSheet(loaCellViewModel = loaCellViewModel)
             }
         }
     }
@@ -241,12 +189,9 @@ fun FocusRaidView(
             ).collectAsState(initial = emptyList())
 
             Column() {
-                Text(text = raidInfo.getRaidText())
-                Text(text = raidInfo.makeGateText())
+                Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
             }
-
             loaCellViewModel.apply {
-
                 RaidPartyView(db, characterList, openAction = { index ->
                     if (allUserList.isEmpty()) {
                         showSnackBar(
@@ -358,7 +303,9 @@ fun RaidPartyView(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = "캐릭터를 추가해주세요")
-                        MyIconButton(SharedRes.images.add) {
+                        MyIconButton(
+                            imageResource = SharedRes.images.add
+                        ) {
                             openAction(index)
                         }
                     }

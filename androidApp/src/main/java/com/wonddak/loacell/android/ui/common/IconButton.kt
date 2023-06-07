@@ -12,11 +12,13 @@ import dev.icerock.moko.resources.ImageResource
 
 @Composable
 fun MyIconButton(
+    modifier: Modifier = Modifier,
     @DrawableRes id: Int,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     IconButton(
+        modifier = modifier,
         onClick = onClick,
         enabled = enabled
     ) {
@@ -30,11 +32,13 @@ fun MyIconButton(
 
 @Composable
 fun MyIconButton(
+    modifier: Modifier = Modifier,
     imageResource: ImageResource,
     enabled :Boolean =true,
     onClick: () -> Unit
 ) {
     MyIconButton(
+        modifier = modifier,
         id = imageResource.drawableResId,
         enabled =enabled,
         onClick = onClick

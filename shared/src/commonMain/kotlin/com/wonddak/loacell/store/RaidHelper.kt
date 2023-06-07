@@ -72,6 +72,15 @@ object CommonRaidHelper {
             failAction = failAction
         )
     }
+    fun updateFinish(
+        roomId: String,
+        raidId: String,
+        isFinish: Boolean
+    ) {
+        RefHelper.getRaidRef(roomId, raidId).update(
+            "finish",isFinish
+        )
+    }
 
     // 파티 리스트를 업데이트 한다.
     fun updatePartList(

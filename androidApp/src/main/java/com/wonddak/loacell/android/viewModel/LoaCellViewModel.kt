@@ -3,6 +3,7 @@ package com.wonddak.loacell.android.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
@@ -18,7 +19,9 @@ import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
@@ -36,30 +39,41 @@ class LoaCellViewModel(
         _roomId.value = ""
         tabState = 0
         clearFocusItem()
-        filterRaidType = RaidType.values()
-        filterFinish = 0
+        clearFilter()
     }
 
     private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
     val roomInfo get() = _roomInfo
 
+    private var _userInfoList: MutableStateFlow<List<UserInfo>> = MutableStateFlow(emptyList())
+    val userInfoList get() = _userInfoList
+
     private var _focusUserName = MutableStateFlow("")
     val focusUserName get() = _focusUserName
 
-    private var _userInfo: MutableStateFlow<UserInfo?> = MutableStateFlow(null)
-    val userInfo get() = _userInfo
+    val userInfo = userInfoList.combine(focusUserName) { list, name ->
+        list.find { it.name == name }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = null
+    )
     private var _focusRaidId = MutableStateFlow("")
     val focusRaidId get() = _focusRaidId
 
     private var _raidInfoList: MutableStateFlow<List<RaidInfo>> = MutableStateFlow(emptyList())
     val raidInfoList get() = _raidInfoList
 
-    private var _raidInfo: MutableStateFlow<RaidInfo?> = MutableStateFlow(null)
-    val raidInfo get() = _raidInfo
+    val raidInfo = raidInfoList.combine(focusRaidId) {list, id ->
+        list.find { it.raidId == id }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = null
+    )
 
-    private var userInfoJob: Job? = null
     private var raidListInfoJob: Job? = null
-    private var raidInfoJob: Job? = null
+    private var userListInfoJob: Job? = null
     private var roomInfoJob: Job? = null
 
     private var observeRoom: CommonListenerRegistration? = null
@@ -76,13 +90,18 @@ class LoaCellViewModel(
                             id,
                             successAction = {
                                 observeRoom = CommonRoomHelper.observe(id,dataBase)
-                                observeUser = CommonUserHelper.observe(id,dataBase)
-                                observeRaid = CommonRaidHelper.observe(id, dataBase)
                                 roomInfoJob = launch {
                                     dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
                                         _roomInfo.value = it
                                     }
                                 }
+                                observeUser = CommonUserHelper.observe(id,dataBase)
+                                userListInfoJob = launch {
+                                    dataBase.userInfoQueriesHelper.getUsersByRoomId(id).collect{
+                                        _userInfoList.value = it
+                                    }
+                                }
+                                observeRaid = CommonRaidHelper.observe(id, dataBase)
                                 raidListInfoJob = launch {
                                     dataBase.raidInfoQueriesHelper.getALlByRoomId(id).collect {
                                         _raidInfoList.value = it
@@ -94,52 +113,17 @@ class LoaCellViewModel(
                             }
                         )
                     } else {
+                        userListInfoJob?.cancel()
                         roomInfoJob?.cancel()
                         raidListInfoJob?.cancel()
+
                         observeRoom?.remove()
                         observeUser?.remove()
                         observeRaid?.remove()
+
+                        _userInfoList.value = emptyList()
                         _roomInfo.value = null
                         _raidInfoList.value = emptyList()
-                    }
-                }
-            }
-            //선택된 유저 정보 갱신
-            launch {
-                focusUserName.combine(roomId) { name, id ->
-                    Pair(name, id)
-                }.collect { pair ->
-                    val name = pair.first
-                    val id = pair.second
-
-                    if (id.isNotEmpty() && name.isNotEmpty()) {
-                        userInfoJob = launch {
-                            dataBase.userInfoQueriesHelper.getUsersByName(id, name).collect {
-                                _userInfo.value = it
-                            }
-                        }
-                    } else {
-                        userInfoJob?.cancel()
-                        _userInfo.value = null
-                    }
-                }
-            }
-            //선택된 레이드 정보 갱신
-            launch {
-                focusRaidId.combine(roomId) { raidId, roomId ->
-                    Pair(raidId, roomId)
-                }.collect { pair ->
-                    val raidId = pair.first
-                    val roomId = pair.second
-                    if (raidId.isNotEmpty() && roomId.isNotEmpty()) {
-                        raidInfoJob = launch {
-                            dataBase.raidInfoQueriesHelper.getRaidInfoById(roomId, raidId).collect {
-                                _raidInfo.value = it
-                            }
-                        }
-                    } else {
-                        raidInfoJob?.cancel()
-                        _raidInfo.value = null
                     }
                 }
             }
@@ -178,7 +162,14 @@ class LoaCellViewModel(
     }
 
     var filterRaidType by mutableStateOf(RaidType.values())
-    var filterFinish by mutableStateOf(0)
+    var filterFinish by mutableIntStateOf(0)
+    var filterUser by mutableStateOf(emptyList<String>())
+
+    fun clearFilter() {
+        filterRaidType = RaidType.values()
+        filterFinish = 0
+        filterUser = emptyList()
+    }
 
     //region dialog status
     var showRoomDialog by mutableStateOf(false)

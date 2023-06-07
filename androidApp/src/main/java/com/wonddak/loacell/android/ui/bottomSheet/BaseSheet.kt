@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,17 +18,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.ui.common.MyIconButton
 import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseSheet(
     title: String,
+    useCloseIcon : Boolean = false,
     onDismissRequest :() -> Unit = {},
     content: @Composable () -> Unit
 ) {
@@ -47,13 +52,24 @@ fun BaseSheet(
                 .wrapContentHeight()
                 .padding(10.dp)
         ) {
-            Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Box() {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (useCloseIcon) {
+                    MyIconButton(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        imageResource = SharedRes.images.close
+                    ) {
+                        onDismissRequest()
+                    }
+                }
+
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Divider()
             content()
@@ -64,13 +80,14 @@ fun BaseSheet(
 fun BaseSheet(
     title: String,
     errorMsg :String = "",
+    useCloseIcon : Boolean = false,
     updateErrorMsg :(msg:String) -> Unit ={},
     onDismissRequest :() -> Unit = {},
     buttonClickAction : () -> Unit,
     content: @Composable () -> Unit
 ) {
     BaseSheet(
-        title,onDismissRequest
+        title,useCloseIcon,onDismissRequest
     ) {
         Column() {
             content()

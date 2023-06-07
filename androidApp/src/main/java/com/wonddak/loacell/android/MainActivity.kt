@@ -56,6 +56,7 @@ import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 import com.wonddak.loacell.ext.checkTimeOver
+import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 
 class MainActivity : ComponentActivity() {
@@ -309,11 +310,13 @@ fun MyBottomAppBar(
                             IconButton(onClick = { clearFocusItem() }) {
                                 Icon(Icons.Filled.ArrowBack, contentDescription = null)
                             }
-                            MyIconButton(SharedRes.images.change_person) {
+                            MyIconButton(
+                                imageResource = SharedRes.images.change_person
+                            ) {
                                 openCharacterEditDialog = true
                             }
                             MyIconButton(
-                                SharedRes.images.refresh,
+                                imageResource = SharedRes.images.refresh,
                                 enabled = it.checkTimeOver(System.currentTimeMillis())
                             ) {
                                 showLoading = true
@@ -327,6 +330,18 @@ fun MyBottomAppBar(
                     Row() {
                         IconButton(onClick = { clearFocusItem() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                        }
+                        focusRaidInfo?.let {info ->
+                            val icon = if (info.isFinish) {
+                                SharedRes.images.task_finish_done
+                            } else {
+                                SharedRes.images.task_finish_not
+                            }
+                            MyIconButton(
+                                imageResource = icon
+                            ) {
+                                CommonRaidHelper.updateFinish(info.roomId,info.raidId,!info.isFinish)
+                            }
                         }
                     }
                 }

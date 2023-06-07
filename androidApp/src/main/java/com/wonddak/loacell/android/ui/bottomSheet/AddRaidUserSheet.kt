@@ -171,6 +171,7 @@ fun AddRaidUserSheet(
             Spacer(modifier = Modifier.height(5.dp))
             Divider()
             selectedCharacter?.let {character ->
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -179,7 +180,6 @@ fun AddRaidUserSheet(
                     Text(text = character.className)
                     Text(text = character.getLevel().toString())
                 }
-
             }
         }
     }
