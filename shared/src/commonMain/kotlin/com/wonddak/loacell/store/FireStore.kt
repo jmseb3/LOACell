@@ -17,6 +17,11 @@ expect class CommonCollection {
     fun document(): CommonDocument
     fun document(documentPath: String): CommonDocument
 
+    fun getListenerRegistration(
+        successAction: (a:CommonQuerySnapshot) -> Unit,
+        failAction: (error: Error?) -> Unit
+    ) : CommonListenerRegistration
+
     fun where(filter :CommonFilter) : CommonQuery
 }
 
@@ -36,6 +41,11 @@ expect class CommonDocument {
 
     fun collection(collectionPath: String): CommonCollection
 
+    fun getListenerRegistration(
+        successAction: (a:CommonDocumentSnapshot) -> Unit,
+        failAction: (error: Error?) -> Unit
+    ) : CommonListenerRegistration
+
     fun set(data: Map<String, Any>)
     fun set(data: Map<String, Any>, successAction: () -> Unit, failAction: (error:Error) -> Unit)
 
@@ -44,7 +54,7 @@ expect class CommonDocument {
 
     fun update(data: Map<String, Any>, successAction: () -> Unit, failAction: (error:Error) -> Unit)
     fun update(field: String,value :Any,successAction: () -> Unit, failAction: (error:Error) -> Unit)
-
+    fun update(field: String,value :CommonFieldValue,successAction: () -> Unit, failAction: (error:Error) -> Unit)
     fun delete()
     fun delete(successAction: () -> Unit, failAction: (error :Error) -> Unit)
 
@@ -67,4 +77,14 @@ expect class CommonQuerySnapshot {
 
 expect class CommonQuery {
     fun get(successAction: (querySnapshot : CommonQuerySnapshot) -> Unit, failAction: (error :Error) -> Unit)
+}
+
+expect class CommonFieldValue{
+    companion object {
+        fun arrayUnion(vararg value :Any) : CommonFieldValue
+    }
+}
+
+expect class CommonListenerRegistration{
+    fun remove()
 }

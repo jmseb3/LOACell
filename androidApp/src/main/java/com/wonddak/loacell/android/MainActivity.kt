@@ -57,7 +57,6 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 import com.wonddak.loacell.ext.checkTimeOver
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.RoomHelper
 
 class MainActivity : ComponentActivity() {
     private lateinit var loginHelper: LoginHelper
@@ -183,7 +182,7 @@ fun MainContent(
                                     onDismissRequest = { showRoomAdd = false }
                                 ) { title, description, password ->
                                     val owner = userInfo!!.uid
-                                    RoomHelper.makeInfo(
+                                    CommonRoomHelper.makeInfo(
                                         title, description, password, owner
                                     ) { id ->
                                         db.roomInfoQueriesHelper.addRoomInfo(
@@ -200,7 +199,7 @@ fun MainContent(
                                 RoomEnterDialog(
                                     nowEnterRoomList = roomList.map { it.uniqueId },
                                     success = { roomId ->
-                                        RoomHelper.updateUser(
+                                        CommonRoomHelper.updateUser(
                                             roomId,
                                             userInfo!!.uid,
                                             userInfo!!.isAnonymous,
@@ -208,7 +207,7 @@ fun MainContent(
                                                 showRoomEnter = false
                                             },
                                             failAction = { error ->
-                                                showSnackBar(error ?: "입장에 실패했습니다.")
+                                                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
                                                 showRoomEnter = false
                                             }
                                         )

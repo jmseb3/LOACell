@@ -6,16 +6,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.ListenerRegistration
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.store.CommonListenerRegistration
+import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.ListenerDoc
-import com.wonddak.loacell.store.ObserveHelper
-import com.wonddak.loacell.store.RoomHelper
+import com.wonddak.loacell.store.CommonUserHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -60,9 +59,9 @@ class LoaCellViewModel(
     private var raidInfoJob: Job? = null
     private var roomInfoJob: Job? = null
 
-    private var observeRoom: ListenerDoc? = null
-    private var observeUser: ListenerDoc? = null
-    private var observeRaid: ListenerDoc? = null
+    private var observeRoom: CommonListenerRegistration? = null
+    private var observeUser: CommonListenerRegistration? = null
+    private var observeRaid: CommonListenerRegistration? = null
 
     init {
         viewModelScope.launch {
@@ -73,9 +72,9 @@ class LoaCellViewModel(
                         CommonRoomHelper.checkExist(
                             id,
                             successAction = {
-                                observeRoom = ObserveHelper.roomInfo(id,dataBase)
-                                observeUser = ObserveHelper.users(id,dataBase)
-                                observeRaid = ObserveHelper.raidInfo(id, dataBase)
+                                observeRoom = CommonRoomHelper.observe(id,dataBase)
+                                observeUser = CommonUserHelper.observe(id,dataBase)
+                                observeRaid = CommonRaidHelper.observe(id, dataBase)
                                 roomInfoJob = launch {
                                     dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
                                         _roomInfo.value = it

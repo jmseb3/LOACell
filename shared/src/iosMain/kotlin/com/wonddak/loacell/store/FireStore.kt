@@ -3,10 +3,11 @@ package com.wonddak.loacell.store
 import cocoapods.FirebaseFirestore.FIRCollectionReference
 import cocoapods.FirebaseFirestore.FIRDocumentReference
 import cocoapods.FirebaseFirestore.FIRDocumentSnapshot
+import cocoapods.FirebaseFirestore.FIRFieldValue
 import cocoapods.FirebaseFirestore.FIRFilter
 import cocoapods.FirebaseFirestore.FIRFirestore
+import cocoapods.FirebaseFirestore.FIRListenerRegistrationProtocol
 import cocoapods.FirebaseFirestore.FIRQuery
-import cocoapods.FirebaseFirestore.FIRQueryDocumentSnapshot
 import cocoapods.FirebaseFirestore.FIRQuerySnapshot
 import platform.Foundation.NSError
 
@@ -33,6 +34,25 @@ actual class CommonCollection(
     actual fun document(): CommonDocument = CommonDocument(ref.documentWithAutoID())
     actual fun document(documentPath: String): CommonDocument =
         CommonDocument(ref.documentWithPath(documentPath))
+
+    actual fun getListenerRegistration(
+        successAction: (a:CommonQuerySnapshot) -> Unit,
+        failAction: (error: Error?) -> Unit
+    ): CommonListenerRegistration {
+        return CommonListenerRegistration(
+            ref.addSnapshotListener { value, error ->
+                if (error != null) {
+                    failAction(Error(error))
+                }
+                if (value != null) {
+                    successAction(CommonQuerySnapshot(value))
+                } else {
+                    failAction(null)
+                }
+
+            }
+        )
+    }
 
     actual fun where(filter: CommonFilter): CommonQuery {
         return CommonQuery(ref.queryWhereFilter(filter.ref))
@@ -73,6 +93,24 @@ actual class CommonDocument(
     actual fun collection(collectionPath: String): CommonCollection =
         CommonCollection(ref.collectionWithPath(collectionPath))
 
+    actual fun getListenerRegistration(
+        successAction: (a:CommonDocumentSnapshot) -> Unit,
+        failAction: (error: Error?) -> Unit
+    ): CommonListenerRegistration {
+        return CommonListenerRegistration(
+            ref.addSnapshotListener { value, error ->
+                if (error != null) {
+                    failAction(Error(error))
+                }
+                if (value != null) {
+                    successAction(CommonDocumentSnapshot(value))
+                } else {
+                    failAction(null)
+                }
+
+            }
+        )
+    }
     actual fun set(data: Map<String, Any>) {
         ref.setData(data as Map<Any?, *>)
     }
@@ -118,6 +156,19 @@ actual class CommonDocument(
         failAction: (error: Error) -> Unit
     ) {
         ref.updateData(mapOf(field to value)) { err ->
+            if (err == null) {
+                successAction()
+            } else {
+                failAction(Error(err))
+            }
+        }
+    }
+
+    actual fun update(
+        field: String, value: CommonFieldValue, successAction: () -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        ref.updateData(mapOf(field to value.ref)) { err ->
             if (err == null) {
                 successAction()
             } else {
@@ -204,4 +255,21 @@ actual class CommonQuery(
         }
     }
 
+}
+
+actual class CommonFieldValue(
+    val ref : FIRFieldValue
+) {
+    actual companion object {
+        actual fun arrayUnion(vararg value: Any) :CommonFieldValue {
+            return CommonFieldValue(FIRFieldValue.fieldValueForArrayUnion(value.toList()))
+        }
+    }
+
+}
+
+actual class CommonListenerRegistration(
+    val ref : FIRListenerRegistrationProtocol
+){
+    actual fun remove() = ref.remove()
 }

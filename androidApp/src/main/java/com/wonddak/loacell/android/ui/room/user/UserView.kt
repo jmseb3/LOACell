@@ -1,6 +1,5 @@
 package com.wonddak.loacell.android.ui.room.user
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,8 +30,8 @@ import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.store.CharacterHelper
-import com.wonddak.loacell.store.UserHelper
+import com.wonddak.loacell.store.CommonCharacterHelper
+import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
@@ -112,7 +111,7 @@ fun FocusUserView(
                             representativeCharacter = userInfo.representativeCharacter,
                             characters = characterList,
                             confirm = { name ->
-                                UserHelper.updateRepresentativeCharacter(
+                                CommonUserHelper.updateRepresentativeCharacter(
                                     roomId,
                                     userInfo.name,
                                     name
@@ -128,7 +127,7 @@ fun FocusUserView(
                         DeleteCharacterDialog(
                             name = userInfo.name,
                             confirm = {
-                                UserHelper.delete(
+                                CommonUserHelper.delete(
                                     roomId,
                                     userInfo.name,
                                     failAction = { e ->
@@ -158,8 +157,8 @@ fun FocusUserView(
                 val characterResult =
                     LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
                 characterResult.onSuccess { list ->
-                    list.forEach { CharacterHelper.addOrUpdate(it,db) }
-                    UserHelper.add(
+                    list.forEach { CommonCharacterHelper.addOrUpdate(it,db) }
+                    CommonUserHelper.add(
                         roomId = roomId,
                         name = userInfo.name,
                         representativeCharacter = userInfo.representativeCharacter,

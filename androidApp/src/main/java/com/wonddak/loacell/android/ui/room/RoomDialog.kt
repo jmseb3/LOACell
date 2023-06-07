@@ -35,7 +35,6 @@ import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.RoomHelper
 import kotlinx.coroutines.delay
 
 @Composable
