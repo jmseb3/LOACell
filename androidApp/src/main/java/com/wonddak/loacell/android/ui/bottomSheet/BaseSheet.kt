@@ -24,15 +24,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseSheet(
     title: String,
-    errorMsg :String = "",
-    updateErrorMsg :(msg:String) -> Unit ={},
     onDismissRequest :() -> Unit = {},
-    buttonClickAction : () -> Unit,
     content: @Composable () -> Unit
 ) {
     val sheetState :SheetState = rememberModalBottomSheetState(
@@ -60,6 +56,23 @@ fun BaseSheet(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Divider()
+            content()
+        }
+    }
+}
+@Composable
+fun BaseSheet(
+    title: String,
+    errorMsg :String = "",
+    updateErrorMsg :(msg:String) -> Unit ={},
+    onDismissRequest :() -> Unit = {},
+    buttonClickAction : () -> Unit,
+    content: @Composable () -> Unit
+) {
+    BaseSheet(
+        title,onDismissRequest
+    ) {
+        Column() {
             content()
             Spacer(modifier = Modifier.height(10.dp))
 

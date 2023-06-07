@@ -174,8 +174,6 @@ fun AddRaidSheet(
                                 enabled = enabled,
                                 onClick = { nowDifficulty = difficulty },
                                 colors = RadioButtonDefaults.colors(
-                                    //TODO Match Theme Color
-                                    selectedColor = Color(0xFF6200EE)
                                 )
                             )
                             Text(

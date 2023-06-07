@@ -11,6 +11,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -35,6 +36,8 @@ class LoaCellViewModel(
         _roomId.value = ""
         tabState = 0
         clearFocusItem()
+        filterRaidType = RaidType.values()
+        filterFinish = 0
     }
 
     private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
@@ -174,6 +177,9 @@ class LoaCellViewModel(
         hideRoomInfo()
     }
 
+    var filterRaidType by mutableStateOf(RaidType.values())
+    var filterFinish by mutableStateOf(0)
+
     //region dialog status
     var showRoomDialog by mutableStateOf(false)
     var showRoomAdd by mutableStateOf(false)
@@ -182,6 +188,7 @@ class LoaCellViewModel(
     var showUserAdd by mutableStateOf(false)
     var showRaidAdd by mutableStateOf(false)
     var showSetting by mutableStateOf(false)
+    var showRaidFilter by mutableStateOf(false)
     fun hideAllDialog() {
         showRoomDialog = false
         showRoomAdd = false
@@ -190,6 +197,7 @@ class LoaCellViewModel(
         showUserAdd = false
         showRaidAdd = false
         showSetting = false
+        showRaidFilter = false
     }
 
     var openCharacterEditDialog by mutableStateOf(false)
