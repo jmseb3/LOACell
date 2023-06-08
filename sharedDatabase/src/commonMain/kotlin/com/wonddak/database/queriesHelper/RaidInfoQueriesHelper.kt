@@ -6,7 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 

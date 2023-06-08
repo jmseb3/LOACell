@@ -1,5 +1,5 @@
 import com.wonddak.loacell.model.Difficulty;
-import com.wonddak.loacell.model.RaidType;
+import com.wonddak.database.model.RaidType;
 import kotlin.String;
 import kotlin.collections.List;
 import kotlin.Boolean;

@@ -11,7 +11,7 @@ import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform

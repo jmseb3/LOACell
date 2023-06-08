@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,7 +1,7 @@
 package com.wonddak.database.ext
 
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 
 fun RaidInfo.getMinLevel(): Int {
     return this.type!!.getMinLevel(this.Difficulty!!, this.endGateNumber.toInt())

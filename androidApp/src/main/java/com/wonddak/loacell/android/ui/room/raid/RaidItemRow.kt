@@ -29,7 +29,7 @@ import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.ext.getImg
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable

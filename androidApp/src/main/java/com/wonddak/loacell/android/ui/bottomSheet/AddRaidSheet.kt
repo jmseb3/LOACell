@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -4,7 +4,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.convertDifficulty
 import com.wonddak.database.ext.convertType
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(

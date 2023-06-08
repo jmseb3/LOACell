@@ -12,7 +12,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.loacell.model.RaidType
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper

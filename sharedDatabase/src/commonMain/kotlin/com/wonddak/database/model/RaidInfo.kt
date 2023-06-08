@@ -1,4 +1,6 @@
-package com.wonddak.loacell.model
+package com.wonddak.database.model
+
+import com.wonddak.loacell.model.Difficulty
 
 
 enum class RaidType(val maxPerson: Int) {
@@ -6,7 +8,7 @@ enum class RaidType(val maxPerson: Int) {
     VYKAS(8),
     KOUKU(4),
     ABRELSHUD(8),
-    ILLIALAN(8),
+    ILLIAKAN(8),
     KAYANGEL(4),
     IVORYTOWER(4),
     ETC(8);
@@ -17,7 +19,7 @@ enum class RaidType(val maxPerson: Int) {
             VYKAS -> "비아키스"
             KOUKU -> "쿠크세이튼"
             ABRELSHUD -> "아브렐슈드"
-            ILLIALAN -> "일리아칸"
+            ILLIAKAN -> "일리아칸"
             KAYANGEL -> "카앙겔"
             IVORYTOWER -> "상아탑"
             ETC -> "기타"
@@ -37,7 +39,7 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Hell
             )
 
-            ILLIALAN, KAYANGEL, IVORYTOWER -> listOf(
+            ILLIAKAN, KAYANGEL, IVORYTOWER -> listOf(
                 Difficulty.Normal,
                 Difficulty.Hard
             )
@@ -82,7 +84,7 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Hell -> 1560
             }
 
-            ILLIALAN -> when (difficulty) {
+            ILLIAKAN -> when (difficulty) {
                 Difficulty.Normal -> 1580
                 Difficulty.Hard -> 1600
                 Difficulty.Hell -> 0
@@ -110,7 +112,7 @@ enum class RaidType(val maxPerson: Int) {
             VYKAS -> 3
             KOUKU -> 3
             ABRELSHUD -> 6
-            ILLIALAN -> 3
+            ILLIAKAN -> 3
             KAYANGEL -> 4
             IVORYTOWER -> 4
             ETC -> 0
@@ -119,7 +121,7 @@ enum class RaidType(val maxPerson: Int) {
 
     fun getMaxParty(): Int {
         return when (this) {
-            VALTAN, VYKAS, ABRELSHUD, ILLIALAN, ETC -> 2
+            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, ETC -> 2
             KOUKU, KAYANGEL, IVORYTOWER -> 1
         }
     }
