@@ -60,17 +60,15 @@ fun AddRaidUserSheet(
 
     LaunchedEffect(selectedUser) {
         if (selectedUser != null) {
-            db.characterInfoQueriesHelper.getCharacterValueFlow(selectedUser!!).collect {
-                characterList = it.filter { it.getLevel() >= raidInfo.getMinLevel()}
-                if (characterList.isNotEmpty()) {
-                    selectedCharacter = characterList[0]
-                    currentIndexCharacter = 0
-                    launch {
-                        stateCharacter.animateScrollToItem(0)
-                    }
-                } else {
-                    selectedCharacter = null
+            characterList = selectedUser!!.characterList.filter { it.getLevel() >= raidInfo.getMinLevel()}
+            if (characterList.isNotEmpty()) {
+                selectedCharacter = characterList[0]
+                currentIndexCharacter = 0
+                launch {
+                    stateCharacter.animateScrollToItem(0)
                 }
+            } else {
+                selectedCharacter = null
             }
             return@LaunchedEffect
         }

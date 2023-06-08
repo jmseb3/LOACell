@@ -3,10 +3,10 @@ package com.wonddak.database
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.wonddak.database.queriesHelper.CharacterInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.RaidInfo
@@ -63,6 +63,46 @@ class AppDataBase(driverFactory: DriverFactory) {
             return value.joinToString(",")
         }
     }
+    private val characterListAdapter = object  : ColumnAdapter<List<Character>,String> {
+        override fun decode(databaseValue: String): List<Character> {
+            return databaseValue.split("|").map {
+                val item = it.split("^")
+                try {
+                    Character(
+                        item[0],
+                        item[1],
+                        item[2],
+                        item[3]
+                    )
+                }
+                catch (e:Exception) {
+                    Character(
+                        "error",
+                        "error",
+                        "error",
+                        "error"
+                    )
+                }
+            }
+        }
+
+        override fun encode(value: List<Character>): String {
+            val st = StringBuilder()
+            value.forEachIndexed { index, character ->
+                st.append(character.name)
+                st.append("^")
+                st.append(character.server)
+                st.append("^")
+                st.append(character.className)
+                st.append("^")
+                st.append(character.level)
+                if (index != value.size -1) {
+                    st.append("|")
+                }
+            }
+            return st.toString()
+        }
+    }
     private val database = Database(
         driver = driver,
         RaidInfoAdapter = RaidInfo.Adapter(
@@ -72,14 +112,13 @@ class AppDataBase(driverFactory: DriverFactory) {
             party2characterListAdapter = stringListAdapter
         ),
         UserInfoAdapter = UserInfo.Adapter(
-            characterListAdapter = stringListAdapter
+            characterListAdapter = characterListAdapter
         )
     )
 
     val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
     val userInfoQueriesHelper = UserInfoQueriesHelper(database.userInfoQueries)
-    val characterInfoQueriesHelper = CharacterInfoQueriesHelper(database.characterQueries)
 
     fun getUsersByRoomIdFilterCharacterAndType(
         roomId: String,
@@ -104,7 +143,7 @@ class AppDataBase(driverFactory: DriverFactory) {
                     val filter = it.filter { userInfo ->
                         var result = true
                         for (name in nameInPartyList) {
-                            if (userInfo.characterList.contains(name)) {
+                            if (userInfo.characterList.map { it.name }.contains(name)) {
                                 result = false
                                 break
                             }
@@ -116,7 +155,7 @@ class AppDataBase(driverFactory: DriverFactory) {
                             it.name,
                             it.roomId,
                             it.representativeCharacter,
-                            it.characterList.toMutableList().filter { name ->!totalNameList.contains(name) },
+                            it.characterList.toMutableList().filter { character -> !totalNameList.contains(character.name) },
                             it.timeStamp
                         )
                     }
@@ -130,6 +169,5 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     fun clearAll() {
         database.roomInfoQueries.deleteAll()
-        database.characterQueries.deleteAll()
     }
 }

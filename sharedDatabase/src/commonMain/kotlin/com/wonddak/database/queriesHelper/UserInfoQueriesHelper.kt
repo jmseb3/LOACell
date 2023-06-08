@@ -3,11 +3,11 @@ package com.wonddak.database.queriesHelper;
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.UserInfoQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.transform
 
 class UserInfoQueriesHelper(
     private val queries: UserInfoQueries
@@ -16,7 +16,7 @@ class UserInfoQueriesHelper(
         userString: String,
         roomId: String,
         representativeCharacter: String,
-        characterList: List<String>,
+        characterList: List<Character>,
         timeStamp: Long
     ) {
         queries.insertUserInfo(
@@ -30,7 +30,7 @@ class UserInfoQueriesHelper(
 
     fun updateUserInfo(
         userName: String,
-        characterList: List<String>,
+        characterList: List<Character>,
         roomId: String,
         representativeCharacter: String,
         timeStamp: Long

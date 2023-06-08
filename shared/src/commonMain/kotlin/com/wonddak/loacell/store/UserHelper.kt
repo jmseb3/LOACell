@@ -1,17 +1,17 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.Character
 import com.wonddak.sharedapi.model.CharacterInfo
 import korlibs.time.DateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 data class FBUSerInfo(
     val representativeCharacter: String = "",
-    val characterList: List<String> = emptyList(),
+    val characterList: List<Character> = emptyList(),
     val timeStamp: Long = DateTime.now().unixMillisLong
 ) {
     fun toMap() = mapOf<String, Any>(
@@ -20,7 +20,6 @@ data class FBUSerInfo(
         "timeStamp" to timeStamp
     )
 }
-
 object CommonUserHelper {
 
     // 방에 유저정보를 추가한다.
@@ -34,7 +33,14 @@ object CommonUserHelper {
     ) {
         val fbUserInfo = FBUSerInfo(
             representativeCharacter,
-            characterList.map { it.characterName }
+            characterList.map {
+                Character(
+                    it.characterName,
+                    it.serverName,
+                    it.characterClassName,
+                    it.itemMaxLevel
+                )
+            }
         )
         val userRoom = RefHelper.getUserDocRef(roomId, name)
 
@@ -44,7 +50,7 @@ object CommonUserHelper {
                     userRoom.update(
                         data = fbUserInfo.toMap(),
                         successAction = successAction,
-                        failAction = {err ->
+                        failAction = { err ->
                             failAction(err.errorMsg)
                         }
                     )
@@ -100,46 +106,33 @@ object CommonUserHelper {
                         .toMutableSet()
                 // 이름 조회..
                 CoroutineScope(Dispatchers.IO).launch {
-                    withContext(Dispatchers.IO) {
                         value.documents.forEach {
                             val userName = it.id
 
                             val representativeCharacter =
                                 it.data!!["representativeCharacter"] as String
-                            val characterNameList =
-                                it.data!!["characterList"] as List<String>
-                            val timeStamp = it.data!!["timeStamp"] as Long
-                            println("JWH Listen Users == $userName")
-                            println("JWH ${characterNameList.joinToString("|")}")
+                            val getCharacterList =
+                                it.data!!["characterList"] as List<Map<String, Any>>
 
-                            launch {
-                                RefHelper.getCharacterRef().whereIn(CommonFieldPath.documentId(),characterNameList).get(
-                                    successAction = {
-                                        it.documents.forEach {
-                                            val name = it.id
-                                            val className = it.data!!["className"] as String
-                                            val level = it.data!!["level"] as String
-                                            val server = it.data!!["server"] as String
-                                            db.characterInfoQueriesHelper.updateCharacter(
-                                                name,
-                                                server,
-                                                className,
-                                                level
-                                            )
-                                        }
-                                    },
-                                    failAction = {
-
-                                    }
+                            val characterList = getCharacterList.map {
+                                Character(
+                                    it["name"] as String,
+                                    it["server"] as String,
+                                    it["className"] as String,
+                                    it["level"] as String
                                 )
                             }
 
+                            val timeStamp = it.data!!["timeStamp"] as Long
+
+                            println("JWH Listen Users == $userName")
+                            println("JWH ${characterList.joinToString("|") { it.name }}")
                             //이미 값이 있는 경우
                             if (userName in dbUserList) {
                                 //업데이트
                                 db.userInfoQueriesHelper.updateUserInfo(
                                     userName,
-                                    characterNameList,
+                                    characterList,
                                     roomId,
                                     representativeCharacter,
                                     timeStamp
@@ -151,12 +144,11 @@ object CommonUserHelper {
                                     userName,
                                     roomId,
                                     representativeCharacter,
-                                    characterNameList,
+                                    characterList,
                                     timeStamp
                                 )
                             }
                         }
-                    }
 
                     // 동작이 끝난후 남아있다면
                     dbUserList.forEach { name ->
@@ -164,8 +156,7 @@ object CommonUserHelper {
                     }
                 }
             },
-            failAction =
-            {
+            failAction = {
                 println("JWH Fail with error : ${it?.errorMsg}")
             }
         )

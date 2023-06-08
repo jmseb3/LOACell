@@ -81,6 +81,8 @@ fun BaseSheet(
     title: String,
     errorMsg :String = "",
     useCloseIcon : Boolean = false,
+    enabledButton : Boolean = true,
+    buttonText :String = "추가",
     updateErrorMsg :(msg:String) -> Unit ={},
     onDismissRequest :() -> Unit = {},
     buttonClickAction : () -> Unit,
@@ -112,9 +114,10 @@ fun BaseSheet(
                 onClick = {
                     buttonClickAction()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = enabledButton
             ) {
-                Text(text = "추가")
+                Text(text = buttonText)
             }
         }
     }

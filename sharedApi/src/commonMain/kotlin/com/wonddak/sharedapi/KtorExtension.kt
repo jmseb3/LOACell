@@ -16,6 +16,7 @@ suspend inline fun <reified T> HttpClient.safeRequest(
 ): ApiResult<T> =
     try {
         val response = request { block() }
+        delay(1000L)
         ApiResult.Success(response.body())
     } catch (e: RedirectResponseException) {
         // 3xx ~ error

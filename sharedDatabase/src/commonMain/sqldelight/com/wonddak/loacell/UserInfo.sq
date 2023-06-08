@@ -1,3 +1,4 @@
+import com.wonddak.loacell.Character;
 import kotlin.String;
 import kotlin.collections.List;
 
@@ -5,7 +6,7 @@ CREATE TABLE UserInfo (
   name TEXT NOT NULL,
   roomId TEXT NOT NULL,
   representativeCharacter Text NOT NULL,
-  characterList TEXT AS List<String> NOT NULL,
+  characterList TEXT AS List<Character> NOT NULL,
   timeStamp INTEGER,
   FOREIGN KEY(roomId) REFERENCES RoomInfo(uniqueId) ON DELETE CASCADE,
   PRIMARY KEY(name,roomId)

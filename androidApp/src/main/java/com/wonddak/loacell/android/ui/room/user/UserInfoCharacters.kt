@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
+import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.ext.getCharacterListSort
 
 @Composable
 fun UserInfoCharacter(
@@ -47,10 +49,10 @@ fun UserInfoCharacter(
 }
 @Composable
 fun UserInfoCharacters(
-    characterList: List<Character>,
-    representativeCharacter :String
+    userInfo: UserInfo
 ) {
-
+    val characterList = userInfo.getCharacterListSort()
+    val representativeCharacter = userInfo.representativeCharacter
     LazyColumn {
         itemsIndexed(characterList) { index,character ->
             UserInfoCharacter(character,representativeCharacter)

@@ -4,22 +4,3 @@ CREATE TABLE Character (
   className TEXT NOT NULL,
   level TEXT NOT NULL
 );
-
-insertCharacterInfo:
-INSERT OR REPLACE INTO Character
-VALUES (?,?,?,?);
-
-getCharacterInfo:
-SELECT * FROM Character WHERE name = ?;
-
-getCharacterInfos:
-SELECT * FROM Character WHERE name IN ?;
-
-updateCharacterInfo:
-UPDATE Character SET server = ?, className =?, level =? WHERE name =?;
-
-deleteUserByName:
-DELETE FROM Character WHERE  name =?;
-
-deleteAll:
-DELETE FROM Character;

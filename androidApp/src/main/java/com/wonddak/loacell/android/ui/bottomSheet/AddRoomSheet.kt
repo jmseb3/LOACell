@@ -1,10 +1,13 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 
 
@@ -27,6 +31,9 @@ fun AddRoomSheet(
     var description by remember {
         mutableStateOf("")
     }
+    var usePassword by remember {
+        mutableStateOf(false)
+    }
 
     var password by remember {
         mutableStateOf("")
@@ -35,22 +42,20 @@ fun AddRoomSheet(
     var errorMsg by remember {
         mutableStateOf("")
     }
+    LaunchedEffect(usePassword) {
+        if (!usePassword) {
+            password = ""
+        }
+    }
 
     BaseSheet(
         title = "방 만들기",
         onDismissRequest = onDismissRequest,
         buttonClickAction = {
-            if (title.isEmpty()) {
-                errorMsg = "제목이 비어있습니다."
-                return@BaseSheet
-            }
-            if (password.length != 6) {
-                errorMsg = "입장 패스워드는 6자리로 입력해주세요"
-                return@BaseSheet
-            }
             addAction(title, description, password)
         },
         errorMsg = errorMsg,
+        enabledButton = title.isNotEmpty() && ((!usePassword && password.isEmpty()) || (usePassword && password.length == 6)),
         updateErrorMsg = { errorMsg = it }
     ) {
         Column() {
@@ -73,20 +78,6 @@ fun AddRoomSheet(
             )
             LengthLimitTextField(
                 modifier = textFieldModifier,
-                text = password,
-                label = "방 입장 비밀번호",
-                placeHolder = "비밀번호를 입력하세요.",
-                maxLine = 1,
-                maxLength = 6,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                ),
-                textChange = {
-                    password = it
-                }
-            )
-            LengthLimitTextField(
-                modifier = textFieldModifier,
                 text = description,
                 label = "방 설명",
                 placeHolder = "방 설명을 입력하세요.",
@@ -104,6 +95,34 @@ fun AddRoomSheet(
                     description = it
                 }
             )
+            Row() {
+                CheckBoxRow(
+                    modifier = Modifier.weight(1f),
+                    text = "비밀번호 사용",
+                    value = usePassword,
+                    enabled = true,
+                    onClick = { value ->
+                        usePassword = value
+                    }
+                )
+            }
+
+            AnimatedVisibility(usePassword) {
+                LengthLimitTextField(
+                    modifier = textFieldModifier,
+                    text = password,
+                    label = "방 입장 비밀번호",
+                    placeHolder = "비밀번호를 입력하세요.",
+                    maxLine = 1,
+                    maxLength = 6,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    ),
+                    textChange = {
+                        password = it
+                    }
+                )
+            }
         }
     }
 }

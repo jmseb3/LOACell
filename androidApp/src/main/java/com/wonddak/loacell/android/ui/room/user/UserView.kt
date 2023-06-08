@@ -31,7 +31,6 @@ import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.store.CommonCharacterHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.LostArkApi
 import com.wonddak.sharedapi.onError
@@ -72,7 +71,7 @@ fun UserView(
             }
         }
         if (focusUserName.isNotEmpty()) {
-            FocusUserView(db, roomId, loaCellViewModel)
+            FocusUserView(roomId, loaCellViewModel)
         }
     }
 }
@@ -80,7 +79,6 @@ fun UserView(
 //유저를 선택했을때 보여질 화면
 @Composable
 fun FocusUserView(
-    db: AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -99,18 +97,10 @@ fun FocusUserView(
                 }
 
                 loaCellViewModel.apply {
-
-                    val characterList by db.characterInfoQueriesHelper.getCharacterValueFlow(userInfo).collectAsState(
-                        initial = emptyList()
-                    )
-//                    Text(text = "${userInfo.name}님의 캐릭터 정보입니다.")
-//                    Text(text = "대표 캐릭터 : ${userInfo.representativeCharacter}")
-//                    Divider()
-                    UserInfoCharacters(characterList,userInfo.representativeCharacter)
+                    UserInfoCharacters(userInfo)
                     if (openCharacterEditDialog) {
                         EditCharacterDialog(
-                            representativeCharacter = userInfo.representativeCharacter,
-                            characters = characterList,
+                            userInfo = userInfo,
                             confirm = { name ->
                                 CommonUserHelper.updateRepresentativeCharacter(
                                     roomId,
@@ -155,11 +145,9 @@ fun FocusUserView(
 
         LaunchedEffect(loaCellViewModel.showLoading) {
             if (loaCellViewModel.showLoading) {
-                val characterResult =
-                    LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
+                val characterResult = LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
                 Log.i("JWH",characterResult.toString())
                 characterResult.onSuccess { list ->
-                    list.forEach { CommonCharacterHelper.addOrUpdate(it) }
                     CommonUserHelper.addOrUpdate(
                         roomId = roomId,
                         name = userInfo.name,

@@ -7,17 +7,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.Character
+import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCharacterDialog(
-    representativeCharacter: String,
-    characters: List<Character>,
+    userInfo: UserInfo,
     confirm: (name: String) -> Unit,
     dismiss: () -> Unit
 ) {
+    val representativeCharacter = userInfo.representativeCharacter
+    val characters = userInfo.characterList
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(representativeCharacter) }
 

@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +48,8 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.containCharacterName
+import com.wonddak.loacell.ext.findCharacters
 import com.wonddak.loacell.ext.getMaxParty
 import com.wonddak.loacell.ext.getRaidText
 import com.wonddak.loacell.ext.makeGateText
@@ -100,7 +103,7 @@ fun RaidView(
                     it.party1characterList.forEach { character ->
                         if (character.isNotEmpty()) {
                             for (userInfo in filterUser) {
-                                if (userInfo.characterList.contains(character)) {
+                                if (userInfo.containCharacterName(character)) {
                                     names.add(userInfo.name)
                                     break
                                 }
@@ -110,7 +113,7 @@ fun RaidView(
                     it.party2characterList.forEach { character ->
                         if (character.isNotEmpty()) {
                             for (userInfo in filterUser) {
-                                if (userInfo.characterList.contains(character)) {
+                                if (userInfo.containCharacterName(character)) {
                                     names.add(userInfo.name)
                                     break
                                 }
@@ -156,31 +159,21 @@ fun FocusRaidView(
             loaCellViewModel.clearFocusItem()
         }
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
+        val userInfoList  by loaCellViewModel.userInfoList.collectAsState()
+
         val context = LocalContext.current
-        var focusIndex by remember {
-            mutableStateOf(-1)
-        }
+        var focusIndex by remember { mutableIntStateOf(-1) }
         var characterList: List<Character?> by remember {
             mutableStateOf(emptyList())
         }
         LaunchedEffect(raidInfo) {
             raidInfo?.let { info ->
                 val maxParty = info.getMaxParty()
-                val characters = mutableListOf<Character?>()
-                characters.addAll(info.party1characterList.map {
-                    db.characterInfoQueriesHelper.characterName(
-                        it
-                    )
-                })
-
-                if (maxParty == 2) {
-                    characters.addAll(info.party2characterList.map {
-                        db.characterInfoQueriesHelper.characterName(
-                            it
-                        )
-                    })
+                val findList = info.party1characterList.toMutableList()
+                if (maxParty ==2) {
+                    findList.addAll(info.party2characterList)
                 }
-                characterList = characters
+                characterList = userInfoList.findCharacters(findList)
             }
         }
         raidInfo?.let { raidInfo ->
@@ -192,7 +185,7 @@ fun FocusRaidView(
                 Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
             }
             loaCellViewModel.apply {
-                RaidPartyView(db, characterList, openAction = { index ->
+                RaidPartyView(characterList, openAction = { index ->
                     if (allUserList.isEmpty()) {
                         showSnackBar(
                             message = "추가 가능한 인원이 없습니다.",
@@ -278,7 +271,6 @@ fun FocusRaidView(
 
 @Composable
 fun RaidPartyView(
-    db: AppDataBase,
     list: List<Character?>,
     openAction: (index: Int) -> Unit,
     deleteAction: (index: Int) -> Unit,
@@ -310,8 +302,7 @@ fun RaidPartyView(
                         }
                     }
                 } else {
-                    val character = db.characterInfoQueriesHelper.characterName(item.name)
-                    character?.let { info ->
+                    item.let { info ->
                         Row(
                             modifier = modifier,
                             verticalAlignment = Alignment.CenterVertically,
