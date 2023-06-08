@@ -35,18 +35,6 @@ fun RooListView(
         }
     }
 }
-
-@Preview
-@Composable
-fun RoomViewPreview() {
-    val testList: List<RoomInfo> = listOf(
-        RoomInfo("!2312312", "test1", "여기는 1 이다.","1"),
-        RoomInfo("%4534534534", "test2", "여기는 2 이다.","2"),
-        RoomInfo("#$534534534", "test3", "여기는 3 이다.","3"),
-    )
-    RooListView(testList)
-}
-
 @Composable
 fun RoomInfoRow(
     room: RoomInfo,

@@ -12,6 +12,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.RoomInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
@@ -55,11 +56,11 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val stringListAdapter = object  : ColumnAdapter<List<String>,String> {
         override fun decode(databaseValue: String): List<String> {
-            return databaseValue.split(",")
+            return databaseValue.split("^^")
         }
 
         override fun encode(value: List<String>): String {
-            return value.joinToString(",")
+            return value.joinToString("^^")
         }
     }
 
@@ -70,6 +71,11 @@ class AppDataBase(driverFactory: DriverFactory) {
             DifficultyAdapter = difficultyTypeAdapter,
             party1characterListAdapter = stringListAdapter,
             party2characterListAdapter = stringListAdapter
+        ),
+        RoomInfoAdapter = RoomInfo.Adapter(
+            enterUserAdapter = stringListAdapter,
+            editableUserAdapter = stringListAdapter,
+            anoymousUserAdapter = stringListAdapter
         )
     )
 

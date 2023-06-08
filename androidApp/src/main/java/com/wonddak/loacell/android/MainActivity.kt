@@ -190,7 +190,10 @@ fun MainContent(
                                             title,
                                             description,
                                             id,
-                                            owner = owner
+                                            owner,
+                                            emptyList(),
+                                            emptyList(),
+                                            emptyList()
                                         )
                                     }
                                     showRoomAdd = false
@@ -200,7 +203,7 @@ fun MainContent(
                                 RoomEnterDialog(
                                     nowEnterRoomList = roomList.map { it.uniqueId },
                                     success = { roomId, roomInfo ->
-                                        CommonRoomHelper.updateUser(
+                                        CommonRoomHelper.enterRoom(
                                             roomId,
                                             userInfo!!.uid,
                                             userInfo!!.isAnonymous,
@@ -216,7 +219,10 @@ fun MainContent(
                                             roomInfo.title,
                                             roomInfo.description,
                                             roomId,
-                                            roomInfo.owner
+                                            roomInfo.owner,
+                                            roomInfo.enterUser,
+                                            roomInfo.editableUser,
+                                            roomInfo.anonymousUser
                                         )
                                     },
                                     dismiss = {

@@ -276,6 +276,10 @@ actual class CommonFieldValue(
         actual fun arrayUnion(value: Any) :CommonFieldValue {
             return CommonFieldValue(FieldValue.arrayUnion(value))
         }
+
+        actual fun arrayRemove(value: Any): CommonFieldValue {
+            return CommonFieldValue(FieldValue.arrayRemove(value))
+        }
     }
 }
 

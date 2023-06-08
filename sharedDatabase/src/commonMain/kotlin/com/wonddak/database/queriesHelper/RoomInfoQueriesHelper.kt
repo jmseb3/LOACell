@@ -20,12 +20,44 @@ class RoomInfoQueriesHelper(
         return queries.selectById(id).asFlow().mapToOne(Dispatchers.Default)
     }
 
-    fun addRoomInfo(title: String, description: String, uniqueId: String, owner: String) {
-        queries.insertRoomInfo(uniqueId, title, description,owner)
+    fun addRoomInfo(
+        title: String,
+        description: String,
+        uniqueId: String,
+        owner: String,
+        enterUser: List<String> ,
+        editableUser: List<String>,
+        anonymousUser: List<String>,
+    ) {
+        queries.insertRoomInfo(
+            uniqueId,
+            title,
+            description,
+            owner,
+            enterUser,
+            editableUser,
+            anonymousUser
+        )
     }
 
-    fun updateRoomInfo(title: String, description: String, owner: String,uniqueId: String) {
-        queries.updateInfo(title, description, owner,uniqueId)
+    fun updateRoomInfo(
+        title: String,
+        description: String,
+        owner: String,
+        enterUser: List<String>,
+        editableUser: List<String>,
+        anonymousUser: List<String>,
+        uniqueId: String
+    ) {
+        queries.updateInfo(
+            title,
+            description,
+            owner,
+            enterUser,
+            editableUser,
+            anonymousUser,
+            uniqueId
+        )
     }
 
     fun deleteRoomInfo(roomId: String) {

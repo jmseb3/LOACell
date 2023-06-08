@@ -279,6 +279,9 @@ actual class CommonFieldValue(
         actual fun arrayUnion(value: Any) :CommonFieldValue {
             return CommonFieldValue(FIRFieldValue.fieldValueForArrayUnion(listOf(value)))
         }
+        actual fun arrayRemove(value: Any): CommonFieldValue {
+            return CommonFieldValue(FIRFieldValue.fieldValueForArrayRemove(listOf(value)))
+        }
     }
 }
 

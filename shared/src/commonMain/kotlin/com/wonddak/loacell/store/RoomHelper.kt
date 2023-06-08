@@ -1,6 +1,7 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.RoomRole
 
 data class FBRoomInfo(
     val title: String = "",
@@ -46,11 +47,17 @@ object CommonRoomHelper {
                         val title = data["title"] as String
                         val description = data["description"] as String
                         val owner = data["owner"] as String
+                        val enterUser = data["enterUser"] as List<String>
+                        val editableUser = data["editableUser"] as List<String>
+                        val anonymousUser = data["anonymousUser"] as List<String>
                         db.roomInfoQueriesHelper.addRoomInfo(
                             title = title,
                             description = description,
                             uniqueId = id,
-                            owner = owner
+                            owner = owner,
+                            enterUser = enterUser,
+                            editableUser = editableUser,
+                            anonymousUser = anonymousUser
                         )
                     }
                     successAction()
@@ -116,7 +123,7 @@ object CommonRoomHelper {
     }
 
     // 유저를 방에 추가한다.
-    fun updateUser(
+    fun enterRoom(
         roomId: String,
         userId: String,
         isAnonymous: Boolean,
@@ -132,6 +139,27 @@ object CommonRoomHelper {
         )
     }
 
+    fun exitRoom(
+        roomId: String,
+        userId: String,
+        role: RoomRole,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit
+    ) {
+        val field = when(role) {
+            RoomRole.MANAGER -> "editableUser"
+            RoomRole.USER -> "enterUser"
+            RoomRole.ANONYMOUS -> "anonymousUser"
+            else -> "owner"
+        }
+        RefHelper.getRoomRef(roomId).update(
+            field = field,
+            value = CommonFieldValue.arrayRemove(userId),
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
+
     fun observe(
         roomId: String,
         db:AppDataBase
@@ -142,10 +170,16 @@ object CommonRoomHelper {
                     val title = data["title"] as String
                     val description = data["description"] as String
                     val owner = data["owner"] as String
+                    val enterUser = data["enterUser"] as List<String>
+                    val editableUser = data["editableUser"] as List<String>
+                    val anonymousUser = data["anonymousUser"] as List<String>
                     db.roomInfoQueriesHelper.updateRoomInfo(
                         title,
                         description,
                         owner,
+                        enterUser,
+                        editableUser,
+                        anonymousUser,
                         roomId
                     )
                 }

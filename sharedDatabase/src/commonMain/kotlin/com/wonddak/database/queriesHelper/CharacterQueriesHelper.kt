@@ -27,7 +27,7 @@ class CharacterQueriesHelper(
     fun getAllListByLevelFilter(
         userInfo: UserInfo,
         minLevel: Int
-    ) = getAllList(userInfo).filter { it.getLevel() >= minLevel }
+    ) = getAllList(userInfo).filter { it.getLevel() >= minLevel }.sortedByDescending { it.getLevel() }
 
     fun getCharacterInfo(
         userInfo: UserInfo,
