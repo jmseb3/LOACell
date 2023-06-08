@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -23,20 +24,29 @@ fun LoginInfoView(
     user?.let { userInfo ->
         Column() {
             Text(text = userInfo.uid)
-            if (!userInfo.isAnonymous) {
-                OutlinedButton(
-                    onClick = {
+            OutlinedButton(
+                onClick = {
+                    if (userInfo.isAnonymous) {
+                        loginHelper.delete()
+                    } else {
                         loginHelper.signOut()
-                        loaCellViewModel.signOut()
                     }
-                ) {
-                    Text(text = "로그아웃")
+                    loaCellViewModel.signOut()
                 }
-            } else{
+            ) {
+                Text(text = if (userInfo.isAnonymous) "나기기" else "로그아웃")
+            }
+            if (userInfo.isAnonymous) {
                 val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult()
                 ) { result ->
-                    loginHelper.registerAnonymousToGoogle(result)
+                    loginHelper.registerAnonymousToGoogle(result) {error ->
+                        if (error is FirebaseAuthUserCollisionException) {
+                            loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
+                        } else {
+                            loaCellViewModel.showSnackBar(error?.localizedMessage ?: "unknown Error")
+                        }
+                    }
                 }
                 OutlinedButton(onClick = {
                     loginHelper.requestGoogleLogin {

@@ -1,5 +1,8 @@
 package com.wonddak.loacell.android.ui.room
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -11,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
+import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
 import com.wonddak.loacell.android.ui.room.raid.RaidView
@@ -86,6 +91,8 @@ fun RoomTitleView(
     val focusUserName by loaCellViewModel.focusUserName.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
+    val context = LocalContext.current
+
     AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -94,7 +101,11 @@ fun RoomTitleView(
             )
             Text(
                 text = roomInfo.uniqueId,
-                modifier = Modifier
+                modifier = Modifier.noRippleClickable {
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip: ClipData = ClipData.newPlainText("Room Id", roomInfo.uniqueId)
+                    clipboard.setPrimaryClip(clip)
+                },
             )
             Divider()
         }

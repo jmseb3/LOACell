@@ -43,7 +43,9 @@ interface LoginHelperFunction {
     /**
      * 익명을 구글계정과 연동한다.
      */
-    fun registerAnonymousToGoogle(result: ActivityResult)
+    fun registerAnonymousToGoogle(result: ActivityResult,failAction : (e:Exception?) -> Unit)
+
+    fun delete()
 }
 
 class LoginHelper(
@@ -154,7 +156,10 @@ class LoginHelper(
         }
     }
 
-    override fun registerAnonymousToGoogle(result: ActivityResult) {
+    override fun registerAnonymousToGoogle(
+        result: ActivityResult,
+        failAction: (e:Exception?) -> Unit
+    ) {
         registerToken(result) { firebaseCredential ->
             auth.currentUser!!.linkWithCredential(firebaseCredential)
                 .addOnCompleteListener { task ->
@@ -162,12 +167,16 @@ class LoginHelper(
                         Log.d(TAG, "linkWithCredential:success")
                         updateUserInfo()
                     } else {
-                        Log.w(TAG, "linkWithCredential:failure", task.exception)
-                        updateUserInfo(null)
+                        failAction(task.exception)
                     }
                 }
 
         }
+    }
+
+    override fun delete() {
+        auth.currentUser!!.delete()
+        signOut()
     }
 
     override fun requestAnonymousLogin() {
