@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 class RaidInfoQueriesHelper(
     private val queries: RaidInfoQueries
 ) {
-    fun getALlByRoomId(roomId: String): Flow<List<RaidInfo>> {
+    fun getAllByRoomId(roomId: String): Flow<List<RaidInfo>> {
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
     }
 

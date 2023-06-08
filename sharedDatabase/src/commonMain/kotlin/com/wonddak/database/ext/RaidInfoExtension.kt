@@ -1,9 +1,7 @@
-package com.wonddak.loacell.ext
+package com.wonddak.database.ext
 
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.model.RaidType
-import dev.icerock.moko.resources.ImageResource
 
 fun RaidInfo.getMinLevel(): Int {
     return this.type!!.getMinLevel(this.Difficulty!!, this.endGateNumber.toInt())
@@ -33,13 +31,4 @@ fun RaidInfo.makeGateText(): String {
     }
 }
 
-fun RaidInfo.getImg(): ImageResource? {
-    return when (this.type!!) {
-        RaidType.VALTAN -> {
-            SharedRes.images.valtan
-        }
-        else -> {
-            null
-        }
-    }
-}
+fun RaidInfo.getAllPartyList() : List<String> = this.party1characterList + this.party2characterList

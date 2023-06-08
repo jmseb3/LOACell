@@ -1,8 +1,8 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.ext.convertDifficulty
-import com.wonddak.loacell.ext.convertType
+import com.wonddak.database.ext.convertDifficulty
+import com.wonddak.database.ext.convertType
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import kotlin.jvm.JvmField

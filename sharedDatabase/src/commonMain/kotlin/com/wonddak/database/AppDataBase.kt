@@ -3,10 +3,11 @@ package com.wonddak.database
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
-import com.wonddak.loacell.Character
+import com.wonddak.loacell.CharacterQueries
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.RaidInfo
@@ -63,46 +64,7 @@ class AppDataBase(driverFactory: DriverFactory) {
             return value.joinToString(",")
         }
     }
-    private val characterListAdapter = object  : ColumnAdapter<List<Character>,String> {
-        override fun decode(databaseValue: String): List<Character> {
-            return databaseValue.split("|").map {
-                val item = it.split("^")
-                try {
-                    Character(
-                        item[0],
-                        item[1],
-                        item[2],
-                        item[3]
-                    )
-                }
-                catch (e:Exception) {
-                    Character(
-                        "error",
-                        "error",
-                        "error",
-                        "error"
-                    )
-                }
-            }
-        }
 
-        override fun encode(value: List<Character>): String {
-            val st = StringBuilder()
-            value.forEachIndexed { index, character ->
-                st.append(character.name)
-                st.append("^")
-                st.append(character.server)
-                st.append("^")
-                st.append(character.className)
-                st.append("^")
-                st.append(character.level)
-                if (index != value.size -1) {
-                    st.append("|")
-                }
-            }
-            return st.toString()
-        }
-    }
     private val database = Database(
         driver = driver,
         RaidInfoAdapter = RaidInfo.Adapter(
@@ -110,56 +72,57 @@ class AppDataBase(driverFactory: DriverFactory) {
             DifficultyAdapter = difficultyTypeAdapter,
             party1characterListAdapter = stringListAdapter,
             party2characterListAdapter = stringListAdapter
-        ),
-        UserInfoAdapter = UserInfo.Adapter(
-            characterListAdapter = characterListAdapter
         )
     )
 
     val roomInfoQueriesHelper = RoomInfoQueriesHelper(database.roomInfoQueries)
     val raidInfoQueriesHelper = RaidInfoQueriesHelper(database.raidInfoQueries)
     val userInfoQueriesHelper = UserInfoQueriesHelper(database.userInfoQueries)
+    val characterQueriesHelper = CharacterQueriesHelper(database.characterQueries)
 
+    /**
+     * 타입에 맞고 ㅋ
+     */
     fun getUsersByRoomIdFilterCharacterAndType(
         roomId: String,
         raidInfo: RaidInfo
     ): Flow<List<UserInfo>> {
-        val raidList = database.raidInfoQueries.selectByRoomId(roomId).executeAsList()
+        // id에 맞는 레이드 정보 리스트를 가져옴
+        val raidList = raidInfoQueriesHelper.getAllByRoomIdValue(roomId)
 
-        val nameInPartyList = mutableListOf<String>()
-        nameInPartyList.addAll(raidInfo.party1characterList.filter { it.isNotEmpty() })
-        nameInPartyList.addAll(raidInfo.party2characterList.filter { it.isNotEmpty() })
+        //현재 레이드 정보에 들어가있는 캐릭터 이름을 가져옴
+        val characterNameInParty = mutableListOf<String>()
+        characterNameInParty.addAll(raidInfo.party1characterList.filter { it.isNotEmpty() })
+        characterNameInParty.addAll(raidInfo.party2characterList.filter { it.isNotEmpty() })
 
+        //현재 레이드 타입에 맞는 것만 필터링 한뒤 파티에 가입된 캐릭터를 모두 추가한다.
         val totalNameList = mutableListOf<String>()
-        raidList.filter { it.type == raidInfo.type }.forEach {
-            totalNameList.addAll(it.party1characterList.filter { it.isNotEmpty() })
-            totalNameList.addAll(it.party2characterList.filter { it.isNotEmpty() })
-        }
+        raidList
+            .filter { it.type == raidInfo.type }
+            .forEach {
+                //각 레이드 정보에있는 캐릭터 이름을 모두 넣는다.
+                totalNameList.addAll(it.party1characterList.filter { it.isNotEmpty() })
+                totalNameList.addAll(it.party2characterList.filter { it.isNotEmpty() })
+            }
 
         return database.userInfoQueries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
             .transform {
+                //현재 방에 있는 유저 정보를 모두 가져온 뒤
                 try {
                     val filter = it.filter { userInfo ->
                         var result = true
-                        for (name in nameInPartyList) {
-                            if (userInfo.characterList.map { it.name }.contains(name)) {
+                        //캐릭터 이름이 들어가지 않은 유저만 필터랑 하여 내보낸다.
+                        for (characterName in characterNameInParty) {
+                            val characterList = characterQueriesHelper.getAllList(userInfo)
+                            if(characterList.map { it.name }.contains(characterName)) {
                                 result = false
                                 break
                             }
                         }
                         result
                     }
-                    val result = filter.map {
-                        UserInfo(
-                            it.name,
-                            it.roomId,
-                            it.representativeCharacter,
-                            it.characterList.toMutableList().filter { character -> !totalNameList.contains(character.name) },
-                            it.timeStamp
-                        )
-                    }
-                    emit(result)
+                    emit(filter)
                 }catch (e:Exception) {
                     println("JWH $e")
                     emit(emptyList())

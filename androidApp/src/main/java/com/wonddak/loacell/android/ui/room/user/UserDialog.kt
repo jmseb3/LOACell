@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.DeleteDialog
 
@@ -14,11 +15,11 @@ import com.wonddak.loacell.android.ui.common.DeleteDialog
 @Composable
 fun EditCharacterDialog(
     userInfo: UserInfo,
+    characterList : List<Character>,
     confirm: (name: String) -> Unit,
     dismiss: () -> Unit
 ) {
     val representativeCharacter = userInfo.representativeCharacter
-    val characters = userInfo.characterList
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(representativeCharacter) }
 
@@ -51,7 +52,7 @@ fun EditCharacterDialog(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    characters.forEach { item ->
+                    characterList.forEach { item ->
                         DropdownMenuItem(
                             text = {
                                 Text(

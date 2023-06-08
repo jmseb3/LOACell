@@ -11,13 +11,27 @@ import kotlinx.coroutines.launch
 
 data class FBUSerInfo(
     val representativeCharacter: String = "",
-    val characterList: List<Character> = emptyList(),
+    val characterList: List<FBCharacterInfo> = emptyList(),
     val timeStamp: Long = DateTime.now().unixMillisLong
 ) {
     fun toMap() = mapOf<String, Any>(
         "representativeCharacter" to representativeCharacter,
         "characterList" to characterList,
         "timeStamp" to timeStamp
+    )
+}
+
+data class FBCharacterInfo(
+    public val name: String = "",
+    public val server: String ="",
+    public val className: String ="",
+    public val level: String =""
+) {
+    fun toMap() = mapOf<String, Any>(
+        "name" to name,
+        "server" to server,
+        "className" to className,
+        "level" to level
     )
 }
 object CommonUserHelper {
@@ -34,7 +48,7 @@ object CommonUserHelper {
         val fbUserInfo = FBUSerInfo(
             representativeCharacter,
             characterList.map {
-                Character(
+                FBCharacterInfo(
                     it.characterName,
                     it.serverName,
                     it.characterClassName,
@@ -115,7 +129,7 @@ object CommonUserHelper {
                                 it.data!!["characterList"] as List<Map<String, Any>>
 
                             val characterList = getCharacterList.map {
-                                Character(
+                                FBCharacterInfo(
                                     it["name"] as String,
                                     it["server"] as String,
                                     it["className"] as String,
@@ -124,30 +138,29 @@ object CommonUserHelper {
                             }
 
                             val timeStamp = it.data!!["timeStamp"] as Long
-
                             println("JWH Listen Users == $userName")
                             println("JWH ${characterList.joinToString("|") { it.name }}")
-                            //이미 값이 있는 경우
-                            if (userName in dbUserList) {
-                                //업데이트
-                                db.userInfoQueriesHelper.updateUserInfo(
-                                    userName,
-                                    characterList,
-                                    roomId,
-                                    representativeCharacter,
-                                    timeStamp
-                                )
-                                dbUserList.remove(userName)
-                            } else {
-                                //없는 경우 추가
-                                db.userInfoQueriesHelper.addUser(
-                                    userName,
-                                    roomId,
-                                    representativeCharacter,
-                                    characterList,
-                                    timeStamp
-                                )
-                            }
+//                            //이미 값이 있는 경우
+//                            if (userName in dbUserList) {
+//                                //업데이트
+//                                db.userInfoQueriesHelper.updateUserInfo(
+//                                    userName,
+//                                    characterList,
+//                                    roomId,
+//                                    representativeCharacter,
+//                                    timeStamp
+//                                )
+//                                dbUserList.remove(userName)
+//                            } else {
+//                                //없는 경우 추가
+//                                db.userInfoQueriesHelper.addUser(
+//                                    userName,
+//                                    roomId,
+//                                    representativeCharacter,
+//                                    characterList,
+//                                    timeStamp
+//                                )
+//                            }
                         }
 
                     // 동작이 끝난후 남아있다면

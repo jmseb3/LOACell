@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.database.ext.getRaidText
+import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.ext.getImg
-import com.wonddak.loacell.ext.getRaidText
-import com.wonddak.loacell.ext.makeGateText
 import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.model.RaidType
 import com.wonddak.loacell.store.CommonRaidHelper

@@ -1,4 +1,4 @@
-package com.wonddak.loacell.ext
+package com.wonddak.database.ext
 
 import com.wonddak.loacell.Character
 

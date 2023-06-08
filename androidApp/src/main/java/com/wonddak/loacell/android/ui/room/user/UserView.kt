@@ -71,7 +71,7 @@ fun UserView(
             }
         }
         if (focusUserName.isNotEmpty()) {
-            FocusUserView(roomId, loaCellViewModel)
+            FocusUserView(db, roomId, loaCellViewModel)
         }
     }
 }
@@ -79,12 +79,14 @@ fun UserView(
 //유저를 선택했을때 보여질 화면
 @Composable
 fun FocusUserView(
+    db :AppDataBase,
     roomId: String,
     loaCellViewModel: LoaCellViewModel
 ) {
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
     val context = LocalContext.current
     userInfo?.let { userInfo ->
+        val characterList = db.characterQueriesHelper.getAllList(userInfo)
         Box {
             Column(
                 modifier = Modifier
@@ -97,10 +99,11 @@ fun FocusUserView(
                 }
 
                 loaCellViewModel.apply {
-                    UserInfoCharacters(userInfo)
+                    UserInfoCharacters(userInfo,characterList)
                     if (openCharacterEditDialog) {
                         EditCharacterDialog(
                             userInfo = userInfo,
+                            characterList = characterList ,
                             confirm = { name ->
                                 CommonUserHelper.updateRepresentativeCharacter(
                                     roomId,

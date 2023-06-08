@@ -55,7 +55,7 @@ import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
-import com.wonddak.loacell.ext.checkTimeOver
+import com.wonddak.database.ext.checkTimeOver
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 

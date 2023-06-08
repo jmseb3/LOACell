@@ -16,27 +16,24 @@ class UserInfoQueriesHelper(
         userString: String,
         roomId: String,
         representativeCharacter: String,
-        characterList: List<Character>,
         timeStamp: Long
     ) {
         queries.insertUserInfo(
             userString,
             roomId,
             representativeCharacter,
-            characterList,
             timeStamp
         )
     }
 
     fun updateUserInfo(
         userName: String,
-        characterList: List<Character>,
         roomId: String,
         representativeCharacter: String,
         timeStamp: Long
     ) {
         queries.updateUserInfo(
-            representativeCharacter, characterList, timeStamp, userName, roomId
+            representativeCharacter, timeStamp, userName, roomId
         )
     }
 

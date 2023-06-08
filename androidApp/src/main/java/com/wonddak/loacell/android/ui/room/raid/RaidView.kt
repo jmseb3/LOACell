@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
+import com.wonddak.database.ext.getAllPartyList
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
@@ -48,11 +49,9 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.ext.containCharacterName
-import com.wonddak.loacell.ext.findCharacters
-import com.wonddak.loacell.ext.getMaxParty
-import com.wonddak.loacell.ext.getRaidText
-import com.wonddak.loacell.ext.makeGateText
+import com.wonddak.database.ext.getMaxParty
+import com.wonddak.database.ext.getRaidText
+import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable
@@ -100,20 +99,10 @@ fun RaidView(
                 filterByType.filter {
                     val names = mutableListOf<String>()
                     val filterUser = userInfoList.filter{ loaCellViewModel.filterUser.contains(it.name) }
-                    it.party1characterList.forEach { character ->
+                    it.getAllPartyList().forEach {character ->
                         if (character.isNotEmpty()) {
                             for (userInfo in filterUser) {
-                                if (userInfo.containCharacterName(character)) {
-                                    names.add(userInfo.name)
-                                    break
-                                }
-                            }
-                        }
-                    }
-                    it.party2characterList.forEach { character ->
-                        if (character.isNotEmpty()) {
-                            for (userInfo in filterUser) {
-                                if (userInfo.containCharacterName(character)) {
+                                if(db.characterQueriesHelper.getAllNameList(userInfo).contains(character)) {
                                     names.add(userInfo.name)
                                     break
                                 }
@@ -170,10 +159,23 @@ fun FocusRaidView(
             raidInfo?.let { info ->
                 val maxParty = info.getMaxParty()
                 val findList = info.party1characterList.toMutableList()
-                if (maxParty ==2) {
+                if (maxParty == 2) {
                     findList.addAll(info.party2characterList)
                 }
-                characterList = userInfoList.findCharacters(findList)
+                val result : MutableList<Character?> = List(findList.size) { null }.toMutableList()
+                val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
+
+                for (userInfo in userInfoList) {
+                    val iterator = findNames.iterator()
+                    while (iterator.hasNext()) {
+                        val name = iterator.next()
+                        val find = db.characterQueriesHelper.getCharacterInfo(userInfo,name)
+                        if (find != null) {
+                            result[findList.indexOf(name)] = find
+                        }
+                    }
+                }
+                characterList = result
             }
         }
         raidInfo?.let { raidInfo ->

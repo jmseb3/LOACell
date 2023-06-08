@@ -30,8 +30,8 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.ext.getLevel
-import com.wonddak.loacell.ext.getMinLevel
+import com.wonddak.database.ext.getLevel
+import com.wonddak.database.ext.getMinLevel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,7 +60,7 @@ fun AddRaidUserSheet(
 
     LaunchedEffect(selectedUser) {
         if (selectedUser != null) {
-            characterList = selectedUser!!.characterList.filter { it.getLevel() >= raidInfo.getMinLevel()}
+            characterList = db.characterQueriesHelper.getAllListByLevelFilter(selectedUser!!,raidInfo.getMinLevel())
             if (characterList.isNotEmpty()) {
                 selectedCharacter = characterList[0]
                 currentIndexCharacter = 0

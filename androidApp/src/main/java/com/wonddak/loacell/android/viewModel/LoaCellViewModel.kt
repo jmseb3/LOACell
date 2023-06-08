@@ -103,7 +103,7 @@ class LoaCellViewModel(
                                 }
                                 observeRaid = CommonRaidHelper.observe(id, dataBase)
                                 raidListInfoJob = launch {
-                                    dataBase.raidInfoQueriesHelper.getALlByRoomId(id).collect {
+                                    dataBase.raidInfoQueriesHelper.getAllByRoomId(id).collect {
                                         _raidInfoList.value = it
                                     }
                                 }
