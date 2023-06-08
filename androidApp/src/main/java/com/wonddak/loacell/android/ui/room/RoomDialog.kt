@@ -25,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -181,6 +183,7 @@ fun RoomEnterDialog(
         },
         text = {
             val focusManager = LocalFocusManager.current
+            val focusRequester = remember { FocusRequester() }
             Column() {
                 LengthLimitTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -199,8 +202,11 @@ fun RoomEnterDialog(
                     }
                 )
                 AnimatedVisibility(visible = password.isNotEmpty()) {
+                    LaunchedEffect(true) {
+                        focusRequester.requestFocus()
+                    }
                     LengthLimitTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                         text = enterPassword,
                         label = "방 비밀번호",
                         placeHolder = "방 비밀번호를 입력해주세요.",
@@ -219,7 +225,8 @@ fun RoomEnterDialog(
                 }
                 AnimatedVisibility(errorMsg.isNotEmpty()) {
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         text = errorMsg,
                         textAlign = TextAlign.Center
                     )
