@@ -276,8 +276,8 @@ actual class CommonFieldValue(
     val ref : FIRFieldValue
 ) {
     actual companion object {
-        actual fun arrayUnion(vararg value: Any) :CommonFieldValue {
-            return CommonFieldValue(FIRFieldValue.fieldValueForArrayUnion(value.toList()))
+        actual fun arrayUnion(value: Any) :CommonFieldValue {
+            return CommonFieldValue(FIRFieldValue.fieldValueForArrayUnion(listOf(value)))
         }
     }
 }

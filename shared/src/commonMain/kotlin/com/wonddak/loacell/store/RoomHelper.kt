@@ -63,14 +63,23 @@ object CommonRoomHelper {
     // 방 입장요청시 실제 존재하는 방인지 체크
     fun checkExist(
         roomId: String,
-        successAction: (password: String) -> Unit,
+        successAction: (roomInfo :FBRoomInfo) -> Unit,
         failAction: () -> Unit
     ) {
         RefHelper.getRoomRef(roomId)
             .get(
                 successAction = {
                     if (it.exist) {
-                        successAction(it.data!!["enterPassword"] as String)
+                        val roomInfo = FBRoomInfo(
+                            title = it.data!!["title"] as String,
+                            description = it.data!!["description"] as String,
+                            owner = it.data!!["owner"] as String,
+                            enterPassword = it.data!!["enterPassword"] as String,
+                            anonymousUser = it.data!!["anonymousUser"] as List<String>,
+                            editableUser = it.data!!["editableUser"] as List<String>,
+                            enterUser = it.data!!["enterUser"] as List<String>
+                        )
+                        successAction(roomInfo)
                     } else {
                         failAction()
                     }

@@ -199,7 +199,7 @@ fun MainContent(
                             if (showRoomEnter) {
                                 RoomEnterDialog(
                                     nowEnterRoomList = roomList.map { it.uniqueId },
-                                    success = { roomId ->
+                                    success = { roomId, roomInfo ->
                                         CommonRoomHelper.updateUser(
                                             roomId,
                                             userInfo!!.uid,
@@ -211,6 +211,12 @@ fun MainContent(
                                                 showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
                                                 showRoomEnter = false
                                             }
+                                        )
+                                        db.roomInfoQueriesHelper.addRoomInfo(
+                                            roomInfo.title,
+                                            roomInfo.description,
+                                            roomId,
+                                            roomInfo.owner
                                         )
                                     },
                                     dismiss = {

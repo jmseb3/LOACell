@@ -35,6 +35,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonRoomHelper
+import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
 
 @Composable
@@ -145,7 +146,7 @@ fun RoomEnterErrorDialog(
 @Composable
 fun RoomEnterDialog(
     nowEnterRoomList: List<String>,
-    success: (roomId: String) -> Unit,
+    success: (roomId:String,roomInfo: FBRoomInfo) -> Unit,
     dismiss: () -> Unit,
 ) {
     var roomId by remember {
@@ -153,6 +154,9 @@ fun RoomEnterDialog(
     }
     var errorMsg by remember {
         mutableStateOf("")
+    }
+    var nowRoomInfo : FBRoomInfo? by remember {
+        mutableStateOf(null)
     }
     var password by remember {
         mutableStateOf("")
@@ -168,7 +172,9 @@ fun RoomEnterDialog(
     }
     val regex = Regex("[a-zA-Z0-9]+")
     AlertDialog(
-        modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth(0.8f),
         onDismissRequest = dismiss,
         title = {
             Text(text = if (password.isEmpty()) "입장하기" else "비밀번호 입력")
@@ -232,11 +238,12 @@ fun RoomEnterDialog(
                             } else {
                                 CommonRoomHelper.checkExist(
                                     roomId,
-                                    successAction = { getPassword ->
-                                        if (getPassword.isEmpty()) {
-                                            success(roomId)
+                                    successAction = { roomInfo ->
+                                        if (roomInfo.enterPassword.isEmpty()) {
+                                            success(roomId,roomInfo)
                                         } else {
-                                            password = getPassword
+                                            nowRoomInfo = roomInfo
+                                            password = roomInfo.enterPassword
                                         }
                                     },
                                     failAction = {
@@ -247,7 +254,7 @@ fun RoomEnterDialog(
                         }
                     } else {
                         if (password == enterPassword) {
-                            success(roomId)
+                            success(roomId,nowRoomInfo!!)
                         } else {
                             errorMsg = "비밀번호가 맞지 않습니다."
                         }

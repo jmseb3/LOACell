@@ -83,7 +83,7 @@ expect class CommonQuery {
 
 expect class CommonFieldValue{
     companion object {
-        fun arrayUnion(vararg value :Any) : CommonFieldValue
+        fun arrayUnion(value :Any) : CommonFieldValue
     }
 }
 

@@ -1,5 +1,6 @@
 package com.wonddak.loacell.store
 
+import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -185,6 +186,8 @@ actual class CommonDocument(
         successAction: () -> Unit,
         failAction: (error: Error) -> Unit
     ) {
+        Log.i("JWH_ff",field)
+        Log.i("JWH_ff",value.ref.toString())
         ref.update(field, value.ref)
             .addOnSuccessListener {
                 successAction()
@@ -270,7 +273,7 @@ actual class CommonFieldValue(
     val ref : FieldValue
 ) {
     actual companion object {
-        actual fun arrayUnion(vararg value: Any) :CommonFieldValue {
+        actual fun arrayUnion(value: Any) :CommonFieldValue {
             return CommonFieldValue(FieldValue.arrayUnion(value))
         }
     }
