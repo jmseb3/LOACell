@@ -1,4 +1,4 @@
-package com.wonddak.loacell
+package com.wonddak.database
 
 import app.cash.sqldelight.db.SqlDriver
 

@@ -15,8 +15,14 @@ INSERT OR REPLACE INTO Character VALUES (?,?,?,?,?,?);
 updateUserInfo:
 UPDATE Character SET server = ?,className =?,level=? WHERE userName =? AND roomId = ? AND name =?;
 
+selectAllByRoomId:
+SELECT * FROM Character WHERE roomId = ?;
+
 selectAllByUser:
 SELECT * FROM Character WHERE userName = ? AND roomId = ?;
 
 selectOneByName:
 SELECT * FROM Character WHERE userName = ? AND roomId = ? AND name=?;
+
+deleteUserByName:
+DELETE FROM Character WHERE roomId = ? AND name=?;

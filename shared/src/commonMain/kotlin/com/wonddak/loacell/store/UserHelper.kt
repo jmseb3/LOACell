@@ -1,7 +1,6 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.Character
 import com.wonddak.sharedapi.model.CharacterInfo
 import korlibs.time.DateTime
 import kotlinx.coroutines.CoroutineScope
@@ -23,9 +22,9 @@ data class FBUSerInfo(
 
 data class FBCharacterInfo(
     public val name: String = "",
-    public val server: String ="",
-    public val className: String ="",
-    public val level: String =""
+    public val server: String = "",
+    public val className: String = "",
+    public val level: String = ""
 ) {
     fun toMap() = mapOf<String, Any>(
         "name" to name,
@@ -34,6 +33,7 @@ data class FBCharacterInfo(
         "level" to level
     )
 }
+
 object CommonUserHelper {
 
     // 방에 유저정보를 추가한다.
@@ -120,49 +120,57 @@ object CommonUserHelper {
                         .toMutableSet()
                 // 이름 조회..
                 CoroutineScope(Dispatchers.IO).launch {
-                        value.documents.forEach {
-                            val userName = it.id
+                    value.documents.forEach {
+                        val userName = it.id
 
-                            val representativeCharacter =
-                                it.data!!["representativeCharacter"] as String
-                            val getCharacterList =
-                                it.data!!["characterList"] as List<Map<String, Any>>
+                        val representativeCharacter =
+                            it.data!!["representativeCharacter"] as String
+                        val getCharacterList =
+                            it.data!!["characterList"] as List<Map<String, Any>>
 
-                            val characterList = getCharacterList.map {
-                                FBCharacterInfo(
-                                    it["name"] as String,
-                                    it["server"] as String,
-                                    it["className"] as String,
-                                    it["level"] as String
-                                )
-                            }
-
-                            val timeStamp = it.data!!["timeStamp"] as Long
-                            println("JWH Listen Users == $userName")
-                            println("JWH ${characterList.joinToString("|") { it.name }}")
-//                            //이미 값이 있는 경우
-//                            if (userName in dbUserList) {
-//                                //업데이트
-//                                db.userInfoQueriesHelper.updateUserInfo(
-//                                    userName,
-//                                    characterList,
-//                                    roomId,
-//                                    representativeCharacter,
-//                                    timeStamp
-//                                )
-//                                dbUserList.remove(userName)
-//                            } else {
-//                                //없는 경우 추가
-//                                db.userInfoQueriesHelper.addUser(
-//                                    userName,
-//                                    roomId,
-//                                    representativeCharacter,
-//                                    characterList,
-//                                    timeStamp
-//                                )
-//                            }
+                        val characterList = getCharacterList.map {
+                            FBCharacterInfo(
+                                it["name"] as String,
+                                it["server"] as String,
+                                it["className"] as String,
+                                it["level"] as String
+                            )
                         }
 
+                        val timeStamp = it.data!!["timeStamp"] as Long
+                        println("JWH Listen Users == $userName")
+                        println("JWH ${characterList.joinToString("|") { it.name }}")
+                        //이미 값이 있는 경우
+                        if (userName in dbUserList) {
+                            //업데이트
+                            db.userInfoQueriesHelper.updateUserInfo(
+                                userName,
+                                roomId,
+                                representativeCharacter,
+                                timeStamp
+                            )
+                            dbUserList.remove(userName)
+                        } else {
+                            //없는 경우 추가
+                            db.userInfoQueriesHelper.addUser(
+                                userName,
+                                roomId,
+                                representativeCharacter,
+                                timeStamp
+                            )
+                        }
+                        characterList.forEach {
+                            db.characterQueriesHelper.insertCharacter(
+                                userName,
+                                roomId,
+                                it.name,
+                                it.server,
+                                it.className,
+                                it.level
+                            )
+
+                        }
+                    }
                     // 동작이 끝난후 남아있다면
                     dbUserList.forEach { name ->
                         db.userInfoQueriesHelper.deleteUserName(name, roomId)

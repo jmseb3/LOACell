@@ -1,7 +1,3 @@
-import com.wonddak.loacell.Character;
-import kotlin.String;
-import kotlin.collections.List;
-
 CREATE TABLE UserInfo (
   name TEXT NOT NULL,
   roomId TEXT NOT NULL,

@@ -86,7 +86,7 @@ fun FocusUserView(
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
     val context = LocalContext.current
     userInfo?.let { userInfo ->
-        val characterList = db.characterQueriesHelper.getAllList(userInfo)
+        val characterList = db.characterQueriesHelper.getAllList(userInfo).sortedByDescending { it.level.replace(",","").toFloat() }
         Box {
             Column(
                 modifier = Modifier

@@ -7,9 +7,7 @@ import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
-import com.wonddak.loacell.CharacterQueries
 import com.wonddak.loacell.Database
-import com.wonddak.loacell.DriverFactory
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
