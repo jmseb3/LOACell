@@ -52,6 +52,7 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.DeleteRaidDialog
 import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
+import com.wonddak.loacell.android.ui.dialog.EditRaidTitleDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonRaidHelper
@@ -201,13 +202,13 @@ fun FocusRaidView(
                         }
                     } else {
                         focusIndex = index
-                        openRaidUserAddDialog = true
+                        showRaidUserAdd = true
                     }
                 }, deleteAction = { index ->
                     focusIndex = index
-                    openRaidUserDeleteDialog = true
+                    showRaidUserDelete = true
                 })
-                if (openRaidDeleteDialog) {
+                if (showRaidDelete) {
                     DeleteRaidDialog(confirm = {
                         CommonRaidHelper.delete(roomId, raidInfo.raidId, failAction = { error ->
                             Toast.makeText(
@@ -215,18 +216,18 @@ fun FocusRaidView(
                             ).show()
                         }) {
                             clearFocusItem()
-                            openRaidDeleteDialog = false
+                            showRaidDelete = false
                         }
                     }, dismiss = {
-                        openRaidDeleteDialog = false
+                        showRaidDelete = false
                     })
                 }
-                if (openRaidUserAddDialog && allUserList.isNotEmpty()) {
+                if (showRaidUserAdd && allUserList.isNotEmpty()) {
                     AddRaidUserSheet(raidInfo = raidInfo,
                         allUserList = allUserList,
                         db = db,
                         onDismissRequest = {
-                            openRaidUserAddDialog = false
+                            showRaidUserAdd = false
                         }) { character ->
                         val partyIndex = focusIndex / 4
                         val tempList =
@@ -241,14 +242,14 @@ fun FocusRaidView(
                                 loaCellViewModel.showSnackBar("인원 추가에 실패했습니다.")
                             }) {
                             focusIndex = -1
-                            openRaidUserAddDialog = false
+                            showRaidUserAdd = false
                         }
 
 
                     }
                 }
 
-                if (openRaidUserDeleteDialog) {
+                if (showRaidUserDelete) {
                     val partyIndex = focusIndex / 4
                     val tempList =
                         if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
@@ -262,11 +263,23 @@ fun FocusRaidView(
                             failAction = { error ->
                                 showSnackBar("유저 삭제에 실패했습니다.")
                             }) {
-                            openRaidUserDeleteDialog = false
+                            showRaidUserDelete = false
                         }
                     }, dismiss = {
-                        openRaidUserDeleteDialog = false
+                        showRaidUserDelete = false
                     })
+                }
+
+                if (showRaidEdit) {
+                    EditRaidTitleDialog(
+                        nowTitle = raidInfo.title,
+                        success =  {
+                            CommonRaidHelper.updateTitle(raidInfo.roomId,raidInfo.raidId,it)
+                            showRaidEdit = false
+                        }
+                    ) {
+                        showRaidEdit = false
+                    }
                 }
             }
         }

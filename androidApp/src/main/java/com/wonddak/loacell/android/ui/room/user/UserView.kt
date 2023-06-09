@@ -102,7 +102,7 @@ fun FocusUserView(
 
                 loaCellViewModel.apply {
                     UserInfoCharacters(userInfo,characterList)
-                    if (openCharacterEditDialog) {
+                    if (showCharacterEdit) {
                         EditCharacterDialog(
                             userInfo = userInfo,
                             characterList = characterList ,
@@ -112,14 +112,14 @@ fun FocusUserView(
                                     userInfo.name,
                                     name
                                 )
-                                openCharacterEditDialog = false
+                                showCharacterEdit = false
                             },
                             dismiss = {
-                                openCharacterEditDialog = false
+                                showCharacterEdit = false
                             }
                         )
                     }
-                    if (openCharacterDeleteDialog) {
+                    if (showCharacterDelete) {
                         DeleteCharacterDialog(
                             name = userInfo.name,
                             confirm = {
@@ -131,12 +131,12 @@ fun FocusUserView(
                                     },
                                     successAction = {
                                         loaCellViewModel.clearFocusItem()
-                                        openCharacterDeleteDialog = false
+                                        showCharacterDelete = false
                                     }
                                 )
                             },
                             dismiss = {
-                                openCharacterDeleteDialog = false
+                                showCharacterDelete = false
                             }
                         )
                     }

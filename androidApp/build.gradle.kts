@@ -53,7 +53,6 @@ dependencies {
     implementation(platform(Dependencies.Android.Firebase.Bom))
     implementation(Dependencies.Android.Firebase.Analytics)
     implementation(Dependencies.Android.Firebase.Crashlytics)
-    implementation(Dependencies.Android.Firebase.Firestore)
     implementation(Dependencies.Android.Firebase.Auth)
     implementation(Dependencies.Android.Firebase.AuthGoogle)
 }

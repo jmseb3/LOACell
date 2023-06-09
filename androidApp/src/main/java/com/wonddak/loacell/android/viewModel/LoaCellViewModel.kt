@@ -168,32 +168,48 @@ class LoaCellViewModel(
     }
 
     //region dialog status
-    var showRoomDialog by mutableStateOf(false)
+    var showRoomAction by mutableStateOf(false)
     var showRoomAdd by mutableStateOf(false)
     var showRoomEnter by mutableStateOf(false)
     var showRoomEnterError by mutableStateOf(false)
     var showRoomExit by mutableStateOf(false)
+
     var showUserAdd by mutableStateOf(false)
+
     var showRaidAdd by mutableStateOf(false)
-    var showSetting by mutableStateOf(false)
+    var showRaidEdit by mutableStateOf(false)
     var showRaidFilter by mutableStateOf(false)
+    var showRaidDelete by mutableStateOf(false)
+    var showRaidUserAdd by mutableStateOf(false)
+    var showRaidUserDelete by mutableStateOf(false)
+
+    var showCharacterEdit by mutableStateOf(false)
+    var showCharacterDelete by mutableStateOf(false)
+
+    var showSetting by mutableStateOf(false)
     fun hideAllDialog() {
-        showRoomDialog = false
+        showRoomAction = false
         showRoomAdd = false
         showRoomEnter = false
         showRoomEnterError = false
         showRoomExit = false
+
         showUserAdd = false
+
         showRaidAdd = false
-        showSetting = false
+        showRaidEdit = false
         showRaidFilter = false
+        showRaidDelete = false
+        showRaidUserAdd = false
+        showRaidUserDelete = false
+
+        showCharacterEdit = false
+        showCharacterDelete = false
+
+        showSetting = false
     }
 
-    var openCharacterEditDialog by mutableStateOf(false)
-    var openCharacterDeleteDialog by mutableStateOf(false)
-    var openRaidDeleteDialog by mutableStateOf(false)
-    var openRaidUserAddDialog by mutableStateOf(false)
-    var openRaidUserDeleteDialog by mutableStateOf(false)
+
     // endregion
 
     var tabState by mutableStateOf(0)
@@ -212,18 +228,18 @@ class LoaCellViewModel(
                 if (userInfo.isAnonymous) {
                     showRoomEnter = true
                 } else {
-                    showRoomDialog = true
+                    showRoomAction = true
                 }
             }
         } else {
             if (focusUserName.value.isNotEmpty()) {
                 Log.i("JWH-B", "22--Focus User")
-                openCharacterDeleteDialog = true
+                showCharacterDelete = true
                 return
             }
             if (focusRaidId.value.isNotEmpty()) {
                 Log.i("JWH-B", "33--Focus Raid")
-                openRaidDeleteDialog = true
+                showRaidDelete = true
                 return
             }
             if (tabState == 0) {

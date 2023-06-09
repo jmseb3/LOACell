@@ -165,16 +165,16 @@ fun MainContent(
                             }
                         }
                         loaCellViewModel.apply {
-                            if (showRoomDialog) {
+                            if (showRoomAction) {
                                 RoomActionDialog(
                                     confirm = { status ->
                                         when (status) {
                                             1 -> showRoomEnter = true
                                             2 -> showRoomAdd = true
                                         }
-                                        showRoomDialog = false
+                                        showRoomAction = false
                                     },
-                                    dismiss = { showRoomDialog = false }
+                                    dismiss = { showRoomAction = false }
                                 )
                             }
                             if (showRoomAdd) {
@@ -324,7 +324,7 @@ fun MyBottomAppBar(
                             MyIconButton(
                                 imageResource = SharedRes.images.change_person
                             ) {
-                                openCharacterEditDialog = true
+                                showCharacterEdit = true
                             }
                             MyIconButton(
                                 imageResource = SharedRes.images.refresh,
@@ -343,6 +343,11 @@ fun MyBottomAppBar(
                             Icon(Icons.Filled.ArrowBack, contentDescription = null)
                         }
                         focusRaidInfo?.let {info ->
+                            MyIconButton(
+                                imageResource = SharedRes.images.room_setting
+                            ) {
+                               loaCellViewModel.showRaidEdit = true
+                            }
                             val icon = if (info.isFinish) {
                                 SharedRes.images.task_finish_done
                             } else {
