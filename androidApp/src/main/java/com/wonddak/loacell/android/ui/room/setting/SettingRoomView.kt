@@ -60,3 +60,8 @@ fun UserUidList(
         }
     }
 }
+
+@Composable
+fun SettingRoom() {
+
+}
