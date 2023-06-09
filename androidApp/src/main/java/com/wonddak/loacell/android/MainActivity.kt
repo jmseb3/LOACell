@@ -46,11 +46,11 @@ import com.wonddak.loacell.android.ui.SettingView
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.RoomActionDialog
+import com.wonddak.loacell.android.ui.dialog.RoomEnterDialog
+import com.wonddak.loacell.android.ui.dialog.RoomEnterErrorDialog
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
-import com.wonddak.loacell.android.ui.room.RoomActionDialog
-import com.wonddak.loacell.android.ui.room.RoomEnterDialog
-import com.wonddak.loacell.android.ui.room.RoomEnterErrorDialog
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.util.LoginHelper
@@ -83,7 +83,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
     db: AppDataBase,
@@ -140,7 +139,7 @@ fun MainContent(
                             .collectAsState(initial = emptyList())
 
                         if (loaCellViewModel.showSetting) {
-                            SettingView(loaCellViewModel)
+                            SettingView(db,loaCellViewModel)
                         } else {
                             Column(Modifier.fillMaxSize()) {
                                 AnimatedVisibility(selectedRoomId.isEmpty()) {

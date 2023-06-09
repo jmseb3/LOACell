@@ -3,8 +3,8 @@ package com.wonddak.loacell.store
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.convertDifficulty
 import com.wonddak.database.ext.convertType
-import com.wonddak.loacell.model.Difficulty
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.model.Difficulty
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(
@@ -72,14 +72,29 @@ object CommonRaidHelper {
             failAction = failAction
         )
     }
+    private fun updateField(
+        roomId: String,
+        raidId: String,
+        field :String,
+        value :Any
+    ) {
+        RefHelper.getRaidRef(roomId, raidId).update(
+            field,value
+        )
+    }
     fun updateFinish(
         roomId: String,
         raidId: String,
         isFinish: Boolean
     ) {
-        RefHelper.getRaidRef(roomId, raidId).update(
-            "finish",isFinish
-        )
+        updateField(roomId,raidId,"finish",isFinish)
+    }
+    fun updateTitle(
+        roomId: String,
+        raidId: String,
+        title: String
+    ) {
+        updateField(roomId,raidId,"title",title)
     }
 
     // 파티 리스트를 업데이트 한다.

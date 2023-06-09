@@ -1,9 +1,8 @@
-package com.wonddak.loacell.android.ui.room.raid
+package com.wonddak.loacell.android.ui.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.wonddak.loacell.android.ui.common.DeleteDialog
 
 @Composable
 fun DeleteRaidDialog(
@@ -12,7 +11,7 @@ fun DeleteRaidDialog(
 ) {
     DeleteDialog(
         title = "레이드 정보 삭제",
-        confirm =  confirm,
+        confirm = confirm,
         dismiss = dismiss
     ) {
         Column() {
@@ -28,7 +27,7 @@ fun DeleteRaidUserDialog(
 ) {
     DeleteDialog(
         title = "레이드 유저 정보 삭제",
-        confirm =  confirm,
+        confirm = confirm,
         dismiss = dismiss
     ) {
         Column() {

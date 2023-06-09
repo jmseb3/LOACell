@@ -20,6 +20,9 @@ SELECT * FROM RoomInfo;
 selectById:
 SELECT * FROM RoomInfo WHERE uniqueId = ?;
 
+selectByOwner:
+SELECT * FROM RoomInfo WHERE owner = ?;
+
 updateInfo:
 UPDATE RoomInfo SET title =?, description =? ,owner=?,enterUser=?,editableUser =?,anoymousUser=? WHERE uniqueId =?;
 

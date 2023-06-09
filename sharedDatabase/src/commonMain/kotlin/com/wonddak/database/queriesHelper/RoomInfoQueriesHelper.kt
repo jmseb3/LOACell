@@ -59,7 +59,11 @@ class RoomInfoQueriesHelper(
             uniqueId
         )
     }
-
+    fun getAllRoomListByOwnerId(
+        ownerId :String
+    ) : List<RoomInfo> {
+        return queries.selectByOwner(ownerId).executeAsList()
+    }
     fun deleteRoomInfo(roomId: String) {
         if (roomId.isNotEmpty()) {
             queries.deleteById(roomId)

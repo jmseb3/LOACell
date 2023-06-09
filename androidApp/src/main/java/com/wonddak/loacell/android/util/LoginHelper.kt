@@ -45,7 +45,7 @@ interface LoginHelperFunction {
      */
     fun registerAnonymousToGoogle(result: ActivityResult,failAction : (e:Exception?) -> Unit)
 
-    fun delete()
+    fun delete(successAction: () -> Unit)
 }
 
 class LoginHelper(
@@ -174,9 +174,14 @@ class LoginHelper(
         }
     }
 
-    override fun delete() {
+    override fun delete(
+        successAction:() ->Unit
+    ) {
         auth.currentUser!!.delete()
-        signOut()
+            .addOnSuccessListener {
+                signOut()
+                successAction()
+            }
     }
 
     override fun requestAnonymousLogin() {

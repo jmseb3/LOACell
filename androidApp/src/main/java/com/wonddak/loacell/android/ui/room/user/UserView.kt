@@ -29,6 +29,8 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.LoadingView
+import com.wonddak.loacell.android.ui.dialog.DeleteCharacterDialog
+import com.wonddak.loacell.android.ui.dialog.EditCharacterDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonUserHelper

@@ -10,12 +10,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @Composable
 fun LoginInfoView(
+    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val context = LocalContext.current
@@ -27,24 +29,28 @@ fun LoginInfoView(
             OutlinedButton(
                 onClick = {
                     if (userInfo.isAnonymous) {
-                        loginHelper.delete()
+                        loginHelper.delete {
+                            loaCellViewModel.signOut()
+                        }
                     } else {
                         loginHelper.signOut()
+                        loaCellViewModel.signOut()
                     }
-                    loaCellViewModel.signOut()
                 }
             ) {
-                Text(text = if (userInfo.isAnonymous) "나기기" else "로그아웃")
+                Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
             }
             if (userInfo.isAnonymous) {
                 val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult()
                 ) { result ->
-                    loginHelper.registerAnonymousToGoogle(result) {error ->
+                    loginHelper.registerAnonymousToGoogle(result) { error ->
                         if (error is FirebaseAuthUserCollisionException) {
                             loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
                         } else {
-                            loaCellViewModel.showSnackBar(error?.localizedMessage ?: "unknown Error")
+                            loaCellViewModel.showSnackBar(
+                                error?.localizedMessage ?: "unknown Error"
+                            )
                         }
                     }
                 }
@@ -54,6 +60,21 @@ fun LoginInfoView(
                     }
                 }) {
                     Text(text = "Google과 연동")
+                }
+            } else {
+                val list = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
+                OutlinedButton(
+                    onClick = {
+                        loginHelper.delete {
+                            loaCellViewModel.signOut()
+                        }
+                    },
+                    enabled = list.isEmpty()
+                ) {
+                    Text(text = "탈퇴")
+                }
+                if (list.isNotEmpty()) {
+                    Text(text = "owner인 방의 정보를 모두 삭제해 주세요")
                 }
             }
         }

@@ -7,8 +7,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Divider
@@ -28,6 +26,7 @@ import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.RoomExitDialog
 import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -136,24 +135,33 @@ fun RoomTitleView(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         imageResource = SharedRes.images.room_exit
                     ) {
-                        //TODO Dialog
-                        CommonRoomHelper.exitRoom(
-                            roomInfo.uniqueId,
-                            uid,
-                            role,
-                            successAction = {
-                                loaCellViewModel.hideRoomInfo()
-                                db.roomInfoQueriesHelper.deleteRoomInfo(roomInfo.uniqueId)
-                            },
-                            failAction = {
-
-                            }
-                        )
+                        loaCellViewModel.showRoomExit = true
                     }
                 }
 
+                if (loaCellViewModel.showRoomExit) {
+                    RoomExitDialog(
+                        success = {
+                            CommonRoomHelper.exitRoom(
+                                roomInfo.uniqueId,
+                                uid,
+                                role,
+                                successAction = {
+                                    loaCellViewModel.hideRoomInfo()
+                                    db.roomInfoQueriesHelper.deleteRoomInfo(roomInfo.uniqueId)
+                                },
+                                failAction = {
+
+                                }
+                            )
+                        },
+                        dismiss = {
+                            loaCellViewModel.showRoomExit =false
+                        }
+                    )
+                }
             }
         }
-
     }
+
 }

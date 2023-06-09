@@ -8,11 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -20,7 +20,6 @@ import com.wonddak.loacell.store.CommonUserHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,6 +38,7 @@ class LoaCellViewModel(
     fun hideRoomInfo() {
         _roomId.value = ""
         tabState = 0
+        hideAllDialog()
         clearFocusItem()
         clearFilter()
     }
@@ -135,7 +135,7 @@ class LoaCellViewModel(
     var syncData by mutableStateOf(false)
 
     fun signOut() {
-        clearAllStatus()
+        hideRoomInfo()
         dataBase.clearAll()
     }
 
@@ -157,11 +157,6 @@ class LoaCellViewModel(
         _focusUserName.value = ""
     }
 
-    fun clearAllStatus() {
-        hideAllDialog()
-        hideRoomInfo()
-    }
-
     var filterRaidType by mutableStateOf(RaidType.values())
     var filterFinish by mutableIntStateOf(0)
     var filterUser by mutableStateOf(emptyList<String>())
@@ -177,6 +172,7 @@ class LoaCellViewModel(
     var showRoomAdd by mutableStateOf(false)
     var showRoomEnter by mutableStateOf(false)
     var showRoomEnterError by mutableStateOf(false)
+    var showRoomExit by mutableStateOf(false)
     var showUserAdd by mutableStateOf(false)
     var showRaidAdd by mutableStateOf(false)
     var showSetting by mutableStateOf(false)
@@ -186,6 +182,7 @@ class LoaCellViewModel(
         showRoomAdd = false
         showRoomEnter = false
         showRoomEnterError = false
+        showRoomExit = false
         showUserAdd = false
         showRaidAdd = false
         showSetting = false
