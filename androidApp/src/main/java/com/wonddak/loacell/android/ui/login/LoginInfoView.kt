@@ -73,7 +73,7 @@ fun LoginInfoView(
                     Text(text = "탈퇴")
                 }
                 if (list.isNotEmpty()) {
-                    Text(text = "owner인 방의 정보를 모두 삭제해 주세요")
+                    Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
                 }
             }
         }

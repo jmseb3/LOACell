@@ -188,6 +188,13 @@ class LoginHelper(
         auth.signInAnonymously()
             .addOnSuccessListener {
                 updateUserInfo()
+//                it.user!!.updateProfile(
+//                    userProfileChangeRequest {
+//                        displayName = "Jane Q. User"
+//                        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg"
+//                        )
+//                    }
+//                )
             }
     }
 
