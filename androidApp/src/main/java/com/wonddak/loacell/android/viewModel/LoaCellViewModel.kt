@@ -11,9 +11,11 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
+import com.wonddak.loacell.RoomRole
 import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -28,8 +30,11 @@ import kotlinx.coroutines.launch
 class LoaCellViewModel(
     private val dataBase: AppDataBase
 ) : SnackBarController() {
+    val user get() =  LoaCellApp.user
+
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
+
 
     fun showRoomInfo(roomId: String) {
         tabState = RoomState.Raid
@@ -46,6 +51,18 @@ class LoaCellViewModel(
 
     private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
     val roomInfo get() = _roomInfo
+
+    val myRole = user.combine(roomInfo) { user , info ->
+        if (user != null && info != null) {
+            info.getRole(user.uid)
+        } else {
+            RoomRole.NONE
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = RoomRole.NONE
+    )
 
     private var _userInfoList: MutableStateFlow<List<UserInfo>> = MutableStateFlow(emptyList())
     val userInfoList get() = _userInfoList

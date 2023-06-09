@@ -3,16 +3,16 @@ package com.wonddak.database
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.wonddak.database.model.RaidType
 import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.database.model.RaidType
-import com.wonddak.loacell.RoomInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
@@ -75,7 +75,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         RoomInfoAdapter = RoomInfo.Adapter(
             enterUserAdapter = stringListAdapter,
             editableUserAdapter = stringListAdapter,
-            anoymousUserAdapter = stringListAdapter
+            anonymousUserAdapter = stringListAdapter
         )
     )
 

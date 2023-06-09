@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui
+package com.wonddak.loacell.android.ui.setting
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column

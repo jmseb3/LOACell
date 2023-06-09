@@ -22,11 +22,9 @@ import com.wonddak.database.ext.checkTimeOver
 import com.wonddak.loacell.RoomRole
 import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.store.CommonRaidHelper
 
 
@@ -35,32 +33,33 @@ fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val user by LoaCellApp.user.collectAsState()
-    val roomInfo by loaCellViewModel.roomInfo.collectAsState()
+    val role by loaCellViewModel.myRole.collectAsState()
     val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
     val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
 
     loaCellViewModel.apply {
         BottomAppBar(
             floatingActionButton = {
-                SmallFloatingActionButton(
-                    content = {
-                        if (focusUserInfo != null || focusRaidInfo != null) {
-                            Icon(
-                                painter = painterResource(id = SharedRes.images.delete.drawableResId),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        } else {
-                            Icon(Icons.Filled.Add, null)
-                        }
-                    },
-                    onClick = {
-                        bottomAddAction()
-                    },
-                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
-                )
+                AnimatedVisibility(tabState != RoomState.Setting) {
+                    SmallFloatingActionButton(
+                        content = {
+                            if (focusUserInfo != null || focusRaidInfo != null) {
+                                Icon(
+                                    painter = painterResource(id = SharedRes.images.delete.drawableResId),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            } else {
+                                Icon(Icons.Filled.Add, null)
+                            }
+                        },
+                        onClick = {
+                            bottomAddAction()
+                        },
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
+                    )
+                }
             },
             actions = {
                 val showLevel1 =
@@ -71,11 +70,8 @@ fun BottomAppBar(
                     Row() {
                         MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Raid)
                         MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.User)
-                        if (roomInfo != null && user != null) {
-                            val role = roomInfo!!.getRole(user!!.uid)
-                            if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
-                                MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Setting)
-                            }
+                        if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
+                            MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Setting)
                         }
                     }
 

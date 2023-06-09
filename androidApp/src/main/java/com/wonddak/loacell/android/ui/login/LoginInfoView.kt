@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
@@ -22,7 +21,7 @@ fun LoginInfoView(
 ) {
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
-    val user by LoaCellApp.user.collectAsState(null)
+    val user by loaCellViewModel.user.collectAsState(null)
     user?.let { userInfo ->
         Column() {
             Text(text = userInfo.uid)

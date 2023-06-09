@@ -16,8 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.loacell.android.ui.SettingView
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.dialog.RoomActionDialog
@@ -26,6 +24,7 @@ import com.wonddak.loacell.android.ui.dialog.RoomEnterErrorDialog
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
+import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -37,7 +36,7 @@ fun MainContent(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val userInfo by LoaCellApp.user.collectAsState()
+    val userInfo by loaCellViewModel.user.collectAsState()
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {

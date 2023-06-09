@@ -29,10 +29,9 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.RoomExitDialog
 import com.wonddak.loacell.android.ui.room.raid.RaidView
+import com.wonddak.loacell.android.ui.room.setting.SettingRoomView
 import com.wonddak.loacell.android.ui.room.user.UserView
-import com.wonddak.loacell.android.ui.setting.SettingRoomView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.store.CommonRoomHelper
 
 @Composable
@@ -69,7 +68,7 @@ fun RoomView(
                 }
 
                 RoomState.Setting -> {
-                    SettingRoomView()
+                    SettingRoomView(loaCellViewModel)
                 }
             }
 
@@ -105,6 +104,7 @@ fun RoomTitleView(
     val focusUserName by loaCellViewModel.focusUserName.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
     val user by LoaCellApp.user.collectAsState(null)
+    val role by loaCellViewModel.myRole.collectAsState()
 
     val context = LocalContext.current
 
@@ -130,11 +130,15 @@ fun RoomTitleView(
                 )
                 Divider()
             }
-            user?.uid?.let { uid ->
-                val role = roomInfo.getRole(uid)
-                if (role == RoomRole.OWNER) {
 
-                } else {
+            when (role) {
+                RoomRole.OWNER -> {
+
+                }
+                RoomRole.NONE -> {
+
+                }
+                else -> {
                     MyIconButton(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         imageResource = SharedRes.images.room_exit
@@ -142,28 +146,28 @@ fun RoomTitleView(
                         loaCellViewModel.showRoomExit = true
                     }
                 }
+            }
 
-                if (loaCellViewModel.showRoomExit) {
-                    RoomExitDialog(
-                        success = {
-                            CommonRoomHelper.exitRoom(
-                                roomInfo.uniqueId,
-                                uid,
-                                role,
-                                successAction = {
-                                    loaCellViewModel.hideRoomInfo()
-                                    db.roomInfoQueriesHelper.deleteRoomInfo(roomInfo.uniqueId)
-                                },
-                                failAction = {
+            if (loaCellViewModel.showRoomExit && user != null) {
+                RoomExitDialog(
+                    success = {
+                        CommonRoomHelper.exitRoom(
+                            roomInfo.uniqueId,
+                            user!!.uid,
+                            role,
+                            successAction = {
+                                loaCellViewModel.hideRoomInfo()
+                                db.roomInfoQueriesHelper.deleteRoomInfo(roomInfo.uniqueId)
+                            },
+                            failAction = {
 
-                                }
-                            )
-                        },
-                        dismiss = {
-                            loaCellViewModel.showRoomExit = false
-                        }
-                    )
-                }
+                            }
+                        )
+                    },
+                    dismiss = {
+                        loaCellViewModel.showRoomExit = false
+                    }
+                )
             }
         }
     }
