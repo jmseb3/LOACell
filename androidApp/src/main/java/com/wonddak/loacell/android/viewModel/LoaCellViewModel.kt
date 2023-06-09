@@ -11,6 +11,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
+import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.store.CommonListenerRegistration
@@ -31,13 +32,13 @@ class LoaCellViewModel(
     val roomId get() = _roomId
 
     fun showRoomInfo(roomId: String) {
-        tabState = 0
+        tabState = RoomState.Raid
         _roomId.value = roomId
     }
 
     fun hideRoomInfo() {
         _roomId.value = ""
-        tabState = 0
+        tabState = RoomState.Raid
         hideAllDialog()
         clearFocusItem()
         clearFilter()
@@ -208,14 +209,12 @@ class LoaCellViewModel(
 
         showSetting = false
     }
-
-
     // endregion
 
-    var tabState by mutableStateOf(0)
+    var tabState by mutableStateOf(RoomState.Raid)
         private set
 
-    fun setTabStatus(value: Int) {
+    fun setTabStatus(value: RoomState) {
         hideAllDialog()
         tabState = value
     }
@@ -242,12 +241,16 @@ class LoaCellViewModel(
                 showRaidDelete = true
                 return
             }
-            if (tabState == 0) {
-                Log.i("JWH-B", "33- ShowRaid")
-                showRaidAdd = true
-            } else if (tabState == 1) {
-                Log.i("JWH-B", "44-- ShowUser")
-                showUserAdd = true
+            when(tabState) {
+                RoomState.Raid -> {
+                    showRaidAdd = true
+                }
+                RoomState.User -> {
+                    showUserAdd = true
+                }
+                RoomState.Setting -> {
+
+                }
             }
         }
     }

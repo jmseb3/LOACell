@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
+import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.noRippleClickable
@@ -29,6 +30,7 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.RoomExitDialog
 import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.user.UserView
+import com.wonddak.loacell.android.ui.setting.SettingRoomView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -50,7 +52,7 @@ fun RoomView(
         roomInfo?.let { roomInfo ->
             RoomTitleView(db, loaCellViewModel, roomInfo)
             when (loaCellViewModel.tabState) {
-                0 -> {
+                RoomState.Raid -> {
                     RaidView(
                         db = db,
                         roomId = roomInfo.uniqueId,
@@ -58,34 +60,36 @@ fun RoomView(
                     )
                 }
 
-                1 -> {
+                RoomState.User -> {
                     UserView(
                         db = db,
                         roomId = roomInfo.uniqueId,
                         loaCellViewModel = loaCellViewModel
                     )
                 }
-            }
 
-            if (loaCellViewModel.showRaidAdd) {
-                AddRaidSheet(
-                    roomInfo.uniqueId,
-                    onDismissRequest = {
-                        loaCellViewModel.showRaidAdd = false
-                    }
-                ) {
-                    loaCellViewModel.showRaidAdd = false
+                RoomState.Setting -> {
+                    SettingRoomView()
                 }
             }
 
-            if (loaCellViewModel.showUserAdd) {
-                AddUserSheet(
-                    roomId = roomInfo.uniqueId,
-                    onDismissRequest = {
-                        loaCellViewModel.showUserAdd = false
-                    }
-                ) {
-                    loaCellViewModel.showUserAdd = false
+            loaCellViewModel.apply {
+                if (showRaidAdd) {
+                    val close = { showRaidAdd = false }
+                    AddRaidSheet(
+                        roomInfo.uniqueId,
+                        onDismissRequest = close,
+                        successAction = close
+                    )
+                }
+
+                if (showUserAdd) {
+                    val close = { showUserAdd = false }
+                    AddUserSheet(
+                        roomId = roomInfo.uniqueId,
+                        onDismissRequest = close,
+                        addAction = close
+                    )
                 }
             }
         }
@@ -156,7 +160,7 @@ fun RoomTitleView(
                             )
                         },
                         dismiss = {
-                            loaCellViewModel.showRoomExit =false
+                            loaCellViewModel.showRoomExit = false
                         }
                     )
                 }

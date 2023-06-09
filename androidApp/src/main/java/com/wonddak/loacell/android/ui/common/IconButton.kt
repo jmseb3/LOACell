@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.RoomState
+import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import dev.icerock.moko.resources.ImageResource
 
 @Composable
@@ -42,5 +45,23 @@ fun MyIconButton(
         id = imageResource.drawableResId,
         enabled =enabled,
         onClick = onClick
+    )
+}
+@Composable
+fun MyRoomIconButton(
+    loaCellViewModel: LoaCellViewModel,
+    state :RoomState
+) {
+    val imageResource = when(state) {
+        RoomState.Raid -> SharedRes.images.room
+        RoomState.User -> SharedRes.images.person
+        RoomState.Setting -> SharedRes.images.room_setting
+    }
+    MyIconButton(
+        id = imageResource.drawableResId,
+        enabled = (loaCellViewModel.tabState != state),
+        onClick = {
+            loaCellViewModel.setTabStatus(state)
+        }
     )
 }

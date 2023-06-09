@@ -19,9 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.ext.checkTimeOver
+import com.wonddak.loacell.RoomRole
+import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.store.CommonRaidHelper
 
 
@@ -30,6 +35,8 @@ fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+    val user by LoaCellApp.user.collectAsState()
+    val roomInfo by loaCellViewModel.roomInfo.collectAsState()
     val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
     val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
 
@@ -62,14 +69,14 @@ fun BottomAppBar(
                     showLevel1,
                 ) {
                     Row() {
-                        MyIconButton(
-                            imageResource = SharedRes.images.room,
-                            enabled = tabState != 0
-                        ) { loaCellViewModel.setTabStatus(0) }
-                        MyIconButton(
-                            imageResource = SharedRes.images.person,
-                            enabled = tabState != 1
-                        ) { loaCellViewModel.setTabStatus(1) }
+                        MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Raid)
+                        MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.User)
+                        if (roomInfo != null && user != null) {
+                            val role = roomInfo!!.getRole(user!!.uid)
+                            if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
+                                MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Setting)
+                            }
+                        }
                     }
 
                 }

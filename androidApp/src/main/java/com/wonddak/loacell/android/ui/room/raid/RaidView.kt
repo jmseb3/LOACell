@@ -46,6 +46,7 @@ import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
@@ -197,7 +198,7 @@ fun FocusRaidView(
                             label = "이동",
                         ) {
                             clearFocusItem()
-                            setTabStatus(1)
+                            setTabStatus(RoomState.User)
                             showUserAdd = true
                         }
                     } else {
