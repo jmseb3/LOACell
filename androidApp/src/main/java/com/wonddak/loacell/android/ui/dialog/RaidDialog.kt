@@ -87,7 +87,7 @@ fun EditRaidTitleDialog(
             maxLine = 1,
             maxLength = 10,
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             textChange = {
                 typeText = it

@@ -138,6 +138,35 @@ object CommonRoomHelper {
             failAction = failAction
         )
     }
+    fun exitUsersFromRoom(
+        roomId: String,
+        userId: List<String>,
+        field: String,
+        commonAction:() ->Unit={},
+        successAction: () -> Unit ={},
+        failAction: (e: Error) -> Unit={}
+    ) {
+        getFireStore().runTransaction(
+            refDoc =  RefHelper.getRoomRef(roomId),
+            successAction ={
+                commonAction()
+                successAction()
+            },
+            failAction = {
+                commonAction()
+                failAction(it)
+            }
+        ) {
+            userId.forEach { uid ->
+                it.reference.update(
+                    field = field,
+                    value = CommonFieldValue.arrayRemove(uid),
+                    successAction = { },
+                    failAction = { }
+                )
+            }
+        }
+    }
 
     fun exitRoom(
         roomId: String,

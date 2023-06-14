@@ -24,6 +24,24 @@ actual class CommonFireStore(
     private val ref: FirebaseFirestore
 ) {
     actual fun collection(path: String): CommonCollection = CommonCollection(ref.collection(path))
+
+    actual fun runTransaction(
+        refDoc: CommonDocument,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit,
+        action: (transaction: CommonDocumentSnapshot) -> Unit
+    ) {
+        ref.runTransaction { transaction ->
+            val snapshot = transaction.get(refDoc.ref)
+            action(CommonDocumentSnapshot(snapshot))
+        }
+            .addOnSuccessListener {
+                successAction()
+            }
+            .addOnFailureListener {
+                failAction(Error(it))
+            }
+    }
 }
 
 actual class CommonCollection(
@@ -97,7 +115,7 @@ actual class CommonFilter(
 }
 
 actual class CommonDocument(
-    private val ref: DocumentReference
+    val ref: DocumentReference
 ) {
     actual val id: String = ref.id
     actual val path: String = ref.path

@@ -9,6 +9,4 @@ object RefHelper {
 
     fun getUsersRef(roomId: String): CommonCollection = getRoomRef(roomId).collection("users")
     fun getUserDocRef(roomId: String, name: String): CommonDocument = getUsersRef(roomId).document(name)
-
-    fun getCharacterRef(): CommonCollection = getFireStore().collection("characters")
 }

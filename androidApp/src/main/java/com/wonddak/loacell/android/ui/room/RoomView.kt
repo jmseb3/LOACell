@@ -49,7 +49,9 @@ fun RoomView(
             .fillMaxSize()
     ) {
         roomInfo?.let { roomInfo ->
-            RoomTitleView(db, loaCellViewModel, roomInfo)
+            AnimatedVisibility(loaCellViewModel.tabState != RoomState.Setting) {
+                RoomTitleView(db, loaCellViewModel, roomInfo)
+            }
             when (loaCellViewModel.tabState) {
                 RoomState.Raid -> {
                     RaidView(

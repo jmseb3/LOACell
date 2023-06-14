@@ -30,8 +30,9 @@ import kotlinx.coroutines.launch
 class LoaCellViewModel(
     private val dataBase: AppDataBase
 ) : SnackBarController() {
+
+    var loggingIn by mutableStateOf(false)
     val user get() =  LoaCellApp.user
-    var waitForName = mutableStateOf(false)
 
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
@@ -206,6 +207,7 @@ class LoaCellViewModel(
     var showCharacterDelete by mutableStateOf(false)
 
     var showSetting by mutableStateOf(false)
+    var showSettingEditName by mutableStateOf(false)
     fun hideAllDialog() {
         showRoomAction = false
         showRoomAdd = false
@@ -226,6 +228,7 @@ class LoaCellViewModel(
         showCharacterDelete = false
 
         showSetting = false
+        showSettingEditName = false
     }
     // endregion
 

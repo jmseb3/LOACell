@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.util
 
 import android.content.Context
 import android.content.IntentSender
+import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -15,42 +16,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.R
 
-interface LoginHelperFunction {
-    /**
-     * 로그아웃을 한다
-     */
-    fun signOut()
-
-    /**
-     * 구글 로그인시도를한다.
-     */
-    fun requestGoogleLogin(successAction: (IntentSenderRequest) -> Unit)
-
-    /**
-     * 발생된 결과로부터 토큰을 firebase에 등록한다.
-     */
-    fun registerGoogleToken(result: ActivityResult,otherAction: () -> Unit)
-
-    /**
-     * 익명 로그인시도를 한다.
-     */
-    fun requestAnonymousLogin()
-
-    /**
-     * 익명을 구글계정과 연동한다.
-     */
-    fun registerAnonymousToGoogle(result: ActivityResult,failAction : (e:Exception?) -> Unit)
-
-    fun delete(successAction: () -> Unit)
-}
 
 class LoginHelper(
     context: Context
-) : LoginHelperFunction {
+)  {
     companion object {
         const val TAG = "LoginHelper"
     }
@@ -73,16 +46,16 @@ class LoginHelper(
         auth = Firebase.auth
     }
 
-    fun updateUserInfo(userInfo : FirebaseUser? = auth.currentUser) {
-        LoaCellApp.updateUser(userInfo)
+    fun updateUserInfo(userInfo: FirebaseUser? = auth.currentUser) {
+//        LoaCellApp.updateUser(userInfo)
     }
 
-    override fun signOut() {
+    fun signOut() {
         auth.signOut()
         updateUserInfo()
     }
 
-    override fun requestGoogleLogin(
+    fun requestGoogleLogin(
         successAction: (IntentSenderRequest) -> Unit
     ) {
         oneTapClient.beginSignIn(signInRequest)
@@ -140,25 +113,30 @@ class LoginHelper(
         }
     }
 
-    override fun registerGoogleToken(
+    fun registerGoogleToken(
         result: ActivityResult,
-        otherAction : () -> Unit
+        commonAction :() ->Unit,
+        otherAction: () -> Unit
     ) {
         registerToken(result) { firebaseCredential ->
             auth.signInWithCredential(firebaseCredential)
                 .addOnCompleteListener { task ->
+                    commonAction()
                     if (task.isSuccessful) {
                         updateUserInfo()
                         otherAction()
                     }
                 }
+                .addOnFailureListener {
+                    commonAction()
+                }
 
         }
     }
 
-    override fun registerAnonymousToGoogle(
+    fun registerAnonymousToGoogle(
         result: ActivityResult,
-        failAction: (e:Exception?) -> Unit
+        failAction: (e: Exception?) -> Unit
     ) {
         registerToken(result) { firebaseCredential ->
             auth.currentUser!!.linkWithCredential(firebaseCredential)
@@ -174,8 +152,8 @@ class LoginHelper(
         }
     }
 
-    override fun delete(
-        successAction:() ->Unit
+    fun delete(
+        successAction: () -> Unit
     ) {
         auth.currentUser!!.delete()
             .addOnSuccessListener {
@@ -184,18 +162,30 @@ class LoginHelper(
             }
     }
 
-    override fun requestAnonymousLogin() {
+    fun requestAnonymousLogin(
+        name :String
+    ) {
         auth.signInAnonymously()
             .addOnSuccessListener {
                 updateUserInfo()
-//                it.user!!.updateProfile(
-//                    userProfileChangeRequest {
-//                        displayName = "Jane Q. User"
-//                        photoUri = Uri.parse("https://example.com/jane-q-user/profile.jpg"
-//                        )
-//                    }
-//                )
+                updateDisplayName(name)
             }
+    }
+
+    fun updateDisplayName(name: String) {
+        auth.currentUser?.updateProfile(
+            userProfileChangeRequest {
+                displayName = name
+            }
+        )
+    }
+
+    fun updateProfileImg(photoUri : Uri) {
+        auth.currentUser?.updateProfile(
+            userProfileChangeRequest {
+                setPhotoUri(photoUri)
+            }
+        )
     }
 
 }

@@ -24,6 +24,31 @@ actual class CommonFireStore(
 ) {
     actual fun collection(path: String): CommonCollection =
         CommonCollection(ref.collectionWithPath(path))
+
+    actual fun runTransaction(
+        refDoc: CommonDocument,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit,
+        action: (transaction: CommonDocumentSnapshot) -> Unit
+    ) {
+        ref.runTransactionWithBlock(
+            updateBlock =  {transaction, errorPointer ->
+                if (transaction != null) {
+                    val snapshot = transaction.getDocument(refDoc.ref,errorPointer)
+                    if (snapshot != null) {
+                        action(CommonDocumentSnapshot(snapshot))
+                    }
+                }
+            },
+            completion = {_,error ->
+                if (error == null) {
+                    successAction()
+                } else {
+                    failAction(Error(error))
+                }
+            }
+        )
+    }
 }
 
 actual class CommonCollection(
@@ -99,7 +124,7 @@ actual class CommonFilter(
 }
 
 actual class CommonDocument(
-    private val ref: FIRDocumentReference
+    val ref: FIRDocumentReference
 ) {
     actual val id: String = ref.documentID
     actual val path: String = ref.path

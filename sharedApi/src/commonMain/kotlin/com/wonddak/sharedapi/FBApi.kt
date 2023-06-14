@@ -37,7 +37,7 @@ class FBApi {
         defaultRequest {
             url {
                 protocol = URLProtocol.HTTP
-                host = ""
+                host = "loacell.cafe24app.com"
             }
             headers {
                 append(HttpHeaders.Accept, "application/json")

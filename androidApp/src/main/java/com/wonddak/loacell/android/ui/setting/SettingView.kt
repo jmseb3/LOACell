@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.android.ui.login.LoginInfoView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @Composable

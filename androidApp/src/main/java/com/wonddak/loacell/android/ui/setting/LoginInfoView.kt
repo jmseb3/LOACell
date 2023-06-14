@@ -1,17 +1,29 @@
-package com.wonddak.loacell.android.ui.login
+package com.wonddak.loacell.android.ui.setting
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.ProfileNameDialog
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
@@ -24,8 +36,46 @@ fun LoginInfoView(
     val loginHelper = LoginHelper(context)
     val user by loaCellViewModel.user.collectAsState(null)
     user?.let { userInfo ->
-        Column() {
-            Text(text = userInfo.uid)
+        var displayName by remember {
+            mutableStateOf("")
+        }
+        LaunchedEffect(true) {
+            displayName = user?.displayName ?:""
+        }
+        if (loaCellViewModel.showSettingEditName) {
+            ProfileNameDialog(
+                displayName,
+                success = {
+                    loginHelper.updateDisplayName(it)
+                    displayName = it
+                    loaCellViewModel.showSettingEditName = false
+                },
+                dismiss = {
+                    loaCellViewModel.showSettingEditName = false
+                }
+            )
+        }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = displayName.ifEmpty { "이름 없음" },
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = userInfo.uid
+                    )
+                }
+                MyIconButton(imageResource = SharedRes.images.change_person) {
+                    loaCellViewModel.showSettingEditName = true
+                }
+            }
+            Divider()
             OutlinedButton(
                 onClick = {
                     if (userInfo.isAnonymous) {

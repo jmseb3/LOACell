@@ -8,6 +8,12 @@ expect fun getFireStore(): CommonFireStore
 
 expect class CommonFireStore {
     fun collection(path: String): CommonCollection
+    fun runTransaction(
+        refDoc: CommonDocument,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit,
+        action: (transaction: CommonDocumentSnapshot) -> Unit
+    )
 }
 
 expect class CommonCollection {

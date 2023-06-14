@@ -40,7 +40,7 @@ fun BottomAppBar(
     loaCellViewModel.apply {
         BottomAppBar(
             floatingActionButton = {
-                AnimatedVisibility(tabState != RoomState.Setting) {
+                AnimatedVisibility(!(tabState == RoomState.Setting || showSetting)) {
                     SmallFloatingActionButton(
                         content = {
                             if (focusUserInfo != null || focusRaidInfo != null) {
@@ -68,10 +68,19 @@ fun BottomAppBar(
                     showLevel1,
                 ) {
                     Row() {
-                        MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Raid)
-                        MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.User)
+                        MyRoomIconButton(
+                            loaCellViewModel = loaCellViewModel,
+                            state = RoomState.Raid
+                        )
+                        MyRoomIconButton(
+                            loaCellViewModel = loaCellViewModel,
+                            state = RoomState.User
+                        )
                         if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
-                            MyRoomIconButton(loaCellViewModel = loaCellViewModel, state = RoomState.Setting)
+                            MyRoomIconButton(
+                                loaCellViewModel = loaCellViewModel,
+                                state = RoomState.Setting
+                            )
                         }
                     }
 
@@ -105,7 +114,7 @@ fun BottomAppBar(
                         IconButton(onClick = { clearFocusItem() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = null)
                         }
-                        focusRaidInfo?.let {info ->
+                        focusRaidInfo?.let { info ->
                             MyIconButton(
                                 imageResource = SharedRes.images.room_setting
                             ) {
@@ -119,7 +128,11 @@ fun BottomAppBar(
                             MyIconButton(
                                 imageResource = icon
                             ) {
-                                CommonRaidHelper.updateFinish(info.roomId,info.raidId,!info.isFinish)
+                                CommonRaidHelper.updateFinish(
+                                    info.roomId,
+                                    info.raidId,
+                                    !info.isFinish
+                                )
                             }
                         }
                     }

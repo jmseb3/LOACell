@@ -3,7 +3,9 @@ package com.wonddak.loacell.android.ui.login
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -43,51 +46,63 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        loginHelper.registerGoogleToken(result) {
+        loaCellViewModel.loggingIn = true
+        loginHelper.registerGoogleToken(
+            result,
+            commonAction = {loaCellViewModel.loggingIn = false}
+        ) {
             loaCellViewModel.syncData = true
         }
     }
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "안녕하세요 \n 레이드 관리를 도와주는 <LoaCell>입니다.",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Column(
             modifier = Modifier
-                .padding(vertical = 10.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            GoogleLoginButton(
-                modifier = Modifier.fillMaxWidth(0.8f)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                loginHelper.requestGoogleLogin { intent ->
-                    googleLoginLauncher.launch(intent)
-                }
+                Text(
+                    text = "안녕하세요 \n 레이드 관리를 도와주는 <LoaCell>입니다.",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "로그인 하지 않고 계속",
-                color = Color.Black,
-                textDecoration = TextDecoration.Underline,
+            Column(
                 modifier = Modifier
-                    .noRippleClickable { loginHelper.requestAnonymousLogin() }
+                    .padding(vertical = 10.dp)
                     .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GoogleLoginButton(
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                ) {
+                    loginHelper.requestGoogleLogin { intent ->
+                        googleLoginLauncher.launch(intent)
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "로그인 하지 않고 계속",
+                    color = Color.Black,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier
+                        .noRippleClickable { loginHelper.requestAnonymousLogin(name = "익명") }
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        if (loaCellViewModel.loggingIn) {
+            LoadingView(info = "로그인 처리 중입니다.", color = Color.Gray.copy(0.5f))
         }
     }
 }
@@ -100,7 +115,7 @@ fun GoogleLoginButton(
     Card(
         modifier = modifier
             .height(40.dp)
-            .noRippleClickable {
+            .clickable {
                 action()
             },
         elevation = CardDefaults.cardElevation(

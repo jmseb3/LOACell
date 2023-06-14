@@ -13,7 +13,9 @@ data class FBRequest(
 @Serializable
 data class FBData(
     @SerialName("data")
-    var items: List<FBDataItem>
+    var data: List<FBDataItem>,
+    @SerialName("fail")
+    var failUidList: List<String>
 )
 
 @Serializable
