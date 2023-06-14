@@ -14,3 +14,11 @@ fun RoomInfo.getRole(id: String): RoomRole {
         RoomRole.ANONYMOUS
     }
 }
+
+fun RoomInfo.getAllUidList(): List<String> {
+    val result = mutableListOf(this.owner)
+    result.addAll(this.editableUser.filter { it.isNotEmpty() })
+    result.addAll(this.enterUser.filter { it.isNotEmpty() })
+    result.addAll(this.anonymousUser.filter { it.isNotEmpty() })
+    return result
+}

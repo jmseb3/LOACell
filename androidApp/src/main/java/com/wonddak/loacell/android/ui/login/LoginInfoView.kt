@@ -3,6 +3,7 @@ package com.wonddak.loacell.android.ui.login
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,22 +59,24 @@ fun LoginInfoView(
                         anonymousToGoogleLoginLauncher.launch(it)
                     }
                 }) {
-                    Text(text = "Google과 연동")
+                    Text(text = "Google 계정 연동")
                 }
             } else {
                 val list = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
-                OutlinedButton(
-                    onClick = {
-                        loginHelper.delete {
-                            loaCellViewModel.signOut()
-                        }
-                    },
-                    enabled = list.isEmpty()
-                ) {
-                    Text(text = "탈퇴")
-                }
-                if (list.isNotEmpty()) {
-                    Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
+                Row() {
+                    OutlinedButton(
+                        onClick = {
+                            loginHelper.delete {
+                                loaCellViewModel.signOut()
+                            }
+                        },
+                        enabled = list.isEmpty()
+                    ) {
+                        Text(text = "탈퇴")
+                    }
+                    if (list.isNotEmpty()) {
+                        Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
+                    }
                 }
             }
         }

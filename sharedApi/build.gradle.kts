@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
@@ -57,5 +59,10 @@ android {
     compileSdk = AppConfig.Android.compileSdk
     defaultConfig {
         minSdk = AppConfig.Android.minSdk
+        buildConfigField("String","LOACELL_API",getApiKey("loacell.api"))
     }
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }

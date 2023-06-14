@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.DriverFactory
 import com.wonddak.loacell.android.ui.home.MainContent
@@ -18,6 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
 
         loaCellViewModel = ViewModelProvider(
             this,

@@ -31,6 +31,7 @@ class LoaCellViewModel(
     private val dataBase: AppDataBase
 ) : SnackBarController() {
     val user get() =  LoaCellApp.user
+    var waitForName = mutableStateOf(false)
 
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
