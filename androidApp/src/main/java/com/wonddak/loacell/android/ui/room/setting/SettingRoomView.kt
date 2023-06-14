@@ -16,31 +16,50 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
-import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.sharedapi.FBApi
 import com.wonddak.sharedapi.FBDataItem
-import com.wonddak.sharedapi.FBRequest
-import kotlinx.coroutines.delay
 
 @Composable
 fun SettingRoomView(
+    db :AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
+    var fetch by remember {
+        mutableStateOf(false)
+    }
+    val result = loaCellViewModel.tempOfFBData
     val roomInfo by loaCellViewModel.roomInfo.collectAsState()
     roomInfo?.let { info ->
-//        UserUidList(roomInfo = info)
+        if (info.getAllUidList() == result.map { it.uid }) {
+            fetch = true
+        }
+        LaunchedEffect(true) {
+            info.checkNotExistUid { data ->
+                fetch = true
+                loaCellViewModel.tempOfFBData = data
+            }
+        }
+        if (!fetch) {
+            LoadingView("유저 정보를 가져옵니다.")
+        } else {
+            UserUidList(roomInfo = info, result = result)
+        }
+
     }
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserUidList(
-    roomInfo: RoomInfo
+    roomInfo: RoomInfo,
+    result: List<FBDataItem>
 ) {
     val group = mapOf(
         RoomRole.OWNER.toName to listOf(roomInfo.owner),
@@ -48,81 +67,24 @@ fun UserUidList(
         RoomRole.USER.toName to roomInfo.enterUser,
         RoomRole.ANONYMOUS.toName to roomInfo.anonymousUser
     )
-    var fetch by remember {
-        mutableStateOf(false)
-    }
-    var result: List<FBDataItem> by remember {
-        mutableStateOf(listOf())
-    }
-    LaunchedEffect(true) {
-        fetch = true
-        val api = FBApi()
-        api.getData(FBRequest(roomInfo.getAllUidList())).let { fbData ->
-            result = fbData.data
-
-            val failUser = fbData.failUidList
-            val anonymousUser = roomInfo.anonymousUser.filter { failUser.contains(it) }
-            val editableUser = roomInfo.editableUser.filter { failUser.contains(it) }
-            val enterUser = roomInfo.enterUser.filter { failUser.contains(it) }
-
-            var result1 = false
-            var result2 = false
-            var result3 = false
-
-            CommonRoomHelper.exitUsersFromRoom(
-                roomId = roomInfo.uniqueId,
-                userId = anonymousUser,
-                field = "anonymousUser",
-                commonAction = {
-                    result1 = true
+    LazyColumn {
+        group.forEach { (name, data) ->
+            val filter = data.filter { it.isNotEmpty() }
+            if (filter.isNotEmpty()) {
+                stickyHeader {
+                    Text(
+                        text = name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Gray),
+                        fontSize = 20.sp
+                    )
                 }
-            )
-            CommonRoomHelper.exitUsersFromRoom(
-                roomId = roomInfo.uniqueId,
-                userId = editableUser,
-                field = "editableUser",
-                commonAction = {
-                    result2 = true
-                }
-            )
-            CommonRoomHelper.exitUsersFromRoom(
-                roomId = roomInfo.uniqueId,
-                userId = enterUser,
-                field = "enterUser",
-                commonAction = {
-                    result3 = true
-                }
-            )
-
-            while (!result1 || !result2 || !result3) {
-                delay(1_000L)
-            }
-            fetch = false
-        }
-    }
-
-    if (!fetch) {
-        LazyColumn {
-            group.forEach { (name, data) ->
-                val filter = data.filter { it.isNotEmpty() }
-                if (filter.isNotEmpty()) {
-                    stickyHeader {
-                        Text(
-                            text = name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.Gray),
-                            fontSize = 20.sp
-                        )
-                    }
-                    items(filter) { id ->
-                        UserUidItem(uid = id, fbData = result)
-                    }
+                items(filter) { id ->
+                    UserUidItem(uid = id, fbData = result)
                 }
             }
         }
-    } else {
-        LoadingView("유저 정보를 가져옵니다.")
     }
 }
 
@@ -140,6 +102,8 @@ fun UserUidItem(
 }
 
 @Composable
-fun SettingRoom() {
+fun SettingRoom(
+    roomInfo: RoomInfo
+) {
 
 }

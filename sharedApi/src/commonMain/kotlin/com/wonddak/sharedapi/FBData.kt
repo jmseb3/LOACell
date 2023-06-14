@@ -22,8 +22,6 @@ data class FBData(
 data class FBDataItem(
     @SerialName("uid")
     var uid: String,
-    @SerialName("email")
-    var email: String? = null,
     @SerialName("displayName")
     var displayName: String? = null,
     @SerialName("photoURL")

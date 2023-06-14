@@ -20,6 +20,7 @@ import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.sharedapi.FBDataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +47,7 @@ class LoaCellViewModel(
     fun hideRoomInfo() {
         _roomId.value = ""
         tabState = RoomState.Raid
+        tempOfFBData = emptyList()
         hideAllDialog()
         clearFocusItem()
         clearFilter()
@@ -53,6 +55,8 @@ class LoaCellViewModel(
 
     private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
     val roomInfo get() = _roomInfo
+
+    var tempOfFBData :List<FBDataItem> by mutableStateOf(emptyList())
 
     val myRole = user.combine(roomInfo) { user , info ->
         if (user != null && info != null) {

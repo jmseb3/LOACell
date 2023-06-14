@@ -70,7 +70,7 @@ fun RoomView(
                 }
 
                 RoomState.Setting -> {
-                    SettingRoomView(loaCellViewModel)
+                    SettingRoomView(db,loaCellViewModel)
                 }
             }
 

@@ -47,12 +47,14 @@ fun TopAppBar(
             }
         },
         actions = {
-            Row() {
-                IconButton(
-                    onClick = { loaCellViewModel.showSetting = true },
-                    enabled = !loaCellViewModel.showSetting
-                ) {
-                    Icon(Icons.Filled.Settings, contentDescription = null)
+            AnimatedVisibility(selectedRoomId.isEmpty()) {
+                Row() {
+                    IconButton(
+                        onClick = { loaCellViewModel.showSetting = true },
+                        enabled = !loaCellViewModel.showSetting
+                    ) {
+                        Icon(Icons.Filled.Settings, contentDescription = null)
+                    }
                 }
             }
         },
