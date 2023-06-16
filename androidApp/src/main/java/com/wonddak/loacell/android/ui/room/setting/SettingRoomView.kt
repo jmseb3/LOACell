@@ -64,8 +64,7 @@ fun UserUidList(
     val group = mapOf(
         RoomRole.OWNER.toName to listOf(roomInfo.owner),
         RoomRole.MANAGER.toName to roomInfo.editableUser,
-        RoomRole.USER.toName to roomInfo.enterUser,
-        RoomRole.ANONYMOUS.toName to roomInfo.anonymousUser
+        RoomRole.USER.toName to roomInfo.enterUser
     )
     LazyColumn {
         group.forEach { (name, data) ->

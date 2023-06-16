@@ -139,7 +139,6 @@ fun MainContent(
                                             owner,
                                             emptyList(),
                                             emptyList(),
-                                            emptyList()
                                         )
                                     }
                                     showRoomAdd = false
@@ -152,7 +151,6 @@ fun MainContent(
                                         CommonRoomHelper.enterRoom(
                                             roomId,
                                             userInfo!!.uid,
-                                            userInfo!!.isAnonymous,
                                             successAction = {
                                                 showRoomEnter = false
                                             },
@@ -168,7 +166,6 @@ fun MainContent(
                                             roomInfo.owner,
                                             roomInfo.enterUser,
                                             roomInfo.editableUser,
-                                            roomInfo.anonymousUser
                                         )
                                     },
                                     dismiss = {

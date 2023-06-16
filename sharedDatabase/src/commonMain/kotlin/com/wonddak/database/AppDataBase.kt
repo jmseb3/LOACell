@@ -74,8 +74,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         ),
         RoomInfoAdapter = RoomInfo.Adapter(
             enterUserAdapter = stringListAdapter,
-            editableUserAdapter = stringListAdapter,
-            anonymousUserAdapter = stringListAdapter
+            editableUserAdapter = stringListAdapter
         )
     )
 

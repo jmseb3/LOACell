@@ -7,12 +7,11 @@ CREATE TABLE RoomInfo (
   description TEXT NOT NULL,
   owner Text NOT NULL,
   enterUser TEXT AS List<String> NOT NULL,
-  editableUser TEXT AS List<String> NOT NULL,
-  anonymousUser TEXT AS List<String> NOT NULL
+  editableUser TEXT AS List<String> NOT NULL
 );
 
 insertRoomInfo:
-INSERT INTO RoomInfo VALUES (?,?,?,?,?,?,?);
+INSERT INTO RoomInfo VALUES (?,?,?,?,?,?);
 
 selectAll:
 SELECT * FROM RoomInfo;
@@ -24,7 +23,7 @@ selectByOwner:
 SELECT * FROM RoomInfo WHERE owner = ?;
 
 updateInfo:
-UPDATE RoomInfo SET title =?, description =? ,owner=?,enterUser=?,editableUser =?,anonymousUser=? WHERE uniqueId =?;
+UPDATE RoomInfo SET title =?, description =? ,owner=?,enterUser=?,editableUser =? WHERE uniqueId =?;
 
 deleteById:
 DELETE FROM RoomInfo WHERE uniqueId = ?;

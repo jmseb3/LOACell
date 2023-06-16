@@ -16,7 +16,7 @@ fun RoomInfo.getRole(id: String): RoomRole {
     } else if (this.enterUser.contains(id)) {
         RoomRole.USER
     } else {
-        RoomRole.ANONYMOUS
+        RoomRole.NONE
     }
 }
 
@@ -24,7 +24,6 @@ fun RoomInfo.getAllUidList(): List<String> {
     val result = mutableListOf(this.owner)
     result.addAll(this.editableUser.filter { it.isNotEmpty() })
     result.addAll(this.enterUser.filter { it.isNotEmpty() })
-    result.addAll(this.anonymousUser.filter { it.isNotEmpty() })
     return result
 }
 
@@ -33,39 +32,23 @@ suspend fun RoomInfo.checkNotExistUid(
 ) {
     val api = FBApi()
     api.getData(FBRequest(this.getAllUidList())).let { fbData ->
+        //실패한 유저 정보 모음을 가져옴
         val failUser = fbData.failUidList
-        val anonymousUser = this.anonymousUser.filter { failUser.contains(it) }
+        //실패한 유저가 있는 경우 체크
         val editableUser = this.editableUser.filter { failUser.contains(it) }
         val enterUser = this.enterUser.filter { failUser.contains(it) }
 
         var result1 = false
         var result2 = false
-        var result3 = false
-        CommonRoomHelper.exitUsersFromRoom(
-            roomId = this.uniqueId,
-            userId = anonymousUser,
-            field = "anonymousUser",
-            commonAction = {
-                result1 = true
-            }
-        )
-        CommonRoomHelper.exitUsersFromRoom(
-            roomId = this.uniqueId,
-            userId = editableUser,
-            field = "editableUser",
-            commonAction = {
-                result2 = true
-            }
-        )
-        CommonRoomHelper.exitUsersFromRoom(
-            roomId = this.uniqueId,
-            userId = enterUser,
-            field = "enterUser",
-            commonAction = {
-                result3 = true
-            }
-        )
-        while (!result1 || !result2 || !result3) {
+        val roomId = this.uniqueId
+        CommonRoomHelper.exitEditableUserFromRoom(roomId,editableUser){
+            result1 = true
+        }
+        CommonRoomHelper.exitEnterUserFromRoom(roomId,enterUser){
+            result2 = true
+        }
+
+        while (!result1 || !result2) {
             delay(1_000L)
         }
         success(fbData.data)

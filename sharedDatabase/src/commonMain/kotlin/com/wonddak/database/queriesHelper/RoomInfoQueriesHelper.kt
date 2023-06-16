@@ -27,7 +27,6 @@ class RoomInfoQueriesHelper(
         owner: String,
         enterUser: List<String> ,
         editableUser: List<String>,
-        anonymousUser: List<String>,
     ) {
         queries.insertRoomInfo(
             uniqueId,
@@ -36,7 +35,6 @@ class RoomInfoQueriesHelper(
             owner,
             enterUser,
             editableUser,
-            anonymousUser
         )
     }
 
@@ -46,7 +44,6 @@ class RoomInfoQueriesHelper(
         owner: String,
         enterUser: List<String>,
         editableUser: List<String>,
-        anonymousUser: List<String>,
         uniqueId: String
     ) {
         queries.updateInfo(
@@ -55,7 +52,6 @@ class RoomInfoQueriesHelper(
             owner,
             enterUser,
             editableUser,
-            anonymousUser,
             uniqueId
         )
     }

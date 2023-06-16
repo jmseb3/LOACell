@@ -32,32 +32,40 @@ class LoaCellViewModel(
     private val dataBase: AppDataBase
 ) : SnackBarController() {
 
+    //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
+
+    //현재 로그인된 유저 정보
     val user get() =  LoaCellApp.user
 
+    //방 클릭시 매핑되는 방 id
     private var _roomId = MutableStateFlow("")
     val roomId get() = _roomId
 
 
+    //방에 들어갈경우
     fun showRoomInfo(roomId: String) {
         tabState = RoomState.Raid
         _roomId.value = roomId
     }
 
+    //방에서 나갈경우
     fun hideRoomInfo() {
         _roomId.value = ""
         tabState = RoomState.Raid
-        tempOfFBData = emptyList()
         hideAllDialog()
         clearFocusItem()
         clearFilter()
     }
 
+    //현재 roomid와 매칭되는 roomInfo
     private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
     val roomInfo get() = _roomInfo
 
+    //owner가 사용자 정보를 볼경우 저장되는 temp값
     var tempOfFBData :List<FBDataItem> by mutableStateOf(emptyList())
 
+    //현재 유저id와 roominfo로 나의 권한 체크
     val myRole = user.combine(roomInfo) { user , info ->
         if (user != null && info != null) {
             info.getRole(user.uid)

@@ -8,7 +8,6 @@ data class FBRoomInfo(
     val description: String = "",
     val owner: String = "",
     val enterPassword: String = "",
-    val anonymousUser: List<String> = emptyList(),
     val editableUser: List<String> = emptyList(),
     val enterUser: List<String> = emptyList(),
 ) {
@@ -17,7 +16,6 @@ data class FBRoomInfo(
         "description" to description,
         "owner" to owner,
         "enterPassword" to enterPassword,
-        "anonymousUser" to anonymousUser,
         "editableUser" to editableUser,
         "enterUser" to enterUser,
     )
@@ -35,7 +33,6 @@ object CommonRoomHelper {
             .where(
                 CommonFilter.or(
                     CommonFilter.equalTo("owner", userId),
-                    CommonFilter.arrayContains("anonymousUser", userId),
                     CommonFilter.arrayContains("editableUser", userId),
                     CommonFilter.arrayContains("enterUser", userId),
                 )
@@ -49,15 +46,13 @@ object CommonRoomHelper {
                         val owner = data["owner"] as String
                         val enterUser = data["enterUser"] as List<String>
                         val editableUser = data["editableUser"] as List<String>
-                        val anonymousUser = data["anonymousUser"] as List<String>
                         db.roomInfoQueriesHelper.addRoomInfo(
                             title = title,
                             description = description,
                             uniqueId = id,
                             owner = owner,
                             enterUser = enterUser,
-                            editableUser = editableUser,
-                            anonymousUser = anonymousUser
+                            editableUser = editableUser
                         )
                     }
                     successAction()
@@ -82,7 +77,6 @@ object CommonRoomHelper {
                             description = it.data!!["description"] as String,
                             owner = it.data!!["owner"] as String,
                             enterPassword = it.data!!["enterPassword"] as String,
-                            anonymousUser = it.data!!["anonymousUser"] as List<String>,
                             editableUser = it.data!!["editableUser"] as List<String>,
                             enterUser = it.data!!["enterUser"] as List<String>
                         )
@@ -126,11 +120,10 @@ object CommonRoomHelper {
     fun enterRoom(
         roomId: String,
         userId: String,
-        isAnonymous: Boolean,
         successAction: () -> Unit,
         failAction: (e: Error) -> Unit
     ) {
-        val field = if (isAnonymous) "anonymousUser" else "enterUser"
+        val field = "enterUser"
         RefHelper.getRoomRef(roomId).update(
             field = field,
             value = CommonFieldValue.arrayUnion(userId),
@@ -167,7 +160,16 @@ object CommonRoomHelper {
             }
         }
     }
-
+    fun exitEditableUserFromRoom(
+        roomId: String,
+        editableUser :List<String>,
+        commonAction: () -> Unit
+    ) = exitUsersFromRoom(roomId,editableUser,"editableUser",commonAction)
+    fun exitEnterUserFromRoom(
+        roomId: String,
+        enterUser :List<String>,
+        commonAction: () -> Unit
+    ) = exitUsersFromRoom(roomId,enterUser,"enterUser",commonAction)
     fun exitRoom(
         roomId: String,
         userId: String,
@@ -178,7 +180,6 @@ object CommonRoomHelper {
         val field = when(role) {
             RoomRole.MANAGER -> "editableUser"
             RoomRole.USER -> "enterUser"
-            RoomRole.ANONYMOUS -> "anonymousUser"
             else -> "owner"
         }
         RefHelper.getRoomRef(roomId).update(
@@ -201,14 +202,12 @@ object CommonRoomHelper {
                     val owner = data["owner"] as String
                     val enterUser = data["enterUser"] as List<String>
                     val editableUser = data["editableUser"] as List<String>
-                    val anonymousUser = data["anonymousUser"] as List<String>
                     db.roomInfoQueriesHelper.updateRoomInfo(
                         title,
                         description,
                         owner,
                         enterUser,
                         editableUser,
-                        anonymousUser,
                         roomId
                     )
                 }
