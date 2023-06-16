@@ -39,6 +39,6 @@ data class FBDataItem(
     var displayName: String? = null,
     @SerialName("photoURL")
     var photoURL: String? = null,
-    @SerialName("providerData")
-    var providerData: List<ProviderData> = emptyList()
+//    @SerialName("providerData")
+//    var providerData: List<ProviderData> = emptyList()
 )

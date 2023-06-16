@@ -25,6 +25,7 @@ class RoomInfoQueriesHelper(
         description: String,
         uniqueId: String,
         owner: String,
+        enterPassword :String,
         enterUser: List<String> ,
         editableUser: List<String>,
     ) {
@@ -33,6 +34,7 @@ class RoomInfoQueriesHelper(
             title,
             description,
             owner,
+            enterPassword,
             enterUser,
             editableUser,
         )
@@ -42,6 +44,7 @@ class RoomInfoQueriesHelper(
         title: String,
         description: String,
         owner: String,
+        enterPassword: String,
         enterUser: List<String>,
         editableUser: List<String>,
         uniqueId: String
@@ -50,6 +53,7 @@ class RoomInfoQueriesHelper(
             title,
             description,
             owner,
+            enterPassword,
             enterUser,
             editableUser,
             uniqueId

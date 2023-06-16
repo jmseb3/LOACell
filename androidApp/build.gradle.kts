@@ -1,3 +1,5 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -29,13 +31,13 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
-            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = true
             }
         }
         getByName("debug") {
             isDebuggable = true
-            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = false
             }
         }

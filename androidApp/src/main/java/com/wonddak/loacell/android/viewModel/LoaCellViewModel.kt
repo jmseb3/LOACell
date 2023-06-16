@@ -53,6 +53,7 @@ class LoaCellViewModel(
     fun hideRoomInfo() {
         _roomId.value = ""
         tabState = RoomState.Raid
+        tempOfFBData = emptyList()
         hideAllDialog()
         clearFocusItem()
         clearFilter()
@@ -205,6 +206,7 @@ class LoaCellViewModel(
     var showRoomEnter by mutableStateOf(false)
     var showRoomEnterError by mutableStateOf(false)
     var showRoomExit by mutableStateOf(false)
+    var showRoomEdit by mutableStateOf(false)
 
     var showUserAdd by mutableStateOf(false)
 
@@ -226,6 +228,7 @@ class LoaCellViewModel(
         showRoomEnter = false
         showRoomEnterError = false
         showRoomExit = false
+        showRoomEdit = false
 
         showUserAdd = false
 

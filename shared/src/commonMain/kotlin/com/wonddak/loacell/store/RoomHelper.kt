@@ -44,6 +44,7 @@ object CommonRoomHelper {
                         val title = data["title"] as String
                         val description = data["description"] as String
                         val owner = data["owner"] as String
+                        val enterPassword = data["enterPassword"] as String
                         val enterUser = data["enterUser"] as List<String>
                         val editableUser = data["editableUser"] as List<String>
                         db.roomInfoQueriesHelper.addRoomInfo(
@@ -51,6 +52,7 @@ object CommonRoomHelper {
                             description = description,
                             uniqueId = id,
                             owner = owner,
+                            enterPassword= enterPassword,
                             enterUser = enterUser,
                             editableUser = editableUser
                         )
@@ -131,6 +133,28 @@ object CommonRoomHelper {
             failAction = failAction
         )
     }
+
+    //방 정보를 업데이트 한다
+    fun updateRoom(
+        roomId: String,
+        title: String,
+        description: String,
+        password: String,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit
+    ) {
+        RefHelper.getRoomRef(roomId)
+            .update(
+                mapOf(
+                    "title" to title,
+                    "description" to description,
+                    "password" to password
+                ),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
+
     fun exitUsersFromRoom(
         roomId: String,
         userId: List<String>,
@@ -170,6 +194,7 @@ object CommonRoomHelper {
         enterUser :List<String>,
         commonAction: () -> Unit
     ) = exitUsersFromRoom(roomId,enterUser,"enterUser",commonAction)
+
     fun exitRoom(
         roomId: String,
         userId: String,
@@ -200,12 +225,14 @@ object CommonRoomHelper {
                     val title = data["title"] as String
                     val description = data["description"] as String
                     val owner = data["owner"] as String
+                    val enterPassword = data["password"] as String
                     val enterUser = data["enterUser"] as List<String>
                     val editableUser = data["editableUser"] as List<String>
                     db.roomInfoQueriesHelper.updateRoomInfo(
                         title,
                         description,
                         owner,
+                        enterPassword,
                         enterUser,
                         editableUser,
                         roomId

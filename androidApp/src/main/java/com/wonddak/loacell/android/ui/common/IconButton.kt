@@ -7,6 +7,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
@@ -17,6 +18,7 @@ import dev.icerock.moko.resources.ImageResource
 fun MyIconButton(
     modifier: Modifier = Modifier,
     @DrawableRes id: Int,
+    size: Dp = 30.dp,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -26,7 +28,7 @@ fun MyIconButton(
         enabled = enabled
     ) {
         Icon(
-            modifier = Modifier.size(size = 30.dp),
+            modifier = Modifier.size(size = size),
             painter = painterResource(id),
             contentDescription = ""
         )
@@ -37,22 +39,25 @@ fun MyIconButton(
 fun MyIconButton(
     modifier: Modifier = Modifier,
     imageResource: ImageResource,
-    enabled :Boolean =true,
+    enabled: Boolean = true,
+    size: Dp = 30.dp,
     onClick: () -> Unit
 ) {
     MyIconButton(
         modifier = modifier,
         id = imageResource.drawableResId,
-        enabled =enabled,
+        size = size,
+        enabled = enabled,
         onClick = onClick
     )
 }
+
 @Composable
 fun MyRoomIconButton(
     loaCellViewModel: LoaCellViewModel,
-    state :RoomState
+    state: RoomState
 ) {
-    val imageResource = when(state) {
+    val imageResource = when (state) {
         RoomState.Raid -> SharedRes.images.room
         RoomState.User -> SharedRes.images.person
         RoomState.Setting -> SharedRes.images.room_setting

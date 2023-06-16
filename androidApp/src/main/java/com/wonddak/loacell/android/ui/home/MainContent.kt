@@ -137,6 +137,7 @@ fun MainContent(
                                             description,
                                             id,
                                             owner,
+                                            password,
                                             emptyList(),
                                             emptyList(),
                                         )
@@ -164,6 +165,7 @@ fun MainContent(
                                             roomInfo.description,
                                             roomId,
                                             roomInfo.owner,
+                                            roomInfo.enterPassword,
                                             roomInfo.enterUser,
                                             roomInfo.editableUser,
                                         )
