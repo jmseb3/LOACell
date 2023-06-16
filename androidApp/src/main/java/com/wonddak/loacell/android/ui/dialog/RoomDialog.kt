@@ -154,7 +154,7 @@ fun RoomEnterDialog(
         dismiss = dismiss,
         titleText = if (password.isEmpty()) "입장하기" else "비밀번호 입력",
         confirmButtonText = if (password.isEmpty()) "입장" else "확인",
-        confirmButtonEnabled = if (password.isEmpty()) roomId.length == 20 else  enterPassword.length == 6,
+        confirmButtonEnabled = if (password.isEmpty()) roomId.length == 20  else  true,
         confirmButtonAction =  {
             if (password.isEmpty()) {
                 if (roomId.isEmpty()) {
@@ -223,7 +223,7 @@ fun RoomEnterDialog(
                     label = "방 비밀번호",
                     placeHolder = "방 비밀번호를 입력해주세요.",
                     maxLine = 1,
-                    maxLength = 6,
+                    maxLength = 10,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
                     ),

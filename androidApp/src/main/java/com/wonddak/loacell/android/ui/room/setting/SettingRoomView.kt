@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -200,7 +201,18 @@ fun UserUidList(
                             )
                         }
                         items(filter) { id ->
-                            UserUidItem(uid = id, fbData = result)
+                            UserUidItem(uid = id, fbData = result,showButton = (name != RoomRole.OWNER.toName)) {
+                                if (name == RoomRole.MANAGER.toName) {
+                                    CommonRoomHelper.exitEditableUserFromRoom(roomInfo.uniqueId, listOf(id)) {
+
+                                    }
+                                }
+                                if (name == RoomRole.USER.toName) {
+                                    CommonRoomHelper.exitEnterUserFromRoom(roomInfo.uniqueId, listOf(id)) {
+
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -212,12 +224,26 @@ fun UserUidList(
 @Composable
 fun UserUidItem(
     uid: String,
-    fbData: List<FBDataItem>
+    fbData: List<FBDataItem>,
+    showButton :Boolean,
+    clickAction:() ->Unit
 ) {
     val find = fbData.find { it.uid == uid }
-    if (find != null) {
-        Text(text = find.displayName ?: "이름없음($uid)")
-    } else {
-        Text(text = uid)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (find != null) {
+            Text(text = find.displayName ?: "이름없음($uid)")
+        } else {
+            Text(text = uid)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        if (showButton) {
+            MyIconButton(imageResource = SharedRes.images.room_exit,size =22.dp) {
+                clickAction()
+            }
+        }
     }
+
 }

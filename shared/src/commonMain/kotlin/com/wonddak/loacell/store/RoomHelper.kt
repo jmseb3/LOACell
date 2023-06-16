@@ -15,7 +15,7 @@ data class FBRoomInfo(
         "title" to title,
         "description" to description,
         "owner" to owner,
-        "enterPassword" to enterPassword,
+        "password" to enterPassword,
         "editableUser" to editableUser,
         "enterUser" to enterUser,
     )
@@ -44,7 +44,7 @@ object CommonRoomHelper {
                         val title = data["title"] as String
                         val description = data["description"] as String
                         val owner = data["owner"] as String
-                        val enterPassword = data["enterPassword"] as String
+                        val enterPassword = data["password"] as String
                         val enterUser = data["enterUser"] as List<String>
                         val editableUser = data["editableUser"] as List<String>
                         db.roomInfoQueriesHelper.addRoomInfo(
@@ -78,7 +78,7 @@ object CommonRoomHelper {
                             title = it.data!!["title"] as String,
                             description = it.data!!["description"] as String,
                             owner = it.data!!["owner"] as String,
-                            enterPassword = it.data!!["enterPassword"] as String,
+                            enterPassword = it.data!!["password"] as String,
                             editableUser = it.data!!["editableUser"] as List<String>,
                             enterUser = it.data!!["enterUser"] as List<String>
                         )
