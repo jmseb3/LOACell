@@ -41,4 +41,6 @@ data class FBDataItem(
     var photoURL: String? = null,
 //    @SerialName("providerData")
 //    var providerData: List<ProviderData> = emptyList()
-)
+) {
+    fun getName() :String = displayName ?: "이름없음($uid)"
+}

@@ -35,6 +35,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.ChangeOwnerDialog
 import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
@@ -60,17 +61,24 @@ fun SettingRoomView(
         mutableStateOf(false)
     }
 
+    var showChangeAlert by remember() {
+        mutableStateOf(false)
+    }
 
     roomInfo?.let { info ->
+        //유저 정보랑 owner랑 같은 경우 바로 가져오기 가능
         user?.let { userInfo ->
             if (info.getAllUidList().size == 1 && info.owner == userInfo.uid) {
-                loaCellViewModel.tempOfFBData = listOf(FBDataItem(
-                    userInfo.uid,
-                    userInfo.displayName,
-                    userInfo.photoUrl.toString()
-                ))
+                loaCellViewModel.tempOfFBData = listOf(
+                    FBDataItem(
+                        userInfo.uid,
+                        userInfo.displayName,
+                        userInfo.photoUrl.toString()
+                    )
+                )
             }
         }
+        //이전 값이랑 같으면 갱신 pass
         if (info.getAllUidList() == result.map { it.uid }) {
             fetch = true
         }
@@ -104,6 +112,32 @@ fun SettingRoomView(
                 }
             )
         }
+
+        if (showChangeAlert) {
+            ChangeOwnerDialog(
+                owner = info.owner,
+                fbDataList = result,
+                confirm = { uid ->
+                    CommonRoomHelper.changeOwner(
+                        roomId = info.uniqueId,
+                        preOwner = info.owner,
+                        newOwnerUid = uid,
+                        commonAction = {
+                            showChangeAlert = false
+                        },
+                        successAction = {
+                            loaCellViewModel.hideRoomInfo()
+                        },
+                        failAction =  {
+                            loaCellViewModel.showSnackBar("변경에 실패했습니다.${it.errorMsg}")
+                        }
+                    )
+                },
+                dismiss =  {
+                    showChangeAlert = false
+                }
+            )
+        }
         Column {
             SettingRoomInfo(loaCellViewModel, info)
             Divider()
@@ -127,7 +161,9 @@ fun SettingRoomView(
                             Text(text = "나가기")
                         }
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                showChangeAlert = true
+                            },
                             enabled = otherMemberList.isNotEmpty()
                         ) {
                             Text(text = "소유자 위임")
@@ -304,7 +340,7 @@ fun UserUidItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (find != null) {
-            Text(text = find.displayName ?: "이름없음($uid)")
+            Text(text = find.getName())
         } else {
             Text(text = uid)
         }

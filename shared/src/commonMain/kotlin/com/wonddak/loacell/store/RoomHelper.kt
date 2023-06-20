@@ -20,6 +20,7 @@ data class FBRoomInfo(
         "enterUser" to enterUser,
     )
 }
+
 object CommonRoomHelper {
 
     //로그인시 동기화를 위한 메서드
@@ -52,7 +53,7 @@ object CommonRoomHelper {
                             description = description,
                             uniqueId = id,
                             owner = owner,
-                            enterPassword= enterPassword,
+                            enterPassword = enterPassword,
                             enterUser = enterUser,
                             editableUser = editableUser
                         )
@@ -67,13 +68,14 @@ object CommonRoomHelper {
     // 방 입장요청시 실제 존재하는 방인지 체크
     fun checkExist(
         roomId: String,
-        successAction: (roomInfo :FBRoomInfo) -> Unit,
+        successAction: (roomInfo: FBRoomInfo) -> Unit,
         failAction: () -> Unit
     ) {
         RefHelper.getRoomRef(roomId)
             .get(
                 successAction = {
                     if (it.exist) {
+                        println("JWH Check ${it.data}")
                         val roomInfo = FBRoomInfo(
                             title = it.data!!["title"] as String,
                             description = it.data!!["description"] as String,
@@ -88,7 +90,7 @@ object CommonRoomHelper {
                     }
 
                 },
-                failAction = {failAction()}
+                failAction = { failAction() }
             )
     }
 
@@ -159,13 +161,18 @@ object CommonRoomHelper {
         roomId: String,
         userId: List<String>,
         field: String,
-        commonAction:() ->Unit={},
-        successAction: () -> Unit ={},
-        failAction: (e: Error) -> Unit={}
+        commonAction: () -> Unit = {},
+        successAction: () -> Unit = {},
+        failAction: (e: Error) -> Unit = {}
     ) {
-        getFireStore().runTransaction(
-            refDoc =  RefHelper.getRoomRef(roomId),
-            successAction ={
+        getFireStore().runBatch(
+            write = {
+                val ref = RefHelper.getRoomRef(roomId)
+                userId.forEach { uid ->
+                    it.update(ref,field,CommonFieldValue.arrayRemove(uid))
+                }
+            },
+            successAction = {
                 commonAction()
                 successAction()
             },
@@ -173,27 +180,20 @@ object CommonRoomHelper {
                 commonAction()
                 failAction(it)
             }
-        ) {
-            userId.forEach { uid ->
-                it.reference.update(
-                    field = field,
-                    value = CommonFieldValue.arrayRemove(uid),
-                    successAction = { },
-                    failAction = { }
-                )
-            }
-        }
+        )
     }
+
     fun exitEditableUserFromRoom(
         roomId: String,
-        editableUser :List<String>,
+        editableUser: List<String>,
         commonAction: () -> Unit
-    ) = exitUsersFromRoom(roomId,editableUser,"editableUser",commonAction)
+    ) = exitUsersFromRoom(roomId, editableUser, "editableUser", commonAction)
+
     fun exitEnterUserFromRoom(
         roomId: String,
-        enterUser :List<String>,
+        enterUser: List<String>,
         commonAction: () -> Unit
-    ) = exitUsersFromRoom(roomId,enterUser,"enterUser",commonAction)
+    ) = exitUsersFromRoom(roomId, enterUser, "enterUser", commonAction)
 
     fun exitRoom(
         roomId: String,
@@ -202,7 +202,7 @@ object CommonRoomHelper {
         successAction: () -> Unit,
         failAction: (e: Error) -> Unit
     ) {
-        val field = when(role) {
+        val field = when (role) {
             RoomRole.MANAGER -> "editableUser"
             RoomRole.USER -> "enterUser"
             else -> "owner"
@@ -217,11 +217,12 @@ object CommonRoomHelper {
 
     fun observe(
         roomId: String,
-        db:AppDataBase
-    ) : CommonListenerRegistration {
+        db: AppDataBase
+    ): CommonListenerRegistration {
         return RefHelper.getRoomRef(roomId).getListenerRegistration(
-            successAction =  {
+            successAction = {
                 it.data?.let { data ->
+                    println("JWH Observe.. $data")
                     val title = data["title"] as String
                     val description = data["description"] as String
                     val owner = data["owner"] as String
@@ -251,8 +252,36 @@ object CommonRoomHelper {
         failAction: (e: Error) -> Unit
     ) {
         RefHelper.getRoomRef(roomId).delete(
-            successAction =  successAction,
+            successAction = successAction,
             failAction = failAction
+        )
+    }
+
+    fun changeOwner(
+        roomId: String,
+        preOwner: String,
+        newOwnerUid: String,
+        commonAction: () -> Unit = {},
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit
+    ) {
+        getFireStore().runBatch(
+            write = {
+                val roomDoc = RefHelper.getRoomRef(roomId)
+                it.update(roomDoc, "enterUser", CommonFieldValue.arrayUnion(preOwner))
+                it.update(roomDoc, "owner", newOwnerUid)
+                it.update(roomDoc, "enterUser", CommonFieldValue.arrayRemove(newOwnerUid))
+            },
+            successAction = {
+                println("JWH change Success")
+                commonAction()
+                successAction()
+            },
+            failAction = {
+                println("JWH change fail with Error ${it.errorMsg}")
+                commonAction()
+                failAction(it)
+            }
         )
     }
 }

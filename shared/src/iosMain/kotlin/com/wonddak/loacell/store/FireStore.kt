@@ -10,6 +10,7 @@ import cocoapods.FirebaseFirestore.FIRFirestore
 import cocoapods.FirebaseFirestore.FIRListenerRegistrationProtocol
 import cocoapods.FirebaseFirestore.FIRQuery
 import cocoapods.FirebaseFirestore.FIRQuerySnapshot
+import cocoapods.FirebaseFirestore.FIRWriteBatch
 import platform.Foundation.NSError
 
 actual class Error(error: NSError?) {
@@ -49,8 +50,48 @@ actual class CommonFireStore(
             }
         )
     }
+
+    actual fun runBatch(write: (batch: CommonBatch) -> Unit) {
+        val batch = ref.batch()
+        write(CommonBatch(batch))
+        batch.commit()
+    }
+
+    actual fun runBatch(
+        write: (batch: CommonBatch) -> Unit,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit,
+    ) {
+        val batch = ref.batch()
+        write(CommonBatch(batch))
+        batch.commitWithCompletion { error ->
+            if (error != null) {
+                successAction()
+            } else {
+                failAction(com.wonddak.loacell.store.Error(error))
+            }
+        }
+    }
 }
 
+actual class CommonBatch(
+    val ref :FIRWriteBatch
+) {
+    actual fun update(
+        doc :CommonDocument,
+        field: String,
+        value :Any
+    ) {
+        ref.updateData(mapOf(field to value),doc.ref)
+    }
+    actual fun update(
+        doc :CommonDocument,
+        field: String,
+        value :CommonFieldValue
+    ) {
+        ref.updateData(mapOf(field to value.ref),doc.ref)
+    }
+}
 actual class CommonCollection(
     private val ref: FIRCollectionReference
 ) {

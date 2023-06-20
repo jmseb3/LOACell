@@ -1,6 +1,5 @@
 package com.wonddak.loacell.store
 
-import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -11,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -41,6 +41,48 @@ actual class CommonFireStore(
             .addOnFailureListener {
                 failAction(Error(it))
             }
+    }
+
+    actual fun runBatch(
+        write: (batch :CommonBatch) -> Unit
+    ) {
+        val batch = ref.batch()
+        write(CommonBatch(batch))
+        batch.commit()
+    }
+
+    actual fun runBatch(
+        write: (batch: CommonBatch) -> Unit,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit
+    ) {
+        val batch = ref.batch()
+        write(CommonBatch(batch))
+        batch.commit().addOnSuccessListener {
+            successAction()
+        }.addOnFailureListener {
+            failAction(Error(it))
+        }
+    }
+}
+
+actual class CommonBatch(
+    val ref :WriteBatch
+) {
+    actual fun update(
+        doc :CommonDocument,
+        field: String,
+        value :Any
+    ) {
+        ref.update(doc.ref,field,value)
+    }
+
+    actual fun update(
+        doc :CommonDocument,
+        field: String,
+        value :CommonFieldValue
+    ) {
+        ref.update(doc.ref,field,value.ref)
     }
 }
 
@@ -204,8 +246,6 @@ actual class CommonDocument(
         successAction: () -> Unit,
         failAction: (error: Error) -> Unit
     ) {
-        Log.i("JWH_ff",field)
-        Log.i("JWH_ff",value.ref.toString())
         ref.update(field, value.ref)
             .addOnSuccessListener {
                 successAction()

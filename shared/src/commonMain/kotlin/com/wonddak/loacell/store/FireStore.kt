@@ -14,8 +14,25 @@ expect class CommonFireStore {
         failAction: (error: Error) -> Unit,
         action: (transaction: CommonDocumentSnapshot) -> Unit
     )
+    fun runBatch(write: (batch: CommonBatch) -> Unit)
+    fun runBatch(
+        write: (batch: CommonBatch) -> Unit,
+        successAction: () -> Unit,
+        failAction: (error: Error) -> Unit
+    )
 }
-
+expect class CommonBatch {
+    fun update(
+        doc :CommonDocument,
+        field: String,
+        value :Any
+    )
+    fun update(
+        doc :CommonDocument,
+        field: String,
+        value :CommonFieldValue
+    )
+}
 expect class CommonCollection {
     val id: String
     val parent: CommonDocument?
