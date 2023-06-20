@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi.armories
+package com.wonddak.sharedapi.lostark.armories
 
 
 import kotlinx.serialization.SerialName

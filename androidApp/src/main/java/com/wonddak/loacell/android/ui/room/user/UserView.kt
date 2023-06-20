@@ -34,7 +34,7 @@ import com.wonddak.loacell.android.ui.dialog.EditCharacterDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.LostArkApi
+import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
 import com.wonddak.sharedapi.onSuccess

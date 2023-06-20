@@ -3,9 +3,9 @@ package com.wonddak.loacell.ext
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.sharedapi.FBApi
-import com.wonddak.sharedapi.FBDataItem
-import com.wonddak.sharedapi.FBRequest
+import com.wonddak.sharedapi.firebase.FBApi
+import com.wonddak.sharedapi.firebase.model.FBDataItem
+import com.wonddak.sharedapi.firebase.model.FBRequest
 import kotlinx.coroutines.delay
 
 fun RoomInfo.getRole(id: String): RoomRole {

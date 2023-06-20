@@ -20,7 +20,7 @@ import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.FBDataItem
+import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -38,7 +38,7 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.sharedapi.FBDataItem
+import com.wonddak.sharedapi.firebase.model.FBDataItem
 
 @Composable
 fun SettingRoomView(

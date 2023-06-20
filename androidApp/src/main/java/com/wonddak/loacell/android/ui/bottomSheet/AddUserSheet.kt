@@ -24,8 +24,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.LostArkApi
-import com.wonddak.sharedapi.model.CharacterInfo
+import com.wonddak.sharedapi.lostark.LostArkApi
+import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
 import com.wonddak.sharedapi.onSuccess

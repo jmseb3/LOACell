@@ -1,9 +1,11 @@
-package com.wonddak.sharedapi
+package com.wonddak.sharedapi.lostark
 
-import com.wonddak.sharedapi.armories.EquipmentItem
-import com.wonddak.sharedapi.armories.ProfilesItem
-import com.wonddak.sharedapi.model.CharacterInfo
-import com.wonddak.sharedapi.resource.Armories
+import com.wonddak.sharedapi.ApiResult
+import com.wonddak.sharedapi.lostark.armories.EquipmentItem
+import com.wonddak.sharedapi.lostark.armories.ProfilesItem
+import com.wonddak.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.sharedapi.lostark.resource.Armories
+import com.wonddak.sharedapi.safeRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
