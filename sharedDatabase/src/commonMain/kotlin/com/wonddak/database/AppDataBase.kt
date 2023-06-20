@@ -56,6 +56,9 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val stringListAdapter = object  : ColumnAdapter<List<String>,String> {
         override fun decode(databaseValue: String): List<String> {
+            if (databaseValue == "") {
+                return emptyList()
+            }
             return databaseValue.split("^^")
         }
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,6 +64,29 @@ fun SettingRoomView(
         }
         Column {
             SettingRoomInfo(loaCellViewModel,info)
+            Divider()
+            if (fetch) {
+                SectionCardView("방 관리") {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        val otherMemberList = info.enterUser + info.editableUser
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            enabled = otherMemberList.isEmpty()
+                        ) {
+                            Text(text = "나가기")
+                        }
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            enabled = otherMemberList.isNotEmpty()
+                        ) {
+                            Text(text = "소유자 위임")
+                        }
+                    }
+                }
+            }
             Divider()
             UserUidList(fetch,info,result)
         }
