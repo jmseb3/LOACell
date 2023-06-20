@@ -55,3 +55,39 @@ fun BaseDialog(
         properties = dialogProperties
     )
 }
+
+@Composable
+fun ConfirmDialog(
+    title: String? = null,
+    bodyText :String,
+    confirm: () -> Unit,
+    dismiss: () -> Unit,
+) {
+    BaseDialog(
+        titleText = title,
+        confirmButtonText = "확인",
+        confirmButtonAction = confirm,
+        dismissButtonText = "취소",
+        dismiss = dismiss,
+        content = {
+            Text(text = bodyText)
+        }
+    )
+}
+
+@Composable
+fun DeleteDialog(
+    title: String? = null,
+    confirm: () -> Unit,
+    dismiss: () -> Unit,
+    bodyContent: @Composable () -> Unit,
+) {
+    BaseDialog(
+        titleText = title,
+        confirmButtonText = "삭제",
+        confirmButtonAction = confirm,
+        dismissButtonText = "취소",
+        dismiss = dismiss,
+        content = bodyContent
+    )
+}

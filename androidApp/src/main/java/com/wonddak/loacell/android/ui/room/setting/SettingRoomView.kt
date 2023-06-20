@@ -34,6 +34,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
@@ -201,18 +202,12 @@ fun UserUidList(
                             )
                         }
                         items(filter) { id ->
-                            UserUidItem(uid = id, fbData = result,showButton = (name != RoomRole.OWNER.toName)) {
-                                if (name == RoomRole.MANAGER.toName) {
-                                    CommonRoomHelper.exitEditableUserFromRoom(roomInfo.uniqueId, listOf(id)) {
-
-                                    }
-                                }
-                                if (name == RoomRole.USER.toName) {
-                                    CommonRoomHelper.exitEnterUserFromRoom(roomInfo.uniqueId, listOf(id)) {
-
-                                    }
-                                }
-                            }
+                            UserUidItem(
+                                roomId = roomInfo.uniqueId,
+                                name = name,
+                                uid = id,
+                                fbData = result
+                            )
                         }
                     }
                 }
@@ -223,12 +218,15 @@ fun UserUidList(
 
 @Composable
 fun UserUidItem(
+    roomId :String,
+    name:String,
     uid: String,
     fbData: List<FBDataItem>,
-    showButton :Boolean,
-    clickAction:() ->Unit
 ) {
     val find = fbData.find { it.uid == uid }
+    var showConfirm by remember {
+        mutableStateOf(false)
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -239,11 +237,33 @@ fun UserUidItem(
             Text(text = uid)
         }
         Spacer(modifier = Modifier.weight(1f))
-        if (showButton) {
+        if ((name != RoomRole.OWNER.toName)) {
             MyIconButton(imageResource = SharedRes.images.room_exit,size =22.dp) {
-                clickAction()
+                showConfirm = true
             }
         }
     }
+    if (showConfirm) {
+        ConfirmDialog(
+            title = "내보내기",
+            bodyText = "해당 유저를 방에서 정말 내보내시겠습니까?",
+            confirm = {
+                if (name == RoomRole.MANAGER.toName) {
+                    CommonRoomHelper.exitEditableUserFromRoom(roomId, listOf(uid)) {
+                        showConfirm = false
+                    }
+                }
+                if (name == RoomRole.USER.toName) {
+                    CommonRoomHelper.exitEnterUserFromRoom(roomId, listOf(uid)) {
+                        showConfirm = false
+                    }
+                }
+            },
+            dismiss = {
+                showConfirm = false
+            }
+        )
+    }
+
 
 }
