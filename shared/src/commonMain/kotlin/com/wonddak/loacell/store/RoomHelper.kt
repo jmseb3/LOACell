@@ -244,4 +244,15 @@ object CommonRoomHelper {
             }
         )
     }
+
+    fun deleteRoom(
+        roomId: String,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit
+    ) {
+        RefHelper.getRoomRef(roomId).delete(
+            successAction =  successAction,
+            failAction = failAction
+        )
+    }
 }

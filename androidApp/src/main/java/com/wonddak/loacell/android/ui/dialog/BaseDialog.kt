@@ -60,12 +60,13 @@ fun BaseDialog(
 fun ConfirmDialog(
     title: String? = null,
     bodyText :String,
+    confirmButtonText:String = "확인",
     confirm: () -> Unit,
     dismiss: () -> Unit,
 ) {
     BaseDialog(
         titleText = title,
-        confirmButtonText = "확인",
+        confirmButtonText = confirmButtonText,
         confirmButtonAction = confirm,
         dismissButtonText = "취소",
         dismiss = dismiss,
