@@ -23,8 +23,8 @@ data class FBRoomInfo(
 
 object CommonRoomHelper {
 
-    //로그인시 동기화를 위한 메서드
-    fun syncInfo(
+    //동기화를 위한 메서드
+    fun syncRoom(
         userId: String,
         db: AppDataBase,
         failAction: (error: Error) -> Unit,
@@ -39,6 +39,8 @@ object CommonRoomHelper {
                 )
             ).get(
                 successAction = { querySnapshot ->
+                    val allRooms = db.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }.toMutableSet()
+
                     querySnapshot.documents.forEach { document ->
                         val id = document.id
                         val data = document.data!!
@@ -48,15 +50,34 @@ object CommonRoomHelper {
                         val enterPassword = data["password"] as String
                         val enterUser = data["enterUser"] as List<String>
                         val editableUser = data["editableUser"] as List<String>
-                        db.roomInfoQueriesHelper.addRoomInfo(
-                            title = title,
-                            description = description,
-                            uniqueId = id,
-                            owner = owner,
-                            enterPassword = enterPassword,
-                            enterUser = enterUser,
-                            editableUser = editableUser
-                        )
+
+                        if (allRooms.contains(id)) {
+                            db.roomInfoQueriesHelper.updateRoomInfo(
+                                title = title,
+                                description = description,
+                                owner = owner,
+                                enterPassword = enterPassword,
+                                enterUser = enterUser,
+                                editableUser = editableUser,
+                                uniqueId = id
+                            )
+                            allRooms.remove(id)
+                        } else {
+                            db.roomInfoQueriesHelper.addRoomInfo(
+                                title = title,
+                                description = description,
+                                uniqueId = id,
+                                owner = owner,
+                                enterPassword = enterPassword,
+                                enterUser = enterUser,
+                                editableUser = editableUser
+                            )
+                        }
+                    }
+                    if (allRooms.isNotEmpty()) {
+                        allRooms.forEach {uid ->
+                            db.roomInfoQueriesHelper.deleteRoomInfo(uid)
+                        }
                     }
                     successAction()
                 },

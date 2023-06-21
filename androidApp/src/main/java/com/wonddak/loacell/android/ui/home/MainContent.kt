@@ -180,30 +180,35 @@ fun MainContent(
 
                     }
 
-                    if (loaCellViewModel.showRoomEnterError) {
-                        RoomEnterErrorDialog(
-                            confirm = {
-                                db.roomInfoQueriesHelper.deleteRoomInfo(loaCellViewModel.roomId.value)
-                                loaCellViewModel.hideRoomInfo()
-                                loaCellViewModel.showRoomEnterError = false
-                            },
-                            dismiss = {
-                                loaCellViewModel.showRoomEnterError = false
-                            }
-                        )
-                    }
-                    if (loaCellViewModel.syncData) {
-                        LaunchedEffect(loaCellViewModel.syncData) {
-                            CommonRoomHelper.syncInfo(
-                                userInfo!!.uid,
-                                db,
-                                failAction = {e ->},
-                                successAction = {
-                                    loaCellViewModel.syncData = false
+                    loaCellViewModel.apply {
+                        if (showRoomEnterError) {
+                            RoomEnterErrorDialog(
+                                confirm = {
+                                    db.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
+                                    hideRoomInfo()
+                                    showRoomEnterError = false
+                                },
+                                dismiss = {
+                                    showRoomEnterError = false
                                 }
                             )
                         }
-                        LoadingView("데이터를 동기화 중입니다.")
+                    }
+
+                    loaCellViewModel.apply {
+                        if (syncData) {
+                            LaunchedEffect(syncData) {
+                                CommonRoomHelper.syncRoom(
+                                    userInfo!!.uid,
+                                    db,
+                                    failAction = {e ->},
+                                    successAction = {
+                                        syncData = false
+                                    }
+                                )
+                            }
+                            LoadingView("데이터를 동기화 중입니다.")
+                        }
                     }
                 }
             }

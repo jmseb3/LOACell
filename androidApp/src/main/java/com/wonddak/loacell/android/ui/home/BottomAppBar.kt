@@ -62,10 +62,17 @@ fun BottomAppBar(
                 }
             },
             actions = {
-                val showLevel1 =
-                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidInfo == null)
+                AnimatedVisibility(selectedRoomId.isEmpty()) {
+                    Row() {
+                        MyIconButton(
+                            imageResource = SharedRes.images.refresh,
+                        ) {
+                            syncData = true
+                        }
+                    }
+                }
                 AnimatedVisibility(
-                    showLevel1,
+                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidInfo == null),
                 ) {
                     Row() {
                         MyRoomIconButton(
@@ -86,7 +93,7 @@ fun BottomAppBar(
 
                 }
                 AnimatedVisibility(
-                    focusUserInfo != null
+                    selectedRoomId.isNotEmpty() && focusUserInfo != null
                 ) {
                     focusUserInfo?.let {
                         Row() {
@@ -108,7 +115,7 @@ fun BottomAppBar(
                     }
                 }
                 AnimatedVisibility(
-                    focusRaidInfo != null
+                    selectedRoomId.isNotEmpty() && focusRaidInfo != null
                 ) {
                     Row() {
                         IconButton(onClick = { clearFocusItem() }) {

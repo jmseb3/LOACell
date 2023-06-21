@@ -16,6 +16,10 @@ class RoomInfoQueriesHelper(
         return queries.selectAll().asFlow().mapToList(Dispatchers.Main)
     }
 
+    fun getAllValue(): List<RoomInfo> {
+        return queries.selectAll().executeAsList()
+    }
+
     fun getRoomInfoById(id: String): Flow<RoomInfo> {
         return queries.selectById(id).asFlow().mapToOne(Dispatchers.Default)
     }
