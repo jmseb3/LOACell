@@ -30,9 +30,4 @@ class MainActivity : ComponentActivity() {
             MainContent(db, loaCellViewModel)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        loginHelper.updateUserInfo()
-    }
 }

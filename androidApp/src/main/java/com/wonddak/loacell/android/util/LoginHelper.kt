@@ -13,12 +13,12 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.wonddak.loacell.android.R
+import java.util.Random
 
 
 class LoginHelper(
@@ -46,13 +46,8 @@ class LoginHelper(
         auth = Firebase.auth
     }
 
-    fun updateUserInfo(userInfo: FirebaseUser? = auth.currentUser) {
-//        LoaCellApp.updateUser(userInfo)
-    }
-
     fun signOut() {
         auth.signOut()
-        updateUserInfo()
     }
 
     fun requestGoogleLogin(
@@ -79,6 +74,7 @@ class LoginHelper(
 
     private fun registerToken(
         result: ActivityResult,
+        failAction: (e: ApiException) -> Unit ={},
         authAction: (firebaseCredential: AuthCredential) -> Unit
     ) {
         try {
@@ -97,6 +93,7 @@ class LoginHelper(
                 }
             }
         } catch (e: ApiException) {
+            failAction(e)
             when (e.statusCode) {
                 CommonStatusCodes.CANCELED -> {
                     Log.d(TAG, "One-tap dialog was closed.")
@@ -116,19 +113,21 @@ class LoginHelper(
     fun registerGoogleToken(
         result: ActivityResult,
         commonAction :() ->Unit,
-        otherAction: () -> Unit
+        failRegisterAction:(e:ApiException)->Unit,
+        successAction: () -> Unit,
+        failAction: (e: Exception) -> Unit
     ) {
-        registerToken(result) { firebaseCredential ->
+        commonAction()
+        registerToken(
+            result,
+            failRegisterAction
+        ) { firebaseCredential ->
             auth.signInWithCredential(firebaseCredential)
-                .addOnCompleteListener { task ->
-                    commonAction()
-                    if (task.isSuccessful) {
-                        updateUserInfo()
-                        otherAction()
-                    }
+                .addOnSuccessListener {
+                    successAction()
                 }
                 .addOnFailureListener {
-                    commonAction()
+                    failAction(it)
                 }
 
         }
@@ -136,14 +135,14 @@ class LoginHelper(
 
     fun registerAnonymousToGoogle(
         result: ActivityResult,
+        failRegisterAction:(e:ApiException)->Unit,
         failAction: (e: Exception?) -> Unit
     ) {
-        registerToken(result) { firebaseCredential ->
+        registerToken(result,failRegisterAction) { firebaseCredential ->
             auth.currentUser!!.linkWithCredential(firebaseCredential)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "linkWithCredential:success")
-                        updateUserInfo()
                     } else {
                         failAction(task.exception)
                     }
@@ -162,13 +161,19 @@ class LoginHelper(
             }
     }
 
-    fun requestAnonymousLogin(
-        name :String
-    ) {
+    fun requestAnonymousLogin() {
+        fun makeName() : String {
+            val name = listOf("코니","모코코","디붕디붕")
+            val index = List(4) { Random().nextInt(8) + 1}
+            println(">>>>>>>> + $index")
+            println(">>>>>>>> + ${index.map { it.toString() }.joinToString { "" }}")
+            val result = name.random() + index.joinToString { "" }
+            println(">>>>>>>> + $result")
+            return result
+        }
         auth.signInAnonymously()
             .addOnSuccessListener {
-                updateUserInfo()
-                updateDisplayName(name)
+                updateDisplayName(makeName())
             }
     }
 

@@ -46,13 +46,24 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        loaCellViewModel.loggingIn = true
         loginHelper.registerGoogleToken(
             result,
-            commonAction = {loaCellViewModel.loggingIn = false}
-        ) {
-            loaCellViewModel.syncData = true
-        }
+            commonAction = {
+                println("<>>>>>>>>>>> common")
+                loaCellViewModel.loggingIn = true
+            },
+            failRegisterAction = {e ->
+                loaCellViewModel.loggingIn = false
+            },
+            successAction = {
+                println("<>>>>>>>>>>> success")
+                loaCellViewModel.syncData = true
+            },
+            failAction = {
+                println("<>>>>>>>>>>> ${it.localizedMessage}")
+                loaCellViewModel.loggingIn = false
+            }
+        )
     }
     Box(
         modifier = Modifier
@@ -95,7 +106,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     color = Color.Black,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
-                        .noRippleClickable { loginHelper.requestAnonymousLogin(name = "익명") }
+                        .noRippleClickable { loginHelper.requestAnonymousLogin() }
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )

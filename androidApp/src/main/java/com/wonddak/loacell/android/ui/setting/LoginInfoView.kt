@@ -94,7 +94,12 @@ fun LoginInfoView(
                 val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartIntentSenderForResult()
                 ) { result ->
-                    loginHelper.registerAnonymousToGoogle(result) { error ->
+                    loginHelper.registerAnonymousToGoogle(
+                        result,
+                        failRegisterAction = {error ->
+                            loaCellViewModel.showSnackBar(error.localizedMessage ?: "unknown Error")
+                        }
+                    ) { error ->
                         if (error is FirebaseAuthUserCollisionException) {
                             loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
                         } else {
