@@ -4,12 +4,13 @@ package com.wonddak.loacell.android.viewModel
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.Config
+import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
@@ -17,6 +18,8 @@ import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.ext.getRole
+import com.wonddak.loacell.getLong
+import com.wonddak.loacell.putLong
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -30,7 +33,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
-    private val dataBase: AppDataBase
+    private val dataBase: AppDataBase,
+    private val config: Config
 ) : SnackBarController() {
 
     //로그인 요청후 로그인 프로그레스 출력..
@@ -168,17 +172,21 @@ class LoaCellViewModel(
 
     var syncData by mutableStateOf(false)
         private  set
-    var syncTime by mutableLongStateOf(0L)
-        private set
-    fun syncStart() {
-        val nowTime = System.currentTimeMillis()
 
-        if (nowTime - syncTime > 60 * 5 * 1000) {
-            syncData = true
-            syncTime = System.currentTimeMillis()
-        } else {
-            showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
+    fun syncStart() {
+        viewModelScope.launch {
+            val nowTime = System.currentTimeMillis()
+            val syncTime = config.getLong(ConfigKeys.HomeRefreshKey)
+            if (nowTime - syncTime > 60 * 5 * 1000) {
+                syncData = true
+                launch {
+                    config.putLong(ConfigKeys.HomeRefreshKey,nowTime)
+                }
+            } else {
+                showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
+            }
         }
+
     }
     fun syncEnd() {
         showSnackBar("동기화가 완료되었습니다",label = "확인")

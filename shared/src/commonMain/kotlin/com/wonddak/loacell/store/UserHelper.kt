@@ -2,16 +2,16 @@ package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.sharedapi.lostark.model.CharacterInfo
-import korlibs.time.DateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 data class FBUSerInfo(
     val representativeCharacter: String = "",
     val characterList: List<FBCharacterInfo> = emptyList(),
-    val timeStamp: Long = DateTime.now().unixMillisLong
+    val timeStamp: Long = Clock.System.now().toEpochMilliseconds()
 ) {
     fun toMap() = mapOf<String, Any>(
         "representativeCharacter" to representativeCharacter,

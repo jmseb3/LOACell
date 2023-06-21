@@ -33,6 +33,11 @@ object Dependencies {
             const val Ios = "${Base}native-driver:${Versions.Dependencies.KMM.SQLDelightVersion}"
         }
 
+        object Kotlinx {
+            const val DateTime = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+            const val Coroutines = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+        }
+
     }
 
     //All Android libraries

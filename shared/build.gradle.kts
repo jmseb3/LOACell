@@ -27,15 +27,17 @@ kotlin {
         pod("FirebaseFirestore","~> 10.10")
 
     }
-    val coroutinesVersion = "1.6.4"
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(project(Modules.api))
                 api(project(Modules.resources))
                 api(project(Modules.database))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                implementation("com.soywiz.korlibs.klock:klock:4.0.2")
+                implementation(Dependencies.KMM.Kotlinx.Coroutines)
+                implementation(Dependencies.KMM.Kotlinx.DateTime)
+                implementation("com.russhwolf:multiplatform-settings:1.0.0")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
+
             }
         }
         val commonTest by getting {
@@ -47,9 +49,10 @@ kotlin {
             dependencies {
                 implementation(platform(Dependencies.Android.Firebase.Bom))
                 implementation(Dependencies.Android.Firebase.Firestore)
+                implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
+                implementation("androidx.datastore:datastore-preferences:1.0.0")
             }
         }
-        val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -58,15 +61,6 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
         }
     }
 }
