@@ -56,11 +56,10 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 loaCellViewModel.loggingIn = false
             },
             successAction = {
-                println("<>>>>>>>>>>> success")
                 loaCellViewModel.syncData = true
+                loaCellViewModel.loggingIn = false
             },
             failAction = {
-                println("<>>>>>>>>>>> ${it.localizedMessage}")
                 loaCellViewModel.loggingIn = false
             }
         )

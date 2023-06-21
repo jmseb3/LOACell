@@ -162,14 +162,16 @@ class LoginHelper(
     }
 
     fun requestAnonymousLogin() {
-        fun makeName() : String {
-            val name = listOf("코니","모코코","디붕디붕")
-            val index = List(4) { Random().nextInt(8) + 1}
-            println(">>>>>>>> + $index")
-            println(">>>>>>>> + ${index.map { it.toString() }.joinToString { "" }}")
-            val result = name.random() + index.joinToString { "" }
-            println(">>>>>>>> + $result")
-            return result
+        fun makeName(): String {
+            val st = StringBuilder()
+                .append(listOf("코니", "모코코", "디붕디붕").random())
+                .append(Random().nextInt(8) + 1)
+                .append(Random().nextInt(8) + 1)
+                .append(Random().nextInt(8) + 1)
+                .append(Random().nextInt(8) + 1)
+                .toString()
+            println(">>>>>>>>> $st")
+            return st
         }
         auth.signInAnonymously()
             .addOnSuccessListener {
