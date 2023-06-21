@@ -86,7 +86,7 @@ fun MainContent(
                             .collectAsState(initial = emptyList())
 
                         if (loaCellViewModel.showSetting) {
-                            SettingView(db,loaCellViewModel)
+                            SettingView(db, loaCellViewModel)
                         } else {
                             Column(Modifier.fillMaxSize()) {
                                 AnimatedVisibility(selectedRoomId.isEmpty()) {
@@ -201,10 +201,8 @@ fun MainContent(
                                 CommonRoomHelper.syncRoom(
                                     userInfo!!.uid,
                                     db,
-                                    failAction = {e ->},
-                                    successAction = {
-                                        syncData = false
-                                    }
+                                    failAction = { _ -> },
+                                    successAction = { syncEnd() }
                                 )
                             }
                             LoadingView("데이터를 동기화 중입니다.")

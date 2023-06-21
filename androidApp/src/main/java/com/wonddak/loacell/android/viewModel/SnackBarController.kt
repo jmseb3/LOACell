@@ -22,7 +22,7 @@ open class SnackBarController(
         message: String,
         label: String? = null,
         duration: SnackbarDuration = SnackbarDuration.Short,
-        action: () -> Unit = {},
+        action: () -> Unit = {resetSnackBar()},
     ) {
         showSnackBar(SnackBarItem(true, message, label, duration, action))
     }

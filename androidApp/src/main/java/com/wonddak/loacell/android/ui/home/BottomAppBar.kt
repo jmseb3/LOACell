@@ -66,8 +66,9 @@ fun BottomAppBar(
                     Row() {
                         MyIconButton(
                             imageResource = SharedRes.images.refresh,
+                            enabled = !syncData
                         ) {
-                            syncData = true
+                            syncStart()
                         }
                     }
                 }

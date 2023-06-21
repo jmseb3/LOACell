@@ -4,6 +4,7 @@ package com.wonddak.loacell.android.viewModel
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
@@ -166,6 +167,23 @@ class LoaCellViewModel(
 
 
     var syncData by mutableStateOf(false)
+        private  set
+    var syncTime by mutableLongStateOf(0L)
+        private set
+    fun syncStart() {
+        val nowTime = System.currentTimeMillis()
+
+        if (nowTime - syncTime > 60 * 5 * 1000) {
+            syncData = true
+            syncTime = System.currentTimeMillis()
+        } else {
+            showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
+        }
+    }
+    fun syncEnd() {
+        showSnackBar("동기화가 완료되었습니다",label = "확인")
+        syncData = false
+    }
 
     fun signOut() {
         hideRoomInfo()

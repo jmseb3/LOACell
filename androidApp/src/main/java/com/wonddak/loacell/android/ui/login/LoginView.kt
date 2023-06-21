@@ -46,23 +46,26 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        loginHelper.registerGoogleToken(
-            result,
-            commonAction = {
-                println("<>>>>>>>>>>> common")
-                loaCellViewModel.loggingIn = true
-            },
-            failRegisterAction = {e ->
-                loaCellViewModel.loggingIn = false
-            },
-            successAction = {
-                loaCellViewModel.syncData = true
-                loaCellViewModel.loggingIn = false
-            },
-            failAction = {
-                loaCellViewModel.loggingIn = false
-            }
-        )
+        loaCellViewModel.apply {
+            loginHelper.registerGoogleToken(
+                result,
+                commonAction = {
+                    println("<>>>>>>>>>>> common")
+                    loggingIn = true
+                },
+                failRegisterAction = {e ->
+                    loggingIn = false
+                },
+                successAction = {
+                    syncStart()
+                    loggingIn = false
+                },
+                failAction = {
+                    loggingIn = false
+                }
+            )
+        }
+
     }
     Box(
         modifier = Modifier
