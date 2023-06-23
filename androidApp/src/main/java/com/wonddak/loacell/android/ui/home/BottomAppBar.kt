@@ -62,7 +62,7 @@ fun BottomAppBar(
                 }
             },
             actions = {
-                AnimatedVisibility(selectedRoomId.isEmpty()) {
+                AnimatedVisibility(selectedRoomId.isEmpty() && !loaCellViewModel.showSetting) {
                     Row() {
                         MyIconButton(
                             imageResource = SharedRes.images.refresh,

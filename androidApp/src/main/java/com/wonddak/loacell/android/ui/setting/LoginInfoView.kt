@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -118,7 +119,9 @@ fun LoginInfoView(
                 }
             } else {
                 val list = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
-                Row() {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     OutlinedButton(
                         onClick = {
                             loginHelper.delete {
