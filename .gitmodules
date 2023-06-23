@@ -1,0 +1,3 @@
+[submodule "keystore"]
+	path = keystore
+	url = https://github.com/jmseb3/keystore.git

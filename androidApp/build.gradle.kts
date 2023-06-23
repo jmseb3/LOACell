@@ -7,6 +7,8 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
+apply("../keystore/signing.gradle")
+
 android {
     namespace = AppConfig.Android.packageName
     compileSdk = AppConfig.Android.compileSdk
@@ -16,6 +18,7 @@ android {
         targetSdk = AppConfig.Android.targetSdk
         versionCode =  AppConfig.versionCode
         versionName = AppConfig.version
+        setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
     }
     buildFeatures {
         compose = true
@@ -34,6 +37,7 @@ android {
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = true
             }
+            signingConfig = signingConfigs.getByName("LoaCellSigning")
         }
         getByName("debug") {
             isDebuggable = true
