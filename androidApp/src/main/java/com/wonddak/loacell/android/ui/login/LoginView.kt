@@ -2,6 +2,7 @@ package com.wonddak.loacell.android.ui.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -72,24 +73,34 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
             .fillMaxSize()
             .background(Color.White),
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
+                modifier =Modifier.align(Alignment.Center),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "안녕하세요 \n 레이드 관리를 도와주는 <LoaCell>입니다.",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "레이드 관리를 도와 주는 ",
+                        textAlign = TextAlign.Center
+                    )
+                    Image(painter = painterResource(id = R.mipmap.ic_launcher_foreground), contentDescription = null)
+                    Text(
+                        text = "입니다.",
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             Column(
                 modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .padding(vertical = 10.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
