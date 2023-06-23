@@ -3,15 +3,16 @@ package com.wonddak.database
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.wonddak.database.ext.getMinLevel
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
 import com.wonddak.database.queriesHelper.RoomInfoQueriesHelper
 import com.wonddak.database.queriesHelper.UserInfoQueriesHelper
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.model.Difficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -91,8 +92,8 @@ class AppDataBase(driverFactory: DriverFactory) {
      */
     fun getUsersByRoomIdFilterCharacterAndType(
         roomId: String,
-        raidInfo: RaidInfo
-    ): Flow<List<UserInfo>> {
+        raidInfo: RaidInfo //현재 레이드 정보
+    ): Flow<Map<String,List<Character>>> {
         // id에 맞는 레이드 정보 리스트를 가져옴
         val raidList = raidInfoQueriesHelper.getAllByRoomIdValue(roomId)
 
@@ -102,7 +103,7 @@ class AppDataBase(driverFactory: DriverFactory) {
         characterNameInParty.addAll(raidInfo.party2characterList.filter { it.isNotEmpty() })
 
         //현재 레이드 타입에 맞는 것만 필터링 한뒤 파티에 가입된 캐릭터를 모두 추가한다.
-        val totalNameList = mutableListOf<String>()
+        val totalNameList = mutableSetOf<String>()
         raidList
             .filter { it.type == raidInfo.type }
             .forEach {
@@ -113,25 +114,33 @@ class AppDataBase(driverFactory: DriverFactory) {
 
         return database.userInfoQueries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
-            .transform {
-                //현재 방에 있는 유저 정보를 모두 가져온 뒤
+            .transform { userInfoList ->
+                //모든 유저 정보를 가져온다.
                 try {
-                    val filter = it.filter { userInfo ->
-                        var result = true
-                        //캐릭터 이름이 들어가지 않은 유저만 필터랑 하여 내보낸다.
+                    val result :MutableMap<String,List<Character>> = mutableMapOf()
+                    userInfoList.forEach { userInfo ->
+                        var find = true
+                        val characterList :List<Character> = characterQueriesHelper.getAllListByLevelFilter(userInfo,raidInfo.getMinLevel())
+
+                        //현재 레이드 정보에 캐릭터가 들어가 있는 사람은 제외시킨다.
                         for (characterName in characterNameInParty) {
-                            val characterList = characterQueriesHelper.getAllList(userInfo)
                             if(characterList.map { it.name }.contains(characterName)) {
-                                result = false
+                                find = false
                                 break
                             }
                         }
-                        result
+
+                        if (find) {
+                            val newList = characterList.filter { !totalNameList.contains(it.name) }
+                            if (newList.isNotEmpty()){
+                                result[userInfo.name] = newList
+                            }
+                        }
                     }
-                    emit(filter)
+                    emit(result)
                 }catch (e:Exception) {
                     println("JWH $e")
-                    emit(emptyList())
+                    emit(mapOf())
                 }
             }
     }

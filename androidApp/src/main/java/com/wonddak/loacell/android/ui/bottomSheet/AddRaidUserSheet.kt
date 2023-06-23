@@ -25,51 +25,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.andyliu.compose_wheel_picker.VerticalWheelPicker
-import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.Character
-import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.database.ext.getLevel
-import com.wonddak.database.ext.getMinLevel
+import com.wonddak.loacell.Character
+import com.wonddak.loacell.android.noRippleClickable
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddRaidUserSheet(
-    raidInfo: RaidInfo,
-    allUserList: List<UserInfo>,
-    db: AppDataBase,
+    userAndCharacterMap: Map<String,List<Character>>,
     onDismissRequest: () -> Unit,
     successAction: (character: Character) -> Unit
 ) {
 
-    var selectedUser: UserInfo? by remember { mutableStateOf(null) }
-
-    var characterList: List<Character> by remember { mutableStateOf(emptyList()) }
-
+    var selectedUser: String? by remember { mutableStateOf(null) }
     var selectedCharacter: Character? by remember { mutableStateOf(null) }
+
+    var userList :List<String> by remember { mutableStateOf(emptyList()) }
+    var characterList :List<Character> by remember { mutableStateOf(emptyList()) }
 
     val stateCharacter = rememberLazyListState(0)
     var currentIndexCharacter by remember { mutableStateOf(0) }
 
-    LaunchedEffect(allUserList) {
-        if (allUserList.isNotEmpty()) {
-            selectedUser = allUserList[0]
-        }
+    LaunchedEffect(true) {
+        userList = userAndCharacterMap.keys.toList()
+        selectedUser = userList[0]
     }
 
     LaunchedEffect(selectedUser) {
         if (selectedUser != null) {
-            characterList = db.characterQueriesHelper.getAllListByLevelFilter(selectedUser!!,raidInfo.getMinLevel())
-            if (characterList.isNotEmpty()) {
-                selectedCharacter = characterList[0]
-                currentIndexCharacter = 0
-                launch {
-                    stateCharacter.animateScrollToItem(0)
-                }
-            } else {
-                selectedCharacter = null
-            }
+            characterList = userAndCharacterMap[selectedUser!!]!!
+            selectedCharacter = characterList[0]
+            stateCharacter.animateScrollToItem(0)
             return@LaunchedEffect
         }
     }
@@ -87,18 +73,18 @@ fun AddRaidUserSheet(
             Row(modifier = Modifier.fillMaxWidth()) {
                 val scope = rememberCoroutineScope()
                 val modifier = Modifier.weight(1f)
-                if (allUserList.isNotEmpty()) {
+                if (userList.isNotEmpty()) {
                     val stateUser = rememberLazyListState(0)
                     var currentIndexUser by remember { mutableStateOf(0) }
                     VerticalWheelPicker(
                         modifier = modifier,
                         state = stateUser,
-                        count = allUserList.size,
+                        count = userList.size,
                         itemHeight = 44.dp,
                         visibleItemCount = 3,
                         onScrollFinish = {
                             currentIndexUser = it
-                            selectedUser = allUserList[it]
+                            selectedUser = userList[it]
                         }
                     ) { index ->
                         Box(
@@ -115,11 +101,7 @@ fun AddRaidUserSheet(
                         ) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = try {
-                                    allUserList[index].name
-                                } catch (e: Exception) {
-                                    ""
-                                },
+                                text = userList[index],
                                 color = if (index == currentIndexUser) Color.Black else Color.Gray,
                                 textAlign = TextAlign.Center
                             )

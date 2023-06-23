@@ -183,16 +183,14 @@ fun FocusRaidView(
             }
         }
         raidInfo?.let { raidInfo ->
-            val allUserList by db.getUsersByRoomIdFilterCharacterAndType(
-                roomId, raidInfo
-            ).collectAsState(initial = emptyList())
+            val userAndCharacterMap by db.getUsersByRoomIdFilterCharacterAndType(roomId, raidInfo).collectAsState(initial = mapOf())
 
             Column() {
                 Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
             }
             loaCellViewModel.apply {
                 RaidPartyView(characterList, openAction = { index ->
-                    if (allUserList.isEmpty()) {
+                    if (userAndCharacterMap.isEmpty()) {
                         showSnackBar(
                             message = "추가 가능한 인원이 없습니다.",
                             label = "이동",
@@ -223,13 +221,13 @@ fun FocusRaidView(
                         showRaidDelete = false
                     })
                 }
-                if (showRaidUserAdd && allUserList.isNotEmpty()) {
-                    AddRaidUserSheet(raidInfo = raidInfo,
-                        allUserList = allUserList,
-                        db = db,
+                if (showRaidUserAdd && userAndCharacterMap.isNotEmpty()) {
+                    AddRaidUserSheet(
+                        userAndCharacterMap = userAndCharacterMap,
                         onDismissRequest = {
                             showRaidUserAdd = false
-                        }) { character ->
+                        }
+                    ) { character ->
                         val partyIndex = focusIndex / 4
                         val tempList =
                             if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
@@ -245,8 +243,6 @@ fun FocusRaidView(
                             focusIndex = -1
                             showRaidUserAdd = false
                         }
-
-
                     }
                 }
 
