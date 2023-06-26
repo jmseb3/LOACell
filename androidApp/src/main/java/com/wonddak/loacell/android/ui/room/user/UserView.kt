@@ -170,6 +170,10 @@ fun FocusUserView(
                     }
                 }
                 characterResult.onError { code, message ->
+                    if (code == 429) {
+
+                        return@onError
+                    }
                     msg = if (code == 503) {
                         "현재 로스트아크 서버가 점검중입니다."
                     } else {

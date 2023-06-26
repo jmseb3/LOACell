@@ -72,7 +72,11 @@ fun AddUserSheet(
                 searchResult = list
             }
             characterResult.onError { code, message ->
-                errorMsg = "$message($code)"
+                if (code == 429) {
+
+                } else {
+                    errorMsg = "$message($code)"
+                }
             }
             characterResult.onException {
                 errorMsg = it.message ?: "exception"
