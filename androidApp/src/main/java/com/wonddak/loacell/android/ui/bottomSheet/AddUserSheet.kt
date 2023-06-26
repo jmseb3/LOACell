@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,9 @@ fun AddUserSheet(
     }
     var searchResult by remember {
         mutableStateOf(emptyList<CharacterInfo>())
+    }
+    BackHandler(searchResult.isNotEmpty()) {
+        searchResult = emptyList()
     }
     val searchAction = {
         scope.launch {

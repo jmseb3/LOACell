@@ -16,7 +16,7 @@ android {
         applicationId = AppConfig.Android.packageName
         minSdk = AppConfig.Android.minSdk
         targetSdk = AppConfig.Android.targetSdk
-        versionCode =  AppConfig.versionCode
+        versionCode = AppConfig.versionCode
         versionName = AppConfig.version
         setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
     }

@@ -30,6 +30,22 @@
           }
         },
         {
+          "client_id": "631976126032-joer3ofddohao2cgba36ptdsds7kq99j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wonddak.loacell.android",
+            "certificate_hash": "b7bfae05a75f419cc7492b6b0891936799e53788"
+          }
+        },
+        {
+          "client_id": "631976126032-r2rp7v6upatjjnmom3r8edqrlfrlva0e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wonddak.loacell.android",
+            "certificate_hash": "8852b5415d545b387f34d62ff4d276d0c159098f"
+          }
+        },
+        {
           "client_id": "631976126032-irbd74fnojv8hae9gntgki36hkecqqkq.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -45,6 +61,13 @@
             {
               "client_id": "631976126032-irbd74fnojv8hae9gntgki36hkecqqkq.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "631976126032-3grajrnvr6svtllbg636q0l92s0vs3uv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wonddak.loacell.ios"
+              }
             }
           ]
         }

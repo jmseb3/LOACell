@@ -30,6 +30,7 @@ kotlin {
                 implementation(Dependencies.KMM.Ktor.Logging)
                 implementation(Dependencies.KMM.Ktor.ContentNegotiation)
                 implementation(Dependencies.KMM.Ktor.Serialization)
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
             }
         }
         val androidMain by getting {
