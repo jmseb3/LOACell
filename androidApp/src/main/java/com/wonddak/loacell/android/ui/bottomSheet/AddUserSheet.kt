@@ -29,6 +29,7 @@ import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
+import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.launch
 
@@ -71,15 +72,12 @@ fun AddUserSheet(
             characterResult.onSuccess { list ->
                 searchResult = list
             }
-            characterResult.onError { code, message ->
+            characterResult.onFail { code, message ->
                 if (code == 429) {
 
                 } else {
                     errorMsg = "$message($code)"
                 }
-            }
-            characterResult.onException {
-                errorMsg = it.message ?: "exception"
             }
             showProgress = false
         }

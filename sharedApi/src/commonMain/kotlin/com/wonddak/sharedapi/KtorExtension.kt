@@ -21,19 +21,19 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     } catch (e: RedirectResponseException) {
         // 3xx ~ error
         ApiResult.Error(
-            code = e.response.status.value,
+            response = e.response,
             message = e.message
         )
     } catch (e: ClientRequestException) {
         // 4xx ~ error
         ApiResult.Error(
-            code = e.response.status.value,
+            response = e.response,
             message = e.message
         )
     } catch (e: ServerResponseException) {
         // 5xx ~ error
         ApiResult.Error(
-            code = e.response.status.value,
+            response = e.response,
             message = e.message
         )
     } catch (e: Exception) {
@@ -45,7 +45,7 @@ suspend inline fun <reified T> HttpClient.safeFlowRequest(
     delaySeconds: Long = 1000L,
     crossinline block: HttpRequestBuilder.() -> Unit,
 ): Flow<ApiResult<T>> = flow {
-    emit(com.wonddak.sharedapi.ApiResult.Loading)
+    emit(ApiResult.Loading)
     delay(delaySeconds)
     emit(safeRequest(block = block))
 }

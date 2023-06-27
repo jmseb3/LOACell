@@ -37,6 +37,7 @@ import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.onError
 import com.wonddak.sharedapi.onException
+import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -169,22 +170,12 @@ fun FocusUserView(
                         loaCellViewModel.showLoading = false
                     }
                 }
-                characterResult.onError { code, message ->
+                characterResult.onFail { code, message ->
+                    msg = message
+                    delay(1_500L)
                     if (code == 429) {
 
-                        return@onError
                     }
-                    msg = if (code == 503) {
-                        "현재 로스트아크 서버가 점검중입니다."
-                    } else {
-                        "$message($code)"
-                    }
-                    delay(1_500L)
-                    loaCellViewModel.showLoading = false
-                }
-                characterResult.onException {
-                    msg = it.message ?: "exception"
-                    delay(1_500L)
                     loaCellViewModel.showLoading = false
                 }
             }
@@ -199,3 +190,8 @@ fun FocusUserView(
     }
 }
 
+data class LostarkResult(
+    val success :Boolean,
+    val code :Int,
+    val msg :String,
+)
