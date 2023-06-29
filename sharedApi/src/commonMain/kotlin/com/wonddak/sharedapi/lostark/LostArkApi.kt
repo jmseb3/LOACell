@@ -24,9 +24,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.encodeURLPath
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
-import kotlin.math.abs
 
 class LostArkApi {
     companion object {
@@ -47,7 +45,7 @@ class LostArkApi {
         install(Resources)
         install(Logging) {
             logger = Logger.SIMPLE
-            level = LogLevel.HEADERS
+            level = LogLevel.ALL
         }
         expectSuccess = true
         defaultRequest {
@@ -69,27 +67,12 @@ class LostArkApi {
         }
         return when (result) {
             is ApiResult.Success -> LostArkResult.Success(data = result.data)
+            is ApiResult.ErrorOnlyMsg -> LostArkResult.FailOnlyMsg(result.message)
             is ApiResult.Error -> {
                 when (val code = result.response.status.value) {
                     503 -> {
                         LostArkResult.Fail(code, "로스트아크 서버가 점검중 입니다.")
                     }
-
-                    429 -> {
-                        val resetTime  = runCatching { result.response.headers["X-RateLimit-Reset"] }.getOrNull()
-                        var checkTime :Long = -1L
-                        try {
-                            resetTime?.let { time ->
-                                val get = time.toLong()
-                                val now = Clock.System.now().toEpochMilliseconds()
-                                checkTime = abs(get - now)
-                            }
-                        } catch (e:Exception) {
-                            e.printStackTrace()
-                        }
-                        LostArkResult.Fail(code,if (checkTime <=0) result.message.toError() else "${checkTime}초 후 다시 시도해 주세요.")
-                    }
-
                     else -> {
                         LostArkResult.Fail(code, result.message.toError())
                     }

@@ -35,9 +35,8 @@ import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.lostark.LostArkApi
-import com.wonddak.sharedapi.onError
-import com.wonddak.sharedapi.onException
 import com.wonddak.sharedapi.onFail
+import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -171,11 +170,12 @@ fun FocusUserView(
                     }
                 }
                 characterResult.onFail { code, message ->
-                    msg = message
                     delay(1_500L)
-                    if (code == 429) {
-
-                    }
+                    msg = message
+                    loaCellViewModel.showLoading = false
+                }
+                characterResult.onFailOnlyMsg {  message ->
+                    msg = message
                     loaCellViewModel.showLoading = false
                 }
             }
