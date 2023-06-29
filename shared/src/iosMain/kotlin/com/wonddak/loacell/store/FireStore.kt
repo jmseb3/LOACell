@@ -129,14 +129,14 @@ actual class CommonCollection(
         filed: String,
         list: List<Any>
     ): CommonQuery {
-        return  CommonQuery(ref.queryWhereField(filed,list))
+        return CommonQuery(ref.queryWhereField(field = filed, `in` = list))
     }
 
     actual fun whereIn(
         filed: CommonFieldPath,
         list: List<Any>
     ): CommonQuery {
-        return  CommonQuery(ref.queryWhereFieldPath(filed.ref,list))
+        return  CommonQuery(ref.queryWhereFieldPath(path = filed.ref, `in` = list))
     }
 }
 
