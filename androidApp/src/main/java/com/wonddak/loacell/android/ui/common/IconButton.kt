@@ -42,15 +42,13 @@ fun MyIconButton(
     enabled: Boolean = true,
     size: Dp = 30.dp,
     onClick: () -> Unit
-) {
-    MyIconButton(
-        modifier = modifier,
-        id = imageResource.drawableResId,
-        size = size,
-        enabled = enabled,
-        onClick = onClick
-    )
-}
+) = MyIconButton(
+    modifier = modifier,
+    id = imageResource.drawableResId,
+    size = size,
+    enabled = enabled,
+    onClick = onClick
+)
 
 @Composable
 fun MyRoomIconButton(

@@ -201,6 +201,7 @@ class LoaCellViewModel(
                                             successAction = {
                                                 dataBase.initFBRoomInfo(roomInfo, roomId)
                                                 _showRoomEnterByIntent.value = ""
+                                                showSnackBar("방 정보가 추가되었습니다.")
                                             },
                                             failAction = { error ->
                                                 showSnackBar("입장에 실패했습니다.(${error.errorMsg}")

@@ -5,36 +5,71 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
+import com.wonddak.loacell.RoomInfo
+import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.noRippleClickable
 
 @Composable
 fun ShareSheet(
-    uniqueId: String,
+    roomInfo: RoomInfo,
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
+    val uniqueId: String = roomInfo.uniqueId
 
     BaseSheet(
         title = "공유하기",
         useCloseIcon = true,
         onDismissRequest = onDismissRequest
     ) {
-        Row() {
-            Button(onClick = { copyToClipBoard(context,uniqueId) }) {
-                Text(text = "공유하기")
-            }
-            Button(onClick = { shareToKakao(context,uniqueId) }) {
-                Text(text = "공유하기")
-            }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal =  10.dp, vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        copyToClipBoard(context,uniqueId)
+                    },
+                painter = painterResource(id = SharedRes.images.ic_share_link.drawableResId),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Image(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .noRippleClickable {
+                        shareToKakao(context,roomInfo)
+                    },
+                painter = painterResource(id = SharedRes.images.ic_share_kakaotalk.drawableResId),
+                contentDescription = null
+            )
         }
     }
 }
@@ -45,13 +80,12 @@ internal fun copyToClipBoard(context: Context, uniqueId: String) {
     clipboard.setPrimaryClip(clip)
 }
 
-internal fun shareToKakao(context: Context, uniqueId: String) {
+internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
     val TAG = "KAKAO"
+    val uniqueId: String = roomInfo.uniqueId
+
     val defaultText = TextTemplate(
-        text = """
-        카카오톡 공유는 카카오톡을 실행하여
-        사용자가 선택한 채팅방으로 메시지를 전송합니다.
-    """.trimIndent(),
+        text = """LoaCell의 ${roomInfo.title}방으로 초대합니다.""".trimIndent(),
         link = Link(
             androidExecutionParams = mapOf("uniqueId" to uniqueId),
             iosExecutionParams  = mapOf("uniqueId" to uniqueId)

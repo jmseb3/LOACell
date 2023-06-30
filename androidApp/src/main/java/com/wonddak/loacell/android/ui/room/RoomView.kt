@@ -174,7 +174,7 @@ fun RoomTitleView(
     }
 
     if (showShareSheet) {
-        ShareSheet(uniqueId = roomInfo.uniqueId) {
+        ShareSheet(roomInfo = roomInfo) {
             showShareSheet = false
         }
     }
