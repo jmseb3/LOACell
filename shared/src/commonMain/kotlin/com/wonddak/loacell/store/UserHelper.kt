@@ -13,18 +13,18 @@ data class FBUSerInfo(
     val characterList: List<FBCharacterInfo> = emptyList(),
     val timeStamp: Long = Clock.System.now().toEpochMilliseconds()
 ) {
-    fun toMap() = mapOf<String, Any>(
+    fun toMap() = mapOf(
         "representativeCharacter" to representativeCharacter,
-        "characterList" to characterList,
+        "characterList" to characterList.map { it.toMap() },
         "timeStamp" to timeStamp
     )
 }
 
 data class FBCharacterInfo(
-    public val name: String = "",
-    public val server: String = "",
-    public val className: String = "",
-    public val level: String = ""
+    val name: String = "",
+    val server: String = "",
+    val className: String = "",
+    val level: String = ""
 ) {
     fun toMap() = mapOf<String, Any>(
         "name" to name,
@@ -69,13 +69,18 @@ object CommonUserHelper {
                         }
                     )
                 } else {
-                    userRoom.set(
-                        data = fbUserInfo.toMap(),
-                        successAction = successAction,
-                        failAction = { err ->
-                            failAction(err.errorMsg)
-                        }
-                    )
+                    try {
+                        userRoom.set(
+                            data = fbUserInfo.toMap(),
+                            successAction = successAction,
+                            failAction = { err ->
+                                failAction(err.errorMsg)
+                            }
+                        )
+                    }catch (e:Exception) {
+                        failAction(e.message ?:"dead")
+                    }
+
                 }
             },
             failAction = {
