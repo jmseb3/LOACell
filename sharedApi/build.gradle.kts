@@ -31,8 +31,7 @@ kotlin {
                 implementation(Dependencies.KMM.Ktor.ContentNegotiation)
                 implementation(Dependencies.KMM.Ktor.Serialization)
                 implementation(Dependencies.KMM.Kotlinx.DateTime)
-
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+                implementation(Dependencies.KMM.Kotlinx.Serialization)
             }
         }
         val androidMain by getting {

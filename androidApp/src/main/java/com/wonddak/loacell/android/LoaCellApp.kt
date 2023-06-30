@@ -4,6 +4,8 @@ import android.app.Application
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.common.KakaoSdk
+import com.wonddak.loacell.SharedRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,5 +21,6 @@ class LoaCellApp : Application() {
         Firebase.auth.addAuthStateListener {
             _user.value = it.currentUser
         }
+        KakaoSdk.init(this,SharedRes.strings.kakaoKey.getString(this))
     }
 }

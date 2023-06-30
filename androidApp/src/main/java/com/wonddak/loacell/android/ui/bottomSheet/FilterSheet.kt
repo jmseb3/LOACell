@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.room.raid
+package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

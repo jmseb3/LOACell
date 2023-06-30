@@ -44,6 +44,7 @@ android {
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = false
             }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -70,4 +71,7 @@ dependencies {
     implementation(Dependencies.Android.Firebase.Crashlytics)
     implementation(Dependencies.Android.Firebase.Auth)
     implementation(Dependencies.Android.Firebase.AuthGoogle)
+
+    implementation("com.kakao.sdk:v2-share:2.14.0") // 메시지(카카오톡 공유)
+
 }

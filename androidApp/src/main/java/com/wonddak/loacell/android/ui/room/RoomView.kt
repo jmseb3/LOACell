@@ -1,8 +1,5 @@
 package com.wonddak.loacell.android.ui.room
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -14,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
@@ -26,6 +25,7 @@ import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
+import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.RoomExitDialog
 import com.wonddak.loacell.android.ui.room.raid.RaidView
@@ -108,7 +108,9 @@ fun RoomTitleView(
     val user by LoaCellApp.user.collectAsState(null)
     val role by loaCellViewModel.myRole.collectAsState()
 
-    val context = LocalContext.current
+    var showShareSheet by remember {
+        mutableStateOf(false)
+    }
 
     AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
         Box(
@@ -124,10 +126,7 @@ fun RoomTitleView(
                 Text(
                     text = roomInfo.uniqueId,
                     modifier = Modifier.noRippleClickable {
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip: ClipData = ClipData.newPlainText("Room Id", roomInfo.uniqueId)
-                        clipboard.setPrimaryClip(clip)
+                        showShareSheet = true
                     },
                 )
                 Divider()
@@ -171,6 +170,12 @@ fun RoomTitleView(
                     }
                 )
             }
+        }
+    }
+
+    if (showShareSheet) {
+        ShareSheet(uniqueId = roomInfo.uniqueId) {
+            showShareSheet = false
         }
     }
 

@@ -24,6 +24,8 @@ import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.loacell.store.FBRoomInfo
+import com.wonddak.loacell.store.initFBRoomInfo
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -119,6 +121,19 @@ class LoaCellViewModel(
     private var observeUser: CommonListenerRegistration? = null
     private var observeRaid: CommonListenerRegistration? = null
 
+    private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
+    val showRoomEnterByIntent get() = _showRoomEnterByIntent
+    fun setIntentRoomId(id:String) {
+        _showRoomEnterByIntent.value = id
+    }
+
+    private var _showRoomEnterPasswordByIntent: MutableStateFlow<Pair<String,FBRoomInfo>?> = MutableStateFlow(null)
+    val showRoomEnterPasswordByIntent get() = _showRoomEnterPasswordByIntent
+    fun clearEnterPasswordByIntent() {
+        _showRoomEnterPasswordByIntent.value = null
+    }
+
+
     init {
         viewModelScope.launch {
             //room 정보 갱신
@@ -163,6 +178,43 @@ class LoaCellViewModel(
                         _userInfoList.value = emptyList()
                         _roomInfo.value = null
                         _raidInfoList.value = emptyList()
+                    }
+                }
+            }
+
+            //id 값을 가져온 경우
+            launch {
+                showRoomEnterByIntent.collect { roomId ->
+                    if (roomId.isNotEmpty()) {
+                        hideRoomInfo()
+                        val nowEnterRoomList = dataBase.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }
+                        if (nowEnterRoomList.contains(roomId)) {
+                            showSnackBar("이미 입장한 방입니다.")
+                        } else {
+                            CommonRoomHelper.checkExist(
+                                roomId,
+                                successAction = { roomInfo ->
+                                    if (roomInfo.enterPassword.isEmpty()) {
+                                        CommonRoomHelper.enterRoom(
+                                            roomId,
+                                            user.value!!.uid,
+                                            successAction = {
+                                                dataBase.initFBRoomInfo(roomInfo, roomId)
+                                                _showRoomEnterByIntent.value = ""
+                                            },
+                                            failAction = { error ->
+                                                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
+                                            }
+                                        )
+                                    } else {
+                                        _showRoomEnterPasswordByIntent.value = Pair(roomId,roomInfo)
+                                    }
+                                },
+                                failAction = {
+                                    showSnackBar("방이 존재 하지 않습니다.")
+                                }
+                            )
+                        }
                     }
                 }
             }

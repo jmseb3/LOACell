@@ -21,6 +21,7 @@ import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.dialog.RoomActionDialog
 import com.wonddak.loacell.android.ui.dialog.RoomEnterDialog
 import com.wonddak.loacell.android.ui.dialog.RoomEnterErrorDialog
+import com.wonddak.loacell.android.ui.dialog.RoomEnterPasswordDialog
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
@@ -28,6 +29,7 @@ import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.store.CommonRoomHelper
+import com.wonddak.loacell.store.initFBRoomInfo
 
 
 @Composable
@@ -37,6 +39,7 @@ fun MainContent(
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val userInfo by loaCellViewModel.user.collectAsState()
+    val showRoomEnterPasswordByIntent by loaCellViewModel.showRoomEnterPasswordByIntent.collectAsState()
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {
@@ -145,6 +148,21 @@ fun MainContent(
                                     showRoomAdd = false
                                 }
                             }
+                            if (showRoomEnterPasswordByIntent != null) {
+                                showRoomEnterPasswordByIntent?.let {
+                                    RoomEnterPasswordDialog(
+                                        roomId = it.first,
+                                        fbRoomInfo = it.second,
+                                        success = { id, roomInfo ->
+                                            db.initFBRoomInfo(roomInfo, id)
+                                            loaCellViewModel.clearEnterPasswordByIntent()
+                                        }
+                                    ) {
+                                        loaCellViewModel.clearEnterPasswordByIntent()
+                                    }
+                                }
+
+                            }
                             if (showRoomEnter) {
                                 RoomEnterDialog(
                                     nowEnterRoomList = roomList.map { it.uniqueId },
@@ -160,15 +178,7 @@ fun MainContent(
                                                 showRoomEnter = false
                                             }
                                         )
-                                        db.roomInfoQueriesHelper.addRoomInfo(
-                                            roomInfo.title,
-                                            roomInfo.description,
-                                            roomId,
-                                            roomInfo.owner,
-                                            roomInfo.enterPassword,
-                                            roomInfo.enterUser,
-                                            roomInfo.editableUser,
-                                        )
+                                        db.initFBRoomInfo(roomInfo, roomId)
                                     },
                                     dismiss = {
                                         showRoomEnter = false

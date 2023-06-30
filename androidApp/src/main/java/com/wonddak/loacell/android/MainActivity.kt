@@ -1,6 +1,8 @@
 package com.wonddak.loacell.android
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
             this,
             LoaCellViewModelFactory(db, config)
         )[LoaCellViewModel::class.java]
-
+        kakaoIntent(intent)
         setContent {
             val selectedRoomId by loaCellViewModel.roomId.collectAsState()
             BackHandler(selectedRoomId.isEmpty()) {
@@ -41,6 +43,22 @@ class MainActivity : ComponentActivity() {
                 }
             }
             MainContent(db, loaCellViewModel)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        kakaoIntent(intent)
+    }
+
+    private fun kakaoIntent(intent: Intent?) {
+        Log.i("JWH",intent.toString())
+        intent?.data?.let { uri ->
+            if (uri.scheme == "kakaoeaad613c8a32160c49991040e94170f9") {
+                uri.getQueryParameter("uniqueId")?.let { id ->
+                    loaCellViewModel.setIntentRoomId(id)
+                }
+            }
         }
     }
 }
