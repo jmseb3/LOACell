@@ -38,13 +38,13 @@ android {
                 mappingFileUploadEnabled = true
             }
             signingConfig = signingConfigs.getByName("LoaCellSigning")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
             isDebuggable = true
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = false
             }
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
