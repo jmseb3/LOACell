@@ -1,8 +1,8 @@
 
 object AppConfig {
     const val AppName = "LoaCell"
-    const val versionCode = 4
-    const val version = "1.0.1"
+    const val versionCode = 5
+    const val version = "1.0.2"
     const val group = "com.wonddak"
     const val loaCellgroup = "$group.loacell"
     const val databaseName = "Database"
