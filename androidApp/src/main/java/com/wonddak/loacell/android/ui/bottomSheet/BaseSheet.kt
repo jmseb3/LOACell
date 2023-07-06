@@ -18,16 +18,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.Config
+import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.getFloat
 import kotlinx.coroutines.delay
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseSheet(
@@ -55,7 +65,9 @@ fun BaseSheet(
             Box() {
                 Text(
                     text = title,
-                    modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -88,6 +100,14 @@ fun BaseSheet(
     buttonClickAction : () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+    val config = Config(context)
+    var defaultSpace by remember {
+        mutableFloatStateOf(20f)
+    }
+    LaunchedEffect(true) {
+        defaultSpace = config.getFloat(ConfigKeys.SheetSpace,20f)
+    }
     BaseSheet(
         title,useCloseIcon,onDismissRequest
     ) {
@@ -119,6 +139,7 @@ fun BaseSheet(
             ) {
                 Text(text = buttonText)
             }
+            Spacer(modifier = Modifier.height(Dp(defaultSpace)))
         }
     }
 }

@@ -1,18 +1,14 @@
 package com.wonddak.loacell.android.ui.room.setting
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +31,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.common.SectionCardView
 import com.wonddak.loacell.android.ui.dialog.ChangeOwnerDialog
 import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -173,51 +170,6 @@ fun SettingRoomView(
             }
             Divider()
             UserUidList(fetch, info, result)
-        }
-    }
-}
-
-@Composable
-private fun SectionCardView(
-    title: String? = null,
-    @DrawableRes icon: Int = 0,
-    iconAction: () -> Unit = {},
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-        ) {
-            Box() {
-                title?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterStart),
-                        fontSize = 20.sp
-                    )
-                }
-                if (icon != 0) {
-                    MyIconButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        id = icon,
-                        size = 18.dp
-                    ) {
-                        iconAction()
-                    }
-                }
-            }
-            if (title != null || icon != 0) {
-                Divider()
-            }
-            content()
         }
     }
 }

@@ -5,7 +5,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -20,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.SharedRes
@@ -41,7 +45,7 @@ fun LoginInfoView(
             mutableStateOf("")
         }
         LaunchedEffect(true) {
-            displayName = user?.displayName ?:""
+            displayName = user?.displayName ?: ""
         }
         if (loaCellViewModel.showSettingEditName) {
             ProfileNameDialog(
@@ -77,65 +81,77 @@ fun LoginInfoView(
                 }
             }
             Divider()
-            OutlinedButton(
-                onClick = {
-                    if (userInfo.isAnonymous) {
-                        loginHelper.delete {
+            val roomList = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val buttonWeight = Modifier.weight(1f)
+                OutlinedButton(
+                    modifier = buttonWeight,
+                    onClick = {
+                        if (userInfo.isAnonymous) {
+                            loginHelper.delete {
+                                loaCellViewModel.signOut()
+                            }
+                        } else {
+                            loginHelper.signOut()
                             loaCellViewModel.signOut()
                         }
-                    } else {
-                        loginHelper.signOut()
-                        loaCellViewModel.signOut()
                     }
-                }
-            ) {
-                Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
-            }
-            if (userInfo.isAnonymous) {
-                val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.StartIntentSenderForResult()
-                ) { result ->
-                    loginHelper.registerAnonymousToGoogle(
-                        result,
-                        failRegisterAction = {error ->
-                            loaCellViewModel.showSnackBar(error.localizedMessage ?: "unknown Error")
-                        }
-                    ) { error ->
-                        if (error is FirebaseAuthUserCollisionException) {
-                            loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
-                        } else {
-                            loaCellViewModel.showSnackBar(
-                                error?.localizedMessage ?: "unknown Error"
-                            )
-                        }
-                    }
-                }
-                OutlinedButton(onClick = {
-                    loginHelper.requestGoogleLogin {
-                        anonymousToGoogleLoginLauncher.launch(it)
-                    }
-                }) {
-                    Text(text = "Google 계정 연동")
-                }
-            } else {
-                val list = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
+                }
+                Spacer(modifier = Modifier.width(15.dp))
+                if (userInfo.isAnonymous) {
+                    val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.StartIntentSenderForResult()
+                    ) { result ->
+                        loginHelper.registerAnonymousToGoogle(
+                            result,
+                            failRegisterAction = { error ->
+                                loaCellViewModel.showSnackBar(
+                                    error.localizedMessage ?: "unknown Error"
+                                )
+                            }
+                        ) { error ->
+                            if (error is FirebaseAuthUserCollisionException) {
+                                loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
+                            } else {
+                                loaCellViewModel.showSnackBar(
+                                    error?.localizedMessage ?: "unknown Error"
+                                )
+                            }
+                        }
+                    }
                     OutlinedButton(
+                        modifier = buttonWeight,
+                        onClick = {
+                            loginHelper.requestGoogleLogin {
+                                anonymousToGoogleLoginLauncher.launch(it)
+                            }
+                        }
+                    ) {
+                        Text(text = "Google 계정 연동")
+                    }
+                } else {
+                    OutlinedButton(
+                        modifier = buttonWeight,
                         onClick = {
                             loginHelper.delete {
                                 loaCellViewModel.signOut()
                             }
                         },
-                        enabled = list.isEmpty()
+                        enabled = roomList.isEmpty()
                     ) {
                         Text(text = "탈퇴")
                     }
-                    if (list.isNotEmpty()) {
-                        Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
-                    }
                 }
+            }
+
+            if (!userInfo.isAnonymous && roomList.isNotEmpty()) {
+                Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
             }
         }
     }
