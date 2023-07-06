@@ -1,0 +1,56 @@
+//
+//  LoginHelper.swift
+//  iosApp
+//
+//  Created by WonHee Jung on 2023/07/06.
+//  Copyright © 2023 orgName. All rights reserved.
+//
+
+import Foundation
+import Firebase
+import GoogleSignIn
+import FirebaseAuth
+
+extension LoaCellViewModel {
+
+    func signOut() {
+        do {
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+    }
+    
+    func requestGoogleLogin(
+        successAction: @escaping () -> Void = {}
+    ) {
+        guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {return}
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { [unowned self] result, error in
+            guard error == nil else {
+                return
+            }
+            
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString
+            else {
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
+            
+            firebaseAuth.signIn(with: credential) { result, error in
+                // At this point, our user is signed in
+                if(error != nil) {
+                    successAction()
+                }
+            }
+        }
+    }
+}
