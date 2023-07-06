@@ -8,7 +8,6 @@
 
 import SwiftUI
 import GoogleSignInSwift
-import Firebase
 
 struct LoginView: View {
     @ObservedObject private(set) var viewModel: LoaCellViewModel

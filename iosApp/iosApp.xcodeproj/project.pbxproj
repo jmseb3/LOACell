@@ -9,15 +9,13 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
-		07125FA32A565386003F8FCC /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FA22A565386003F8FCC /* FirebaseAnalytics */; };
-		07125FA52A565386003F8FCC /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FA42A565386003F8FCC /* FirebaseAnalyticsSwift */; };
-		07125FA72A565386003F8FCC /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FA62A565386003F8FCC /* FirebaseAuth */; };
-		07125FA92A565386003F8FCC /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FA82A565386003F8FCC /* FirebaseCrashlytics */; };
 		07125FAC2A5653CE003F8FCC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FAB2A5653CE003F8FCC /* GoogleSignIn */; };
 		07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */; };
 		07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB22A5658B6003F8FCC /* LoginView.swift */; };
-		07125FB52A565954003F8FCC /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB42A565954003F8FCC /* LoginHelper.swift */; };
+		07125FB52A565954003F8FCC /* LoaCellViewModel+FireAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */; };
 		07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */; };
+		07125FBC2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */; };
+		077244C32A568AFD0060367B /* SwiftUISnackbar in Frameworks */ = {isa = PBXBuildFile; productRef = 077244C22A568AFD0060367B /* SwiftUISnackbar */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
@@ -28,8 +26,9 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		07125FB22A5658B6003F8FCC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		07125FB42A565954003F8FCC /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
+		07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoaCellViewModel+FireAuth.swift"; sourceTree = "<group>"; };
 		07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaCellViewModel.swift; sourceTree = "<group>"; };
+		07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoaCellViewModel+FireStore.swift"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		33B975715C0B4F4FE3AE7BED /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -45,13 +44,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07125FA52A565386003F8FCC /* FirebaseAnalyticsSwift in Frameworks */,
-				07125FA32A565386003F8FCC /* FirebaseAnalytics in Frameworks */,
 				07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */,
-				07125FA92A565386003F8FCC /* FirebaseCrashlytics in Frameworks */,
 				BA8DF69188420D41684EB3F9 /* Pods_iosApp.framework in Frameworks */,
-				07125FA72A565386003F8FCC /* FirebaseAuth in Frameworks */,
 				07125FAC2A5653CE003F8FCC /* GoogleSignIn in Frameworks */,
+				077244C32A568AFD0060367B /* SwiftUISnackbar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,18 +78,12 @@
 			path = login;
 			sourceTree = "<group>";
 		};
-		07125FB12A565825003F8FCC /* util */ = {
-			isa = PBXGroup;
-			children = (
-				07125FB42A565954003F8FCC /* LoginHelper.swift */,
-			);
-			path = util;
-			sourceTree = "<group>";
-		};
 		07125FB62A565CB0003F8FCC /* viewModel */ = {
 			isa = PBXGroup;
 			children = (
 				07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */,
+				07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */,
+				07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */,
 			);
 			path = viewModel;
 			sourceTree = "<group>";
@@ -144,7 +134,6 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				07125FAF2A565810003F8FCC /* ui */,
-				07125FB12A565825003F8FCC /* util */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -169,12 +158,9 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
-				07125FA22A565386003F8FCC /* FirebaseAnalytics */,
-				07125FA42A565386003F8FCC /* FirebaseAnalyticsSwift */,
-				07125FA62A565386003F8FCC /* FirebaseAuth */,
-				07125FA82A565386003F8FCC /* FirebaseCrashlytics */,
 				07125FAB2A5653CE003F8FCC /* GoogleSignIn */,
 				07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */,
+				077244C22A568AFD0060367B /* SwiftUISnackbar */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -205,8 +191,8 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				077244C12A568AFD0060367B /* XCRemoteSwiftPackageReference "SwiftUISnackbar" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -296,9 +282,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
-				07125FB52A565954003F8FCC /* LoginHelper.swift in Sources */,
+				07125FB52A565954003F8FCC /* LoaCellViewModel+FireAuth.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				07125FBC2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -512,14 +499,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
-			};
-		};
 		07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -528,29 +507,17 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		077244C12A568AFD0060367B /* XCRemoteSwiftPackageReference "SwiftUISnackbar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zaniluca/SwiftUISnackbar";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		07125FA22A565386003F8FCC /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		07125FA42A565386003F8FCC /* FirebaseAnalyticsSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsSwift;
-		};
-		07125FA62A565386003F8FCC /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		07125FA82A565386003F8FCC /* FirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07125FA12A565386003F8FCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
 		07125FAB2A5653CE003F8FCC /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
@@ -560,6 +527,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		077244C22A568AFD0060367B /* SwiftUISnackbar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 077244C12A568AFD0060367B /* XCRemoteSwiftPackageReference "SwiftUISnackbar" */;
+			productName = SwiftUISnackbar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

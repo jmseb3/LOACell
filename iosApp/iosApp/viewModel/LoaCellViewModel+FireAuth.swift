@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseCore
 import GoogleSignIn
 import FirebaseAuth
 
@@ -47,9 +47,8 @@ extension LoaCellViewModel {
             
             firebaseAuth.signIn(with: credential) { result, error in
                 // At this point, our user is signed in
-                if(error != nil) {
-                    successAction()
-                }
+                self.user = result?.user
+                self.syncStart(force: true)
             }
         }
     }

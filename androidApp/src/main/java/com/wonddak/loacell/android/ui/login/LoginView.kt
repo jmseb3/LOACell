@@ -58,7 +58,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     loggingIn = false
                 },
                 successAction = {
-                    syncStart()
+                    syncStart(force = true)
                     loggingIn = false
                 },
                 failAction = {

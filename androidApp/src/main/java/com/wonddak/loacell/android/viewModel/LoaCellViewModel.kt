@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
@@ -18,12 +17,11 @@ import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.ext.getRole
-import com.wonddak.loacell.getLong
-import com.wonddak.loacell.putLong
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.loacell.syncStart
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -173,17 +171,20 @@ class LoaCellViewModel(
     var syncData by mutableStateOf(false)
         private  set
 
-    fun syncStart() {
+    fun syncStart(force :Boolean = false) {
         viewModelScope.launch {
-            val nowTime = System.currentTimeMillis()
-            val syncTime = config.getLong(ConfigKeys.HomeRefreshKey)
-            if (nowTime - syncTime > 60 * 5 * 1000) {
-                syncData = true
-                launch {
-                    config.putLong(ConfigKeys.HomeRefreshKey,nowTime)
+            config.syncStart(force) { result ->
+                if (result) {
+                    syncData = true
+                    CommonRoomHelper.syncRoom(
+                        user.value!!.uid,
+                        dataBase,
+                        failAction = { _ -> },
+                        successAction = { syncEnd() }
+                    )
+                } else {
+                    showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
                 }
-            } else {
-                showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
             }
         }
 

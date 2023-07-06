@@ -2,7 +2,8 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    @ObservedObject private(set) var viewModel: LoaCellViewModel
+    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
+    
     
     var body: some View {
         VStack {
@@ -11,6 +12,13 @@ struct ContentView: View {
             } else {
                 Button("out") {
                     viewModel.signOut()
+                }
+                if(viewModel.syncData) {
+                    ProgressView(label: {
+                        Text("데이터를 동기화 중입니다.")
+                    })
+                } else {
+                    Text("123")
                 }
             }
         }
