@@ -28,8 +28,6 @@ extension LoaCellViewModel {
                     print("<>>>>>",error)
                 } successAction: {
                     self.synceEnd()
-                    let data = self.db.roomInfoQueriesHelper.getAllValue()
-                    print(data)
                 }
             } else {
                 self.showSnackBar(message: "최근에 동기화를 하여 현재는 할 수 없습니다.")

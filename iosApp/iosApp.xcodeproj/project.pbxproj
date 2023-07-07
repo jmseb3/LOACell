@@ -16,6 +16,7 @@
 		07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */; };
 		07125FBC2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */; };
 		077244C32A568AFD0060367B /* SwiftUISnackbar in Frameworks */ = {isa = PBXBuildFile; productRef = 077244C22A568AFD0060367B /* SwiftUISnackbar */; };
+		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
@@ -29,6 +30,7 @@
 		07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoaCellViewModel+FireAuth.swift"; sourceTree = "<group>"; };
 		07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaCellViewModel.swift; sourceTree = "<group>"; };
 		07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoaCellViewModel+FireStore.swift"; sourceTree = "<group>"; };
+		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		33B975715C0B4F4FE3AE7BED /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
 			);
 			path = ui;
@@ -86,6 +89,14 @@
 				07125FBB2A5665DB003F8FCC /* LoaCellViewModel+FireStore.swift */,
 			);
 			path = viewModel;
+			sourceTree = "<group>";
+		};
+		07DE600A2A57B2E400A122B2 /* home */ = {
+			isa = PBXGroup;
+			children = (
+				07DE600B2A57B2F300A122B2 /* MainContent.swift */,
+			);
+			path = home;
 			sourceTree = "<group>";
 		};
 		60823FB2992DCA43E2906BC0 /* Pods */ = {
@@ -281,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				07125FB52A565954003F8FCC /* LoaCellViewModel+FireAuth.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,

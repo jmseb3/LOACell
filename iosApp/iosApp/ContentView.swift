@@ -10,6 +10,7 @@ struct ContentView: View {
             if(viewModel.user == nil) {
                 LoginView(viewModel: viewModel)
             } else {
+                MainContent(viewModel: viewModel)
                 Button("out") {
                     viewModel.signOut()
                 }
