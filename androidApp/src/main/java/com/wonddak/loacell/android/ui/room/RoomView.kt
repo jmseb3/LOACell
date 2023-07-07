@@ -41,6 +41,7 @@ fun RoomView(
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomInfo = totalRoomInfo.roomInfo
+    val tabState by loaCellViewModel.tabState.collectAsState()
     BackHandler(!loaCellViewModel.showRaidAdd && !loaCellViewModel.showUserAdd) {
         loaCellViewModel.hideRoomInfo()
     }
@@ -50,10 +51,10 @@ fun RoomView(
             .fillMaxSize()
     ) {
         roomInfo?.let { roomInfo ->
-            AnimatedVisibility(loaCellViewModel.tabState != RoomState.Setting) {
+            AnimatedVisibility(tabState != RoomState.Setting) {
                 RoomTitleView(db, loaCellViewModel, roomInfo)
             }
-            when (loaCellViewModel.tabState) {
+            when (tabState) {
                 RoomState.Raid -> {
                     RaidView(
                         db = db,

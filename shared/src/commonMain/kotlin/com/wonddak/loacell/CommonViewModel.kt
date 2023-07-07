@@ -3,6 +3,7 @@ package com.wonddak.loacell
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -40,10 +41,12 @@ open class CommonViewModel(
 
     fun showRoom(roomId: String) {
         _roomId.value = roomId
+        updateTabState(RoomState.Raid)
     }
 
     fun hideRoom() {
         _roomId.value = ""
+        updateTabState(RoomState.Raid)
     }
     //endregion
 
@@ -90,6 +93,13 @@ open class CommonViewModel(
     )
     //endregion
 
+    //region tabState
+    private var _tabState = MutableStateFlow(RoomState.Raid)
+    val tabState = _tabState.toCommonStateFlow()
+    fun updateTabState(state: RoomState) {
+        _tabState.value = state
+    }
+    //endregion
 
     private var totalRoomJob: Job? = null
 

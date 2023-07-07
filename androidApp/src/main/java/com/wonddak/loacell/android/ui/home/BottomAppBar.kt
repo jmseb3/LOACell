@@ -37,6 +37,7 @@ fun BottomAppBar(
     val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
     val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
     val syncData by loaCellViewModel.syncData.collectAsState()
+    val tabState by loaCellViewModel.tabState.collectAsState()
 
     loaCellViewModel.apply {
         BottomAppBar(

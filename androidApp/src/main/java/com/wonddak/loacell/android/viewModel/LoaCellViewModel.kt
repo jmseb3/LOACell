@@ -68,16 +68,21 @@ class LoaCellViewModel(
     val focusRaidId get() = common.focusRaidId
     val raidInfo get() = common.raidInfo
 
-    //방에 들어갈경우
-    fun showRoomInfo(roomId: String) {
-        tabState = RoomState.Raid
-        common.showRoom(roomId)
+    //방에서 탭 선택
+    val tabState get() = common.tabState
+
+    fun setTabStatus(state: RoomState) {
+        hideAllDialog()
+        common.updateTabState(state)
     }
+
+    //방에 들어갈경우
+    fun showRoomInfo(roomId: String) = common.showRoom(roomId)
+
 
     //방에서 나갈경우
     fun hideRoomInfo() {
         common.hideRoom()
-        tabState = RoomState.Raid
         tempOfFBData = emptyList()
         hideAllDialog()
         clearFocusItem()
@@ -242,14 +247,6 @@ class LoaCellViewModel(
     }
     // endregion
 
-    var tabState by mutableStateOf(RoomState.Raid)
-        private set
-
-    fun setTabStatus(value: RoomState) {
-        hideAllDialog()
-        tabState = value
-    }
-
     var showLoading by mutableStateOf(false)
 
     fun bottomAddAction() {
@@ -272,7 +269,7 @@ class LoaCellViewModel(
                 showRaidDelete = true
                 return
             }
-            when (tabState) {
+            when (tabState.value) {
                 RoomState.Raid -> { showRaidAdd = true }
                 RoomState.User -> { showUserAdd = true }
                 RoomState.Setting -> {}
