@@ -19,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.ext.checkTimeOver
-import com.wonddak.loacell.RoomRole
-import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.RoomRole
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
 
 
@@ -36,6 +36,7 @@ fun BottomAppBar(
     val role by loaCellViewModel.myRole.collectAsState()
     val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
     val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
+    val syncData by loaCellViewModel.syncData.collectAsState()
 
     loaCellViewModel.apply {
         BottomAppBar(

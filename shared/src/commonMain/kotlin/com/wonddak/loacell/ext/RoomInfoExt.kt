@@ -1,7 +1,7 @@
 package com.wonddak.loacell.ext
 
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.RoomRole
+import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.sharedapi.firebase.FBApi
 import com.wonddak.sharedapi.firebase.model.FBDataItem

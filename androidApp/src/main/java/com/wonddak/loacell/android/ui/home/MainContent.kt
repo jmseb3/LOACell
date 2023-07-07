@@ -204,11 +204,9 @@ fun MainContent(
                             )
                         }
                     }
-
-                    loaCellViewModel.apply {
-                        if (syncData) {
-                            LoadingView("데이터를 동기화 중입니다.")
-                        }
+                    val syncData by loaCellViewModel.syncData.collectAsState()
+                    if (syncData) {
+                        LoadingView("데이터를 동기화 중입니다.")
                     }
                 }
             }

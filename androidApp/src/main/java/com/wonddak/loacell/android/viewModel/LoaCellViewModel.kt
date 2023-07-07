@@ -9,23 +9,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.RoomRole
-import com.wonddak.loacell.RoomState
-import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.DialogStatus
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.ext.getRole
-import com.wonddak.loacell.store.CommonListenerRegistration
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.model.RoomRole
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
-import com.wonddak.loacell.syncStart
 import com.wonddak.sharedapi.firebase.model.FBDataItem
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -37,26 +31,52 @@ class LoaCellViewModel(
     private val config: Config
 ) : SnackBarController() {
 
+    private val common by lazy {
+        CommonViewModel(
+            viewModelScope,
+            dataBase,
+            config,
+            object : DialogStatus {
+                override fun showRoomEnterError() {
+                    showRoomEnterError = true
+                }
+
+                override fun showSnackBar(msg: String) {
+                    showSnackBar(msg, label = "확인")
+                }
+            }
+        )
+    }
+
     //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
 
     //현재 로그인된 유저 정보
-    val user get() =  LoaCellApp.user
+    val user get() = LoaCellApp.user
 
     //방 클릭시 매핑되는 방 id
-    private var _roomId = MutableStateFlow("")
-    val roomId get() = _roomId
+    val roomId get() = common.roomId
 
+    //선택된 방의 정보
+    val totalRoomInfo get() = common.totalRoomInfo
+
+    //포커싱된 유저 정보
+    val focusUserName get() = common.focusUserName
+    val userInfo get() =  common.userInfo
+
+    //포커싱된 레이드 정
+    val focusRaidId get() = common.focusRaidId
+    val raidInfo get() = common.raidInfo
 
     //방에 들어갈경우
     fun showRoomInfo(roomId: String) {
         tabState = RoomState.Raid
-        _roomId.value = roomId
+        common.showRoom(roomId)
     }
 
     //방에서 나갈경우
     fun hideRoomInfo() {
-        _roomId.value = ""
+        common.hideRoom()
         tabState = RoomState.Raid
         tempOfFBData = emptyList()
         hideAllDialog()
@@ -64,17 +84,14 @@ class LoaCellViewModel(
         clearFilter()
     }
 
-    //현재 roomid와 매칭되는 roomInfo
-    private var _roomInfo: MutableStateFlow<RoomInfo?> = MutableStateFlow(null)
-    val roomInfo get() = _roomInfo
-
     //owner가 사용자 정보를 볼경우 저장되는 temp값
-    var tempOfFBData :List<FBDataItem> by mutableStateOf(emptyList())
+    var tempOfFBData: List<FBDataItem> by mutableStateOf(emptyList())
+
 
     //현재 유저id와 roominfo로 나의 권한 체크
-    val myRole = user.combine(roomInfo) { user , info ->
-        if (user != null && info != null) {
-            info.getRole(user.uid)
+    val myRole = user.combine(totalRoomInfo) { user, info ->
+        if (user != null && info.roomInfo != null) {
+            info.roomInfo!!.getRole(user.uid)
         } else {
             RoomRole.NONE
         }
@@ -84,108 +101,28 @@ class LoaCellViewModel(
         initialValue = RoomRole.NONE
     )
 
-    private var _userInfoList: MutableStateFlow<List<UserInfo>> = MutableStateFlow(emptyList())
-    val userInfoList get() = _userInfoList
-
-    private var _focusUserName = MutableStateFlow("")
-    val focusUserName get() = _focusUserName
-
-    val userInfo = userInfoList.combine(focusUserName) { list, name ->
-        list.find { it.name == name }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = null
-    )
-    private var _focusRaidId = MutableStateFlow("")
-    val focusRaidId get() = _focusRaidId
-
-    private var _raidInfoList: MutableStateFlow<List<RaidInfo>> = MutableStateFlow(emptyList())
-    val raidInfoList get() = _raidInfoList
-
-    val raidInfo = raidInfoList.combine(focusRaidId) {list, id ->
-        list.find { it.raidId == id }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = null
-    )
-
-    private var raidListInfoJob: Job? = null
-    private var userListInfoJob: Job? = null
-    private var roomInfoJob: Job? = null
-
-    private var observeRoom: CommonListenerRegistration? = null
-    private var observeUser: CommonListenerRegistration? = null
-    private var observeRaid: CommonListenerRegistration? = null
-
     private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
     val showRoomEnterByIntent get() = _showRoomEnterByIntent
-    fun setIntentRoomId(id:String) {
+    fun setIntentRoomId(id: String) {
         _showRoomEnterByIntent.value = id
     }
 
-    private var _showRoomEnterPasswordByIntent: MutableStateFlow<Pair<String,FBRoomInfo>?> = MutableStateFlow(null)
+    private var _showRoomEnterPasswordByIntent: MutableStateFlow<Pair<String, FBRoomInfo>?> =
+        MutableStateFlow(null)
     val showRoomEnterPasswordByIntent get() = _showRoomEnterPasswordByIntent
     fun clearEnterPasswordByIntent() {
         _showRoomEnterPasswordByIntent.value = null
     }
 
-
     init {
         viewModelScope.launch {
-            //room 정보 갱신
-            launch {
-                roomId.collect { id ->
-                    if (id.isNotEmpty()) {
-                        CommonRoomHelper.checkExist(
-                            id,
-                            successAction = {
-                                observeRoom = CommonRoomHelper.observe(id,dataBase)
-                                roomInfoJob = launch {
-                                    dataBase.roomInfoQueriesHelper.getRoomInfoById(id).collect {
-                                        _roomInfo.value = it
-                                    }
-                                }
-                                observeUser = CommonUserHelper.observe(id,dataBase)
-                                userListInfoJob = launch {
-                                    dataBase.userInfoQueriesHelper.getUsersByRoomId(id).collect{
-                                        _userInfoList.value = it
-                                    }
-                                }
-                                observeRaid = CommonRaidHelper.observe(id, dataBase)
-                                raidListInfoJob = launch {
-                                    dataBase.raidInfoQueriesHelper.getAllByRoomId(id).collect {
-                                        _raidInfoList.value = it
-                                    }
-                                }
-                            },
-                            failAction = {
-                                showRoomEnterError = true
-                            }
-                        )
-                    } else {
-                        userListInfoJob?.cancel()
-                        roomInfoJob?.cancel()
-                        raidListInfoJob?.cancel()
-
-                        observeRoom?.remove()
-                        observeUser?.remove()
-                        observeRaid?.remove()
-
-                        _userInfoList.value = emptyList()
-                        _roomInfo.value = null
-                        _raidInfoList.value = emptyList()
-                    }
-                }
-            }
-
             //id 값을 가져온 경우
             launch {
                 showRoomEnterByIntent.collect { roomId ->
                     if (roomId.isNotEmpty()) {
                         hideRoomInfo()
-                        val nowEnterRoomList = dataBase.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }
+                        val nowEnterRoomList =
+                            dataBase.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }
                         if (nowEnterRoomList.contains(roomId)) {
                             showSnackBar("이미 입장한 방입니다.")
                         } else {
@@ -206,7 +143,8 @@ class LoaCellViewModel(
                                             }
                                         )
                                     } else {
-                                        _showRoomEnterPasswordByIntent.value = Pair(roomId,roomInfo)
+                                        _showRoomEnterPasswordByIntent.value =
+                                            Pair(roomId, roomInfo)
                                     }
                                 },
                                 failAction = {
@@ -221,31 +159,8 @@ class LoaCellViewModel(
     }
 
 
-    var syncData by mutableStateOf(false)
-        private  set
-
-    fun syncStart(force :Boolean = false) {
-        viewModelScope.launch {
-            config.syncStart(force) { result ->
-                if (result) {
-                    syncData = true
-                    CommonRoomHelper.syncRoom(
-                        user.value!!.uid,
-                        dataBase,
-                        failAction = { _ -> },
-                        successAction = { syncEnd() }
-                    )
-                } else {
-                    showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.",label = "확인")
-                }
-            }
-        }
-
-    }
-    fun syncEnd() {
-        showSnackBar("동기화가 완료되었습니다",label = "확인")
-        syncData = false
-    }
+    val syncData get() =  common.syncData
+    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid,force)
 
     fun signOut() {
         hideRoomInfo()
@@ -256,18 +171,18 @@ class LoaCellViewModel(
         hideAllDialog()
         clearFocusItem()
         showLoading = false
-        _focusUserName.value = userName
+        common.updateFocusUserName(userName)
     }
 
     fun setNowRaidInfo(raidId: String) {
         hideAllDialog()
         clearFocusItem()
-        _focusRaidId.value = raidId
+        common.updateFocusRaidId(raidId)
     }
 
     fun clearFocusItem() {
-        _focusRaidId.value = ""
-        _focusUserName.value = ""
+        common.updateFocusRaidId("")
+        common.updateFocusUserName("")
     }
 
     var filterRaidType by mutableStateOf(RaidType.values())
@@ -357,16 +272,10 @@ class LoaCellViewModel(
                 showRaidDelete = true
                 return
             }
-            when(tabState) {
-                RoomState.Raid -> {
-                    showRaidAdd = true
-                }
-                RoomState.User -> {
-                    showUserAdd = true
-                }
-                RoomState.Setting -> {
-
-                }
+            when (tabState) {
+                RoomState.Raid -> { showRaidAdd = true }
+                RoomState.User -> { showUserAdd = true }
+                RoomState.Setting -> {}
             }
         }
     }

@@ -35,7 +35,9 @@ fun FilterSheet(
     loaCellViewModel: LoaCellViewModel
 ) {
     val raidTypes = RaidType.values()
-    val userInfoList by loaCellViewModel.userInfoList.collectAsState(emptyList())
+
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val userInfoList= totalRoomInfo.userInfoList
 
     loaCellViewModel.apply {
         BaseSheet(title = "필터 설정",

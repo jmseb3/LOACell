@@ -1,4 +1,4 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.model
 
 enum class RoomState {
     Raid,

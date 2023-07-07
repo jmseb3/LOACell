@@ -35,7 +35,7 @@ object Dependencies {
 
         object Kotlinx {
             const val DateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
-            const val Coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+            const val Coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2"
             const val Serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
         }
 

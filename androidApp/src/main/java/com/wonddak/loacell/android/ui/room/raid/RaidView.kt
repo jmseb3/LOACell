@@ -46,7 +46,6 @@ import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
-import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
@@ -57,15 +56,17 @@ import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
 import com.wonddak.loacell.android.ui.dialog.EditRaidTitleDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable
 fun RaidView(
     db: AppDataBase, roomId: String, loaCellViewModel: LoaCellViewModel
 ) {
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
 
-    val raidInfoList by loaCellViewModel.raidInfoList.collectAsState()
-    val userInfoList by loaCellViewModel.userInfoList.collectAsState()
+    val raidInfoList = totalRoomInfo.raidInfoList
+    val userInfoList = totalRoomInfo.userInfoList
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
     Box() {
@@ -152,8 +153,10 @@ fun FocusRaidView(
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
+        val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
-        val userInfoList  by loaCellViewModel.userInfoList.collectAsState()
+        val userInfoList  = totalRoomInfo.userInfoList
 
         val context = LocalContext.current
         var focusIndex by remember { mutableIntStateOf(-1) }

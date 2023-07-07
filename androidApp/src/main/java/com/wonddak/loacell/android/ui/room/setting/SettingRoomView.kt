@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.RoomRole
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
@@ -37,6 +36,7 @@ import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
+import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 
@@ -50,9 +50,11 @@ fun SettingRoomView(
     }
     val result = loaCellViewModel.tempOfFBData
     val user by loaCellViewModel.user.collectAsState()
-    val roomInfo by loaCellViewModel.roomInfo.collectAsState()
-    val raidList by loaCellViewModel.raidInfoList.collectAsState()
-    val userList by loaCellViewModel.userInfoList.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+
+    val roomInfo = totalRoomInfo.roomInfo
+    val raidList = totalRoomInfo.raidInfoList
+    val userList = totalRoomInfo.userInfoList
 
     var showExitAlert by remember {
         mutableStateOf(false)

@@ -18,8 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.RoomRole
-import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.noRippleClickable
@@ -32,6 +30,8 @@ import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.setting.SettingRoomView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.RoomRole
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
 
 @Composable
@@ -39,7 +39,8 @@ fun RoomView(
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val roomInfo by loaCellViewModel.roomInfo.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val roomInfo = totalRoomInfo.roomInfo
     BackHandler(!loaCellViewModel.showRaidAdd && !loaCellViewModel.showUserAdd) {
         loaCellViewModel.hideRoomInfo()
     }

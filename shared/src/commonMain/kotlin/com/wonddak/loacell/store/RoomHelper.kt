@@ -1,7 +1,7 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.RoomRole
+import com.wonddak.loacell.model.RoomRole
 
 data class FBRoomInfo(
     val title: String = "",
