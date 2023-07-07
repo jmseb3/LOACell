@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomRole
@@ -18,14 +17,13 @@ import com.wonddak.loacell.RoomState
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.ext.getRole
-import com.wonddak.loacell.getLong
-import com.wonddak.loacell.putLong
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
+import com.wonddak.loacell.syncStart
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
