@@ -24,8 +24,7 @@ kotlin {
             export(project(Modules.database))
             transitiveExport = true
         }
-        pod("FirebaseFirestore","~> 10.10")
-
+        pod("FirebaseFirestore")
     }
     sourceSets {
         val commonMain by getting {

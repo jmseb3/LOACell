@@ -207,14 +207,6 @@ fun MainContent(
 
                     loaCellViewModel.apply {
                         if (syncData) {
-                            LaunchedEffect(syncData) {
-                                CommonRoomHelper.syncRoom(
-                                    userInfo!!.uid,
-                                    db,
-                                    failAction = { _ -> },
-                                    successAction = { syncEnd() }
-                                )
-                            }
                             LoadingView("데이터를 동기화 중입니다.")
                         }
                     }
