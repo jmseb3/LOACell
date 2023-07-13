@@ -3,10 +3,11 @@ package com.wonddak.database.queriesHelper
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.wonddak.database.model.Day
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.database.model.RaidType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
@@ -35,6 +36,36 @@ class RaidInfoQueriesHelper(
         startGateNumber: Long,
         endGateNumber: Long,
         party1 : List<String>,
+        party2 : List<String>,
+        day :Day,
+        hour :Long,
+        minute :Long
+    ) {
+        queries.insertRaidInfo(
+            raidId,
+            roomId,
+            title,
+            type,
+            difficulty,
+            startGateNumber,
+            endGateNumber,
+            false,
+            party1,
+            party2,
+            day,
+            hour,
+            minute
+        )
+    }
+    fun addRaidInfo(
+        raidId: String,
+        roomId: String,
+        title: String,
+        type: RaidType,
+        difficulty: Difficulty,
+        startGateNumber: Long,
+        endGateNumber: Long,
+        party1 : List<String>,
         party2 : List<String>
     ) {
         queries.insertRaidInfo(
@@ -47,7 +78,10 @@ class RaidInfoQueriesHelper(
             endGateNumber,
             false,
             party1,
-            party2
+            party2,
+            Day.NONE,
+            0,
+            0
         )
     }
 

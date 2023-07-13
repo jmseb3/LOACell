@@ -1,7 +1,8 @@
 package com.wonddak.loacell.store
 
 object RefHelper {
-    fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms")
+//    fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms")
+    fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms-dev")
     fun getRoomRef(id: String): CommonDocument = getRoomsRef().document(id)
 
     fun getRaidsRef(roomId: String): CommonCollection = getRoomRef(roomId).collection("raidInfo")
