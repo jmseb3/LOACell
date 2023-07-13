@@ -3,7 +3,6 @@ package com.wonddak.loacell.android.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
@@ -14,6 +13,7 @@ import com.wonddak.loacell.Config
 import com.wonddak.loacell.DialogStatus
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.ext.getRole
+import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -190,15 +190,14 @@ class LoaCellViewModel(
         common.updateFocusUserName("")
     }
 
-    var filterRaidType by mutableStateOf(RaidType.values())
-    var filterFinish by mutableIntStateOf(0)
-    var filterUser by mutableStateOf(emptyList<String>())
+    val filter get() =  common.filter
 
-    fun clearFilter() {
-        filterRaidType = RaidType.values()
-        filterFinish = 0
-        filterUser = emptyList()
-    }
+    fun clearFilter() = common.clearFilter()
+    fun updateFilterRaidType(raidType: RaidType) = common.updateFilterRaidType(raidType)
+
+    fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
+    fun updateFilterUser(user: String) = common.updateFilterUser(user)
+
 
     //region dialog status
     var showRoomAction by mutableStateOf(false)
@@ -251,7 +250,7 @@ class LoaCellViewModel(
 
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {
-            LoaCellApp.user.value?.let { userInfo ->
+            user.value?.let { userInfo ->
                 if (userInfo.isAnonymous) {
                     showRoomEnter = true
                 } else {

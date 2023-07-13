@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
@@ -107,7 +106,7 @@ fun RoomTitleView(
 ) {
     val focusUserName by loaCellViewModel.focusUserName.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
-    val user by LoaCellApp.user.collectAsState(null)
+    val user by loaCellViewModel.user.collectAsState(null)
     val role by loaCellViewModel.myRole.collectAsState()
 
     var showShareSheet by remember {

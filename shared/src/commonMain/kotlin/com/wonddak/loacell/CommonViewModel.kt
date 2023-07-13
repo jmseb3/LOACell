@@ -1,8 +1,10 @@
 package com.wonddak.loacell
 
 import com.wonddak.database.AppDataBase
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
+import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
@@ -10,7 +12,6 @@ import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,8 +27,8 @@ open class CommonViewModel(
     private val config: Config,
     private val dialogStatus: DialogStatus
 ) {
-    // Ios 의 경우 CoroutineScope(Dispatchers.IO)로 작동
-    private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.IO)
+    // Ios 의 경우 CoroutineScope(Dispatchers.Main)로 작동
+    private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
     //region 방 클릭시 매핑되는 방 id
     private var _roomId = MutableStateFlow("")
@@ -68,6 +69,7 @@ open class CommonViewModel(
     fun updateFocusUserName(name: String) {
         _focusUserName.value = name
     }
+
     val userInfo = totalRoomInfo.combine(focusUserName) { info, name ->
         info.findUserInfoByName(name)
     }.stateIn(
@@ -143,10 +145,11 @@ open class CommonViewModel(
     //region sync 관련
     private var _syncData = MutableStateFlow(false)
     val syncData = _syncData.toCommonStateFlow()
-    private fun updateSync(value:Boolean) {
+    private fun updateSync(value: Boolean) {
         _syncData.value = value
     }
-    fun syncStart(uid:String, force: Boolean = false) {
+
+    fun syncStart(uid: String, force: Boolean = false) {
         viewModelScope.launch {
             val syncSuccess = {
                 updateSync(true)
@@ -165,13 +168,13 @@ open class CommonViewModel(
             }
             val nowTime = Clock.System.now().toEpochMilliseconds()
             if (force) {
-                config.putLong(ConfigKeys.HomeRefreshKey,nowTime)
+                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
                 syncSuccess()
                 return@launch
             }
             val syncTime = config.getLong(ConfigKeys.HomeRefreshKey)
             if (nowTime - syncTime > 60 * 5 * 1000) {
-                config.putLong(ConfigKeys.HomeRefreshKey,nowTime)
+                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
                 syncSuccess()
             } else {
                 dialogStatus.showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
@@ -179,9 +182,31 @@ open class CommonViewModel(
         }
     }
     //endregion
+
+    //region filter
+
+    private var _filter = MutableStateFlow(Filter())
+    val filter get() = _filter.toCommonStateFlow()
+
+    private fun updateFilter(filter: Filter) {
+        _filter.value = filter
+    }
+
+    fun updateFilterRaidType(type: RaidType) =
+        updateFilter(_filter.value.updateRaidType(type))
+
+    fun updateFilterFinish(finish: Filter.FINISH)
+    = updateFilter(_filter.value.updateFinish(finish))
+    fun updateFilterUser(user: String)
+    = updateFilter(_filter.value.updateUser(user))
+
+    fun clearFilter() {
+        _filter.value = Filter()
+    }
+    //endregion
 }
 
 interface DialogStatus {
     fun showRoomEnterError()
-    fun showSnackBar(msg:String)
+    fun showSnackBar(msg: String)
 }

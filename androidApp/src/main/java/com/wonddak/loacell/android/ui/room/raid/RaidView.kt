@@ -40,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.getAllPartyList
 import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
@@ -67,6 +66,7 @@ fun RaidView(
 
     val raidInfoList = totalRoomInfo.raidInfoList
     val userInfoList = totalRoomInfo.userInfoList
+    val filter by loaCellViewModel.filter.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
     Box() {
@@ -91,38 +91,11 @@ fun RaidView(
                 }
             }
             Divider()
-            val filterByFinish = when (loaCellViewModel.filterFinish) {
-                1 -> raidInfoList.filter { it.isFinish }
-                2 -> raidInfoList.filter { !it.isFinish }
-                else -> raidInfoList
-            }
-            val filterByType =
-                filterByFinish.filter { loaCellViewModel.filterRaidType.contains(it.type) }
-
-            val filterByUser = if (loaCellViewModel.filterUser.isEmpty()) {
-                filterByType
-            } else {
-                filterByType.filter {
-                    val names = mutableListOf<String>()
-                    val filterUser = userInfoList.filter{ loaCellViewModel.filterUser.contains(it.name) }
-                    it.getAllPartyList().forEach {character ->
-                        if (character.isNotEmpty()) {
-                            for (userInfo in filterUser) {
-                                if(db.characterQueriesHelper.getAllNameList(userInfo).contains(character)) {
-                                    names.add(userInfo.name)
-                                    break
-                                }
-                            }
-                        }
-                    }
-                    names.sorted() == loaCellViewModel.filterUser.sorted()
-                }
-            }
 
             LazyColumn(
                 modifier = Modifier.padding(10.dp)
             ) {
-                items(filterByUser) { raidInfo ->
+                items(filter.filterList(raidInfoList, userInfoList, db)) { raidInfo ->
                     RaidItemRow(raidInfo) {
                         loaCellViewModel.setNowRaidInfo(raidInfo.raidId)
                     }
