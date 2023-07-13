@@ -1,9 +1,11 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.convertDifficulty
-import com.wonddak.database.ext.convertType
+import com.wonddak.database.model.Day
 import com.wonddak.database.model.RaidType
+import com.wonddak.database.model.convertDifficulty
+import com.wonddak.database.model.convertToDay
+import com.wonddak.database.model.convertType
 import com.wonddak.loacell.model.Difficulty
 import kotlin.jvm.JvmField
 
@@ -16,8 +18,10 @@ data class FBRaidInfo(
     @field:JvmField
     val isFinish: Boolean = false,
     val party1: List<String> = List(4) { "" },
-    val party2: List<String> = List(4) { "" }
-
+    val party2: List<String> = List(4) { "" },
+    val day: Int = Day.NONE.index,
+    val hour: Long = 0L,
+    val minute: Long = 0L
 ) {
     fun toMap() = mapOf(
         "title" to title,
@@ -28,7 +32,10 @@ data class FBRaidInfo(
         "endGateNumber" to endGateNumber,
         "finish" to isFinish,
         "party1" to party1,
-        "party2" to party2
+        "party2" to party2,
+        "day" to day,
+        "hour" to hour,
+        "minute" to minute
     )
 }
 
@@ -57,7 +64,46 @@ object CommonRaidHelper {
                 successAction = successAction,
                 failAction = failAction
             )
+    }
 
+    fun add(
+        roomId: String,
+        title: String,
+        type: RaidType,
+        difficulty: Difficulty,
+        startGateNumber: Int,
+        endGateNumber: Int,
+        day: Day,
+        hour: Long,
+        minute: Long,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit
+    ) {
+        val fbRaidInfo = FBRaidInfo(
+            title = title,
+            type = type.name,
+            difficulty = difficulty.name,
+            startGateNumber = startGateNumber,
+            endGateNumber = endGateNumber,
+            day = day.index,
+            hour = hour,
+            minute = minute
+        )
+        RefHelper.getRaidsRef(roomId).document()
+            .set(
+                fbRaidInfo.toMap(),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
+
+    private fun addEmptyDay(roomId: String, raidId: String) {
+        val emptyDayMap = mapOf(
+            "day" to -1,
+            "hour" to 0,
+            "minute" to 0
+        )
+        RefHelper.getRaidRef(roomId, raidId).update(emptyDayMap)
     }
 
     //레이드 정보를 삭제한다.
@@ -72,29 +118,32 @@ object CommonRaidHelper {
             failAction = failAction
         )
     }
+
     private fun updateField(
         roomId: String,
         raidId: String,
-        field :String,
-        value :Any
+        field: String,
+        value: Any
     ) {
         RefHelper.getRaidRef(roomId, raidId).update(
-            field,value
+            field, value
         )
     }
+
     fun updateFinish(
         roomId: String,
         raidId: String,
         isFinish: Boolean
     ) {
-        updateField(roomId,raidId,"finish",isFinish)
+        updateField(roomId, raidId, "finish", isFinish)
     }
+
     fun updateTitle(
         roomId: String,
         raidId: String,
         title: String
     ) {
-        updateField(roomId,raidId,"title",title)
+        updateField(roomId, raidId, "title", title)
     }
 
     // 파티 리스트를 업데이트 한다.
@@ -114,12 +163,20 @@ object CommonRaidHelper {
         )
     }
 
+    fun updateDay(
+        roomId: String,
+        raidId: String,
+        day: Day,
+    ) {
+        updateField(roomId, raidId, "day", day.index)
+    }
+
     fun observe(
         roomId: String,
         db: AppDataBase
-    ) : CommonListenerRegistration {
+    ): CommonListenerRegistration {
         return RefHelper.getRaidsRef(roomId).getListenerRegistration(
-            successAction =  {value ->
+            successAction = { value ->
                 val dbRaidList =
                     db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }
                         .toMutableSet()
@@ -135,6 +192,10 @@ object CommonRaidHelper {
                     val isFinish = it.data!!["finish"] as Boolean
                     val party1 = it.data!!["party1"] as List<String>
                     val party2 = it.data!!["party2"] as List<String>
+
+                    val day = it.data["day"] as Long?
+                    val hour = it.data["hour"] as Long?
+                    val minute = it.data["minute"] as Long?
 
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
@@ -152,6 +213,18 @@ object CommonRaidHelper {
                             party2
                         )
                         dbRaidList.remove(raidId)
+                        if (day == null && hour == null && minute == null) {
+                            println("JWH $raidId none Day Date.. update")
+                            addEmptyDay(roomId, raidId)
+                        } else if (day != null && hour != null && minute != null) {
+                            db.raidInfoQueriesHelper.updateRaidInfoDay(
+                                roomId,
+                                raidId,
+                                day,
+                                hour,
+                                minute
+                            )
+                        }
                     } else {
                         //없는 경우 추가
                         db.raidInfoQueriesHelper.addRaidInfo(
@@ -163,7 +236,10 @@ object CommonRaidHelper {
                             startGateNumber,
                             endGateNumber,
                             party1,
-                            party2
+                            party2,
+                            (day ?: -1L).convertToDay(),
+                            hour ?: 0,
+                            minute ?: 0
                         )
                     }
                 }

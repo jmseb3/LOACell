@@ -22,14 +22,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.database.ext.getRaidText
+import com.wonddak.database.ext.makeGateText
+import com.wonddak.database.model.Day
+import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
-import com.wonddak.database.ext.getRaidText
-import com.wonddak.database.ext.makeGateText
 import com.wonddak.loacell.ext.getImg
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable
@@ -118,7 +119,10 @@ fun RaidItemRowPreview() {
         endGateNumber = 3L,
         isFinish = false,
         party1characterList = emptyList(),
-        party2characterList = emptyList()
+        party2characterList = emptyList(),
+        day = Day.MON,
+        hour = 12,
+        minute = 59
     )
     RaidItemRow(raidInfo) {}
 }

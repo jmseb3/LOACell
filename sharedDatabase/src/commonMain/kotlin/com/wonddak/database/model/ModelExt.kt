@@ -1,7 +1,6 @@
-package com.wonddak.database.ext
+package com.wonddak.database.model
 
 import com.wonddak.loacell.model.Difficulty
-import com.wonddak.database.model.RaidType
 
 fun String.convertType(): RaidType {
     RaidType.values().forEach {
@@ -19,4 +18,13 @@ fun String.convertDifficulty(): Difficulty {
         }
     }
     return Difficulty.Normal
+}
+
+fun Long.convertToDay() :Day {
+    Day.values().forEach {
+        if (it.index == this.toInt()) {
+            return  it
+        }
+    }
+    return  Day.NONE
 }

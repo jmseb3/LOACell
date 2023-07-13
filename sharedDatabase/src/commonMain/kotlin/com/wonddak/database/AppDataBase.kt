@@ -4,6 +4,7 @@ import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.database.ext.getMinLevel
+import com.wonddak.database.model.Day
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
@@ -74,7 +75,22 @@ class AppDataBase(driverFactory: DriverFactory) {
             typeAdapter = raidTypeAdapter,
             DifficultyAdapter = difficultyTypeAdapter,
             party1characterListAdapter = stringListAdapter,
-            party2characterListAdapter = stringListAdapter
+            party2characterListAdapter = stringListAdapter,
+            dayAdapter = object : ColumnAdapter<Day,Long> {
+                override fun decode(databaseValue: Long): Day {
+                    Day.values().forEach {
+                        if (it.index.toLong() == databaseValue) {
+                            return  it
+                        }
+                    }
+                    return  Day.NONE
+                }
+
+                override fun encode(value: Day): Long {
+                    return value.index.toLong()
+                }
+
+            }
         ),
         RoomInfoAdapter = RoomInfo.Adapter(
             enterUserAdapter = stringListAdapter,
