@@ -11,53 +11,47 @@ import kotlin.jvm.JvmField
 
 data class FBRaidInfo(
     val title: String = "",
-    val type: String = RaidType.ETC.name,
-    val difficulty: String = Difficulty.Normal.name,
+    val type: RaidType = RaidType.ETC,
+    val difficulty: Difficulty = Difficulty.Normal,
     val startGateNumber: Int = 0,
     val endGateNumber: Int = 0,
     @field:JvmField
     val isFinish: Boolean = false,
     val party1: List<String> = List(4) { "" },
     val party2: List<String> = List(4) { "" },
-    val day: Int = Day.NONE.index,
+    val day: Day = Day.NONE,
     val hour: Long = 0L,
     val minute: Long = 0L
 ) {
     fun toMap() = mapOf(
         "title" to title,
-        "type" to type,
-        "difficulty" to difficulty,
+        "type" to type.name,
+        "difficulty" to difficulty.name,
         "startGateNumber" to startGateNumber,
         "endGateNumber" to endGateNumber,
         "endGateNumber" to endGateNumber,
         "finish" to isFinish,
         "party1" to party1,
         "party2" to party2,
-        "day" to day,
+        "day" to day.index,
         "hour" to hour,
         "minute" to minute
     )
+
+    fun getMinLevelText() :String {
+        val minLevel =  this.type.getMinLevel(difficulty,endGateNumber)
+        return if (minLevel == 0) "제한 없음" else minLevel.toString()
+    }
 }
 
 object CommonRaidHelper {
     //레이드 정보를 추가한다.
     fun add(
         roomId: String,
-        title: String,
-        type: RaidType,
-        difficulty: Difficulty,
-        startGateNumber: Int,
-        endGateNumber: Int,
+        fbRaidInfo: FBRaidInfo,
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        val fbRaidInfo = FBRaidInfo(
-            title = title,
-            type = type.name,
-            difficulty = difficulty.name,
-            startGateNumber = startGateNumber,
-            endGateNumber = endGateNumber
-        )
         RefHelper.getRaidsRef(roomId).document()
             .set(
                 fbRaidInfo.toMap(),
@@ -65,7 +59,6 @@ object CommonRaidHelper {
                 failAction = failAction
             )
     }
-
     fun add(
         roomId: String,
         title: String,
@@ -73,21 +66,15 @@ object CommonRaidHelper {
         difficulty: Difficulty,
         startGateNumber: Int,
         endGateNumber: Int,
-        day: Day,
-        hour: Long,
-        minute: Long,
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
         val fbRaidInfo = FBRaidInfo(
             title = title,
-            type = type.name,
-            difficulty = difficulty.name,
+            type = type,
+            difficulty = difficulty,
             startGateNumber = startGateNumber,
-            endGateNumber = endGateNumber,
-            day = day.index,
-            hour = hour,
-            minute = minute
+            endGateNumber = endGateNumber
         )
         RefHelper.getRaidsRef(roomId).document()
             .set(
