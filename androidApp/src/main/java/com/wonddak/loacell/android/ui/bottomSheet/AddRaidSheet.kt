@@ -1,6 +1,8 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.database.model.Day
@@ -54,6 +58,10 @@ fun AddRaidSheet(
             )
         )
     }
+    val radioOptions = Difficulty.values()
+    val textFieldModifier = Modifier.fillMaxWidth()
+    var errorMsg by remember { mutableStateOf("") }
+    var showDayUse by remember {mutableStateOf(false)}
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
             fbRaidInfo = fbRaidInfo.copy(difficulty = Difficulty.Normal)
@@ -63,10 +71,11 @@ fun AddRaidSheet(
             fbRaidInfo = fbRaidInfo.copy(startGateNumber = 1, endGateNumber = maxGate)
         }
     }
-    val radioOptions = Difficulty.values()
-    val textFieldModifier = Modifier.fillMaxWidth()
-    var errorMsg by remember { mutableStateOf("") }
-    var showDayUse by remember {mutableStateOf(false)}
+    LaunchedEffect(showDayUse) {
+        if (!showDayUse) {
+            fbRaidInfo = fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0)
+        }
+    }
 
     BaseSheet(
         title = "레이드 정보 추가",
@@ -311,10 +320,29 @@ fun AddRaidSheet(
                 }
             )
             AnimatedVisibility(showDayUse) {
-                Row() {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                ) {
+                    val weight = Modifier.weight(1f)
                     Day.values().forEach {
                         if (it.index >= 0) {
-                            Text(text = it.text)
+                            val selected = fbRaidInfo.day == it
+                            val color = if (selected) Color.Black else Color.Transparent
+                            TextButton(
+                                modifier = weight.border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)),
+                                onClick = { fbRaidInfo = fbRaidInfo.copy(day = it) }
+                            ) {
+                                Text(
+                                    text = it.text,
+                                    textAlign = TextAlign.Center,
+                                    color = Color.Black
+                                )
+                            }
+                            if (it.index < 6) {
+                                Spacer(modifier = Modifier.weight(0.5f))
+                            }
                         }
                     }
                 }
