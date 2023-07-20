@@ -115,14 +115,6 @@ object CommonRaidHelper {
         updateField(roomId, raidId, "finish", isFinish)
     }
 
-    fun updateTitle(
-        roomId: String,
-        raidId: String,
-        title: String
-    ) {
-        updateField(roomId, raidId, "title", title)
-    }
-
     // 파티 리스트를 업데이트 한다.
     fun updatePartList(
         roomId: String,
@@ -138,14 +130,6 @@ object CommonRaidHelper {
             successAction = successAction,
             failAction = failAction
         )
-    }
-
-    fun updateDay(
-        roomId: String,
-        raidId: String,
-        day: Day,
-    ) {
-        updateField(roomId, raidId, "day", day.index)
     }
 
     fun observe(
@@ -173,6 +157,7 @@ object CommonRaidHelper {
                     val day = it.data["day"] as Long?
                     val hour = it.data["hour"] as Long?
                     val minute = it.data["minute"] as Long?
+                    println("JWH $raidId none day: $day hour : $hour minute : $minute")
 
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
@@ -187,21 +172,12 @@ object CommonRaidHelper {
                             endGateNumber,
                             isFinish,
                             party1,
-                            party2
+                            party2,
+                            day,
+                            hour,
+                            minute
                         )
                         dbRaidList.remove(raidId)
-                        if (day == null && hour == null && minute == null) {
-                            println("JWH $raidId none Day Date.. update")
-                            addEmptyDay(roomId, raidId)
-                        } else if (day != null && hour != null && minute != null) {
-                            db.raidInfoQueriesHelper.updateRaidInfoDay(
-                                roomId,
-                                raidId,
-                                day,
-                                hour,
-                                minute
-                            )
-                        }
                     } else {
                         //없는 경우 추가
                         db.raidInfoQueriesHelper.addRaidInfo(

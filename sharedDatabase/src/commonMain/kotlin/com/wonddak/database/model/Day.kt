@@ -11,7 +11,7 @@ enum class Day(val index: Int, val text: String) {
     SUN(6, "일");
     fun getList(): List<Day> {
         val startDay = this
-        val result = listOf(Day.MON, Day.THU, Day.WED, Day.THU, Day.FRI, Day.SAT, Day.SUN)
-        return result.subList(startDay.index,6) + result.subList(0,startDay.index)
+        val result = listOf(Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT, Day.SUN)
+        return result.subList(startDay.index,6) + result.subList(0,startDay.index+1)
     }
 }

@@ -86,10 +86,13 @@ fun EditRaidSheet(
         mutableStateOf(
             FBRaidInfo(
                 title = raidInfo.title,
-                type = raidInfo.type!!,
-                difficulty = raidInfo.Difficulty!!,
+                type = raidInfo.type,
+                difficulty = raidInfo.Difficulty,
                 startGateNumber = raidInfo.startGateNumber.toInt(),
                 endGateNumber = raidInfo.endGateNumber.toInt(),
+                isFinish = raidInfo.isFinish,
+                party1 = raidInfo.party1characterList,
+                party2 = raidInfo.party2characterList,
                 day = raidInfo.day,
                 hour = raidInfo.hour,
                 minute = raidInfo.minute,
@@ -105,6 +108,7 @@ fun EditRaidSheet(
         },
         onDismissRequest = onDismissRequest
     ) {
+        println(fbRaidInfo.toString())
         CommonRaidHelper.update(
             raidInfo.roomId,
             raidInfo.raidId,
@@ -129,7 +133,7 @@ fun RaidSheetBase(
 
     val radioOptions = Difficulty.values()
     val textFieldModifier = Modifier.fillMaxWidth()
-    var showDayUse by remember { mutableStateOf(false) }
+    var showDayUse by remember { mutableStateOf(fbRaidInfo.day != Day.NONE) }
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
             update(fbRaidInfo.copy(difficulty = Difficulty.Normal))

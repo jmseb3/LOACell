@@ -69,8 +69,12 @@ class RaidInfoQueriesHelper(
         endGateNumber: Long,
         isFinish: Boolean,
         party1: List<String>,
-        party2: List<String>
+        party2: List<String>,
+        dayIndex :Long?,
+        hour :Long?,
+        minute: Long?
     ) {
+        val day = dayIndex?.convertToDay() ?: Day.NONE
         queries.updateRaidInfo(
             title,
             type,
@@ -80,35 +84,11 @@ class RaidInfoQueriesHelper(
             isFinish,
             party1,
             party2,
-            raidId,
-            roomId
-        )
-    }
-
-    fun updateRaidInfoDay(
-        raidId: String,
-        roomId: String,
-        dayIndex: Long,
-        hour: Long,
-        minute: Long
-    ) {
-        val day = dayIndex.convertToDay()
-        updateRaidInfoDay(raidId, roomId, day, hour, minute)
-    }
-
-    fun updateRaidInfoDay(
-        raidId: String,
-        roomId: String,
-        day: Day,
-        hour: Long,
-        minute: Long
-    ) {
-        queries.updateDay(
             day,
-            hour,
-            minute,
+            hour ?:0L,
+            minute ?: 0L,
             raidId,
-            roomId
+            roomId,
         )
     }
 

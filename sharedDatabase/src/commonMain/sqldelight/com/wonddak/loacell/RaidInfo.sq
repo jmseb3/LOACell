@@ -32,7 +32,7 @@ insertRaidInfo:
 INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateRaidInfo:
-UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? ,party1characterList =?,party2characterList =? WHERE raidId =? AND  roomId =?;
+UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? ,party1characterList =?,party2characterList =? ,day =?, hour =?, minute =?WHERE raidId =? AND  roomId =?;
 
 updateDay:
 UPDATE RaidInfo SET day =?,hour =?,minute =? WHERE raidId =? AND  roomId =?;
