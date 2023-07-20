@@ -5,13 +5,18 @@ data class ClassInfo(
     val className: String,
     val gender: Gender,
     val synergy: List<Synergy> = emptyList()
-)
+) {
+    companion object {
+        fun makeMaleClass(className: String,synergy:  List<Synergy>) = ClassInfo(className,Gender.Male,synergy)
+        fun makeFeMaleClass(className: String,synergy:  List<Synergy>) = ClassInfo(className,Gender.Female,synergy)
+    }
+
+}
 
 data class Synergy(
     val name: SynergyName,
     val type: SynergyType,
 )
-
 
 enum class SynergyName(val kotString: String) {
     DamageIncreasedOnCriticalHits("치명타 시 피해 증가"),

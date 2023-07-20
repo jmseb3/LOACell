@@ -189,9 +189,3 @@ fun FocusUserView(
         }
     }
 }
-
-data class LostarkResult(
-    val success :Boolean,
-    val code :Int,
-    val msg :String,
-)

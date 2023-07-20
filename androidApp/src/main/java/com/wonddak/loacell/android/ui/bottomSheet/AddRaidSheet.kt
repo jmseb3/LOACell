@@ -30,10 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
-import com.wonddak.loacell.model.Difficulty
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.FBRaidInfo
 

@@ -1,7 +1,5 @@
 package com.wonddak.database.model
 
-import com.wonddak.loacell.model.Difficulty
-
 
 enum class RaidType(val maxPerson: Int) {
     VALTAN(8),

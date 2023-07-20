@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.database.ext.getMinLevel
 import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
@@ -14,7 +15,6 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.model.Difficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform

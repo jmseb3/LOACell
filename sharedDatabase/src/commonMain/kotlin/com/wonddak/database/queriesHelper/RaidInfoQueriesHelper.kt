@@ -4,11 +4,11 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.model.convertToDay
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
-import com.wonddak.loacell.model.Difficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 

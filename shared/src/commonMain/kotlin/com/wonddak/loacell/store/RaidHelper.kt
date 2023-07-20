@@ -2,11 +2,11 @@ package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.model.convertDifficulty
 import com.wonddak.database.model.convertToDay
 import com.wonddak.database.model.convertType
-import com.wonddak.loacell.model.Difficulty
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(

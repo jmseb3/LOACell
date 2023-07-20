@@ -1,14 +1,12 @@
 package com.wonddak.loacell.android.ui.room.raid
 
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,46 +15,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.getMaxParty
-import com.wonddak.database.ext.getRaidText
-import com.wonddak.database.ext.makeGateText
-import com.wonddak.loacell.Character
+import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
-import com.wonddak.loacell.android.ui.dialog.DeleteRaidDialog
-import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
-import com.wonddak.loacell.android.ui.dialog.EditRaidTitleDialog
-import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.RoomState
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.model.RoomType
+import java.text.DecimalFormat
 
 @Composable
 fun RaidView(
@@ -69,9 +53,20 @@ fun RaidView(
     val filter by loaCellViewModel.filter.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
 
+    var showType by remember {
+        mutableStateOf(RoomType.Default)
+    }
+
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
             Row() {
+                MyIconButton(imageResource = SharedRes.images.calendar) {
+                    showType = if (showType == RoomType.Default) {
+                        RoomType.Calendar
+                    } else {
+                        RoomType.Default
+                    }
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 OutlinedButton(onClick = { loaCellViewModel.showRaidFilter = true }) {
                     Row(
@@ -91,17 +86,11 @@ fun RaidView(
                 }
             }
             Divider()
-
-            LazyColumn(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                items(filter.filterList(raidInfoList, userInfoList, db)) { raidInfo ->
-                    RaidItemRow(raidInfo) {
-                        loaCellViewModel.setNowRaidInfo(raidInfo.raidId)
-                    }
-                    Spacer(modifier = Modifier.height(5.dp))
-                }
-            }
+            RaidTypeView(
+                type = showType,
+                filterRaidInfoList = filter.filterList(raidInfoList, userInfoList, db),
+                loaCellViewModel = loaCellViewModel
+            )
         }
         if (focusRaidId.isNotEmpty()) {
             FocusRaidView(db, roomId, loaCellViewModel)
@@ -114,219 +103,127 @@ fun RaidView(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FocusRaidView(
-    db: AppDataBase, roomId: String, loaCellViewModel: LoaCellViewModel
+fun RaidTypeView(
+    type: RoomType,
+    filterRaidInfoList: List<RaidInfo>,
+    loaCellViewModel: LoaCellViewModel
 ) {
+    val timeStep = 30
+    val timeSteps = (0 until (1440 / timeStep)).map { it * timeStep }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(md_theme_light_background)
-        .noRippleClickable() { }) {
-        BackHandler() {
-            loaCellViewModel.clearFocusItem()
+    val table = MutableList(24) { MutableList(60 / timeStep) { mutableListOf<RaidInfo>() } }
+
+    filterRaidInfoList.forEach {
+        if (it.day != Day.NONE) {
+            table[it.hour.toInt()][(it.minute / timeStep).toInt()].add(it)
         }
-        val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    }
 
-        val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
-        val userInfoList  = totalRoomInfo.userInfoList
-
-        val context = LocalContext.current
-        var focusIndex by remember { mutableIntStateOf(-1) }
-        var characterList: List<Character?> by remember {
-            mutableStateOf(emptyList())
-        }
-        LaunchedEffect(raidInfo) {
-            raidInfo?.let { info ->
-                val maxParty = info.getMaxParty()
-                val findList = info.party1characterList.toMutableList()
-                if (maxParty == 2) {
-                    findList.addAll(info.party2characterList)
+    if (type == RoomType.Default) {
+        LazyColumn(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            items(filterRaidInfoList) { raidInfo ->
+                RaidItemRow(raidInfo) {
+                    loaCellViewModel.setNowRaidInfo(raidInfo.raidId)
                 }
-                val result : MutableList<Character?> = List(findList.size) { null }.toMutableList()
-                val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
+                Spacer(modifier = Modifier.height(5.dp))
+            }
+        }
+    } else {
 
-                for (userInfo in userInfoList) {
-                    val iterator = findNames.iterator()
-                    while (iterator.hasNext()) {
-                        val name = iterator.next()
-                        val find = db.characterQueriesHelper.getCharacterInfo(userInfo,name)
-                        if (find != null) {
-                            result[findList.indexOf(name)] = find
-                        }
+        LazyColumn() {
+            stickyHeader {
+                Row() {
+                    CalendarRow(
+                        modifier = Modifier.background(Color.White),
+                        timeText = "시간"
+                    ) { modifier ,day ->
+                        Text(
+                            modifier = modifier,
+                            text = day.text,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
-                characterList = result
             }
-        }
-        raidInfo?.let { raidInfo ->
-            val userAndCharacterMap by db.getUsersByRoomIdFilterCharacterAndType(roomId, raidInfo).collectAsState(initial = mapOf())
+            fun makeTimeText(
+                hour :Int,
+                minute :Int,
+                step :Int
+            ):String {
+                val df = DecimalFormat("00")
+                val rs1 = "${df.format(hour)} : ${df.format(minute)}"
+                val timeTotal = hour * 60 + minute + step
+                val newHour = timeTotal / 60
+                val newMinute = timeTotal % 60
+                val rs2 = "${df.format(newHour)} : ${df.format(newMinute)}"
+                return  "$rs1\n~\n$rs2"
 
-            Column() {
-                Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
             }
-            loaCellViewModel.apply {
-                RaidPartyView(characterList, openAction = { index ->
-                    if (userAndCharacterMap.isEmpty()) {
-                        showSnackBar(
-                            message = "추가 가능한 인원이 없습니다.",
-                            label = "이동",
-                        ) {
-                            clearFocusItem()
-                            setTabStatus(RoomState.User)
-                            showUserAdd = true
-                        }
+            items(timeSteps) { totalMin ->
+                val hour = totalMin / 60
+                val minute = (totalMin % 60)
+                val minuteIndex = (totalMin % 60) / timeStep
+                val result = table[hour][minuteIndex]
+
+                CalendarRow(timeText = makeTimeText(hour,minute,timeStep)) { modifier,day ->
+                    val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
+                    val text = if (filterDay.isEmpty()) {
+                        ""
+                    } else if (filterDay.size == 1) {
+                        filterDay.first().title
                     } else {
-                        focusIndex = index
-                        showRaidUserAdd = true
+                        "${filterDay.first().title} 외 ${filterDay.size - 1}"
                     }
-                }, deleteAction = { index ->
-                    focusIndex = index
-                    showRaidUserDelete = true
-                })
-                if (showRaidDelete) {
-                    DeleteRaidDialog(confirm = {
-                        CommonRaidHelper.delete(roomId, raidInfo.raidId, failAction = { error ->
-                            Toast.makeText(
-                                context, error.errorMsg, Toast.LENGTH_SHORT
-                            ).show()
-                        }) {
-                            clearFocusItem()
-                            showRaidDelete = false
-                        }
-                    }, dismiss = {
-                        showRaidDelete = false
-                    })
+                    Text(
+                        modifier = modifier,
+                        text = text,
+                        textAlign = TextAlign.Center
+                    )
                 }
-                if (showRaidUserAdd && userAndCharacterMap.isNotEmpty()) {
-                    AddRaidUserSheet(
-                        userAndCharacterMap = userAndCharacterMap,
-                        onDismissRequest = {
-                            showRaidUserAdd = false
-                        }
-                    ) { character ->
-                        val partyIndex = focusIndex / 4
-                        val tempList =
-                            if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                        val partyTemp = tempList.toMutableList()
-                        partyTemp[focusIndex % 4] = character.name
-                        CommonRaidHelper.updatePartList(roomId,
-                            raidInfo.raidId,
-                            partyIndex + 1,
-                            partyTemp,
-                            failAction = { error ->
-                                loaCellViewModel.showSnackBar("인원 추가에 실패했습니다.")
-                            }) {
-                            focusIndex = -1
-                            showRaidUserAdd = false
-                        }
-                    }
-                }
+                Divider()
 
-                if (showRaidUserDelete) {
-                    val partyIndex = focusIndex / 4
-                    val tempList =
-                        if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    val partyTemp = tempList.toMutableList()
-                    partyTemp[focusIndex % 4] = ""
-                    DeleteRaidUserDialog(confirm = {
-                        CommonRaidHelper.updatePartList(roomId,
-                            raidInfo.raidId,
-                            partyIndex + 1,
-                            partyTemp,
-                            failAction = { error ->
-                                showSnackBar("유저 삭제에 실패했습니다.")
-                            }) {
-                            showRaidUserDelete = false
-                        }
-                    }, dismiss = {
-                        showRaidUserDelete = false
-                    })
-                }
-
-                if (showRaidEdit) {
-                    EditRaidTitleDialog(
-                        nowTitle = raidInfo.title,
-                        success =  {
-                            CommonRaidHelper.updateTitle(raidInfo.roomId,raidInfo.raidId,it)
-                            showRaidEdit = false
-                        }
-                    ) {
-                        showRaidEdit = false
-                    }
-                }
             }
         }
     }
 }
 
 @Composable
-fun RaidPartyView(
-    list: List<Character?>,
-    openAction: (index: Int) -> Unit,
-    deleteAction: (index: Int) -> Unit,
+fun CalendarRow(
+    modifier: Modifier = Modifier,
+    timeText: String,
+    dayItem: @Composable (modifier: Modifier,day: Day) -> Unit
 ) {
-    Card(
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        LazyColumn(modifier = Modifier.padding(5.dp)) {
-            itemsIndexed(list) { index, item ->
-                val modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-
-                if (index == 4) {
-                    Divider()
-                }
-                if (item == null) {
-                    Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "캐릭터를 추가해주세요")
-                        MyIconButton(
-                            imageResource = SharedRes.images.add
-                        ) {
-                            openAction(index)
-                        }
-                    }
-                } else {
-                    item.let { info ->
-                        Row(
-                            modifier = modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(
-                                modifier.weight(5f)
-                            ) {
-                                Text(text = info.name)
-                                Row(
-                                    modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(text = info.className)
-                                    Text(text = info.level)
-                                }
-                            }
-                            IconButton(
-                                modifier = Modifier.weight(1f),
-                                onClick = {
-                                    deleteAction(index)
-                                },
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(size = 30.dp),
-                                    painter = painterResource(SharedRes.images.delete.drawableResId),
-                                    contentDescription = ""
-                                )
-                            }
-                        }
-                    }
-
-                }
+        Text(
+            text = timeText,
+            modifier = Modifier.weight(2f),
+            textAlign = TextAlign.Center
+        )
+        Divider(
+            modifier = Modifier
+                .fillMaxHeight()  //fill the max height
+                .width(1.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(7f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Day.MON.getList().forEach { day ->
+                dayItem(Modifier.weight(1f),day)
+                Divider(
+                    modifier = Modifier
+                        .fillMaxHeight()  //fill the max height
+                        .width(1.dp)
+                )
             }
         }
     }

@@ -1,7 +1,5 @@
 package com.wonddak.database.model
 
-import com.wonddak.loacell.model.Difficulty
-
 fun String.convertType(): RaidType {
     RaidType.values().forEach {
         if (it.name == this) {
