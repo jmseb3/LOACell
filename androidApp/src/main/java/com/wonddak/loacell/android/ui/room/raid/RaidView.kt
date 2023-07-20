@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
@@ -134,58 +135,95 @@ fun RaidTypeView(
         }
     } else {
 
-        LazyColumn() {
-            stickyHeader {
-                Row() {
-                    CalendarRow(
-                        modifier = Modifier.background(Color.White),
-                        timeText = "시간"
-                    ) { modifier ,day ->
+        Box() {
+            LazyColumn() {
+                stickyHeader {
+                    Column() {
+                        CalendarRow(
+                            modifier = Modifier.background(Color.White),
+                            timeText = "시간"
+                        ) { modifier ,day ->
+                            Text(
+                                modifier = modifier,
+                                text = day.text,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        Divider()
+                    }
+                }
+                fun makeTimeText(
+                    hour :Int,
+                    minute :Int,
+                    step :Int
+                ):String {
+                    val df = DecimalFormat("00")
+                    val rs1 = "${df.format(hour)} : ${df.format(minute)}"
+                    val timeTotal = hour * 60 + minute + step
+                    val newHour = timeTotal / 60
+                    val newMinute = timeTotal % 60
+                    val rs2 = "${df.format(newHour)} : ${df.format(newMinute)}"
+                    return  "$rs1\n~\n$rs2"
+
+                }
+                items(timeSteps) { totalMin ->
+                    val hour = totalMin / 60
+                    val minute = (totalMin % 60)
+                    val minuteIndex = (totalMin % 60) / timeStep
+                    val result = table[hour][minuteIndex]
+
+                    CalendarRow(timeText = makeTimeText(hour,minute,timeStep)) { modifier,day ->
+                        val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
+                        val text = if (filterDay.isEmpty()) {
+                            ""
+                        } else if (filterDay.size == 1) {
+                            filterDay.first().title
+                        } else {
+                            "${filterDay.first().title} 외 ${filterDay.size - 1}"
+                        }
                         Text(
                             modifier = modifier,
-                            text = day.text,
-                            textAlign = TextAlign.Center
+                            text = text,
+                            textAlign = TextAlign.Center,
+                            fontSize = 11.sp
                         )
                     }
+                    Divider()
+
                 }
             }
-            fun makeTimeText(
-                hour :Int,
-                minute :Int,
-                step :Int
-            ):String {
-                val df = DecimalFormat("00")
-                val rs1 = "${df.format(hour)} : ${df.format(minute)}"
-                val timeTotal = hour * 60 + minute + step
-                val newHour = timeTotal / 60
-                val newMinute = timeTotal % 60
-                val rs2 = "${df.format(newHour)} : ${df.format(newMinute)}"
-                return  "$rs1\n~\n$rs2"
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "",
+                    modifier = Modifier.weight(2f),
+                    textAlign = TextAlign.Center
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxHeight()  //fill the max height
+                        .width(1.dp)
+                )
 
-            }
-            items(timeSteps) { totalMin ->
-                val hour = totalMin / 60
-                val minute = (totalMin % 60)
-                val minuteIndex = (totalMin % 60) / timeStep
-                val result = table[hour][minuteIndex]
-
-                CalendarRow(timeText = makeTimeText(hour,minute,timeStep)) { modifier,day ->
-                    val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
-                    val text = if (filterDay.isEmpty()) {
-                        ""
-                    } else if (filterDay.size == 1) {
-                        filterDay.first().title
-                    } else {
-                        "${filterDay.first().title} 외 ${filterDay.size - 1}"
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(7f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Day.MON.getList().forEach { day ->
+                        Text("",Modifier.weight(1f))
+                        if (day.index <6) {
+                            Divider(
+                                modifier = Modifier
+                                    .fillMaxHeight()  //fill the max height
+                                    .width(1.dp)
+                            )
+                        }
                     }
-                    Text(
-                        modifier = modifier,
-                        text = text,
-                        textAlign = TextAlign.Center
-                    )
                 }
-                Divider()
-
             }
         }
     }
@@ -206,11 +244,6 @@ fun CalendarRow(
             modifier = Modifier.weight(2f),
             textAlign = TextAlign.Center
         )
-        Divider(
-            modifier = Modifier
-                .fillMaxHeight()  //fill the max height
-                .width(1.dp)
-        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -219,11 +252,6 @@ fun CalendarRow(
         ) {
             Day.MON.getList().forEach { day ->
                 dayItem(Modifier.weight(1f),day)
-                Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()  //fill the max height
-                        .width(1.dp)
-                )
             }
         }
     }
