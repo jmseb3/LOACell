@@ -59,31 +59,21 @@ object CommonRaidHelper {
                 failAction = failAction
             )
     }
-    fun add(
+
+    fun update(
         roomId: String,
-        title: String,
-        type: RaidType,
-        difficulty: Difficulty,
-        startGateNumber: Int,
-        endGateNumber: Int,
+        raidId: String,
+        fbRaidInfo: FBRaidInfo,
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        val fbRaidInfo = FBRaidInfo(
-            title = title,
-            type = type,
-            difficulty = difficulty,
-            startGateNumber = startGateNumber,
-            endGateNumber = endGateNumber
-        )
-        RefHelper.getRaidsRef(roomId).document()
-            .set(
+        RefHelper.getRaidRef(roomId, raidId)
+            .update(
                 fbRaidInfo.toMap(),
                 successAction = successAction,
                 failAction = failAction
             )
     }
-
     private fun addEmptyDay(roomId: String, raidId: String) {
         val emptyDayMap = mapOf(
             "day" to -1,

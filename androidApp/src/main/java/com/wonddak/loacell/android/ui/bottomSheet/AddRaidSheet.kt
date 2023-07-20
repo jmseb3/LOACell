@@ -32,20 +32,18 @@ import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.wonddak.database.model.Day
 import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.FBRaidInfo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRaidSheet(
     roomId: String,
     onDismissRequest: () -> Unit,
     successAction: () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
             FBRaidInfo(
@@ -60,36 +58,99 @@ fun AddRaidSheet(
             )
         )
     }
+    RaidSheetBase(
+        fbRaidInfo = fbRaidInfo,
+        title = "레이드 정보 추가",
+        buttonText = "추가",
+        update = {
+            fbRaidInfo = it
+        },
+        onDismissRequest = onDismissRequest
+    ) {
+        CommonRaidHelper.add(
+            roomId,
+            fbRaidInfo,
+            { e -> },
+            successAction
+        )
+    }
+}
+
+@Composable
+fun EditRaidSheet(
+    raidInfo: RaidInfo,
+    onDismissRequest: () -> Unit,
+    successAction: () -> Unit
+) {
+    var fbRaidInfo: FBRaidInfo by remember {
+        mutableStateOf(
+            FBRaidInfo(
+                title = raidInfo.title,
+                type = raidInfo.type!!,
+                difficulty = raidInfo.Difficulty!!,
+                startGateNumber = raidInfo.startGateNumber.toInt(),
+                endGateNumber = raidInfo.endGateNumber.toInt(),
+                day = raidInfo.day,
+                hour = raidInfo.hour,
+                minute = raidInfo.minute,
+            )
+        )
+    }
+    RaidSheetBase(
+        fbRaidInfo = fbRaidInfo,
+        title = "레이드 정보 수정",
+        buttonText = "수정",
+        update = {
+            fbRaidInfo = it
+        },
+        onDismissRequest = onDismissRequest
+    ) {
+        CommonRaidHelper.update(
+            raidInfo.roomId,
+            raidInfo.raidId,
+            fbRaidInfo,
+            { e -> },
+            successAction
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RaidSheetBase(
+    fbRaidInfo: FBRaidInfo,
+    title: String,
+    buttonText: String,
+    update: (fbRaidInfo: FBRaidInfo) -> Unit,
+    onDismissRequest: () -> Unit,
+    buttonAction: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
     val radioOptions = Difficulty.values()
     val textFieldModifier = Modifier.fillMaxWidth()
     var showDayUse by remember { mutableStateOf(false) }
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
-            fbRaidInfo = fbRaidInfo.copy(difficulty = Difficulty.Normal)
+            update(fbRaidInfo.copy(difficulty = Difficulty.Normal))
         }
         if (fbRaidInfo.type != RaidType.ABRELSHUD) {
             val maxGate = fbRaidInfo.type.getMaxGate()
-            fbRaidInfo = fbRaidInfo.copy(startGateNumber = 1, endGateNumber = maxGate)
+            update(fbRaidInfo.copy(startGateNumber = 1, endGateNumber = maxGate))
         }
     }
     LaunchedEffect(showDayUse) {
         if (!showDayUse) {
-            fbRaidInfo = fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0)
+            update(fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0))
         }
     }
 
     BaseSheet(
-        title = "레이드 정보 추가",
+        title = title,
+        buttonText = buttonText,
         onDismissRequest = onDismissRequest,
-        enabledButton = fbRaidInfo.title.isNotEmpty() && (if (showDayUse)  fbRaidInfo.day != Day.NONE  else  true ),
-        buttonClickAction = {
-            CommonRaidHelper.add(
-                roomId,
-                fbRaidInfo,
-                { e ->  },
-                successAction
-            )
-        },
+        enabledButton = fbRaidInfo.title.isNotEmpty() && (if (showDayUse) fbRaidInfo.day != Day.NONE else true),
+        buttonClickAction = buttonAction,
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -106,7 +167,7 @@ fun AddRaidSheet(
                     imeAction = ImeAction.Next
                 ),
                 textChange = {
-                    fbRaidInfo = fbRaidInfo.copy(title = it)
+                    update(fbRaidInfo.copy(title = it))
                 }
             )
             //타입
@@ -142,7 +203,7 @@ fun AddRaidSheet(
                                 )
                             },
                             onClick = {
-                                fbRaidInfo = fbRaidInfo.copy(type = item)
+                                update(fbRaidInfo.copy(type = item))
                                 expanded = false
                             }
                         )
@@ -163,8 +224,8 @@ fun AddRaidSheet(
                         val selected = difficulty == fbRaidInfo.difficulty
                         val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
 
-                        val update = {
-                            fbRaidInfo = fbRaidInfo.copy(difficulty = difficulty)
+                        val updateAction = {
+                            update(fbRaidInfo.copy(difficulty = difficulty))
                         }
 
                         Row(
@@ -172,14 +233,14 @@ fun AddRaidSheet(
                                 .weight(1f)
                                 .selectable(
                                     selected = selected,
-                                    onClick = update
+                                    onClick = updateAction
                                 ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
                                 selected = selected,
                                 enabled = enabled,
-                                onClick = update,
+                                onClick = updateAction,
                                 colors = RadioButtonDefaults.colors()
                             )
                             Text(
@@ -199,9 +260,8 @@ fun AddRaidSheet(
                 var checked1 by remember { mutableStateOf(true) }
                 var checked2 by remember { mutableStateOf(false) }
                 var checked3 by remember { mutableStateOf(false) }
-                val update = { start: Int, end: Int ->
-                    fbRaidInfo = fbRaidInfo.copy(startGateNumber = start, endGateNumber = end)
-
+                val updateAction = { start: Int, end: Int ->
+                    update(fbRaidInfo.copy(startGateNumber = start, endGateNumber = end))
                 }
                 LaunchedEffect(checked1, checked2, checked3) {
                     val endGateNumber = if (checked3) {
@@ -218,14 +278,14 @@ fun AddRaidSheet(
                     } else {
                         3
                     }
-                    update(startGateNumber, endGateNumber)
+                    updateAction(startGateNumber, endGateNumber)
                 }
                 LaunchedEffect(fbRaidInfo.difficulty) {
                     if (fbRaidInfo.difficulty == Difficulty.Hell) {
                         checked1 = false
                         checked2 = false
                         checked3 = true
-                        update(3, 3)
+                        updateAction(3, 3)
                     }
                 }
                 Column(
@@ -330,9 +390,11 @@ fun AddRaidSheet(
                     WheelTimePicker(
                         modifier = Modifier.weight(2f),
                     ) { time ->
-                        fbRaidInfo = fbRaidInfo.copy(
-                            hour = time.hour.toLong(),
-                            minute = time.minute.toLong()
+                        update(
+                            fbRaidInfo.copy(
+                                hour = time.hour.toLong(),
+                                minute = time.minute.toLong()
+                            )
                         )
                     }
                     val days = Day.values().toList()
@@ -344,12 +406,14 @@ fun AddRaidSheet(
                             .weight(3f),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        val update = { day: Day ->
-                            fbRaidInfo = if (fbRaidInfo.day == day) {
-                                fbRaidInfo.copy(day = Day.NONE)
-                            } else {
-                                fbRaidInfo.copy(day = day)
-                            }
+                        val updateAction = { day: Day ->
+                            update(
+                                if (fbRaidInfo.day == day) {
+                                    fbRaidInfo.copy(day = Day.NONE)
+                                } else {
+                                    fbRaidInfo.copy(day = day)
+                                }
+                            )
                         }
                         Row() {
                             days.subList(1, 5).forEach {
@@ -358,7 +422,7 @@ fun AddRaidSheet(
                                     modifier = weight,
                                     selected = fbRaidInfo.day == it
                                 ) {
-                                    update(it)
+                                    updateAction(it)
                                 }
                             }
                         }
@@ -369,7 +433,7 @@ fun AddRaidSheet(
                                     modifier = weight,
                                     selected = fbRaidInfo.day == it
                                 ) {
-                                    update(it)
+                                    updateAction(it)
                                 }
                             }
                             Spacer(modifier = weight)

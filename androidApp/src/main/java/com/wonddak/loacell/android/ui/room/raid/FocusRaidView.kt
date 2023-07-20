@@ -24,9 +24,9 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
+import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
 import com.wonddak.loacell.android.ui.dialog.DeleteRaidDialog
 import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
-import com.wonddak.loacell.android.ui.dialog.EditRaidTitleDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.RoomState
@@ -162,15 +162,12 @@ fun FocusRaidView(
                 }
 
                 if (showRaidEdit) {
-                    EditRaidTitleDialog(
-                        nowTitle = raidInfo.title,
-                        success =  {
-                            CommonRaidHelper.updateTitle(raidInfo.roomId,raidInfo.raidId,it)
-                            showRaidEdit = false
-                        }
-                    ) {
-                        showRaidEdit = false
-                    }
+                    val close = { showRaidEdit = false }
+                    EditRaidSheet(
+                        raidInfo = raidInfo,
+                        onDismissRequest = close,
+                        successAction = close
+                    )
                 }
             }
         }
