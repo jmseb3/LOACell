@@ -72,6 +72,8 @@ dependencies {
     implementation(Dependencies.Android.Firebase.Auth)
     implementation(Dependencies.Android.Firebase.AuthGoogle)
 
+    implementation("com.github.commandiron:WheelPickerCompose:1.1.11")
+
     implementation("com.kakao.sdk:v2-share:2.14.0") // 메시지(카카오톡 공유)
 
 }

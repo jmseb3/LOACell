@@ -3,6 +3,7 @@ package com.wonddak.loacell.android.ui.bottomSheet
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.wonddak.database.model.Day
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
@@ -44,7 +46,7 @@ fun AddRaidSheet(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    var fbRaidInfo :FBRaidInfo by remember {
+    var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
             FBRaidInfo(
                 title = "",
@@ -61,7 +63,7 @@ fun AddRaidSheet(
     val radioOptions = Difficulty.values()
     val textFieldModifier = Modifier.fillMaxWidth()
     var errorMsg by remember { mutableStateOf("") }
-    var showDayUse by remember {mutableStateOf(false)}
+    var showDayUse by remember { mutableStateOf(false) }
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
             fbRaidInfo = fbRaidInfo.copy(difficulty = Difficulty.Normal)
@@ -85,7 +87,7 @@ fun AddRaidSheet(
                 CommonRaidHelper.add(
                     roomId,
                     fbRaidInfo,
-                    {e -> errorMsg = e.errorMsg},
+                    { e -> errorMsg = e.errorMsg },
                     successAction
                 )
             } else {
@@ -110,7 +112,7 @@ fun AddRaidSheet(
                     imeAction = ImeAction.Next
                 ),
                 textChange = {
-                   fbRaidInfo = fbRaidInfo.copy(title = it)
+                    fbRaidInfo = fbRaidInfo.copy(title = it)
                 }
             )
             //타입
@@ -222,14 +224,14 @@ fun AddRaidSheet(
                     } else {
                         3
                     }
-                    update(startGateNumber,endGateNumber)
+                    update(startGateNumber, endGateNumber)
                 }
                 LaunchedEffect(fbRaidInfo.difficulty) {
                     if (fbRaidInfo.difficulty == Difficulty.Hell) {
                         checked1 = false
                         checked2 = false
                         checked3 = true
-                        update(3,3)
+                        update(3, 3)
                     }
                 }
                 Column(
@@ -310,44 +312,99 @@ fun AddRaidSheet(
                     Text(text = fbRaidInfo.type.maxPerson.toString())
                 }
             }
-            CheckBoxRow(
-                modifier = Modifier.fillMaxWidth(1f),
-                text = "일정 지정",
-                value = showDayUse,
-                enabled = true,
-                onClick = {
-                    showDayUse = it
-                }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                CheckBoxRow(
+                    modifier = Modifier,
+                    text = "일정 지정",
+                    value = showDayUse,
+                    enabled = true,
+                    onClick = {
+                        showDayUse = it
+                    }
+                )
+                Spacer(modifier = Modifier.weight(1f))
+            }
             AnimatedVisibility(showDayUse) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    WheelTimePicker(
+                        modifier = Modifier.weight(2f),
+                    ) { time ->
+                        fbRaidInfo = fbRaidInfo.copy(
+                            hour = time.hour.toLong(),
+                            minute = time.minute.toLong()
+                        )
+                    }
+                    val days = Day.values().toList()
                     val weight = Modifier.weight(1f)
-                    Day.values().forEach {
-                        if (it.index >= 0) {
-                            val selected = fbRaidInfo.day == it
-                            val color = if (selected) Color.Black else Color.Transparent
-                            TextButton(
-                                modifier = weight.border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)),
-                                onClick = { fbRaidInfo = fbRaidInfo.copy(day = it) }
-                            ) {
-                                Text(
-                                    text = it.text,
-                                    textAlign = TextAlign.Center,
-                                    color = Color.Black
-                                )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .weight(3f),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        val update = { day: Day ->
+                            fbRaidInfo = if (fbRaidInfo.day == day) {
+                                fbRaidInfo.copy(day = Day.NONE)
+                            } else {
+                                fbRaidInfo.copy(day = day)
                             }
-                            if (it.index < 6) {
-                                Spacer(modifier = Modifier.weight(0.5f))
+                        }
+                        Row() {
+                            days.subList(1, 5).forEach {
+                                DayButton(
+                                    day = it,
+                                    modifier = weight,
+                                    selected = fbRaidInfo.day == it
+                                ) {
+                                    update(it)
+                                }
                             }
+                        }
+                        Row() {
+                            days.subList(5, 8).forEach {
+                                DayButton(
+                                    day = it,
+                                    modifier = weight,
+                                    selected = fbRaidInfo.day == it
+                                ) {
+                                    update(it)
+                                }
+                            }
+                            Spacer(modifier = weight)
                         }
                     }
                 }
+
             }
         }
+    }
+}
+
+@Composable
+fun DayButton(
+    day: Day,
+    modifier: Modifier,
+    selected: Boolean,
+    update: () -> Unit
+) {
+    val color = if (selected) Color.Black else Color.Transparent
+    TextButton(
+        modifier = modifier.border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)),
+        onClick = update
+    ) {
+        Text(
+            text = day.text,
+            textAlign = TextAlign.Center,
+            color = Color.Black
+        )
     }
 }
 
