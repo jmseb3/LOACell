@@ -62,7 +62,6 @@ fun AddRaidSheet(
     }
     val radioOptions = Difficulty.values()
     val textFieldModifier = Modifier.fillMaxWidth()
-    var errorMsg by remember { mutableStateOf("") }
     var showDayUse by remember { mutableStateOf(false) }
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
@@ -82,20 +81,15 @@ fun AddRaidSheet(
     BaseSheet(
         title = "레이드 정보 추가",
         onDismissRequest = onDismissRequest,
+        enabledButton = fbRaidInfo.title.isNotEmpty() && (if (showDayUse)  fbRaidInfo.day != Day.NONE  else  true ),
         buttonClickAction = {
-            if (fbRaidInfo.title.isNotEmpty()) {
-                CommonRaidHelper.add(
-                    roomId,
-                    fbRaidInfo,
-                    { e -> errorMsg = e.errorMsg },
-                    successAction
-                )
-            } else {
-                errorMsg = "제목을 입력해주세요."
-            }
+            CommonRaidHelper.add(
+                roomId,
+                fbRaidInfo,
+                { e ->  },
+                successAction
+            )
         },
-        errorMsg = errorMsg,
-        updateErrorMsg = { errorMsg = it }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
