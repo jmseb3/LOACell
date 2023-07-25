@@ -1,14 +1,10 @@
 package com.wonddak.loacell.android.ui.room.raid
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,21 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.room.raid.calendar.RaidCalendarView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.RoomType
-import java.text.DecimalFormat
 
 @Composable
 fun RaidView(
@@ -104,7 +97,6 @@ fun RaidView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RaidTypeView(
     type: RoomType,
@@ -134,125 +126,6 @@ fun RaidTypeView(
             }
         }
     } else {
-
-        Box() {
-            LazyColumn() {
-                stickyHeader {
-                    Column() {
-                        CalendarRow(
-                            modifier = Modifier.background(Color.White),
-                            timeText = "시간"
-                        ) { modifier ,day ->
-                            Text(
-                                modifier = modifier,
-                                text = day.text,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        Divider()
-                    }
-                }
-                fun makeTimeText(
-                    hour :Int,
-                    minute :Int,
-                    step :Int
-                ):String {
-                    val df = DecimalFormat("00")
-                    val rs1 = "${df.format(hour)} : ${df.format(minute)}"
-                    val timeTotal = hour * 60 + minute + step
-                    val newHour = timeTotal / 60
-                    val newMinute = timeTotal % 60
-                    val rs2 = "${df.format(newHour)} : ${df.format(newMinute)}"
-                    return  "$rs1\n~\n$rs2"
-
-                }
-                items(timeSteps) { totalMin ->
-                    val hour = totalMin / 60
-                    val minute = (totalMin % 60)
-                    val minuteIndex = (totalMin % 60) / timeStep
-                    val result = table[hour][minuteIndex]
-
-                    CalendarRow(timeText = makeTimeText(hour,minute,timeStep)) { modifier,day ->
-                        val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
-                        val text = if (filterDay.isEmpty()) {
-                            ""
-                        } else if (filterDay.size == 1) {
-                            filterDay.first().title
-                        } else {
-                            "${filterDay.first().title} 외 ${filterDay.size - 1}"
-                        }
-                        Text(
-                            modifier = modifier,
-                            text = text,
-                            textAlign = TextAlign.Center,
-                            fontSize = 11.sp
-                        )
-                    }
-                    Divider()
-
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "",
-                    modifier = Modifier.weight(2f),
-                    textAlign = TextAlign.Center
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()  //fill the max height
-                        .width(1.dp)
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(7f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Day.MON.getList().forEach { day ->
-                        Text("",Modifier.weight(1f))
-                        if (day.index <6) {
-                            Divider(
-                                modifier = Modifier
-                                    .fillMaxHeight()  //fill the max height
-                                    .width(1.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CalendarRow(
-    modifier: Modifier = Modifier,
-    timeText: String,
-    dayItem: @Composable (modifier: Modifier,day: Day) -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = timeText,
-            modifier = Modifier.weight(2f),
-            textAlign = TextAlign.Center
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(7f),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Day.MON.getList().forEach { day ->
-                dayItem(Modifier.weight(1f),day)
-            }
-        }
+        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, table = table)
     }
 }

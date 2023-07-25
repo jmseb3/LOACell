@@ -1,10 +1,10 @@
 package com.wonddak.loacell.model
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.getAllPartyList
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.ext.getAllPartyList
 
 data class Filter(
     val raidType: List<RaidType> = RaidType.values().toList(),

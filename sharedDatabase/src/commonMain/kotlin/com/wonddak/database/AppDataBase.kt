@@ -103,9 +103,6 @@ class AppDataBase(driverFactory: DriverFactory) {
     val userInfoQueriesHelper = UserInfoQueriesHelper(database.userInfoQueries)
     val characterQueriesHelper = CharacterQueriesHelper(database.characterQueries)
 
-    /**
-     * 타입에 맞고 ㅋ
-     */
     fun getUsersByRoomIdFilterCharacterAndType(
         roomId: String,
         raidInfo: RaidInfo //현재 레이드 정보

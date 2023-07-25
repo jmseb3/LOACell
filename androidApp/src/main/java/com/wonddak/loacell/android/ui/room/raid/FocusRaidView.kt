@@ -20,6 +20,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
+import com.wonddak.database.model.Day
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.noRippleClickable
@@ -29,6 +30,7 @@ import com.wonddak.loacell.android.ui.dialog.DeleteRaidDialog
 import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.getDayText
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
 
@@ -81,6 +83,9 @@ fun FocusRaidView(
 
             Column() {
                 Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
+                if (raidInfo.day != Day.NONE) {
+                    Text(text = raidInfo.getDayText())
+                }
             }
             loaCellViewModel.apply {
                 RaidPartyView(characterList, openAction = { index ->
