@@ -37,6 +37,7 @@ import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.FBRaidInfo
+import java.time.LocalTime
 
 @Composable
 fun AddRaidSheet(
@@ -393,6 +394,7 @@ fun RaidSheetBase(
                 ) {
                     WheelTimePicker(
                         modifier = Modifier.weight(2f),
+                        startTime = LocalTime.of(fbRaidInfo.hour.toInt(), fbRaidInfo.minute.toInt())
                     ) { time ->
                         update(
                             fbRaidInfo.copy(
