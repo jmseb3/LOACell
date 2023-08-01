@@ -212,7 +212,8 @@ class LoaCellViewModel(
 
     fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
     fun updateFilterUser(user: String) = common.updateFilterUser(user)
-
+    fun updateFilterTimeStep(step:Int) = common.updateTimeStep(step)
+    fun updateFilterShowEmptyRow(show:Boolean) = common.updateShowEmptyRow(show)
 
     //region dialog status
     var showRoomAction by mutableStateOf(false)

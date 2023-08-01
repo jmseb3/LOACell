@@ -200,6 +200,12 @@ open class CommonViewModel(
     fun updateFilterUser(user: String)
     = updateFilter(_filter.value.updateUser(user))
 
+    fun updateTimeStep(step :Int)
+     = updateFilter(_filter.value.updateTimeStep(step))
+
+    fun updateShowEmptyRow(show:Boolean)
+            = updateFilter(_filter.value.updateEmptyCalendarRow(show))
+
     fun clearFilter() {
         _filter.value = Filter()
     }

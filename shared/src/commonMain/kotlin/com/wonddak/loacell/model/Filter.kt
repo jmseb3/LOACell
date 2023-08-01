@@ -9,7 +9,9 @@ import com.wonddak.loacell.ext.getAllPartyList
 data class Filter(
     val raidType: List<RaidType> = RaidType.values().toList(),
     val finish: FINISH = FINISH.ALL,
-    val userList: List<String> = emptyList()
+    val userList: List<String> = emptyList(),
+    val timeStep : Int = 60,
+    val showEmptyCalendarRow :Boolean = true
 ) {
 
     enum class FINISH(val title:String) {
@@ -79,6 +81,13 @@ data class Filter(
             temp.add(user)
             this.copy(userList = temp)
         }
+    }
+
+    fun updateTimeStep(step:Int) : Filter {
+        return this.copy(timeStep = step)
+    }
+    fun updateEmptyCalendarRow(show:Boolean) : Filter {
+        return this.copy(showEmptyCalendarRow = show)
     }
 
     fun isSelected(type: RaidType) :Boolean {

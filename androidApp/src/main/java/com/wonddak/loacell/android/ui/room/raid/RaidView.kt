@@ -82,6 +82,8 @@ fun RaidView(
             Divider()
             RaidTypeView(
                 type = showType,
+                timeStep = filter.timeStep,
+                showEmptyRow = filter.showEmptyCalendarRow,
                 filterRaidInfoList = filter.filterList(raidInfoList, userInfoList, db),
                 loaCellViewModel = loaCellViewModel
             )
@@ -100,10 +102,11 @@ fun RaidView(
 @Composable
 fun RaidTypeView(
     type: RoomType,
+    timeStep :Int,
+    showEmptyRow :Boolean,
     filterRaidInfoList: List<RaidInfo>,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val timeStep = 30
     val timeSteps = (0 until (1440 / timeStep)).map { it * timeStep }
 
     val table = MutableList(24) { MutableList(60 / timeStep) { mutableListOf<RaidInfo>() } }
@@ -126,6 +129,6 @@ fun RaidTypeView(
             }
         }
     } else {
-        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, table = table)
+        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, showEmptyRow = showEmptyRow,table = table)
     }
 }

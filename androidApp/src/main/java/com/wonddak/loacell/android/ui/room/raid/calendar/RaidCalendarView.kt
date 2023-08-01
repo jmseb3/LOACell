@@ -5,19 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
@@ -28,10 +27,16 @@ import com.wonddak.loacell.util.TimeHelper
 fun RaidCalendarView(
     timeStep :Int,
     timeSteps : List<Int>,
+    showEmptyRow:Boolean,
     table : List<List<List<RaidInfo>>>
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(timeStep) {
+        listState.scrollToItem(0)
+    }
     Box() {
-        LazyColumn() {
+        LazyColumn(state = listState) {
             stickyHeader {
                 Column() {
                     CalendarRow(
@@ -53,6 +58,9 @@ fun RaidCalendarView(
                 val minuteIndex = (totalMin % 60) / timeStep
                 val result = table[hour][minuteIndex]
 
+                if (result.isEmpty() && !showEmptyRow) {
+                    return@items
+                }
                 CalendarRow(timeText = TimeHelper.makeTimeText(hour,minute,timeStep)) { modifier, day ->
                     val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
                     val text = if (filterDay.isEmpty()) {
@@ -73,39 +81,39 @@ fun RaidCalendarView(
 
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "",
-                modifier = Modifier.weight(2f),
-                textAlign = TextAlign.Center
-            )
-            Divider(
-                modifier = Modifier
-                    .fillMaxHeight()  //fill the max height
-                    .width(1.dp)
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(7f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Day.MON.getList().forEach { day ->
-                    Text("", Modifier.weight(1f))
-                    if (day.index <6) {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxHeight()  //fill the max height
-                                .width(1.dp)
-                        )
-                    }
-                }
-            }
-        }
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = "",
+//                modifier = Modifier.weight(2f),
+//                textAlign = TextAlign.Center
+//            )
+//            Divider(
+//                modifier = Modifier
+//                    .fillMaxHeight()  //fill the max height
+//                    .width(1.dp)
+//            )
+//
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(7f),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Day.MON.getList().forEach { day ->
+//                    Text("", Modifier.weight(1f))
+//                    if (day.index <6) {
+//                        Divider(
+//                            modifier = Modifier
+//                                .fillMaxHeight()  //fill the max height
+//                                .width(1.dp)
+//                        )
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
