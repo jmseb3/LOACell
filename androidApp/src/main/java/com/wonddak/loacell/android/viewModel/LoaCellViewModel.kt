@@ -2,9 +2,11 @@ package com.wonddak.loacell.android.viewModel
 
 
 import android.util.Log
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
@@ -29,7 +31,7 @@ import kotlinx.coroutines.launch
 class LoaCellViewModel(
     private val dataBase: AppDataBase,
     private val config: Config
-) : SnackBarController() {
+) : ViewModel() {
 
     private val common by lazy {
         CommonViewModel(
@@ -47,6 +49,18 @@ class LoaCellViewModel(
             }
         )
     }
+    private val snackBarController = SnackBarController()
+
+    val snackBarMessage
+        get() = snackBarController.snackBarMessage
+
+    fun showSnackBar(
+        message: String,
+        label: String? = null,
+        duration: SnackbarDuration = SnackbarDuration.Short,
+    ) = snackBarController.showSnackBar(message, label, duration)
+
+    fun resetSnackBar() = snackBarController.resetSnackBar()
 
     //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
