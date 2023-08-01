@@ -11,7 +11,7 @@ data class Filter(
     val finish: FINISH = FINISH.ALL,
     val userList: List<String> = emptyList(),
     val timeStep : Int = 60,
-    val showEmptyCalendarRow :Boolean = true
+    val showEmptyCalendarRow :Boolean = false
 ) {
 
     enum class FINISH(val title:String) {

@@ -152,7 +152,10 @@ fun FilterSheet(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "${it}분")
+                                Text(
+                                    text = "${it}분",
+                                    color = Color.Black
+                                )
                             }
                         }
                     }

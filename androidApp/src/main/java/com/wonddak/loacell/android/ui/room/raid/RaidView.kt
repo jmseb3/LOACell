@@ -129,6 +129,14 @@ fun RaidTypeView(
             }
         }
     } else {
-        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, showEmptyRow = showEmptyRow,table = table)
+        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, showEmptyRow = showEmptyRow,table = table) {filterDay ->
+            if (filterDay.isEmpty()) {
+
+            } else if (filterDay.size == 1) {
+               loaCellViewModel.setNowRaidInfo(filterDay[0].raidId)
+            } else {
+
+            }
+        }
     }
 }
