@@ -122,7 +122,8 @@ fun CalendarRow(
         Text(
             text = timeText,
             modifier = Modifier.weight(2f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 13.sp
         )
         Row(
             modifier = Modifier

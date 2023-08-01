@@ -58,7 +58,8 @@ class LoaCellViewModel(
         message: String,
         label: String? = null,
         duration: SnackbarDuration = SnackbarDuration.Short,
-    ) = snackBarController.showSnackBar(message, label, duration)
+        action: () -> Unit = { resetSnackBar() },
+    ) = snackBarController.showSnackBar(message, label, duration, action)
 
     fun resetSnackBar() = snackBarController.resetSnackBar()
 
@@ -76,7 +77,7 @@ class LoaCellViewModel(
 
     //포커싱된 유저 정보
     val focusUserName get() = common.focusUserName
-    val userInfo get() =  common.userInfo
+    val userInfo get() = common.userInfo
 
     //포커싱된 레이드 정
     val focusRaidId get() = common.focusRaidId
@@ -178,8 +179,8 @@ class LoaCellViewModel(
     }
 
 
-    val syncData get() =  common.syncData
-    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid,force)
+    val syncData get() = common.syncData
+    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
 
     fun signOut() {
         hideRoomInfo()
@@ -204,7 +205,7 @@ class LoaCellViewModel(
         common.updateFocusUserName("")
     }
 
-    val filter get() =  common.filter
+    val filter get() = common.filter
 
     fun clearFilter() = common.clearFilter()
     fun updateFilterRaidType(raidType: RaidType) = common.updateFilterRaidType(raidType)
@@ -283,8 +284,14 @@ class LoaCellViewModel(
                 return
             }
             when (tabState.value) {
-                RoomState.Raid -> { showRaidAdd = true }
-                RoomState.User -> { showUserAdd = true }
+                RoomState.Raid -> {
+                    showRaidAdd = true
+                }
+
+                RoomState.User -> {
+                    showUserAdd = true
+                }
+
                 RoomState.Setting -> {}
             }
         }
