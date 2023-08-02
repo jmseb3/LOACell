@@ -44,23 +44,20 @@ fun MainContent(
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {
             LaunchedEffect(snackBarMessage) {
-                snackBarMessage.let {
-                    // show가 true일때만 실행됩니다.
-                    if (it.show) {
-                        val snackBarResult = snackBarHostState.showSnackbar(
-                            it.message,
-                            it.actionLabel,
-                            false,
-                            it.duration
-                        )
-                        when (snackBarResult) {
-                            SnackbarResult.Dismissed -> {
-                                resetSnackBar()
-                            }
+                snackBarMessage?.let {item ->
+                    val snackBarResult = snackBarHostState.showSnackbar(
+                        item.message,
+                        item.actionLabel,
+                        false,
+                        item.duration
+                    )
+                    when (snackBarResult) {
+                        SnackbarResult.Dismissed -> {
+                            resetSnackBar()
+                        }
 
-                            SnackbarResult.ActionPerformed -> {
-                                it.performAction()
-                            }
+                        SnackbarResult.ActionPerformed -> {
+                            item.performAction()
                         }
                     }
                 }

@@ -69,7 +69,7 @@ object CommonUserHelper {
                         }
                     )
                 } else {
-                    try {
+                    runCatching {
                         userRoom.set(
                             data = fbUserInfo.toMap(),
                             successAction = successAction,
@@ -77,10 +77,9 @@ object CommonUserHelper {
                                 failAction(err.errorMsg)
                             }
                         )
-                    }catch (e:Exception) {
+                    }.onFailure {e ->
                         failAction(e.message ?:"dead")
                     }
-
                 }
             },
             failAction = {

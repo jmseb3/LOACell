@@ -3,10 +3,12 @@ package com.wonddak.database.queriesHelper
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
+import com.wonddak.database.model.RaidType
+import com.wonddak.database.model.convertToDay
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
-import com.wonddak.loacell.model.Difficulty
-import com.wonddak.database.model.RaidType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
@@ -21,8 +23,8 @@ class RaidInfoQueriesHelper(
         return queries.selectByRoomId(roomId).executeAsList()
     }
 
-    fun getRaidInfoById(roomId: String,raidId: String): Flow<RaidInfo?> {
-        return queries.selectByRaidId(roomId,raidId).asFlow()
+    fun getRaidInfoById(roomId: String, raidId: String): Flow<RaidInfo?> {
+        return queries.selectByRaidId(roomId, raidId).asFlow()
             .mapToOneOrNull(Dispatchers.Main)
     }
 
@@ -34,8 +36,11 @@ class RaidInfoQueriesHelper(
         difficulty: Difficulty,
         startGateNumber: Long,
         endGateNumber: Long,
-        party1 : List<String>,
-        party2 : List<String>
+        party1: List<String>,
+        party2: List<String>,
+        day: Day = Day.NONE,
+        hour: Long = 0,
+        minute: Long = 0
     ) {
         queries.insertRaidInfo(
             raidId,
@@ -47,7 +52,10 @@ class RaidInfoQueriesHelper(
             endGateNumber,
             false,
             party1,
-            party2
+            party2,
+            day,
+            hour,
+            minute
         )
     }
 
@@ -60,9 +68,13 @@ class RaidInfoQueriesHelper(
         startGateNumber: Long,
         endGateNumber: Long,
         isFinish: Boolean,
-        party1 : List<String>,
-        party2 : List<String>
+        party1: List<String>,
+        party2: List<String>,
+        dayIndex :Long?,
+        hour :Long?,
+        minute: Long?
     ) {
+        val day = dayIndex?.convertToDay() ?: Day.NONE
         queries.updateRaidInfo(
             title,
             type,
@@ -72,8 +84,11 @@ class RaidInfoQueriesHelper(
             isFinish,
             party1,
             party2,
+            day,
+            hour ?:0L,
+            minute ?: 0L,
             raidId,
-            roomId
+            roomId,
         )
     }
 

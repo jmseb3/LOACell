@@ -79,7 +79,7 @@ fun RoomView(
                 if (showRaidAdd) {
                     val close = { showRaidAdd = false }
                     AddRaidSheet(
-                        roomInfo.uniqueId,
+                        roomId = roomInfo.uniqueId,
                         onDismissRequest = close,
                         successAction = close
                     )

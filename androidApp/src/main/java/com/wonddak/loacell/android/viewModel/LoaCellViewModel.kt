@@ -2,9 +2,11 @@ package com.wonddak.loacell.android.viewModel
 
 
 import android.util.Log
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
@@ -29,7 +31,7 @@ import kotlinx.coroutines.launch
 class LoaCellViewModel(
     private val dataBase: AppDataBase,
     private val config: Config
-) : SnackBarController() {
+) : ViewModel() {
 
     private val common by lazy {
         CommonViewModel(
@@ -47,6 +49,19 @@ class LoaCellViewModel(
             }
         )
     }
+    private val snackBarController = SnackBarController()
+
+    val snackBarMessage
+        get() = snackBarController.snackBarMessage
+
+    fun showSnackBar(
+        message: String,
+        label: String? = null,
+        duration: SnackbarDuration = SnackbarDuration.Short,
+        action: () -> Unit = { resetSnackBar() },
+    ) = snackBarController.showSnackBar(message, label, duration, action)
+
+    fun resetSnackBar() = snackBarController.resetSnackBar()
 
     //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
@@ -62,7 +77,7 @@ class LoaCellViewModel(
 
     //포커싱된 유저 정보
     val focusUserName get() = common.focusUserName
-    val userInfo get() =  common.userInfo
+    val userInfo get() = common.userInfo
 
     //포커싱된 레이드 정
     val focusRaidId get() = common.focusRaidId
@@ -164,8 +179,8 @@ class LoaCellViewModel(
     }
 
 
-    val syncData get() =  common.syncData
-    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid,force)
+    val syncData get() = common.syncData
+    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
 
     fun signOut() {
         hideRoomInfo()
@@ -190,14 +205,15 @@ class LoaCellViewModel(
         common.updateFocusUserName("")
     }
 
-    val filter get() =  common.filter
+    val filter get() = common.filter
 
     fun clearFilter() = common.clearFilter()
     fun updateFilterRaidType(raidType: RaidType) = common.updateFilterRaidType(raidType)
 
     fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
     fun updateFilterUser(user: String) = common.updateFilterUser(user)
-
+    fun updateFilterTimeStep(step:Int) = common.updateTimeStep(step)
+    fun updateFilterShowEmptyRow(show:Boolean) = common.updateShowEmptyRow(show)
 
     //region dialog status
     var showRoomAction by mutableStateOf(false)
@@ -269,8 +285,14 @@ class LoaCellViewModel(
                 return
             }
             when (tabState.value) {
-                RoomState.Raid -> { showRaidAdd = true }
-                RoomState.User -> { showUserAdd = true }
+                RoomState.Raid -> {
+                    showRaidAdd = true
+                }
+
+                RoomState.User -> {
+                    showUserAdd = true
+                }
+
                 RoomState.Setting -> {}
             }
         }

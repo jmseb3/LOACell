@@ -1,7 +1,5 @@
 package com.wonddak.database.model
 
-import com.wonddak.loacell.model.Difficulty
-
 
 enum class RaidType(val maxPerson: Int) {
     VALTAN(8),
@@ -28,7 +26,14 @@ enum class RaidType(val maxPerson: Int) {
 
     fun accessibleDifficulty(): List<Difficulty> {
         return when (this) {
-            VALTAN, VYKAS, ABRELSHUD, ETC -> listOf(
+            VALTAN -> listOf(
+                Difficulty.Normal,
+                Difficulty.Hard,
+                Difficulty.Hell,
+                Difficulty.ExtremeNormal,
+                Difficulty.ExtremeHard
+            )
+            VYKAS, ABRELSHUD, ETC -> listOf(
                 Difficulty.Normal,
                 Difficulty.Hard,
                 Difficulty.Hell
@@ -52,18 +57,21 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Normal -> 1415
                 Difficulty.Hard -> 1445
                 Difficulty.Hell -> 1445
+                Difficulty.ExtremeNormal -> 1580
+                Difficulty.ExtremeHard -> 1620
             }
 
             VYKAS -> when (difficulty) {
                 Difficulty.Normal -> 1430
                 Difficulty.Hard -> 1460
                 Difficulty.Hell -> 1460
+                else -> 0
             }
 
             KOUKU -> when (difficulty) {
                 Difficulty.Normal -> 1475
-                Difficulty.Hard -> 0
                 Difficulty.Hell -> 1475
+                else -> 0
             }
 
             ABRELSHUD -> when (difficulty) {
@@ -82,24 +90,25 @@ enum class RaidType(val maxPerson: Int) {
                 }
 
                 Difficulty.Hell -> 1560
+                else -> 0
             }
 
             ILLIAKAN -> when (difficulty) {
                 Difficulty.Normal -> 1580
                 Difficulty.Hard -> 1600
-                Difficulty.Hell -> 0
+                else -> 0
             }
 
             KAYANGEL -> when (difficulty) {
                 Difficulty.Normal -> 1540
                 Difficulty.Hard -> 1580
-                Difficulty.Hell -> 0
+                else -> 0
             }
 
             IVORYTOWER -> when (difficulty) {
                 Difficulty.Normal -> 1600
                 Difficulty.Hard -> 1620
-                Difficulty.Hell -> 0
+                else -> 0
             }
 
             ETC -> 0

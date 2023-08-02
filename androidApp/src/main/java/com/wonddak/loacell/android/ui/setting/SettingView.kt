@@ -59,13 +59,15 @@ fun SettingView(
     var showSlider by remember {
         mutableStateOf(false)
     }
+    var showCalendar by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         SectionCardView(title = "로그인 정보") {
             LoginInfoView(db, loaCellViewModel)
         }
-        Divider()
         SectionText(
             title = "시트 하단 여백 조정",
             clicked = showSlider,
@@ -108,13 +110,11 @@ fun SettingView(
                 }
             }
         }
-        Divider()
         SectionText(title = "버그 제보 및 건의하기") {
             Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/acD6rQ9Tja")).also {
                 context.startActivity(it)
             }
         }
-        Divider()
         SectionText(title = "앱 버전 : ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})")
     }
 }
@@ -122,27 +122,35 @@ fun SettingView(
 @Composable
 internal fun SectionText(
     title: String,
+    useDivider :Boolean = true,
     action: (() -> Unit)? = null
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
-            .noRippleClickable {
-                if (action != null) {
-                    action()
-                }
-            },
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = title)
-        if (action != null) {
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(id = SharedRes.images.arrow.drawableResId),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+                .noRippleClickable {
+                    if (action != null) {
+                        action()
+                    }
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = title)
+            if (action != null) {
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    painter = painterResource(id = SharedRes.images.arrow.drawableResId),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+        if (useDivider) {
+            Divider()
         }
     }
 }
@@ -150,6 +158,7 @@ internal fun SectionText(
 @Composable
 internal fun SectionText(
     title: String,
+    useDivider :Boolean = true,
     clicked: Boolean,
     action: () -> Unit,
     content: @Composable () -> Unit
@@ -179,6 +188,9 @@ internal fun SectionText(
         }
         if (clicked) {
             content()
+        }
+        if (useDivider) {
+            Divider()
         }
     }
 }

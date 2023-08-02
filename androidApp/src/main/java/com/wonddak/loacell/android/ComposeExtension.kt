@@ -22,7 +22,6 @@ inline fun Modifier.noRippleClickable(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 inline fun Modifier.noRippleClickable(
     crossinline onClick: () -> Unit = {},
 ): Modifier = composed {

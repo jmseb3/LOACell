@@ -4,13 +4,10 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import com.wonddak.loacell.android.model.SnackBarItem
 
-open class SnackBarController(
-
-) : ViewModel() {
-    var snackBarMessage: SnackBarItem by mutableStateOf(SnackBarItem())
+class SnackBarController {
+    var snackBarMessage: SnackBarItem? by mutableStateOf(null)
         private set
 
     private fun showSnackBar(snackBarItem: SnackBarItem) {
@@ -28,6 +25,6 @@ open class SnackBarController(
     }
 
     fun resetSnackBar() {
-        snackBarMessage = SnackBarItem()
+        snackBarMessage = null
     }
 }

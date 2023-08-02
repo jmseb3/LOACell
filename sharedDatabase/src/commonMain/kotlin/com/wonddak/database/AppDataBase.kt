@@ -4,6 +4,8 @@ import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.database.ext.getMinLevel
+import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
 import com.wonddak.database.queriesHelper.CharacterQueriesHelper
 import com.wonddak.database.queriesHelper.RaidInfoQueriesHelper
@@ -13,7 +15,6 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.Database
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.model.Difficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
@@ -39,6 +40,8 @@ class AppDataBase(driverFactory: DriverFactory) {
     private val difficultyTypeAdapter = object : ColumnAdapter<Difficulty, Long> {
         override fun decode(databaseValue: Long): Difficulty {
             return when (databaseValue) {
+                4L -> Difficulty.ExtremeHard
+                3L -> Difficulty.ExtremeNormal
                 2L -> Difficulty.Hell
                 1L -> Difficulty.Hard
                 else -> Difficulty.Normal
@@ -47,6 +50,8 @@ class AppDataBase(driverFactory: DriverFactory) {
 
         override fun encode(value: Difficulty): Long {
             return when (value) {
+                Difficulty.ExtremeHard -> 4L
+                Difficulty.ExtremeNormal -> 3L
                 Difficulty.Hell -> 2L
                 Difficulty.Hard -> 1L
                 else -> 0L
@@ -55,7 +60,7 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     }
 
-    private val stringListAdapter = object  : ColumnAdapter<List<String>,String> {
+    private val stringListAdapter = object : ColumnAdapter<List<String>, String> {
         override fun decode(databaseValue: String): List<String> {
             if (databaseValue == "") {
                 return emptyList()
@@ -74,7 +79,22 @@ class AppDataBase(driverFactory: DriverFactory) {
             typeAdapter = raidTypeAdapter,
             DifficultyAdapter = difficultyTypeAdapter,
             party1characterListAdapter = stringListAdapter,
-            party2characterListAdapter = stringListAdapter
+            party2characterListAdapter = stringListAdapter,
+            dayAdapter = object : ColumnAdapter<Day, Long> {
+                override fun decode(databaseValue: Long): Day {
+                    Day.values().forEach {
+                        if (it.index.toLong() == databaseValue) {
+                            return it
+                        }
+                    }
+                    return Day.NONE
+                }
+
+                override fun encode(value: Day): Long {
+                    return value.index.toLong()
+                }
+
+            }
         ),
         RoomInfoAdapter = RoomInfo.Adapter(
             enterUserAdapter = stringListAdapter,
@@ -87,13 +107,10 @@ class AppDataBase(driverFactory: DriverFactory) {
     val userInfoQueriesHelper = UserInfoQueriesHelper(database.userInfoQueries)
     val characterQueriesHelper = CharacterQueriesHelper(database.characterQueries)
 
-    /**
-     * 타입에 맞고 ㅋ
-     */
     fun getUsersByRoomIdFilterCharacterAndType(
         roomId: String,
         raidInfo: RaidInfo //현재 레이드 정보
-    ): Flow<Map<String,List<Character>>> {
+    ): Flow<Map<String, List<Character>>> {
         // id에 맞는 레이드 정보 리스트를 가져옴
         val raidList = raidInfoQueriesHelper.getAllByRoomIdValue(roomId)
 
@@ -117,14 +134,18 @@ class AppDataBase(driverFactory: DriverFactory) {
             .transform { userInfoList ->
                 //모든 유저 정보를 가져온다.
                 try {
-                    val result :MutableMap<String,List<Character>> = mutableMapOf()
+                    val result: MutableMap<String, List<Character>> = mutableMapOf()
                     userInfoList.forEach { userInfo ->
                         var find = true
-                        val characterList :List<Character> = characterQueriesHelper.getAllListByLevelFilter(userInfo,raidInfo.getMinLevel())
+                        val characterList: List<Character> =
+                            characterQueriesHelper.getAllListByLevelFilter(
+                                userInfo,
+                                raidInfo.getMinLevel()
+                            )
 
                         //현재 레이드 정보에 캐릭터가 들어가 있는 사람은 제외시킨다.
                         for (characterName in characterNameInParty) {
-                            if(characterList.map { it.name }.contains(characterName)) {
+                            if (characterList.map { it.name }.contains(characterName)) {
                                 find = false
                                 break
                             }
@@ -132,13 +153,13 @@ class AppDataBase(driverFactory: DriverFactory) {
 
                         if (find) {
                             val newList = characterList.filter { !totalNameList.contains(it.name) }
-                            if (newList.isNotEmpty()){
+                            if (newList.isNotEmpty()) {
                                 result[userInfo.name] = newList
                             }
                         }
                     }
                     emit(result)
-                }catch (e:Exception) {
+                } catch (e: Exception) {
                     println("JWH $e")
                     emit(mapOf())
                 }
