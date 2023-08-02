@@ -132,16 +132,16 @@ fun RaidSheetBase(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val radioOptions = Difficulty.values()
     val textFieldModifier = Modifier.fillMaxWidth()
     var showDayUse by remember { mutableStateOf(fbRaidInfo.day != Day.NONE) }
     LaunchedEffect(fbRaidInfo) {
         if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
-            update(fbRaidInfo.copy(difficulty = Difficulty.Normal))
-        }
-        if (fbRaidInfo.type != RaidType.ABRELSHUD) {
-            val maxGate = fbRaidInfo.type.getMaxGate()
-            update(fbRaidInfo.copy(startGateNumber = 1, endGateNumber = maxGate))
+            if (fbRaidInfo.type != RaidType.ABRELSHUD) {
+                val maxGate = fbRaidInfo.type.getMaxGate()
+                update(fbRaidInfo.copy(difficulty = Difficulty.Normal,startGateNumber = 1, endGateNumber = maxGate))
+            } else {
+                update(fbRaidInfo.copy(difficulty = Difficulty.Normal))
+            }
         }
     }
     LaunchedEffect(showDayUse) {
@@ -222,43 +222,28 @@ fun RaidSheetBase(
                     .padding(horizontal = 10.dp)
             ) {
                 RaidSheetHeaderText(text = "난이도 선택")
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    radioOptions.forEach { difficulty ->
-                        val selected = difficulty == fbRaidInfo.difficulty
-                        val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
-
-                        val updateAction = {
-                            update(fbRaidInfo.copy(difficulty = difficulty))
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .weight(1f)
-                                .selectable(
-                                    selected = selected,
-                                    onClick = updateAction
-                                ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = selected,
-                                enabled = enabled,
-                                onClick = updateAction,
-                                colors = RadioButtonDefaults.colors()
-                            )
-                            Text(
-                                text = difficulty.toKorString(),
-                                modifier = Modifier
-                                    .padding(start = 6.dp)
-                                    .fillMaxWidth(),
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (enabled) Color.Black else Color.Gray
-                            )
-                        }
+                Column {
+                    DifficultyRow(
+                        fbRaidInfo = fbRaidInfo,
+                        difficultyList = listOf(
+                            Difficulty.Normal,
+                            Difficulty.Hard,
+                            Difficulty.Hell
+                        )
+                    ) { difficulty ->
+                        update(fbRaidInfo.copy(difficulty = difficulty))
+                    }
+                    DifficultyRow(
+                        fbRaidInfo = fbRaidInfo,
+                        difficultyList = listOf(
+                            Difficulty.ExtremeNormal,
+                            Difficulty.ExtremeHard
+                        )
+                    ) { difficulty ->
+                        update(fbRaidInfo.copy(difficulty = difficulty))
                     }
                 }
+
             }
 
             AnimatedVisibility(visible = fbRaidInfo.type == RaidType.ABRELSHUD) {
@@ -481,5 +466,45 @@ fun RaidSheetHeaderText(text: String) {
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold
         )
+    }
+}
+
+@Composable
+fun DifficultyRow(
+    fbRaidInfo: FBRaidInfo,
+    difficultyList: List<Difficulty>,
+    update: (Difficulty) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        difficultyList.forEach { difficulty ->
+            val selected = difficulty == fbRaidInfo.difficulty
+            val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .selectable(
+                        selected = selected,
+                        onClick = { update(difficulty) }
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = selected,
+                    enabled = enabled,
+                    onClick = {update(difficulty)},
+                    colors = RadioButtonDefaults.colors()
+                )
+                Text(
+                    text = difficulty.toKorString(),
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .fillMaxWidth(),
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (enabled) Color.Black else Color.Gray
+                )
+            }
+        }
     }
 }
