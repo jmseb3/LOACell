@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -65,6 +66,7 @@ fun AddRaidSheet(
         buttonText = "추가",
         update = {
             fbRaidInfo = it
+            Log.i("JWH",fbRaidInfo.toString())
         },
         onDismissRequest = onDismissRequest
     ) {
@@ -106,6 +108,7 @@ fun EditRaidSheet(
         buttonText = "수정",
         update = {
             fbRaidInfo = it
+            Log.i("JWH",fbRaidInfo.toString())
         },
         onDismissRequest = onDismissRequest
     ) {
@@ -134,21 +137,6 @@ fun RaidSheetBase(
 
     val textFieldModifier = Modifier.fillMaxWidth()
     var showDayUse by remember { mutableStateOf(fbRaidInfo.day != Day.NONE) }
-    LaunchedEffect(fbRaidInfo) {
-        if (!fbRaidInfo.type.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
-            if (fbRaidInfo.type != RaidType.ABRELSHUD) {
-                val maxGate = fbRaidInfo.type.getMaxGate()
-                update(fbRaidInfo.copy(difficulty = Difficulty.Normal,startGateNumber = 1, endGateNumber = maxGate))
-            } else {
-                update(fbRaidInfo.copy(difficulty = Difficulty.Normal))
-            }
-        }
-    }
-    LaunchedEffect(showDayUse) {
-        if (!showDayUse) {
-            update(fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0))
-        }
-    }
 
     BaseSheet(
         title = title,
@@ -208,7 +196,21 @@ fun RaidSheetBase(
                                 )
                             },
                             onClick = {
-                                update(fbRaidInfo.copy(type = item))
+                                if (!item.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
+                                    if (item != RaidType.ABRELSHUD) {
+                                        val maxGate = fbRaidInfo.type.getMaxGate()
+                                        update(fbRaidInfo.copy(type = item, difficulty = Difficulty.Normal,startGateNumber = 1, endGateNumber = maxGate))
+                                    } else {
+                                        update(fbRaidInfo.copy(type = item, difficulty = Difficulty.Normal))
+                                    }
+                                } else {
+                                    if (item != RaidType.ABRELSHUD) {
+                                        val maxGate = fbRaidInfo.type.getMaxGate()
+                                        update(fbRaidInfo.copy(type = item,startGateNumber = 1, endGateNumber = maxGate))
+                                    } else {
+                                        update(fbRaidInfo.copy(type = item))
+                                    }
+                                }
                                 expanded = false
                             }
                         )
@@ -366,6 +368,9 @@ fun RaidSheetBase(
                     enabled = true,
                     onClick = {
                         showDayUse = it
+                        if (!showDayUse) {
+                            update(fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0))
+                        }
                     }
                 )
                 Spacer(modifier = Modifier.weight(1f))
