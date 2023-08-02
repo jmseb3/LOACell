@@ -32,6 +32,7 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.dialog.SelectIdDialog
 import com.wonddak.loacell.android.ui.room.raid.calendar.RaidCalendarView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.RoomType
@@ -102,14 +103,18 @@ fun RaidView(
 @Composable
 fun RaidTypeView(
     type: RoomType,
-    timeStep :Int,
-    showEmptyRow :Boolean,
+    timeStep: Int,
+    showEmptyRow: Boolean,
     filterRaidInfoList: List<RaidInfo>,
     loaCellViewModel: LoaCellViewModel
 ) {
     val timeSteps = (0 until (1440 / timeStep)).map { it * timeStep }
 
     val table = MutableList(24) { MutableList(60 / timeStep) { mutableListOf<RaidInfo>() } }
+
+    var showCalendarView: List<RaidInfo>? by remember {
+        mutableStateOf(null)
+    }
 
     filterRaidInfoList.forEach {
         if (it.day != Day.NONE) {
@@ -129,14 +134,28 @@ fun RaidTypeView(
             }
         }
     } else {
-        RaidCalendarView(timeStep = timeStep, timeSteps = timeSteps, showEmptyRow = showEmptyRow,table = table) {filterDay ->
+        RaidCalendarView(
+            timeStep = timeStep,
+            timeSteps = timeSteps,
+            showEmptyRow = showEmptyRow,
+            table = table
+        ) { filterDay ->
             if (filterDay.isEmpty()) {
 
             } else if (filterDay.size == 1) {
-               loaCellViewModel.setNowRaidInfo(filterDay[0].raidId)
+                loaCellViewModel.setNowRaidInfo(filterDay[0].raidId)
             } else {
-
+                showCalendarView = filterDay
             }
+        }
+    }
+    showCalendarView?.let { items ->
+        SelectIdDialog(
+            items,
+            { showCalendarView = null }
+        ) {
+            loaCellViewModel.setNowRaidInfo(it.raidId)
+            showCalendarView = null
         }
     }
 }
