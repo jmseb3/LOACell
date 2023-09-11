@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
+import Const
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -235,14 +236,16 @@ fun RaidSheetBase(
                     ) { difficulty ->
                         update(fbRaidInfo.copy(difficulty = difficulty))
                     }
-                    DifficultyRow(
-                        fbRaidInfo = fbRaidInfo,
-                        difficultyList = listOf(
-                            Difficulty.ExtremeNormal,
-                            Difficulty.ExtremeHard
-                        )
-                    ) { difficulty ->
-                        update(fbRaidInfo.copy(difficulty = difficulty))
+                    if (Const.useExtreme) {
+                        DifficultyRow(
+                            fbRaidInfo = fbRaidInfo,
+                            difficultyList = listOf(
+                                Difficulty.ExtremeNormal,
+                                Difficulty.ExtremeHard
+                            )
+                        ) { difficulty ->
+                            update(fbRaidInfo.copy(difficulty = difficulty))
+                        }
                     }
                 }
 

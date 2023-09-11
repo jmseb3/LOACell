@@ -1,7 +1,7 @@
 package com.wonddak.database.ext
 
-import com.wonddak.loacell.RaidInfo
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.RaidInfo
 
 fun RaidInfo.getMinLevel(): Int {
     return this.type!!.getMinLevel(this.Difficulty!!, this.endGateNumber.toInt())
@@ -17,10 +17,6 @@ fun RaidInfo.getMaxParty(): Int {
 
 fun RaidInfo.makeGateText(): String {
     return when (this.type!!) {
-        RaidType.ABRELSHUD -> {
-            "${this.startGateNumber * 2 - 1} ~ ${this.endGateNumber * 2} 관문"
-        }
-
         RaidType.ETC -> {
             "관문 정보 없음"
         }

@@ -7,6 +7,7 @@ enum class RaidType(val maxPerson: Int) {
     KOUKU(4),
     ABRELSHUD(8),
     ILLIAKAN(8),
+    KAMEN(8),
     KAYANGEL(4),
     IVORYTOWER(4),
     ETC(8);
@@ -18,6 +19,7 @@ enum class RaidType(val maxPerson: Int) {
             KOUKU -> "쿠크세이튼"
             ABRELSHUD -> "아브렐슈드"
             ILLIAKAN -> "일리아칸"
+            KAMEN -> "카멘"
             KAYANGEL -> "카앙겔"
             IVORYTOWER -> "상아탑"
             ETC -> "기타"
@@ -33,6 +35,7 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.ExtremeNormal,
                 Difficulty.ExtremeHard
             )
+
             VYKAS, ABRELSHUD, ETC -> listOf(
                 Difficulty.Normal,
                 Difficulty.Hard,
@@ -44,7 +47,7 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Hell
             )
 
-            ILLIAKAN, KAYANGEL, IVORYTOWER -> listOf(
+            ILLIAKAN, KAMEN, KAYANGEL, IVORYTOWER -> listOf(
                 Difficulty.Normal,
                 Difficulty.Hard
             )
@@ -99,6 +102,12 @@ enum class RaidType(val maxPerson: Int) {
                 else -> 0
             }
 
+            KAMEN -> when (difficulty) {
+                Difficulty.Normal -> 1610
+                Difficulty.Hard -> 1630
+                else -> 0
+            }
+
             KAYANGEL -> when (difficulty) {
                 Difficulty.Normal -> 1540
                 Difficulty.Hard -> 1580
@@ -118,11 +127,12 @@ enum class RaidType(val maxPerson: Int) {
     fun getMaxGate(): Int {
         return when (this) {
             VALTAN -> 2
-            VYKAS -> 3
+            VYKAS -> 2
             KOUKU -> 3
-            ABRELSHUD -> 6
+            ABRELSHUD -> 4
             ILLIAKAN -> 3
-            KAYANGEL -> 4
+            KAMEN -> 4
+            KAYANGEL -> 3
             IVORYTOWER -> 4
             ETC -> 0
         }
@@ -130,7 +140,7 @@ enum class RaidType(val maxPerson: Int) {
 
     fun getMaxParty(): Int {
         return when (this) {
-            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, ETC -> 2
+            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, KAMEN, ETC -> 2
             KOUKU, KAYANGEL, IVORYTOWER -> 1
         }
     }
