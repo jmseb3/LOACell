@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -67,7 +67,7 @@ fun AddRaidSheet(
         buttonText = "추가",
         update = {
             fbRaidInfo = it
-            Log.i("JWH",fbRaidInfo.toString())
+            Log.i("JWH", fbRaidInfo.toString())
         },
         onDismissRequest = onDismissRequest
     ) {
@@ -491,24 +491,23 @@ fun DifficultyRow(
             val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
             Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .selectable(
-                        selected = selected,
-                        onClick = { update(difficulty) }
-                    ),
+                    .weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = selected,
                     enabled = enabled,
-                    onClick = {update(difficulty)},
+                    onClick = { update(difficulty) },
                     colors = RadioButtonDefaults.colors()
                 )
                 Text(
                     text = difficulty.toKorString(),
                     modifier = Modifier
                         .padding(start = 6.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .clickable(enabled = enabled) {
+                            update(difficulty)
+                        },
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                     color = if (enabled) Color.Black else Color.Gray
                 )
