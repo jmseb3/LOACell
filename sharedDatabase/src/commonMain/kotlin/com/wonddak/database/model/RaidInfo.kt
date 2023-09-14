@@ -79,15 +79,15 @@ enum class RaidType(val maxPerson: Int) {
 
             ABRELSHUD -> when (difficulty) {
                 Difficulty.Normal -> when (gateway) {
-                    1 -> 1490
-                    2 -> 1500
-                    3 -> 1520
+                    1,2 -> 1490
+                    3 -> 1500
+                    4 -> 1520
                     else -> 0
                 }
 
                 Difficulty.Hard -> when (gateway) {
-                    1 -> 1540
-                    2 -> 1550
+                    1,2 -> 1540
+                    3 -> 1550
                     3 -> 1560
                     else -> 0
                 }

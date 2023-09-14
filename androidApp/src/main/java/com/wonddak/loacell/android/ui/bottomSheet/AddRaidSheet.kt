@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,8 @@ import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.FBRaidInfo
+import java.lang.Integer.min
+import java.lang.Math.max
 import java.time.LocalTime
 
 @Composable
@@ -109,7 +110,7 @@ fun EditRaidSheet(
         buttonText = "수정",
         update = {
             fbRaidInfo = it
-            Log.i("JWH",fbRaidInfo.toString())
+            Log.i("JWH", fbRaidInfo.toString())
         },
         onDismissRequest = onDismissRequest
     ) {
@@ -200,14 +201,32 @@ fun RaidSheetBase(
                                 if (!item.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
                                     if (item != RaidType.ABRELSHUD) {
                                         val maxGate = fbRaidInfo.type.getMaxGate()
-                                        update(fbRaidInfo.copy(type = item, difficulty = Difficulty.Normal,startGateNumber = 1, endGateNumber = maxGate))
+                                        update(
+                                            fbRaidInfo.copy(
+                                                type = item,
+                                                difficulty = Difficulty.Normal,
+                                                startGateNumber = 1,
+                                                endGateNumber = maxGate
+                                            )
+                                        )
                                     } else {
-                                        update(fbRaidInfo.copy(type = item, difficulty = Difficulty.Normal))
+                                        update(
+                                            fbRaidInfo.copy(
+                                                type = item,
+                                                difficulty = Difficulty.Normal
+                                            )
+                                        )
                                     }
                                 } else {
                                     if (item != RaidType.ABRELSHUD) {
                                         val maxGate = fbRaidInfo.type.getMaxGate()
-                                        update(fbRaidInfo.copy(type = item,startGateNumber = 1, endGateNumber = maxGate))
+                                        update(
+                                            fbRaidInfo.copy(
+                                                type = item,
+                                                startGateNumber = 1,
+                                                endGateNumber = maxGate
+                                            )
+                                        )
                                     } else {
                                         update(fbRaidInfo.copy(type = item))
                                     }
@@ -251,38 +270,12 @@ fun RaidSheetBase(
 
             }
 
-            AnimatedVisibility(visible = fbRaidInfo.type == RaidType.ABRELSHUD) {
-                var checked1 by remember { mutableStateOf(true) }
-                var checked2 by remember { mutableStateOf(false) }
-                var checked3 by remember { mutableStateOf(false) }
+            AnimatedVisibility(visible = (fbRaidInfo.type == RaidType.ABRELSHUD)&& fbRaidInfo.difficulty != Difficulty.Hell) {
                 val updateAction = { start: Int, end: Int ->
                     update(fbRaidInfo.copy(startGateNumber = start, endGateNumber = end))
                 }
-                LaunchedEffect(checked1, checked2, checked3) {
-                    val endGateNumber = if (checked3) {
-                        3
-                    } else if (checked2) {
-                        2
-                    } else {
-                        1
-                    }
-                    val startGateNumber = if (checked1) {
-                        1
-                    } else if (checked2) {
-                        2
-                    } else {
-                        3
-                    }
-                    updateAction(startGateNumber, endGateNumber)
-                }
-                LaunchedEffect(fbRaidInfo.difficulty) {
-                    if (fbRaidInfo.difficulty == Difficulty.Hell) {
-                        checked1 = false
-                        checked2 = false
-                        checked3 = true
-                        updateAction(3, 3)
-                    }
-                }
+                var abStart by remember { mutableStateOf(1) }
+                var abEnd by remember { mutableStateOf(1) }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -293,48 +286,26 @@ fun RaidSheetBase(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        CheckBoxRow(
-                            modifier = Modifier.weight(1f),
-                            text = "1~2",
-                            value = checked1,
-                            enabled = fbRaidInfo.difficulty != Difficulty.Hell,
-                            onClick = { value ->
-                                if (!value && !checked2 && !checked3) {
-                                    return@CheckBoxRow
-                                }
-                                if (value && !checked2 && checked3) {
-                                    checked2 = true
-                                }
-                                checked1 = value
-                            })
-                        CheckBoxRow(
-                            modifier = Modifier.weight(1f),
-                            text = "3~4",
-                            value = checked2,
-                            enabled = fbRaidInfo.difficulty != Difficulty.Hell,
-                            onClick = { value ->
-                                if (!checked1 && !value && !checked3) {
-                                    return@CheckBoxRow
-                                }
-                                if (checked1 && !value && checked3) {
-                                    return@CheckBoxRow
-                                }
-                                checked2 = value
-                            })
-                        CheckBoxRow(
-                            modifier = Modifier.weight(1f),
-                            text = "5~6",
-                            value = checked3,
-                            enabled = true,
-                            onClick = { value ->
-                                if (!checked1 && !checked2 && !value) {
-                                    return@CheckBoxRow
-                                }
-                                if (checked1 && !checked2 && value) {
-                                    checked2 = true
-                                }
-                                checked3 = value
-                            })
+                        listOf(1,2,3,4).forEach {idx ->
+                            CheckBoxRow(
+                                modifier = Modifier.weight(1f),
+                                text = idx.toString(),
+                                value = idx in abStart.. abEnd,
+                                enabled = true,
+                                onClick = { value ->
+                                    if (value) {
+                                        abStart = min(abStart,idx)
+                                        abEnd = max(abEnd,idx)
+                                    } else {
+                                        if (abStart < idx) {
+                                            abStart = idx
+                                        }
+                                        if (idx < abEnd) {
+                                            abEnd = idx
+                                        }
+                                    }
+                                })
+                        }
                     }
                 }
             }
