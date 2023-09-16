@@ -88,7 +88,7 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Hard -> when (gateway) {
                     1,2 -> 1540
                     3 -> 1550
-                    3 -> 1560
+                    4 -> 1560
                     else -> 0
                 }
 

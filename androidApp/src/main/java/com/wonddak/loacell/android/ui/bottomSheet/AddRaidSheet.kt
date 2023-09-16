@@ -17,7 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,9 +46,7 @@ import java.time.LocalTime
 
 @Composable
 fun AddRaidSheet(
-    roomId: String,
-    onDismissRequest: () -> Unit,
-    successAction: () -> Unit
+    roomId: String, onDismissRequest: () -> Unit, successAction: () -> Unit
 ) {
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
@@ -63,29 +63,20 @@ fun AddRaidSheet(
         )
     }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo,
-        title = "레이드 정보 추가",
-        buttonText = "추가",
-        update = {
+        fbRaidInfo = fbRaidInfo, title = "레이드 정보 추가", buttonText = "추가", update = {
             fbRaidInfo = it
             Log.i("JWH", fbRaidInfo.toString())
-        },
-        onDismissRequest = onDismissRequest
+        }, onDismissRequest = onDismissRequest
     ) {
         CommonRaidHelper.add(
-            roomId,
-            fbRaidInfo,
-            { e -> },
-            successAction
+            roomId, fbRaidInfo, { e -> }, successAction
         )
     }
 }
 
 @Composable
 fun EditRaidSheet(
-    raidInfo: RaidInfo,
-    onDismissRequest: () -> Unit,
-    successAction: () -> Unit
+    raidInfo: RaidInfo, onDismissRequest: () -> Unit, successAction: () -> Unit
 ) {
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
@@ -105,22 +96,14 @@ fun EditRaidSheet(
         )
     }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo,
-        title = "레이드 정보 수정",
-        buttonText = "수정",
-        update = {
+        fbRaidInfo = fbRaidInfo, title = "레이드 정보 수정", buttonText = "수정", update = {
             fbRaidInfo = it
             Log.i("JWH", fbRaidInfo.toString())
-        },
-        onDismissRequest = onDismissRequest
+        }, onDismissRequest = onDismissRequest
     ) {
         println(fbRaidInfo.toString())
         CommonRaidHelper.update(
-            raidInfo.roomId,
-            raidInfo.raidId,
-            fbRaidInfo,
-            { e -> },
-            successAction
+            raidInfo.roomId, raidInfo.raidId, fbRaidInfo, { e -> }, successAction
         )
     }
 }
@@ -148,11 +131,9 @@ fun RaidSheetBase(
         buttonClickAction = buttonAction,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LengthLimitTextField(
-                modifier = textFieldModifier.padding(10.dp),
+            LengthLimitTextField(modifier = textFieldModifier.padding(10.dp),
                 text = fbRaidInfo.title,
                 label = "제목",
                 placeHolder = "제목을 입력하세요.",
@@ -163,8 +144,7 @@ fun RaidSheetBase(
                 ),
                 textChange = {
                     update(fbRaidInfo.copy(title = it))
-                }
-            )
+                })
             //타입
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -172,68 +152,59 @@ fun RaidSheetBase(
                     expanded = !expanded
                 },
             ) {
-                OutlinedTextField(
-                    modifier = textFieldModifier
-                        .menuAnchor()
-                        .padding(horizontal = 10.dp),
+                OutlinedTextField(modifier = textFieldModifier
+                    .menuAnchor()
+                    .padding(horizontal = 10.dp),
                     value = fbRaidInfo.type.toKorString(),
                     onValueChange = {},
                     readOnly = true,
                     label = {
                         Text(text = "레이드 정보 선택")
                     },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-                )
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) })
 
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
+                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     RaidType.values().forEach { item ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = item.toKorString(),
-                                    fontWeight = if (fbRaidInfo.type == item) FontWeight.Bold else FontWeight.Normal
-                                )
-                            },
-                            onClick = {
-                                if (!item.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
-                                    if (item != RaidType.ABRELSHUD) {
-                                        val maxGate = fbRaidInfo.type.getMaxGate()
-                                        update(
-                                            fbRaidInfo.copy(
-                                                type = item,
-                                                difficulty = Difficulty.Normal,
-                                                startGateNumber = 1,
-                                                endGateNumber = maxGate
-                                            )
+                        DropdownMenuItem(text = {
+                            Text(
+                                text = item.toKorString(),
+                                fontWeight = if (fbRaidInfo.type == item) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }, onClick = {
+                            if (!item.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
+                                if (item != RaidType.ABRELSHUD) {
+                                    val maxGate = fbRaidInfo.type.getMaxGate()
+                                    update(
+                                        fbRaidInfo.copy(
+                                            type = item,
+                                            difficulty = Difficulty.Normal,
+                                            startGateNumber = 1,
+                                            endGateNumber = maxGate
                                         )
-                                    } else {
-                                        update(
-                                            fbRaidInfo.copy(
-                                                type = item,
-                                                difficulty = Difficulty.Normal
-                                            )
-                                        )
-                                    }
+                                    )
                                 } else {
-                                    if (item != RaidType.ABRELSHUD) {
-                                        val maxGate = fbRaidInfo.type.getMaxGate()
-                                        update(
-                                            fbRaidInfo.copy(
-                                                type = item,
-                                                startGateNumber = 1,
-                                                endGateNumber = maxGate
-                                            )
+                                    update(
+                                        fbRaidInfo.copy(
+                                            type = item, difficulty = Difficulty.Normal
                                         )
-                                    } else {
-                                        update(fbRaidInfo.copy(type = item))
-                                    }
+                                    )
                                 }
-                                expanded = false
+                            } else {
+                                if (item != RaidType.ABRELSHUD) {
+                                    val maxGate = fbRaidInfo.type.getMaxGate()
+                                    update(
+                                        fbRaidInfo.copy(
+                                            type = item,
+                                            startGateNumber = 1,
+                                            endGateNumber = maxGate
+                                        )
+                                    )
+                                } else {
+                                    update(fbRaidInfo.copy(type = item))
+                                }
                             }
-                        )
+                            expanded = false
+                        })
                     }
                 }
             }
@@ -246,21 +217,16 @@ fun RaidSheetBase(
                 RaidSheetHeaderText(text = "난이도 선택")
                 Column {
                     DifficultyRow(
-                        fbRaidInfo = fbRaidInfo,
-                        difficultyList = listOf(
-                            Difficulty.Normal,
-                            Difficulty.Hard,
-                            Difficulty.Hell
+                        fbRaidInfo = fbRaidInfo, difficultyList = listOf(
+                            Difficulty.Normal, Difficulty.Hard, Difficulty.Hell
                         )
                     ) { difficulty ->
                         update(fbRaidInfo.copy(difficulty = difficulty))
                     }
                     if (Const.useExtreme) {
                         DifficultyRow(
-                            fbRaidInfo = fbRaidInfo,
-                            difficultyList = listOf(
-                                Difficulty.ExtremeNormal,
-                                Difficulty.ExtremeHard
+                            fbRaidInfo = fbRaidInfo, difficultyList = listOf(
+                                Difficulty.ExtremeNormal, Difficulty.ExtremeHard
                             )
                         ) { difficulty ->
                             update(fbRaidInfo.copy(difficulty = difficulty))
@@ -270,12 +236,9 @@ fun RaidSheetBase(
 
             }
 
-            AnimatedVisibility(visible = (fbRaidInfo.type == RaidType.ABRELSHUD)&& fbRaidInfo.difficulty != Difficulty.Hell) {
-                val updateAction = { start: Int, end: Int ->
-                    update(fbRaidInfo.copy(startGateNumber = start, endGateNumber = end))
-                }
-                var abStart by remember { mutableStateOf(1) }
-                var abEnd by remember { mutableStateOf(1) }
+            AnimatedVisibility(visible = (fbRaidInfo.type == RaidType.ABRELSHUD) && fbRaidInfo.difficulty != Difficulty.Hell) {
+                var abStart by remember { mutableIntStateOf(1) }
+                var abEnd by remember { mutableIntStateOf(1) }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -286,24 +249,27 @@ fun RaidSheetBase(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        listOf(1,2,3,4).forEach {idx ->
-                            CheckBoxRow(
-                                modifier = Modifier.weight(1f),
+                        listOf(1, 2, 3, 4).forEach { idx ->
+                            CheckBoxRow(modifier = Modifier.weight(1f),
                                 text = idx.toString(),
-                                value = idx in abStart.. abEnd,
+                                value = idx in abStart..abEnd,
                                 enabled = true,
                                 onClick = { value ->
                                     if (value) {
-                                        abStart = min(abStart,idx)
-                                        abEnd = max(abEnd,idx)
+                                        abStart = min(abStart, idx)
+                                        abEnd = max(abEnd, idx)
                                     } else {
-                                        if (abStart < idx) {
-                                            abStart = idx
+                                        if (abStart == idx) {
+                                            abStart = idx + 1
+                                        } else if (abEnd == idx) {
+                                            abEnd = idx - 1
                                         }
-                                        if (idx < abEnd) {
-                                            abEnd = idx
+                                        if (abEnd < abStart) {
+                                            abStart = 1
+                                            abEnd = 1
                                         }
                                     }
+                                    update(fbRaidInfo.copy(startGateNumber = abStart, endGateNumber = abEnd))
                                 })
                         }
                     }
@@ -335,8 +301,7 @@ fun RaidSheetBase(
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                CheckBoxRow(
-                    modifier = Modifier,
+                CheckBoxRow(modifier = Modifier,
                     text = "일정 지정",
                     value = showDayUse,
                     enabled = true,
@@ -345,8 +310,7 @@ fun RaidSheetBase(
                         if (!showDayUse) {
                             update(fbRaidInfo.copy(day = Day.NONE, hour = 0, minute = 0))
                         }
-                    }
-                )
+                    })
                 Spacer(modifier = Modifier.weight(1f))
             }
             AnimatedVisibility(showDayUse) {
@@ -362,8 +326,7 @@ fun RaidSheetBase(
                     ) { time ->
                         update(
                             fbRaidInfo.copy(
-                                hour = time.hour.toLong(),
-                                minute = time.minute.toLong()
+                                hour = time.hour.toLong(), minute = time.minute.toLong()
                             )
                         )
                     }
@@ -388,9 +351,7 @@ fun RaidSheetBase(
                         Row() {
                             days.subList(1, 5).forEach {
                                 DayButton(
-                                    day = it,
-                                    modifier = weight,
-                                    selected = fbRaidInfo.day == it
+                                    day = it, modifier = weight, selected = fbRaidInfo.day == it
                                 ) {
                                     updateAction(it)
                                 }
@@ -399,9 +360,7 @@ fun RaidSheetBase(
                         Row() {
                             days.subList(5, 8).forEach {
                                 DayButton(
-                                    day = it,
-                                    modifier = weight,
-                                    selected = fbRaidInfo.day == it
+                                    day = it, modifier = weight, selected = fbRaidInfo.day == it
                                 ) {
                                     updateAction(it)
                                 }
@@ -418,10 +377,7 @@ fun RaidSheetBase(
 
 @Composable
 fun DayButton(
-    day: Day,
-    modifier: Modifier,
-    selected: Boolean,
-    update: () -> Unit
+    day: Day, modifier: Modifier, selected: Boolean, update: () -> Unit
 ) {
     val color = if (selected) Color.Black else Color.Transparent
     TextButton(
@@ -429,9 +385,7 @@ fun DayButton(
         onClick = update
     ) {
         Text(
-            text = day.text,
-            textAlign = TextAlign.Center,
-            color = Color.Black
+            text = day.text, textAlign = TextAlign.Center, color = Color.Black
         )
     }
 }
@@ -441,18 +395,14 @@ fun RaidSheetHeaderText(text: String) {
     Column() {
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
+            text = text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold
         )
     }
 }
 
 @Composable
 fun DifficultyRow(
-    fbRaidInfo: FBRaidInfo,
-    difficultyList: List<Difficulty>,
-    update: (Difficulty) -> Unit
+    fbRaidInfo: FBRaidInfo, difficultyList: List<Difficulty>, update: (Difficulty) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -461,9 +411,7 @@ fun DifficultyRow(
             val selected = difficulty == fbRaidInfo.difficulty
             val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
             Row(
-                modifier = Modifier
-                    .weight(1f),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = selected,
