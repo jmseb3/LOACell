@@ -29,6 +29,10 @@ fun RaidInfo.getImg(): ImageResource? {
             SharedRes.images.raid_illiakan
         }
 
+        RaidType.KAMEN -> {
+            SharedRes.images.raid_kamen
+        }
+
         RaidType.KAYANGEL -> {
             SharedRes.images.raid_kayangel
         }
