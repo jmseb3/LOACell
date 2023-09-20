@@ -23,19 +23,9 @@ struct MainContent: View {
                 }
             }
         }.onAppear {
-            Task {
-                await abdd()
-            }
         }
     }
-    
-    func abdd() async {
-        self.viewModel.db.roomInfoQueriesHelper.getAllCommonFlow().watch(block: { value in
-            let a = value as! [RoomInfo]
-            roomList = a
-        })
-        
-    }
+
 }
 
 

@@ -154,9 +154,9 @@ object CommonRaidHelper {
                     val party1 = it.data!!["party1"] as List<String>
                     val party2 = it.data!!["party2"] as List<String>
 
-                    val day = it.data["day"] as Long?
-                    val hour = it.data["hour"] as Long?
-                    val minute = it.data["minute"] as Long?
+                    val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
+                    val hour = runCatching { it.data?.get("hour") as Long?}.getOrNull()
+                    val minute = runCatching { it.data?.get("minute") as Long?}.getOrNull()
                     println("JWH $raidId none day: $day hour : $hour minute : $minute")
 
                     //이미 값이 있는 경우
