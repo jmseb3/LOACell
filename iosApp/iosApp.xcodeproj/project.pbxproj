@@ -12,8 +12,8 @@
 		07125FAC2A5653CE003F8FCC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FAB2A5653CE003F8FCC /* GoogleSignIn */; };
 		07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */; };
 		07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB22A5658B6003F8FCC /* LoginView.swift */; };
-		07125FB52A565954003F8FCC /* LoaCellViewModel+FireAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */; };
 		07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */; };
+		072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072AA1102ABBD6880060414E /* LoginHelper.swift */; };
 		077244C32A568AFD0060367B /* SwiftUISnackbar in Frameworks */ = {isa = PBXBuildFile; productRef = 077244C22A568AFD0060367B /* SwiftUISnackbar */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
@@ -26,8 +26,8 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		07125FB22A5658B6003F8FCC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoaCellViewModel+FireAuth.swift"; sourceTree = "<group>"; };
 		07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaCellViewModel.swift; sourceTree = "<group>"; };
+		072AA1102ABBD6880060414E /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		33B975715C0B4F4FE3AE7BED /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -83,9 +83,16 @@
 			isa = PBXGroup;
 			children = (
 				07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */,
-				07125FB42A565954003F8FCC /* LoaCellViewModel+FireAuth.swift */,
 			);
 			path = viewModel;
+			sourceTree = "<group>";
+		};
+		072AA10F2ABBD6720060414E /* util */ = {
+			isa = PBXGroup;
+			children = (
+				072AA1102ABBD6880060414E /* LoginHelper.swift */,
+			);
+			path = util;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -134,6 +141,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				072AA10F2ABBD6720060414E /* util */,
 				07125FB62A565CB0003F8FCC /* viewModel */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -291,8 +299,8 @@
 			files = (
 				07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
-				07125FB52A565954003F8FCC /* LoaCellViewModel+FireAuth.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);

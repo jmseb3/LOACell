@@ -10,18 +10,7 @@ import Foundation
 import FirebaseAuth
 import shared
 
-class LoaCellViewModel: ObservableObject {
-    
-    class DT :DialogStatus {
-        func showRoomEnterError() {
-            
-        }
-        
-        func showSnackBar(msg: String) {
-            
-        }
-    }
-
+class LoaCellViewModel: ObservableObject, DialogStatus {
     @Published var text : String = "Loading..."
     @Published var user : User? = nil
     @Published var syncData :Bool = false
@@ -30,28 +19,32 @@ class LoaCellViewModel: ObservableObject {
     
     @Published var snackBarTitle : String = ""
     
-    
-    let firebaseAuth = Auth.auth()
-    let config :Config
-    let db : AppDataBase
-    let commonViewModel : CommonViewModel
-    let dt :DialogStatus
+    lazy var config :Config = Config()
+    lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
+    lazy var  commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: self)
     init() {
-        self.config = Config()
-        self.db = AppDataBase(driverFactory: DriverFactory())
-        self.dt = DT()
-        self.commonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: dt)
-        firebaseAuth.addStateDidChangeListener { auth, getUser in
+        Auth.auth().addStateDidChangeListener { auth, getUser in
             self.user = auth.currentUser
             print(">>>>>>>>>","get User Info", self.user?.uid as Any)
         }
     }
     
     func syncStart(force:Bool) {
-        commonViewModel.syncStart(uid: user!.uid , force:force)
+        guard let userUid = user?.uid else {
+            return
+        }
+        commonViewModel.syncStart(uid: userUid , force:force)
     }
     
     func resetSnackBar() {
         self.snackBarTitle = ""
+    }
+    
+    func showRoomEnterError() {
+        
+    }
+    
+    func showSnackBar(msg: String) {
+        
     }
 }
