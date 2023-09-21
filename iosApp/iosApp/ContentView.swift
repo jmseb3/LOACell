@@ -12,7 +12,7 @@ struct ContentView: View {
             } else {
                 MainContent(viewModel: viewModel)
                 Button("out") {
-                    viewModel.signOut()
+                    LoginHelper.instance.signOut()
                 }
                 if(viewModel.syncData) {
                     ProgressView(label: {

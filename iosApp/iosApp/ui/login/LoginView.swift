@@ -11,11 +11,17 @@ import GoogleSignInSwift
 
 struct LoginView: View {
     @ObservedObject private(set) var viewModel: LoaCellViewModel
-
+    
+    let loginHelper = LoginHelper.instance
+    
     var body: some View {
         VStack {
             Text("Hello, World!")
-            GoogleSignInButton(action: { viewModel.requestGoogleLogin() })
+            GoogleSignInButton(action: {
+                loginHelper.requestGoogleLogin() {
+                    viewModel.syncStart(force: true)
+                }
+            })
         }
     }
     
