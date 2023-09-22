@@ -16,12 +16,20 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-            Text("Hello, World!")
+            Spacer()
+            HStack {
+                Text("레이드 관리를 도와주는")
+                Text("입니다")
+            }
+            Spacer()
             GoogleSignInButton(action: {
                 loginHelper.requestGoogleLogin() {
                     viewModel.syncStart(force: true)
                 }
             })
+            Button(action: {loginHelper.requestAnonymousLogin()}) {
+                Text("로그인 하지 않고 계속")
+            }
         }
     }
     

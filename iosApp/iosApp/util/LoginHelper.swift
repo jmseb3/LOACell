@@ -47,6 +47,19 @@ class LoginHelper {
         }
     }
     
+    func requestAnonymousLogin() {
+        firebaseAuth.signInAnonymously { authResult, error in
+            if (error != nil) {
+                updateDisplayName(name: "!23")
+            }
+        }
+    }
+    
+    func updateDisplayName(name: String) {
+        let cr = firebaseAuth.currentUser?.createProfileChangeRequest()
+        cr?.displayName = name
+    }
+    
     func signOut() {
         do {
             try firebaseAuth.signOut()

@@ -18,7 +18,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.wonddak.loacell.android.R
-import java.util.Random
+import com.wonddak.loacell.util.NameHelper
 
 
 class LoginHelper(
@@ -162,20 +162,9 @@ class LoginHelper(
     }
 
     fun requestAnonymousLogin() {
-        fun makeName(): String {
-            val st = StringBuilder()
-                .append(listOf("코니", "모코코", "디붕디붕").random())
-                .append(Random().nextInt(8) + 1)
-                .append(Random().nextInt(8) + 1)
-                .append(Random().nextInt(8) + 1)
-                .append(Random().nextInt(8) + 1)
-                .toString()
-            println(">>>>>>>>> $st")
-            return st
-        }
         auth.signInAnonymously()
             .addOnSuccessListener {
-                updateDisplayName(makeName())
+                updateDisplayName(NameHelper.makeName())
             }
     }
 
