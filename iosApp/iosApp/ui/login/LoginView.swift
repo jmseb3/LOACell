@@ -8,6 +8,7 @@
 
 import SwiftUI
 import GoogleSignInSwift
+import shared
 
 struct LoginView: View {
     @ObservedObject private(set) var viewModel: LoaCellViewModel
@@ -19,6 +20,7 @@ struct LoginView: View {
             Spacer()
             HStack {
                 Text("레이드 관리를 도와주는")
+                Image(uiImage: SharedRes.images().logo.toUIImage()!)
                 Text("입니다")
             }
             Spacer()

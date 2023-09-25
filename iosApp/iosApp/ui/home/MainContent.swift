@@ -13,8 +13,13 @@ struct MainContent: View {
     @ObservedObject private(set) var viewModel: LoaCellViewModel
     @State var roomList : [RoomInfo] = []
     
+    @State var text :String = "empty"
     var body: some View {
         VStack {
+            Text(text)
+            Button("test", action: {
+                text = viewModel.user?.displayName ?? "empty"
+            })
             ForEach(roomList,id:\.uniqueId) { room in
                 VStack{
                     Text(room.title)

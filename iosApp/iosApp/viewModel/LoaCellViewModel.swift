@@ -21,7 +21,7 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     
     lazy var config :Config = Config()
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
-    lazy var  commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: self)
+    lazy var commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: self)
     init() {
         Auth.auth().addStateDidChangeListener { auth, getUser in
             self.user = auth.currentUser

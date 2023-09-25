@@ -9,6 +9,7 @@
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
+import shared
 
 class LoginHelper {
     static let instance : LoginHelper = LoginHelper()
@@ -49,8 +50,8 @@ class LoginHelper {
     
     func requestAnonymousLogin() {
         firebaseAuth.signInAnonymously { authResult, error in
-            if (error != nil) {
-                updateDisplayName(name: "!23")
+            if (error == nil) {
+                self.updateDisplayName(name: NameHelper().makeName())
             }
         }
     }
@@ -58,6 +59,7 @@ class LoginHelper {
     func updateDisplayName(name: String) {
         let cr = firebaseAuth.currentUser?.createProfileChangeRequest()
         cr?.displayName = name
+        cr?.commitChanges()
     }
     
     func signOut() {

@@ -21,6 +21,7 @@ kotlin {
             linkerOpts.add("-lsqlite3")
             export(project(Modules.api))
             export(project(Modules.resources))
+            export("dev.icerock.moko:resources:0.23.0")
             export(project(Modules.database))
             transitiveExport = true
         }
