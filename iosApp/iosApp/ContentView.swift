@@ -14,13 +14,6 @@ struct ContentView: View {
                 Button("out") {
                     LoginHelper.instance.signOut()
                 }
-                if(viewModel.syncData) {
-                    ProgressView(label: {
-                        Text("데이터를 동기화 중입니다.")
-                    })
-                } else {
-                    Text("123")
-                }
             }
         }
     }

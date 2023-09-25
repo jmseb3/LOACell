@@ -13,19 +13,25 @@ import shared
 class LoaCellViewModel: ObservableObject, DialogStatus {
     @Published var text : String = "Loading..."
     @Published var user : User? = nil
-    @Published var syncData :Bool = false
     @Published var roomId : String = ""
     @Published var tabState : RoomState = RoomState.raid
-    
     @Published var snackBarTitle : String = ""
+    
+    @Published var logginIn :Bool = false
+    @Published var syncData : Bool = false
     
     lazy var config :Config = Config()
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
     lazy var commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: self)
+
     init() {
         Auth.auth().addStateDidChangeListener { auth, getUser in
             self.user = auth.currentUser
             print(">>>>>>>>>","get User Info", self.user?.uid as Any)
+        }
+        commonViewModel.syncData.collect { value in
+            print(">>??>>>>",value)
+            self.syncData = value!.boolValue
         }
     }
     
@@ -45,6 +51,6 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     }
     
     func showSnackBar(msg: String) {
-        
+        print(">>>>>> \(msg)")
     }
 }

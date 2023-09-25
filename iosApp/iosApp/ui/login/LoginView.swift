@@ -16,23 +16,40 @@ struct LoginView: View {
     let loginHelper = LoginHelper.instance
     
     var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Text("레이드 관리를 도와주는")
-                Image(uiImage: SharedRes.images().logo.toUIImage()!)
-                Text("입니다")
-            }
-            Spacer()
-            GoogleSignInButton(action: {
-                loginHelper.requestGoogleLogin() {
-                    viewModel.syncStart(force: true)
+        ZStack {
+            VStack {
+                Spacer()
+                HStack {
+                    Text("레이드 관리를 도와주는")
+                    Image(uiImage: SharedRes.images().logo.toUIImage()!)
+                    Text("입니다")
                 }
-            })
-            Button(action: {loginHelper.requestAnonymousLogin()}) {
-                Text("로그인 하지 않고 계속")
+                Spacer()
+                GoogleSignInButton(action: {
+                    loginHelper.requestGoogleLogin(
+                        commonAction : {
+                            viewModel.logginIn = true
+                        },
+                        successAction: {
+                            viewModel.syncStart(force: true)
+                            viewModel.logginIn = false
+                        },
+                        failAction: {
+                            viewModel.logginIn = false
+                        }
+                    )
+                })
+                Button(action: {loginHelper.requestAnonymousLogin()}) {
+                    Text("로그인 하지 않고 계속")
+                }
+            }
+            VStack {
+                if (viewModel.logginIn) {
+                    LoadingView(info: "로그인 처리 중입니다.")
+                }
             }
         }
+        
     }
     
 }

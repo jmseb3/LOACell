@@ -15,20 +15,28 @@ struct MainContent: View {
     
     @State var text :String = "empty"
     var body: some View {
-        VStack {
-            Text(text)
-            Button("test", action: {
-                text = viewModel.user?.displayName ?? "empty"
-            })
-            ForEach(roomList,id:\.uniqueId) { room in
-                VStack{
-                    Text(room.title)
-                    Text(room.description_)
-                    Text(room.uniqueId)
+        ZStack {
+            VStack {
+                Text(text)
+                Button("test", action: {
+                    text = viewModel.user?.displayName ?? "empty"
+                })
+                ForEach(roomList,id:\.uniqueId) { room in
+                    VStack{
+                        Text(room.title)
+                        Text(room.description_)
+                        Text(room.uniqueId)
+                    }
+                }
+            }.onAppear {
+            }
+            VStack {
+                if(viewModel.syncData) {
+                    LoadingView(info: "데이터를 동기화 중입니다.")
                 }
             }
-        }.onAppear {
         }
+       
     }
 
 }

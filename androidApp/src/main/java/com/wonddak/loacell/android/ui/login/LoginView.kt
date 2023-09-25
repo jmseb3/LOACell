@@ -91,7 +91,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                         text = "레이드 관리를 도와 주는 ",
                         textAlign = TextAlign.Center
                     )
-                    Image(painter = painterResource(id = R.mipmap.ic_launcher_foreground), contentDescription = null)
+                    Image(painter = painterResource(id = com.wonddak.sharedresources.R.drawable.logo), contentDescription = null)
                     Text(
                         text = "입니다.",
                         textAlign = TextAlign.Center

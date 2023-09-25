@@ -17,7 +17,9 @@ class LoginHelper {
     let firebaseAuth = Auth.auth()
 
     func requestGoogleLogin(
-        successAction: @escaping () -> Void = {}
+        commonAction: @escaping () -> Void = {},
+        successAction: @escaping () -> Void = {},
+        failAction: @escaping () -> Void = {}
     ) {
         guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {return}
         
@@ -28,21 +30,26 @@ class LoginHelper {
         GIDSignIn.sharedInstance.configuration = config
         
         GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { [unowned self] result, error in
-            guard error == nil else {
+            commonAction()
+            if(error != nil) {
+                failAction()
                 return
             }
             
             guard let user = result?.user,
                   let idToken = user.idToken?.tokenString
             else {
+                failAction()
                 return
             }
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
             
             firebaseAuth.signIn(with: credential) { result, error in
-                if(error != nil) {
+                if(error == nil) {
                     successAction()
+                } else {
+                    failAction()
                 }
             }
         }
