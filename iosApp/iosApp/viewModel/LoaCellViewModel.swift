@@ -15,6 +15,7 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     
     @Published var logginIn :Bool = false
     @Published var syncData : Bool = false
+    @Published var snackBarMessage : String = ""
     @Published var roomList : [RoomInfo] = []
     
     lazy var config :Config = Config()
@@ -54,6 +55,6 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     }
     
     func showSnackBar(msg: String) {
-        print(">>>>>> \(msg)")
+        self.snackBarMessage = msg
     }
 }

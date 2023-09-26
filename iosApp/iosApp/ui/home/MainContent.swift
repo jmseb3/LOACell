@@ -11,21 +11,20 @@ import shared
 
 struct MainContent: View {
     @ObservedObject private(set) var viewModel: LoaCellViewModel
-    @State var roomList : [RoomInfo] = []
-    
     @State var text :String = "empty"
     var body: some View {
         ZStack {
             VStack {
-                Text(text)
-                Button("test", action: {
+                Button(text, action: {
                     text = viewModel.user?.displayName ?? "empty"
                 })
-                ForEach(roomList,id:\.uniqueId) { room in
+                ForEach(viewModel.roomList,id:\.uniqueId) { room in
                     VStack{
+                        Divider()
                         Text(room.title)
                         Text(room.description_)
                         Text(room.uniqueId)
+                        Divider()
                     }
                 }
             }.onAppear {
