@@ -38,6 +38,7 @@ import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.sharedresources.store.CommonString
 
 @Composable
 fun LoginView(loaCellViewModel: LoaCellViewModel) {
@@ -88,12 +89,12 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "레이드 관리를 도와 주는 ",
+                        text = CommonString.Login.getInfo1().toString(),
                         textAlign = TextAlign.Center
                     )
                     Image(painter = painterResource(id = com.wonddak.sharedresources.R.drawable.logo), contentDescription = null)
                     Text(
-                        text = "입니다.",
+                        text = CommonString.Login.getInfo2().toString(),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -115,7 +116,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "로그인 하지 않고 계속",
+                    text = CommonString.Login.getAnonymous().toString(),
                     color = Color.Black,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
@@ -126,7 +127,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
             }
         }
         if (loaCellViewModel.loggingIn) {
-            LoadingView(info = "로그인 처리 중입니다.", color = Color.Gray.copy(0.5f))
+            LoadingView(info = CommonString.Login.getProgress().toString(), color = Color.Gray.copy(0.5f))
         }
     }
 }

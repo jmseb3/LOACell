@@ -2,4 +2,9 @@
 <resources>
     <string name="button_add">추가하기</string>
     <string name="kakaoKey">eaad613c8a32160c49991040e94170f9</string>
+
+    <string name="login_info_1">레이드 관리를 도와 주는</string>
+    <string name="login_info_2">입니다.</string>
+    <string name="login_anonymous">로그인 하지 않고 계속</string>
+    <string name="login_progress">로그인 처리 중입니다.</string>
 </resources>
