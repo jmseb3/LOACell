@@ -11,14 +11,11 @@ import FirebaseAuth
 import shared
 
 class LoaCellViewModel: ObservableObject, DialogStatus {
-    @Published var text : String = "Loading..."
     @Published var user : User? = nil
-    @Published var roomId : String = ""
-    @Published var tabState : RoomState = RoomState.raid
-    @Published var snackBarTitle : String = ""
     
     @Published var logginIn :Bool = false
     @Published var syncData : Bool = false
+    @Published var roomList : [RoomInfo] = []
     
     lazy var config :Config = Config()
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
@@ -33,6 +30,12 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
             print(">>??>>>>",value)
             self.syncData = value!.boolValue
         }
+        commonViewModel.roomList.collect { value in
+            self.roomList = value as! [RoomInfo]
+            self.roomList.forEach { v in
+                print(">>??>>>>",v)
+            }
+        }
     }
     
     func syncStart(force:Bool) {
@@ -43,7 +46,7 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     }
     
     func resetSnackBar() {
-        self.snackBarTitle = ""
+       
     }
     
     func showRoomEnterError() {

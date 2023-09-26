@@ -66,6 +66,8 @@ class LoaCellViewModel(
     //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
 
+    val roomList get() = common.roomList
+
     //현재 로그인된 유저 정보
     val user get() = LoaCellApp.user
 

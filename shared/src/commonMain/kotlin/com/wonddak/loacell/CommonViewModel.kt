@@ -30,6 +30,14 @@ open class CommonViewModel(
     // Ios 의 경우 CoroutineScope(Dispatchers.Main)로 작동
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
+    val roomList = dataBase.roomInfoQueriesHelper.getAll()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+        .toCommonStateFlow()
+
     //region 방 클릭시 매핑되는 방 id
     private var _roomId = MutableStateFlow("")
     val roomId = _roomId

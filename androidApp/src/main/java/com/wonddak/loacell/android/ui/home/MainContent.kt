@@ -82,8 +82,7 @@ fun MainContent(
                             .fillMaxSize()
                             .padding(it)
                     ) {
-                        val roomList by db.roomInfoQueriesHelper.getAll()
-                            .collectAsState(initial = emptyList())
+                        val roomList by loaCellViewModel.roomList.collectAsState()
 
                         if (loaCellViewModel.showSetting) {
                             SettingView(db, loaCellViewModel)
