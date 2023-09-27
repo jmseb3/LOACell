@@ -1,45 +1,29 @@
 import SwiftUI
+import SwiftUI_Snackbar
 import shared
 
 struct ContentView: View {
-    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
-    
+    @EnvironmentObject var viewModel: LoaCellViewModel 
     
     var body: some View {
         VStack {
             if(viewModel.user == nil) {
-                LoginView(viewModel: viewModel)
+                LoginView()
             } else {
                 VStack{
                     
                 }
                 Divider()
-                ZStack {
-                    VStack {
-                        
-                        MainContent(viewModel: viewModel)
-                        Button("out") {
-                            LoginHelper.instance.signOut()
-                        }
-                      
-                    }
-                    if(!viewModel.snackBarMessage.isEmpty) {
-                        VStack {
-                            Spacer()
-                            HStack{
-                                Text(viewModel.snackBarMessage)
-                            }
-                        }.onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
-                                viewModel.snackBarMessage = ""
-                            }
-                        }
-                    }
-                }
-                Divider()
                 VStack {
-                    
+                    MainContent()
+                    Button("out") {
+                        LoginHelper.instance.signOut()
+                    }
                 }
+            }
+            Divider()
+            VStack {
+                
             }
         }
     }

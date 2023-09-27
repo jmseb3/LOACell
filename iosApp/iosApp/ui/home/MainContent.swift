@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct MainContent: View {
-    @ObservedObject private(set) var viewModel: LoaCellViewModel
+    @EnvironmentObject var viewModel: LoaCellViewModel
     @State var text :String = "empty"
     var body: some View {
         ZStack {
@@ -43,6 +43,6 @@ struct MainContent: View {
 
 struct MainContent_Previews: PreviewProvider {
     static var previews: some View {
-        MainContent(viewModel: LoaCellViewModel())
+        MainContent().environmentObject(LoaCellViewModel())
     }
 }

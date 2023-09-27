@@ -9,14 +9,16 @@
 import Foundation
 import FirebaseAuth
 import shared
+import SwiftUI_Snackbar
 
 class LoaCellViewModel: ObservableObject, DialogStatus {
     @Published var user : User? = nil
     
     @Published var logginIn :Bool = false
     @Published var syncData : Bool = false
-    @Published var snackBarMessage : String = ""
     @Published var roomList : [RoomInfo] = []
+    
+    let sc : SnackbarController = SnackbarController()
     
     lazy var config :Config = Config()
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
@@ -25,10 +27,8 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     init() {
         Auth.auth().addStateDidChangeListener { auth, getUser in
             self.user = auth.currentUser
-            print(">>>>>>>>>","get User Info", self.user?.uid as Any)
         }
         commonViewModel.syncData.collect { value in
-            print(">>??>>>>",value)
             self.syncData = value!.boolValue
         }
         commonViewModel.roomList.collect { value in
@@ -46,15 +46,16 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
         commonViewModel.syncStart(uid: userUid , force:force)
     }
     
-    func resetSnackBar() {
-       
-    }
-    
+
     func showRoomEnterError() {
         
     }
     
     func showSnackBar(msg: String) {
-        self.snackBarMessage = msg
+        self.sc.showSnackBar(message: msg)
+    }
+    
+    func resetSnackBar() {
+        self.sc.resetSnackBar()
     }
 }

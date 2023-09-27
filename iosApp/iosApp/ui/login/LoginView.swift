@@ -11,7 +11,7 @@ import GoogleSignInSwift
 import shared
 
 struct LoginView: View {
-    @ObservedObject private(set) var viewModel: LoaCellViewModel
+    @EnvironmentObject var viewModel: LoaCellViewModel
     
     let loginHelper = LoginHelper.instance
     
@@ -56,6 +56,6 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(viewModel: LoaCellViewModel())
+        LoginView().environmentObject(LoaCellViewModel())
     }
 }

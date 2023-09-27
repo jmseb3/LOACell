@@ -2,6 +2,7 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
+import SwiftUI_Snackbar
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
@@ -31,10 +32,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SnackBarHost() {
+                ContentView()
+            }
+            .environmentObject(viewModel)
+            .environmentObject(viewModel.sc)
         }
     }
 }
