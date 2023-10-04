@@ -17,8 +17,6 @@ struct LoadingView: View {
     }
 }
 
-struct LoadingView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoadingView(info: "동기화 중입니다.")
-    }
+#Preview {
+    LoadingView(info: "동기화 중입니다.")
 }

@@ -18,14 +18,8 @@ struct MainContent: View {
                 Button(text, action: {
                     text = viewModel.user?.displayName ?? "empty"
                 })
-                ForEach(viewModel.roomList,id:\.uniqueId) { room in
-                    VStack{
-                        Divider()
-                        Text(room.title)
-                        Text(room.description_)
-                        Text(room.uniqueId)
-                        Divider()
-                    }
+                RoomListView(roomList: viewModel.roomList) { roomId in
+                    viewModel.commonViewModel.showRoom(roomId: roomId)
                 }
             }.onAppear {
             }
@@ -40,9 +34,7 @@ struct MainContent: View {
 
 }
 
-
-struct MainContent_Previews: PreviewProvider {
-    static var previews: some View {
-        MainContent().environmentObject(LoaCellViewModel())
-    }
+#Preview {
+    MainContent().environmentObject(LoaCellViewModel())
 }
+

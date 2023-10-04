@@ -15,6 +15,7 @@
 		07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */; };
 		07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB22A5658B6003F8FCC /* LoginView.swift */; };
 		07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */; };
+		07179F432ACD530D003A415E /* RoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07179F422ACD530D003A415E /* RoomListView.swift */; };
 		072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072AA1102ABBD6880060414E /* LoginHelper.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
@@ -29,6 +30,7 @@
 		070CF3242AC148440099F2D6 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		07125FB22A5658B6003F8FCC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaCellViewModel.swift; sourceTree = "<group>"; };
+		07179F422ACD530D003A415E /* RoomListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomListView.swift; sourceTree = "<group>"; };
 		072AA1102ABBD6880060414E /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				07179F412ACD52FD003A415E /* room */,
 				070CF3232AC148340099F2D6 /* common */,
 				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
@@ -96,6 +99,14 @@
 				07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */,
 			);
 			path = viewModel;
+			sourceTree = "<group>";
+		};
+		07179F412ACD52FD003A415E /* room */ = {
+			isa = PBXGroup;
+			children = (
+				07179F422ACD530D003A415E /* RoomListView.swift */,
+			);
+			path = room;
 			sourceTree = "<group>";
 		};
 		072AA10F2ABBD6720060414E /* util */ = {
@@ -309,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */,
+				07179F432ACD530D003A415E /* RoomListView.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
