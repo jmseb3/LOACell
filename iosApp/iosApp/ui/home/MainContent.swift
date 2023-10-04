@@ -14,14 +14,23 @@ struct MainContent: View {
     @State var text :String = "empty"
     var body: some View {
         ZStack {
-            VStack {
-                Button(text, action: {
-                    text = viewModel.user?.displayName ?? "empty"
-                })
-                RoomListView(roomList: viewModel.roomList) { roomId in
-                    viewModel.commonViewModel.showRoom(roomId: roomId)
+            if viewModel.roomId.isEmpty {
+                VStack {
+                    Button(text, action: {
+                        text = viewModel.user?.displayName ?? "empty"
+                    })
+                    RoomListView(roomList: viewModel.roomList) { roomId in
+                        viewModel.commonViewModel.showRoom(roomId: roomId)
+                    }
+                }.onAppear {
+                    
                 }
-            }.onAppear {
+            } else {
+                VStack {
+                    Text(viewModel.roomId)
+                }.onAppear {
+                    
+                }
             }
             VStack {
                 if(viewModel.syncData) {

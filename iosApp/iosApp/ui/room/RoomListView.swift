@@ -45,6 +45,9 @@ struct RoomInfoRow: View {
                 .font(.system(size: 14))
                 .lineLimit(2)
         }
+        .onTapGesture {
+            action()
+        }
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
         .clipShape(RoundedRectangle(cornerRadius : 10))
         .background(Color.gray)

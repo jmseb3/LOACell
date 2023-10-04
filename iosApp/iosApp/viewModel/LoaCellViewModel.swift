@@ -17,6 +17,7 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     @Published var logginIn :Bool = false
     @Published var syncData : Bool = false
     @Published var roomList : [RoomInfo] = []
+    @Published var roomId : String = ""
     
     let sc : SnackbarController = SnackbarController()
     
@@ -33,9 +34,10 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
         }
         commonViewModel.roomList.collect { value in
             self.roomList = value as! [RoomInfo]
-            self.roomList.forEach { v in
-                print(">>??>>>>",v)
-            }
+        }
+        commonViewModel.roomId.collect { value in
+            self.roomId = value as! String
+            print(">>??>>>>",value)
         }
     }
     
