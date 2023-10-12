@@ -23,9 +23,10 @@ struct BottomAppBar: View {
                             viewModel.syncStart()
                         } label: {
                             Image(resource: \.refresh)
+                                .resizable()
                                 .foregroundColor(.black)
+                                .frame(width: iconSize, height: iconSize)
                         }
-                        .frame(width: iconSize, height: iconSize)
                     }
                 }
             }
