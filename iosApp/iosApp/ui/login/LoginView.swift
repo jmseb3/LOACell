@@ -21,7 +21,7 @@ struct LoginView: View {
                 Spacer()
                 HStack {
                     Text(CommonString.Login().getInfo1().localized())
-                    Image(uiImage: SharedRes.images().logo.toUIImage()!)
+                    Image(resource: \.logo)
                     Text(CommonString.Login().getInfo2().localized())
                 }
                 Spacer()

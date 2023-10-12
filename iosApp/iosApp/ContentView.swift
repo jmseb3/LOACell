@@ -3,26 +3,23 @@ import SwiftUI_Snackbar
 import shared
 
 struct ContentView: View {
-    @EnvironmentObject var viewModel: LoaCellViewModel 
-    
+    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
+
     var body: some View {
         VStack {
             if(viewModel.user == nil) {
                 LoginView()
             } else {
-                TopAppBar()
-                Divider()
-                VStack {
+                SnackBarHost() {
+                    TopAppBar()
+                    Divider()
                     MainContent()
-                    Button("out") {
-                        LoginHelper.instance.signOut()
-                    }
+                    Spacer().frame(height: 10)
                 }
-            }
-            Divider()
-            VStack {
-                
+                BottomAppBar()
             }
         }
+        .environmentObject(viewModel)
+        .environmentObject(viewModel.sc)
     }
 }

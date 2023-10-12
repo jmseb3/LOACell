@@ -32,15 +32,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
     
     var body: some Scene {
         WindowGroup {
-            SnackBarHost() {
-                ContentView()
-            }
-            .environmentObject(viewModel)
-            .environmentObject(viewModel.sc)
+            ContentView()
         }
     }
 }

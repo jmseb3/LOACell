@@ -19,6 +19,9 @@
 		072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072AA1102ABBD6880060414E /* LoginHelper.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
+		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
+		07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61472AD7BE20004701DF /* ColorManager.swift */; };
+		07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		55F1E67DA43416D3F48D3F6F /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3C6A4BC0ECBBB6F2E9AC311 /* Pods_iosApp.framework */; };
@@ -35,6 +38,9 @@
 		072AA1102ABBD6880060414E /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
+		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
+		07FE61472AD7BE20004701DF /* ColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorManager.swift; sourceTree = "<group>"; };
+		07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUi+Extension.swift"; sourceTree = "<group>"; };
 		190A4AF539D132A1B55BEDA4 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -83,6 +89,7 @@
 				070CF3232AC148340099F2D6 /* common */,
 				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
+				07FE61472AD7BE20004701DF /* ColorManager.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -124,6 +131,7 @@
 			children = (
 				07DE600B2A57B2F300A122B2 /* MainContent.swift */,
 				07FE61432AD781DC004701DF /* TopAppBar.swift */,
+				07FE61452AD7BA35004701DF /* BottomAppBar.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -167,6 +175,7 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				07125FAF2A565810003F8FCC /* ui */,
+				07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -324,11 +333,14 @@
 			files = (
 				07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */,
 				07179F432ACD530D003A415E /* RoomListView.swift in Sources */,
+				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
+				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */,
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);

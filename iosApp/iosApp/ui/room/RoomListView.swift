@@ -49,7 +49,7 @@ struct RoomInfoRow: View {
             action()
         }
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-        .clipShape(RoundedRectangle(cornerRadius : 10))
+        .clipShape(RoundedRectangle(cornerRadius : 20))
         .background(Color.gray)
     }
 }

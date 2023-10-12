@@ -14,22 +14,26 @@ struct MainContent: View {
     @State var text :String = "empty"
     var body: some View {
         ZStack {
-            if viewModel.roomId.isEmpty {
-                VStack {
-                    Button(text, action: {
-                        text = viewModel.user?.displayName ?? "empty"
-                    })
-                    RoomListView(roomList: viewModel.roomList) { roomId in
-                        viewModel.commonViewModel.showRoom(roomId: roomId)
+            VStack {
+                if viewModel.showSetting {
+                    //설정화면
+                    Spacer()
+                } else {
+                    if viewModel.roomId.isEmpty {
+                        //방리스트
+                        VStack {
+                            RoomListView(roomList: viewModel.roomList) { roomId in
+                                viewModel.commonViewModel.showRoom(roomId: roomId)
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        // 방정보
+                        VStack {
+                            Text(viewModel.roomId)
+                            Spacer()
+                        }
                     }
-                }.onAppear {
-                    
-                }
-            } else {
-                VStack {
-                    Text(viewModel.roomId)
-                }.onAppear {
-                    
                 }
             }
             VStack {

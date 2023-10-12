@@ -84,7 +84,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         return nil
     }
     
-    func syncStart(force:Bool) {
+    func syncStart(force:Bool = false) {
         guard let userUid = user?.uid else {
             return
         }

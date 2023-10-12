@@ -16,21 +16,25 @@ struct TopAppBar: View {
         HStack {
             if (!viewModel.roomId.isEmpty || viewModel.showSetting) {
                 Button {
-                    viewModel.commonViewModel.topBackAction()
+                    withAnimation {
+                        viewModel.commonViewModel.topBackAction()
+                    }
                 } label: {
                     Image(systemName: "arrow.left")
                 }
                 .foregroundColor(.black)
                 .animation(.easeIn)
+                .transition(.slide)
             }
-            if(viewModel.showSetting) {
-                Text("설정")
-            } else if(!viewModel.focusUserName.isEmpty) {
-                Text("\(viewModel.focusUserName)님 캐릭터 정보")
-            } else {
-                Text(viewModel.raidInfo?.title ?? viewModel.totalRoomInfo.roomInfo?.title ?? "LoaCell")
-            }
-            
+            HStack {
+                if(viewModel.showSetting) {
+                    Text("설정")
+                } else if(!viewModel.focusUserName.isEmpty) {
+                    Text("\(viewModel.focusUserName)님 캐릭터 정보")
+                } else {
+                    Text(viewModel.raidInfo?.title ?? viewModel.totalRoomInfo.roomInfo?.title ?? "LoaCell")
+                }
+            }.transition(.slide)
             Spacer()
             
             Button {
