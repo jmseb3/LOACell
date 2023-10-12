@@ -23,7 +23,7 @@ struct TopAppBar: View {
                     Image(systemName: "arrow.left")
                 }
                 .foregroundColor(.black)
-                .animation(.easeIn)
+                .animation(.default)
                 .transition(.slide)
             }
             HStack {

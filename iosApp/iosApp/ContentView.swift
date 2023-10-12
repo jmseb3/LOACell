@@ -14,7 +14,6 @@ struct ContentView: View {
                     TopAppBar()
                     Divider()
                     MainContent()
-                    Spacer().frame(height: 10)
                 }
                 BottomAppBar()
             }

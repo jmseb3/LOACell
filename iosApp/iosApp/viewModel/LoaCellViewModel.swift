@@ -97,7 +97,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     
     func showSnackBar(msg: String) {
-        self.sc.showSnackBar(message: msg)
+        self.sc.showSnackBar(message: msg,label: "확인")
     }
     
     func resetSnackBar() {

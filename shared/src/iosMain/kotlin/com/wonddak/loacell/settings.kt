@@ -10,6 +10,6 @@ import platform.Foundation.NSUserDefaults
 
 
 actual class Config() {
-    private val delegate = NSUserDefaults.standardUserDefaults()
+    private val delegate = NSUserDefaults.standardUserDefaults
     actual val settings : FlowSettings = NSUserDefaultsSettings(delegate).toFlowSettings()
 }
