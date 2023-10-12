@@ -18,6 +18,7 @@
 		07179F432ACD530D003A415E /* RoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07179F422ACD530D003A415E /* RoomListView.swift */; };
 		072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072AA1102ABBD6880060414E /* LoginHelper.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
+		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		55F1E67DA43416D3F48D3F6F /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3C6A4BC0ECBBB6F2E9AC311 /* Pods_iosApp.framework */; };
@@ -33,6 +34,7 @@
 		07179F422ACD530D003A415E /* RoomListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomListView.swift; sourceTree = "<group>"; };
 		072AA1102ABBD6880060414E /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
+		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		190A4AF539D132A1B55BEDA4 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				07DE600B2A57B2F300A122B2 /* MainContent.swift */,
+				07FE61432AD781DC004701DF /* TopAppBar.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -230,7 +233,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */,
+				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -323,6 +326,7 @@
 				07179F432ACD530D003A415E /* RoomListView.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */,
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
@@ -454,7 +458,9 @@
 			baseConfigurationReference = 190A4AF539D132A1B55BEDA4 /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = MYFH54RH8Y;
 				ENABLE_PREVIEWS = YES;
@@ -463,10 +469,13 @@
 					"\"${PODS_ROOT}/../../shared/build/cocoapods/framework\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -486,8 +495,10 @@
 			baseConfigurationReference = E1E0A5F4DE914601B56DF542 /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = MYFH54RH8Y;
 				ENABLE_PREVIEWS = YES;
@@ -496,10 +507,13 @@
 					"\"${PODS_ROOT}/../../shared/build/cocoapods/framework\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -539,7 +553,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */ = {
+		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jmseb3/SwiftUI-Snackbar.git";
 			requirement = {
@@ -560,7 +574,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */;
+			package = 0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */;
 			productName = "SwiftUI-Snackbar";
 		};
 		07125FAB2A5653CE003F8FCC /* GoogleSignIn */ = {

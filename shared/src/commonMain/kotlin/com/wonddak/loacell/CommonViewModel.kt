@@ -95,7 +95,7 @@ open class CommonViewModel(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = null
-    )
+    ).toCommonStateFlow()
     //endregion
 
     //region 레이드 선택시
@@ -111,7 +111,7 @@ open class CommonViewModel(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = null
-    )
+    ).toCommonStateFlow()
     //endregion
 
     //region tabState

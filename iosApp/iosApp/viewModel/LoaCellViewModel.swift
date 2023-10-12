@@ -13,12 +13,21 @@ import SwiftUI_Snackbar
 
 class LoaCellViewModel: ObservableObject, ViewModelImpl {
         
-    @Published var user : User? = nil
     
     @Published var logginIn :Bool = false
-    @Published var syncData : Bool = false
     @Published var roomList : [RoomInfo] = []
+    @Published var user : User? = nil
     @Published var roomId : String = ""
+    @Published var totalRoomInfo : TotalRoomInfo = TotalRoomInfo(roomInfo: nil, raidInfoList: [], userInfoList: [])
+    
+    @Published var focusUserName : String = ""
+    @Published var userInfo : shared.UserInfo? = nil
+    
+    @Published var focusRaidId : String = ""
+    @Published var raidInfo : shared.RaidInfo? = nil
+    
+    @Published var syncData : Bool = false
+    @Published var showSetting :Bool = false
     
     let sc : SnackbarController = SnackbarController()
     
@@ -37,8 +46,22 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
             self.roomList = value as! [RoomInfo]
         }
         commonViewModel.roomId.collect { value in
-            self.roomId = value as! String
-            print(">>??>>>>",value)
+            self.roomId = value! as String
+        }
+        commonViewModel.totalRoomInfo.collect { value in
+            self.totalRoomInfo = value!
+        }
+        commonViewModel.focusUserName.collect { value in
+            self.focusUserName = value! as String
+        }
+        commonViewModel.userInfo.collect { value in
+            self.userInfo = value
+        }
+        commonViewModel.focusRaidId.collect { value in
+            self.focusRaidId = value! as String
+        }
+        commonViewModel.raidInfo.collect { value in
+            self.raidInfo = value
         }
     }
     func closeLoading() {
@@ -46,7 +69,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     
     func closeSetting() {
-        
+        showSetting = false
     }
     
     func fbUserIsAnonymous() -> KotlinBoolean? {
@@ -54,7 +77,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     
     func getSetting() -> Bool {
-        return true
+        return showSetting
     }
     
     func getUserUid() -> String? {

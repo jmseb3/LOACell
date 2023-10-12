@@ -10,9 +10,7 @@ struct ContentView: View {
             if(viewModel.user == nil) {
                 LoginView()
             } else {
-                VStack{
-                    
-                }
+                TopAppBar()
                 Divider()
                 VStack {
                     MainContent()
