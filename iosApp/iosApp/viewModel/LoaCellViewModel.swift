@@ -11,7 +11,8 @@ import FirebaseAuth
 import shared
 import SwiftUI_Snackbar
 
-class LoaCellViewModel: ObservableObject, DialogStatus {
+class LoaCellViewModel: ObservableObject, ViewModelImpl {
+        
     @Published var user : User? = nil
     
     @Published var logginIn :Bool = false
@@ -23,7 +24,7 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
     
     lazy var config :Config = Config()
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
-    lazy var commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, dialogStatus: self)
+    lazy var commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, viewModelImpl: self)
 
     init() {
         Auth.auth().addStateDidChangeListener { auth, getUser in
@@ -39,6 +40,25 @@ class LoaCellViewModel: ObservableObject, DialogStatus {
             self.roomId = value as! String
             print(">>??>>>>",value)
         }
+    }
+    func closeLoading() {
+        
+    }
+    
+    func closeSetting() {
+        
+    }
+    
+    func fbUserIsAnonymous() -> KotlinBoolean? {
+        return KotlinBoolean(bool: true)
+    }
+    
+    func getSetting() -> Bool {
+        return true
+    }
+    
+    func getUserUid() -> String? {
+        return nil
     }
     
     func syncStart(force:Bool) {

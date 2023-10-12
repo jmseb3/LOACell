@@ -4,12 +4,16 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
+import com.wonddak.loacell.ext.getRole
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -25,7 +30,7 @@ open class CommonViewModel(
     coroutineScope: CoroutineScope? = null,
     private val dataBase: AppDataBase,
     private val config: Config,
-    private val dialogStatus: DialogStatus
+    private val viewModelImpl: ViewModelImpl
 ) {
     // Ios 의 경우 CoroutineScope(Dispatchers.Main)로 작동
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
@@ -52,10 +57,16 @@ open class CommonViewModel(
         _roomId.value = roomId
         updateTabState(RoomState.Raid)
     }
+    //owner가 사용자 정보를 볼경우 저장되는 temp값
+    var tempOfFBData: List<FBDataItem> = emptyList()
 
     fun hideRoom() {
         _roomId.value = ""
         updateTabState(RoomState.Raid)
+        tempOfFBData = emptyList()
+        hideAllDialog()
+        clearFocusItem()
+        clearFilter()
     }
     //endregion
 
@@ -106,7 +117,12 @@ open class CommonViewModel(
     //region tabState
     private var _tabState = MutableStateFlow(RoomState.Raid)
     val tabState = _tabState.toCommonStateFlow()
-    fun updateTabState(state: RoomState) {
+
+    fun setTabStatus(state: RoomState) {
+        hideAllDialog()
+        updateTabState(state)
+    }
+    private fun updateTabState(state: RoomState) {
         _tabState.value = state
     }
     //endregion
@@ -116,6 +132,22 @@ open class CommonViewModel(
     private var observeRoom: CommonListenerRegistration? = null
     private var observeUser: CommonListenerRegistration? = null
     private var observeRaid: CommonListenerRegistration? = null
+
+    //region Role
+    val myRole  = totalRoomInfo.transform { info->
+        val uid = viewModelImpl.getUserUid()
+        val res = if (uid!= null && info.roomInfo != null) {
+            info.roomInfo!!.getRole(uid)
+        } else {
+            RoomRole.NONE
+        }
+        emit(res)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = RoomRole.NONE
+    ).toCommonStateFlow()
+    //endregion
 
     init {
         viewModelScope.launch {
@@ -134,7 +166,7 @@ open class CommonViewModel(
                             }
                         },
                         failAction = {
-                            dialogStatus.showRoomEnterError()
+                            showDialog(DialogStatus.ROOM_ENTER_ERROR)
                         }
                     )
                 } else {
@@ -165,11 +197,11 @@ open class CommonViewModel(
                     uid,
                     dataBase,
                     failAction = { _ ->
-                        dialogStatus.showSnackBar("동기화에 실패하였습니다.")
+                        viewModelImpl.showSnackBar("동기화에 실패하였습니다.")
                         updateSync(false)
                     },
                     successAction = {
-                        dialogStatus.showSnackBar("동기화가 완료되었습니다")
+                        viewModelImpl.showSnackBar("동기화가 완료되었습니다")
                         updateSync(false)
                     }
                 )
@@ -185,7 +217,7 @@ open class CommonViewModel(
                 config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
                 syncSuccess()
             } else {
-                dialogStatus.showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
+                viewModelImpl.showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
             }
         }
     }
@@ -218,9 +250,104 @@ open class CommonViewModel(
         _filter.value = Filter()
     }
     //endregion
+
+    //region dialog
+    private var _dialogStatus = MutableStateFlow(DialogStatus.NONE)
+    val dialogStatus = _dialogStatus
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DialogStatus.NONE
+        )
+        .toCommonStateFlow()
+
+    fun showDialog(status:DialogStatus) {
+        _dialogStatus.value = status
+    }
+
+    fun hideAllDialog() {
+        _dialogStatus.value = DialogStatus.NONE
+    }
+    //endregion
+
+
+    //region setAction
+    fun setNowUserInfo(userName: String) {
+        hideAllDialog()
+        clearFocusItem()
+        viewModelImpl.closeLoading()
+        updateFocusUserName(userName)
+    }
+
+    fun setNowRaidInfo(raidId: String) {
+        hideAllDialog()
+        clearFocusItem()
+        updateFocusRaidId(raidId)
+    }
+
+    fun clearFocusItem() {
+        updateFocusRaidId("")
+        updateFocusUserName("")
+    }
+    fun bottomAddAction() {
+        if (roomId.value.isEmpty()) {
+            viewModelImpl.fbUserIsAnonymous()?.let { result ->
+                if (result) {
+                    showDialog(DialogStatus.ROOM_ENTER)
+                } else {
+                    showDialog(DialogStatus.ROOM_ACTION)
+                }
+            }
+        } else {
+            if (focusUserName.value.isNotEmpty()) {
+                showDialog(DialogStatus.CHARACTER_DELETE)
+                return
+            }
+            if (focusRaidId.value.isNotEmpty()) {
+                showDialog(DialogStatus.RAID_DELETE)
+                return
+            }
+            when (tabState.value) {
+                RoomState.Raid -> {
+                    showDialog(DialogStatus.RAID_ADD)
+                }
+
+                RoomState.User -> {
+                    showDialog(DialogStatus.USER_ADD)
+                }
+
+                RoomState.Setting -> {
+
+                }
+            }
+        }
+    }
+
+    fun topBackAction() {
+        if (viewModelImpl.getSetting()) {
+            viewModelImpl.closeSetting()
+        } else {
+            hideRoom()
+        }
+    }
+
+    fun signOut() {
+        hideRoom()
+        dataBase.clearAll()
+    }
+    //endregion
+
 }
 
-interface DialogStatus {
-    fun showRoomEnterError()
+interface ViewModelImpl {
     fun showSnackBar(msg: String)
+
+    fun fbUserIsAnonymous() : Boolean?
+
+    fun getUserUid():String?
+
+    fun closeSetting()
+    fun getSetting() :Boolean
+
+    fun closeLoading()
 }

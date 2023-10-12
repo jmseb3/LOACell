@@ -11,6 +11,7 @@ import cocoapods.FirebaseFirestore.FIRListenerRegistrationProtocol
 import cocoapods.FirebaseFirestore.FIRQuery
 import cocoapods.FirebaseFirestore.FIRQuerySnapshot
 import cocoapods.FirebaseFirestore.FIRWriteBatch
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSError
 
 actual class Error(error: NSError?) {
@@ -26,6 +27,7 @@ actual class CommonFireStore(
     actual fun collection(path: String): CommonCollection =
         CommonCollection(ref.collectionWithPath(path))
 
+    @OptIn(ExperimentalForeignApi::class)
     actual fun runTransaction(
         refDoc: CommonDocument,
         successAction: () -> Unit,

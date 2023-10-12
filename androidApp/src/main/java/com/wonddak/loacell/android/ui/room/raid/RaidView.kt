@@ -35,6 +35,7 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.SelectIdDialog
 import com.wonddak.loacell.android.ui.room.raid.calendar.RaidCalendarView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomType
 
 @Composable
@@ -47,6 +48,7 @@ fun RaidView(
     val userInfoList = totalRoomInfo.userInfoList
     val filter by loaCellViewModel.filter.collectAsState()
     val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
+    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
 
     var showType by remember {
         mutableStateOf(RoomType.Default)
@@ -63,7 +65,7 @@ fun RaidView(
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                OutlinedButton(onClick = { loaCellViewModel.showRaidFilter = true }) {
+                OutlinedButton(onClick = { loaCellViewModel.showDialog(DialogStatus.RAID_FILTER) }) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -92,10 +94,8 @@ fun RaidView(
         if (focusRaidId.isNotEmpty()) {
             FocusRaidView(db, roomId, loaCellViewModel)
         }
-        loaCellViewModel.apply {
-            if (showRaidFilter) {
-                FilterSheet(loaCellViewModel = loaCellViewModel)
-            }
+        if (dialogStatus == DialogStatus.RAID_FILTER) {
+            FilterSheet(loaCellViewModel = loaCellViewModel)
         }
     }
 }

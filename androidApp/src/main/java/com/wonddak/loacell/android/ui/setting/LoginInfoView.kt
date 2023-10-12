@@ -31,6 +31,7 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.ProfileNameDialog
 import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.DialogStatus
 
 @Composable
 fun LoginInfoView(
@@ -40,6 +41,8 @@ fun LoginInfoView(
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
     val user by loaCellViewModel.user.collectAsState(null)
+    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+
     user?.let { userInfo ->
         var displayName by remember {
             mutableStateOf("")
@@ -47,16 +50,16 @@ fun LoginInfoView(
         LaunchedEffect(true) {
             displayName = user?.displayName ?: ""
         }
-        if (loaCellViewModel.showSettingEditName) {
+        if (dialogStatus == DialogStatus.SETTING_EDIT_NAME) {
             ProfileNameDialog(
                 displayName,
                 success = {
                     loginHelper.updateDisplayName(it)
                     displayName = it
-                    loaCellViewModel.showSettingEditName = false
+                    loaCellViewModel.hideDialog()
                 },
                 dismiss = {
-                    loaCellViewModel.showSettingEditName = false
+                    loaCellViewModel.hideDialog()
                 }
             )
         }
@@ -77,7 +80,7 @@ fun LoginInfoView(
                     )
                 }
                 MyIconButton(imageResource = SharedRes.images.change_person) {
-                    loaCellViewModel.showSettingEditName = true
+                    loaCellViewModel.showDialog(DialogStatus.SETTING_EDIT_NAME)
                 }
             }
             Divider()

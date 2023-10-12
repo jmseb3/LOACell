@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.util.LoginHelper
@@ -52,7 +53,6 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
             loginHelper.registerGoogleToken(
                 result,
                 commonAction = {
-                    println("<>>>>>>>>>>> common")
                     loggingIn = true
                 },
                 failRegisterAction = {e ->
@@ -89,12 +89,12 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = CommonString.Login.getInfo1().toString(),
+                        text = CommonString.Login.getInfo1().toText(),
                         textAlign = TextAlign.Center
                     )
                     Image(painter = painterResource(id = com.wonddak.sharedresources.R.drawable.logo), contentDescription = null)
                     Text(
-                        text = CommonString.Login.getInfo2().toString(),
+                        text = CommonString.Login.getInfo2().toText(),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -116,7 +116,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = CommonString.Login.getAnonymous().toString(),
+                    text = CommonString.Login.getAnonymous().toText(),
                     color = Color.Black,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
@@ -127,7 +127,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
             }
         }
         if (loaCellViewModel.loggingIn) {
-            LoadingView(info = CommonString.Login.getProgress().toString(), color = Color.Gray.copy(0.5f))
+            LoadingView(info = CommonString.Login.getProgress().toText(), color = Color.Gray.copy(0.5f))
         }
     }
 }

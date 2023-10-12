@@ -35,6 +35,6 @@ inline fun Modifier.noRippleClickable(
 }
 
 @Composable
-inline fun StringDesc.toString() :String {
+inline fun StringDesc.toText() :String {
     return this.toString(context = LocalContext.current)
 }

@@ -36,6 +36,7 @@ import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.sharedapi.firebase.model.FBDataItem
@@ -184,11 +185,13 @@ fun SettingRoomInfo(
     var showPassword by remember {
         mutableStateOf(false)
     }
+    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+
     SectionCardView(
         title = "방 정보",
         icon = SharedRes.images.edit.drawableResId,
         iconAction = {
-            loaCellViewModel.showRoomEdit = true
+            loaCellViewModel.showDialog(DialogStatus.ROOM_EDIT)
         }
     ) {
         Text(text = "제목")
@@ -211,21 +214,21 @@ fun SettingRoomInfo(
             }
         }
     }
-    if (loaCellViewModel.showRoomEdit) {
+    if (dialogStatus == DialogStatus.ROOM_EDIT) {
         EditRoomSheet(
             getTitle = roomInfo.title,
             getDescription = roomInfo.description,
             getPassword = roomInfo.enterPassword,
-            onDismissRequest = { loaCellViewModel.showRoomEdit = false },
+            onDismissRequest = { loaCellViewModel.hideDialog() },
             editAction = { title, description, password ->
                 CommonRoomHelper.updateRoom(
                     roomInfo.uniqueId, title, description, password,
                     successAction = {
-                        loaCellViewModel.showRoomEdit = false
+                        loaCellViewModel.hideDialog()
                         showPassword = false
                     },
                     failAction = {
-                        loaCellViewModel.showRoomEdit = false
+                        loaCellViewModel.hideDialog()
                         loaCellViewModel.showSnackBar("변경에 실패했습니다(${it.errorMsg}")
                     }
                 )

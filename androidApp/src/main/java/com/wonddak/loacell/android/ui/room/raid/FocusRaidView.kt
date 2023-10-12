@@ -31,6 +31,7 @@ import com.wonddak.loacell.android.ui.dialog.DeleteRaidUserDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getDayText
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
 
@@ -46,9 +47,10 @@ fun FocusRaidView(
             loaCellViewModel.clearFocusItem()
         }
         val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+        val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
 
         val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
-        val userInfoList  = totalRoomInfo.userInfoList
+        val userInfoList = totalRoomInfo.userInfoList
 
         val context = LocalContext.current
         var focusIndex by remember { mutableIntStateOf(-1) }
@@ -62,14 +64,14 @@ fun FocusRaidView(
                 if (maxParty == 2) {
                     findList.addAll(info.party2characterList)
                 }
-                val result : MutableList<Character?> = List(findList.size) { null }.toMutableList()
+                val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
                 val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
 
                 for (userInfo in userInfoList) {
                     val iterator = findNames.iterator()
                     while (iterator.hasNext()) {
                         val name = iterator.next()
-                        val find = db.characterQueriesHelper.getCharacterInfo(userInfo,name)
+                        val find = db.characterQueriesHelper.getCharacterInfo(userInfo, name)
                         if (find != null) {
                             result[findList.indexOf(name)] = find
                         }
@@ -79,10 +81,11 @@ fun FocusRaidView(
             }
         }
         raidInfo?.let { raidInfo ->
-            val userAndCharacterMap by db.getUsersByRoomIdFilterCharacterAndType(roomId, raidInfo).collectAsState(initial = mapOf())
+            val userAndCharacterMap by db.getUsersByRoomIdFilterCharacterAndType(roomId, raidInfo)
+                .collectAsState(initial = mapOf())
 
             Column() {
-                Text(text = "${raidInfo.getRaidText()} ${ raidInfo.makeGateText()}")
+                Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
                 if (raidInfo.day != Day.NONE) {
                     Text(text = raidInfo.getDayText())
                 }
@@ -96,83 +99,89 @@ fun FocusRaidView(
                         ) {
                             clearFocusItem()
                             setTabStatus(RoomState.User)
-                            showUserAdd = true
+                            showDialog(DialogStatus.USER_ADD)
                         }
                     } else {
                         focusIndex = index
-                        showRaidUserAdd = true
+                        showDialog(DialogStatus.RAID_USER_ADD)
                     }
                 }, deleteAction = { index ->
                     focusIndex = index
-                    showRaidUserDelete = true
+                    showDialog(DialogStatus.RAID_USER_DELETE)
                 })
-                if (showRaidDelete) {
-                    DeleteRaidDialog(confirm = {
-                        CommonRaidHelper.delete(roomId, raidInfo.raidId, failAction = { error ->
-                            Toast.makeText(
-                                context, error.errorMsg, Toast.LENGTH_SHORT
-                            ).show()
-                        }) {
-                            clearFocusItem()
-                            showRaidDelete = false
+                val close = { hideDialog() }
+                when (dialogStatus) {
+                    DialogStatus.RAID_DELETE -> {
+                        DeleteRaidDialog(
+                            confirm = {
+                                CommonRaidHelper.delete(
+                                    roomId,
+                                    raidInfo.raidId,
+                                    failAction = { error ->
+                                        Toast.makeText(
+                                            context, error.errorMsg, Toast.LENGTH_SHORT
+                                        ).show()
+                                    }) {
+                                    clearFocusItem()
+                                    close()
+                                }
+                            },
+                            dismiss = close
+                        )
+                    }
+                    DialogStatus.RAID_USER_ADD -> {
+                        if (userAndCharacterMap.isNotEmpty()) {
+                            AddRaidUserSheet(
+                                userAndCharacterMap = userAndCharacterMap,
+                                onDismissRequest = close
+                            ) { character ->
+                                val partyIndex = focusIndex / 4
+                                val tempList =
+                                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                                val partyTemp = tempList.toMutableList()
+                                partyTemp[focusIndex % 4] = character.name
+                                CommonRaidHelper.updatePartList(roomId,
+                                    raidInfo.raidId,
+                                    partyIndex + 1,
+                                    partyTemp,
+                                    failAction = { error ->
+                                        loaCellViewModel.showSnackBar("인원 추가에 실패했습니다.")
+                                    }) {
+                                    focusIndex = -1
+                                    close()
+                                }
+                            }
                         }
-                    }, dismiss = {
-                        showRaidDelete = false
-                    })
-                }
-                if (showRaidUserAdd && userAndCharacterMap.isNotEmpty()) {
-                    AddRaidUserSheet(
-                        userAndCharacterMap = userAndCharacterMap,
-                        onDismissRequest = {
-                            showRaidUserAdd = false
-                        }
-                    ) { character ->
+                    }
+                    DialogStatus.RAID_USER_DELETE -> {
                         val partyIndex = focusIndex / 4
                         val tempList =
                             if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
                         val partyTemp = tempList.toMutableList()
-                        partyTemp[focusIndex % 4] = character.name
-                        CommonRaidHelper.updatePartList(roomId,
-                            raidInfo.raidId,
-                            partyIndex + 1,
-                            partyTemp,
-                            failAction = { error ->
-                                loaCellViewModel.showSnackBar("인원 추가에 실패했습니다.")
-                            }) {
-                            focusIndex = -1
-                            showRaidUserAdd = false
-                        }
+                        partyTemp[focusIndex % 4] = ""
+                        DeleteRaidUserDialog(confirm = {
+                            CommonRaidHelper.updatePartList(roomId,
+                                raidInfo.raidId,
+                                partyIndex + 1,
+                                partyTemp,
+                                failAction = { error ->
+                                    showSnackBar("유저 삭제에 실패했습니다.")
+                                }) {
+                               close()
+                            }
+                        }, dismiss = close)
                     }
-                }
+                    DialogStatus.RAID_EDIT -> {
+                        EditRaidSheet(
+                            raidInfo = raidInfo,
+                            onDismissRequest = close,
+                            successAction = close
+                        )
+                    }
 
-                if (showRaidUserDelete) {
-                    val partyIndex = focusIndex / 4
-                    val tempList =
-                        if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    val partyTemp = tempList.toMutableList()
-                    partyTemp[focusIndex % 4] = ""
-                    DeleteRaidUserDialog(confirm = {
-                        CommonRaidHelper.updatePartList(roomId,
-                            raidInfo.raidId,
-                            partyIndex + 1,
-                            partyTemp,
-                            failAction = { error ->
-                                showSnackBar("유저 삭제에 실패했습니다.")
-                            }) {
-                            showRaidUserDelete = false
-                        }
-                    }, dismiss = {
-                        showRaidUserDelete = false
-                    })
-                }
+                    else -> {
 
-                if (showRaidEdit) {
-                    val close = { showRaidEdit = false }
-                    EditRaidSheet(
-                        raidInfo = raidInfo,
-                        onDismissRequest = close,
-                        successAction = close
-                    )
+                    }
                 }
             }
         }

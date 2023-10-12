@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.viewModel
 
 
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,41 +11,28 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.DialogStatus
+import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.loacell.ext.getRole
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
-import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
-import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
     private val dataBase: AppDataBase,
     private val config: Config
-) : ViewModel() {
+) : ViewModel(), ViewModelImpl {
 
     private val common by lazy {
         CommonViewModel(
             viewModelScope,
             dataBase,
             config,
-            object : DialogStatus {
-                override fun showRoomEnterError() {
-                    showRoomEnterError = true
-                }
-
-                override fun showSnackBar(msg: String) {
-                    showSnackBar(msg, label = "확인")
-                }
-            }
+            this@LoaCellViewModel
         )
     }
     private val snackBarController = SnackBarController()
@@ -60,6 +46,10 @@ class LoaCellViewModel(
         duration: SnackbarDuration = SnackbarDuration.Short,
         action: () -> Unit = { resetSnackBar() },
     ) = snackBarController.showSnackBar(message, label, duration, action)
+
+    override fun showSnackBar(msg: String) {
+        showSnackBar(msg, label = "확인")
+    }
 
     fun resetSnackBar() = snackBarController.resetSnackBar()
 
@@ -87,41 +77,26 @@ class LoaCellViewModel(
 
     //방에서 탭 선택
     val tabState get() = common.tabState
-
-    fun setTabStatus(state: RoomState) {
-        hideAllDialog()
-        common.updateTabState(state)
-    }
+    fun setTabStatus(state: RoomState) = common.setTabStatus(state)
 
     //방에 들어갈경우
     fun showRoomInfo(roomId: String) = common.showRoom(roomId)
 
-
     //방에서 나갈경우
-    fun hideRoomInfo() {
-        common.hideRoom()
-        tempOfFBData = emptyList()
-        hideAllDialog()
-        clearFocusItem()
-        clearFilter()
-    }
+    fun hideRoomInfo() = common.hideRoom()
 
-    //owner가 사용자 정보를 볼경우 저장되는 temp값
-    var tempOfFBData: List<FBDataItem> by mutableStateOf(emptyList())
-
+    var tempOfFBData
+        get() = common.tempOfFBData
+        set(value) {
+            common.tempOfFBData = value
+        }
 
     //현재 유저id와 roominfo로 나의 권한 체크
-    val myRole = user.combine(totalRoomInfo) { user, info ->
-        if (user != null && info.roomInfo != null) {
-            info.roomInfo!!.getRole(user.uid)
-        } else {
-            RoomRole.NONE
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = RoomRole.NONE
-    )
+    override fun getUserUid(): String? {
+        return user.value?.uid
+    }
+
+    val myRole get() = common.myRole
 
     private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
     val showRoomEnterByIntent get() = _showRoomEnterByIntent
@@ -184,28 +159,10 @@ class LoaCellViewModel(
     val syncData get() = common.syncData
     fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
 
-    fun signOut() {
-        hideRoomInfo()
-        dataBase.clearAll()
-    }
-
-    fun setNowUserInfo(userName: String) {
-        hideAllDialog()
-        clearFocusItem()
-        showLoading = false
-        common.updateFocusUserName(userName)
-    }
-
-    fun setNowRaidInfo(raidId: String) {
-        hideAllDialog()
-        clearFocusItem()
-        common.updateFocusRaidId(raidId)
-    }
-
-    fun clearFocusItem() {
-        common.updateFocusRaidId("")
-        common.updateFocusUserName("")
-    }
+    fun signOut() = common.signOut()
+    fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
+    fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)
+    fun clearFocusItem() = common.clearFocusItem()
 
     val filter get() = common.filter
 
@@ -214,99 +171,34 @@ class LoaCellViewModel(
 
     fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
     fun updateFilterUser(user: String) = common.updateFilterUser(user)
-    fun updateFilterTimeStep(step:Int) = common.updateTimeStep(step)
-    fun updateFilterShowEmptyRow(show:Boolean) = common.updateShowEmptyRow(show)
+    fun updateFilterTimeStep(step: Int) = common.updateTimeStep(step)
+    fun updateFilterShowEmptyRow(show: Boolean) = common.updateShowEmptyRow(show)
 
     //region dialog status
-    var showRoomAction by mutableStateOf(false)
-    var showRoomAdd by mutableStateOf(false)
-    var showRoomEnter by mutableStateOf(false)
-    var showRoomEnterError by mutableStateOf(false)
-    var showRoomExit by mutableStateOf(false)
-    var showRoomEdit by mutableStateOf(false)
+    val dialogStatus get() = common.dialogStatus
 
-    var showUserAdd by mutableStateOf(false)
+    fun showDialog(dialogStatus: DialogStatus) = common.showDialog(dialogStatus)
+    fun hideDialog() = common.hideAllDialog()
 
-    var showRaidAdd by mutableStateOf(false)
-    var showRaidEdit by mutableStateOf(false)
-    var showRaidFilter by mutableStateOf(false)
-    var showRaidDelete by mutableStateOf(false)
-    var showRaidUserAdd by mutableStateOf(false)
-    var showRaidUserDelete by mutableStateOf(false)
-
-    var showCharacterEdit by mutableStateOf(false)
-    var showCharacterDelete by mutableStateOf(false)
-
-    var showSetting by mutableStateOf(false)
-    var showSettingEditName by mutableStateOf(false)
-    fun hideAllDialog() {
-        showRoomAction = false
-        showRoomAdd = false
-        showRoomEnter = false
-        showRoomEnterError = false
-        showRoomExit = false
-        showRoomEdit = false
-
-        showUserAdd = false
-
-        showRaidAdd = false
-        showRaidEdit = false
-        showRaidFilter = false
-        showRaidDelete = false
-        showRaidUserAdd = false
-        showRaidUserDelete = false
-
-        showCharacterEdit = false
-        showCharacterDelete = false
-
-        showSetting = false
-        showSettingEditName = false
-    }
     // endregion
 
+    var showSetting by mutableStateOf(false)
     var showLoading by mutableStateOf(false)
+    override fun getSetting() :Boolean = showSetting
 
-    fun bottomAddAction() {
-        if (roomId.value.isEmpty()) {
-            user.value?.let { userInfo ->
-                if (userInfo.isAnonymous) {
-                    showRoomEnter = true
-                } else {
-                    showRoomAction = true
-                }
-            }
-        } else {
-            if (focusUserName.value.isNotEmpty()) {
-                Log.i("JWH-B", "22--Focus User")
-                showCharacterDelete = true
-                return
-            }
-            if (focusRaidId.value.isNotEmpty()) {
-                Log.i("JWH-B", "33--Focus Raid")
-                showRaidDelete = true
-                return
-            }
-            when (tabState.value) {
-                RoomState.Raid -> {
-                    showRaidAdd = true
-                }
-
-                RoomState.User -> {
-                    showUserAdd = true
-                }
-
-                RoomState.Setting -> {}
-            }
-        }
+    override fun closeSetting() {
+        showSetting = false
     }
 
-    fun topBackAction() {
-        if (showSetting) {
-            showSetting = false
-        } else {
-            hideRoomInfo()
-        }
+    override fun closeLoading() {
+        showLoading = false
     }
 
+    override fun fbUserIsAnonymous(): Boolean? {
+        return user?.value?.isAnonymous
+    }
+
+    fun bottomAddAction() = common.bottomAddAction()
+    fun topBackAction() = common.topBackAction()
 
 }

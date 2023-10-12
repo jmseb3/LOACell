@@ -58,7 +58,7 @@ fun FilterSheet(
     val raidTypes = RaidType.values()
     BaseSheet(title = "필터 설정",
         useCloseIcon = true,
-        onDismissRequest = { loaCellViewModel.showRaidFilter = false }) {
+        onDismissRequest = { loaCellViewModel.hideDialog() }) {
         Column {
             FilterSection(section = "레이드 종류") {
                 LazyVerticalGrid(

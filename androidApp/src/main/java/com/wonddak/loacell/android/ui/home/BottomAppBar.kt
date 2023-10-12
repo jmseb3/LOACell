@@ -23,6 +23,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
@@ -106,7 +107,7 @@ fun BottomAppBar(
                             MyIconButton(
                                 imageResource = SharedRes.images.change_person
                             ) {
-                                showCharacterEdit = true
+                                showDialog(DialogStatus.CHARACTER_EDIT)
                             }
                             MyIconButton(
                                 imageResource = SharedRes.images.refresh,
@@ -128,7 +129,7 @@ fun BottomAppBar(
                             MyIconButton(
                                 imageResource = SharedRes.images.room_setting
                             ) {
-                                loaCellViewModel.showRaidEdit = true
+                                showDialog(DialogStatus.RAID_EDIT)
                             }
                             val icon = if (info.isFinish) {
                                 SharedRes.images.task_finish_done

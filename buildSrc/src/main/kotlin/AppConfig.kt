@@ -14,11 +14,11 @@ object AppConfig {
     }
     object Android {
         const val packageName = "$loaCellgroup.android"
-        const val compileSdk = 33
+        const val compileSdk = 34
         const val minSdk = 26
         const val targetSdk = 33
 
-        const val kotlinCompilerExtensionVersion = "1.4.7"
+        const val kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     object Ios {

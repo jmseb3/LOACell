@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.AppDataBase
@@ -33,6 +32,7 @@ import com.wonddak.loacell.android.ui.dialog.DeleteCharacterDialog
 import com.wonddak.loacell.android.ui.dialog.EditCharacterDialog
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.onFail
@@ -86,7 +86,8 @@ fun FocusUserView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
-    val context = LocalContext.current
+    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+
     userInfo?.let { userInfo ->
         val characterList = db.characterQueriesHelper.getAllList(userInfo).sortedByDescending { it.level.replace(",","").toFloat() }
         Box {
@@ -102,7 +103,7 @@ fun FocusUserView(
 
                 loaCellViewModel.apply {
                     UserInfoCharacters(userInfo,characterList)
-                    if (showCharacterEdit) {
+                    if (dialogStatus == DialogStatus.CHARACTER_EDIT) {
                         EditCharacterDialog(
                             userInfo = userInfo,
                             characterList = characterList ,
@@ -112,14 +113,13 @@ fun FocusUserView(
                                     userInfo.name,
                                     name
                                 )
-                                showCharacterEdit = false
+                                hideDialog()
                             },
                             dismiss = {
-                                showCharacterEdit = false
+                                hideDialog()
                             }
                         )
-                    }
-                    if (showCharacterDelete) {
+                    } else if (dialogStatus == DialogStatus.CHARACTER_DELETE) {
                         DeleteCharacterDialog(
                             name = userInfo.name,
                             confirm = {
@@ -131,12 +131,12 @@ fun FocusUserView(
                                     },
                                     successAction = {
                                         loaCellViewModel.clearFocusItem()
-                                        showCharacterDelete = false
+                                        hideDialog()
                                     }
                                 )
                             },
                             dismiss = {
-                                showCharacterDelete = false
+                                hideDialog()
                             }
                         )
                     }

@@ -28,6 +28,7 @@ import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.initFBRoomInfo
 
@@ -40,6 +41,7 @@ fun MainContent(
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val userInfo by loaCellViewModel.user.collectAsState()
     val showRoomEnterPasswordByIntent by loaCellViewModel.showRoomEnterPasswordByIntent.collectAsState()
+    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {
@@ -110,40 +112,8 @@ fun MainContent(
                                 }
                             }
                         }
+
                         loaCellViewModel.apply {
-                            if (showRoomAction) {
-                                RoomActionDialog(
-                                    confirm = { status ->
-                                        when (status) {
-                                            1 -> showRoomEnter = true
-                                            2 -> showRoomAdd = true
-                                        }
-                                        showRoomAction = false
-                                    },
-                                    dismiss = { showRoomAction = false }
-                                )
-                            }
-                            if (showRoomAdd) {
-                                AddRoomSheet(
-                                    onDismissRequest = { showRoomAdd = false }
-                                ) { title, description, password ->
-                                    val owner = userInfo!!.uid
-                                    CommonRoomHelper.makeInfo(
-                                        title, description, password, owner
-                                    ) { id ->
-                                        db.roomInfoQueriesHelper.addRoomInfo(
-                                            title,
-                                            description,
-                                            id,
-                                            owner,
-                                            password,
-                                            emptyList(),
-                                            emptyList(),
-                                        )
-                                    }
-                                    showRoomAdd = false
-                                }
-                            }
                             if (showRoomEnterPasswordByIntent != null) {
                                 showRoomEnterPasswordByIntent?.let {
                                     RoomEnterPasswordDialog(
@@ -159,47 +129,81 @@ fun MainContent(
                                 }
 
                             }
-                            if (showRoomEnter) {
-                                RoomEnterDialog(
-                                    nowEnterRoomList = roomList.map { it.uniqueId },
-                                    success = { roomId, roomInfo ->
-                                        CommonRoomHelper.enterRoom(
-                                            roomId,
-                                            userInfo!!.uid,
-                                            successAction = {
-                                                showRoomEnter = false
-                                            },
-                                            failAction = { error ->
-                                                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
-                                                showRoomEnter = false
+                            when (dialogStatus) {
+                                DialogStatus.ROOM_ACTION -> {
+                                    RoomActionDialog(
+                                        confirm = { status ->
+                                            when (status) {
+                                                1 -> showDialog(DialogStatus.ROOM_ENTER)
+                                                2 -> showDialog(DialogStatus.ROOM_ADD)
                                             }
-                                        )
-                                        db.initFBRoomInfo(roomInfo, roomId)
-                                    },
-                                    dismiss = {
-                                        showRoomEnter = false
+                                        },
+                                        dismiss = { hideDialog() }
+                                    )
+                                }
+                                DialogStatus.ROOM_ADD -> {
+                                    AddRoomSheet(
+                                        onDismissRequest = {  hideDialog() }
+                                    ) { title, description, password ->
+                                        val owner = userInfo!!.uid
+                                        CommonRoomHelper.makeInfo(
+                                            title, description, password, owner
+                                        ) { id ->
+                                            db.roomInfoQueriesHelper.addRoomInfo(
+                                                title,
+                                                description,
+                                                id,
+                                                owner,
+                                                password,
+                                                emptyList(),
+                                                emptyList(),
+                                            )
+                                        }
+                                        hideDialog()
                                     }
-                                )
+                                }
+                                DialogStatus.ROOM_ENTER -> {
+                                    RoomEnterDialog(
+                                        nowEnterRoomList = roomList.map { it.uniqueId },
+                                        success = { roomId, roomInfo ->
+                                            CommonRoomHelper.enterRoom(
+                                                roomId,
+                                                userInfo!!.uid,
+                                                successAction = {
+                                                    hideDialog()
+                                                },
+                                                failAction = { error ->
+                                                    showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
+                                                    hideDialog()
+                                                }
+                                            )
+                                            db.initFBRoomInfo(roomInfo, roomId)
+                                        },
+                                        dismiss = {
+                                            hideDialog()
+                                        }
+                                    )
 
+                                }
+                                DialogStatus.ROOM_ENTER_ERROR -> {
+                                    RoomEnterErrorDialog(
+                                        confirm = {
+                                            db.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
+                                            hideRoomInfo()
+                                            hideDialog()
+                                        },
+                                        dismiss = {
+                                            hideDialog()
+                                        }
+                                    )
+                                }
+                                else -> {
+
+                                }
                             }
                         }
-
                     }
 
-                    loaCellViewModel.apply {
-                        if (showRoomEnterError) {
-                            RoomEnterErrorDialog(
-                                confirm = {
-                                    db.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
-                                    hideRoomInfo()
-                                    showRoomEnterError = false
-                                },
-                                dismiss = {
-                                    showRoomEnterError = false
-                                }
-                            )
-                        }
-                    }
                     val syncData by loaCellViewModel.syncData.collectAsState()
                     if (syncData) {
                         LoadingView("데이터를 동기화 중입니다.")
