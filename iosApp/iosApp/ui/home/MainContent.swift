@@ -29,10 +29,8 @@ struct MainContent: View {
                         }
                     } else {
                         // 방정보
-                        VStack {
-                            Text(viewModel.roomId)
-                            Spacer()
-                        }
+                        RoomView()
+                        Spacer()
                     }
                 }
             }

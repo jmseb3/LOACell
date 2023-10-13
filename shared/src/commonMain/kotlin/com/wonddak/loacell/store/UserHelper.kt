@@ -142,8 +142,6 @@ object CommonUserHelper {
                         }
 
                         val timeStamp = it.data!!["timeStamp"] as Long
-                        println("JWH Listen Users == $userName")
-                        println("JWH ${characterList.joinToString("|") { it.name }}")
                         //이미 값이 있는 경우
                         if (userName in dbUserList) {
                             //업데이트
@@ -182,7 +180,7 @@ object CommonUserHelper {
                 }
             },
             failAction = {
-                println("JWH Fail with error : ${it?.errorMsg}")
+
             }
         )
     }

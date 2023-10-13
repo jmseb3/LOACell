@@ -26,6 +26,8 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     @Published var focusRaidId : String = ""
     @Published var raidInfo : shared.RaidInfo? = nil
     
+    @Published var tabState : RoomState = RoomState.raid
+    @Published var myRole : RoomRole = RoomRole.none
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
     
@@ -63,6 +65,12 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         commonViewModel.raidInfo.collect { value in
             self.raidInfo = value
         }
+        commonViewModel.tabState.collect { value in
+            self.tabState = value!
+        }
+        commonViewModel.myRole.collect { value in
+            self.myRole = value!
+        }
     }
     func closeLoading() {
         
@@ -81,7 +89,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     
     func getUserUid() -> String? {
-        return nil
+        return user?.uid
     }
     
     func syncStart(force:Bool = false) {

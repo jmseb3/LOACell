@@ -15,7 +15,9 @@ import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,7 +40,7 @@ open class CommonViewModel(
     val roomList = dataBase.roomInfoQueriesHelper.getAll()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(1000),
             initialValue = emptyList()
         )
         .toCommonStateFlow()
@@ -48,7 +50,7 @@ open class CommonViewModel(
     val roomId = _roomId
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(1000),
             initialValue = ""
         )
         .toCommonStateFlow()
@@ -75,7 +77,7 @@ open class CommonViewModel(
     val totalRoomInfo = _totalRoomInfo
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(1000),
             initialValue = TotalRoomInfo()
         )
         .toCommonStateFlow()
@@ -151,32 +153,37 @@ open class CommonViewModel(
 
     init {
         viewModelScope.launch {
-            roomId.collect { id ->
-                if (id.isNotEmpty()) {
-                    CommonRoomHelper.checkExist(
-                        id,
-                        successAction = {
-                            observeRoom = CommonRoomHelper.observe(id, dataBase)
-                            observeUser = CommonUserHelper.observe(id, dataBase)
-                            observeRaid = CommonRaidHelper.observe(id, dataBase)
-                            totalRoomJob = launch {
-                                dataBase.getAllInfoByRoomId(id).collect {
-                                    _totalRoomInfo.value = it
+            launch(Dispatchers.IO) {
+                roomId.collect { id ->
+                    if (id.isNotEmpty()) {
+                        CommonRoomHelper.checkExist(
+                            id,
+                            successAction = {
+                                observeRoom = CommonRoomHelper.observe(id, dataBase)
+                                observeUser = CommonUserHelper.observe(id, dataBase)
+                                observeRaid = CommonRaidHelper.observe(id, dataBase)
+                                totalRoomJob = CoroutineScope(Dispatchers.IO).launch(
+                                    start = CoroutineStart.LAZY
+                                ) {
+                                    dataBase.getAllInfoByRoomId(id).collect {
+                                        _totalRoomInfo.value = it
+                                    }
                                 }
+                                totalRoomJob?.start()
+                            },
+                            failAction = {
+                                showDialog(DialogStatus.ROOM_ENTER_ERROR)
                             }
-                        },
-                        failAction = {
-                            showDialog(DialogStatus.ROOM_ENTER_ERROR)
-                        }
-                    )
-                } else {
-                    totalRoomJob?.cancel()
+                        )
+                    } else {
+                        totalRoomJob?.cancel()
 
-                    observeRoom?.remove()
-                    observeUser?.remove()
-                    observeRaid?.remove()
+                        observeRoom?.remove()
+                        observeUser?.remove()
+                        observeRaid?.remove()
 
-                    _totalRoomInfo.value = TotalRoomInfo()
+                        _totalRoomInfo.value = TotalRoomInfo()
+                    }
                 }
             }
         }

@@ -19,13 +19,25 @@ struct BottomAppBar: View {
             HStack {
                 if (viewModel.roomId.isEmpty && !viewModel.showSetting) {
                     HStack {
-                        Button {
+                        IconButton(resource: \.refresh) {
                             viewModel.syncStart()
-                        } label: {
-                            Image(resource: \.refresh)
-                                .resizable()
-                                .foregroundColor(.black)
-                                .frame(width: iconSize, height: iconSize)
+                        }
+                    }
+                }else {
+                    if (viewModel.userInfo == nil && viewModel.raidInfo == nil) {
+                        HStack {
+                            IconButton(resource: \.room) {
+                                viewModel.commonViewModel.setTabStatus(state: RoomState.raid)
+                            }
+                            IconButton(resource: \.person) {
+                                viewModel.commonViewModel.setTabStatus(state: RoomState.user)
+                            }
+                            if (viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.manager) {
+                                IconButton(resource: \.room_setting) {
+                                    viewModel.commonViewModel.setTabStatus(state: RoomState.setting)
+                                }
+                            }
+                           
                         }
                     }
                 }

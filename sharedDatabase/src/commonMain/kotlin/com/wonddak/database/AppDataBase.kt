@@ -160,7 +160,6 @@ class AppDataBase(driverFactory: DriverFactory) {
                     }
                     emit(result)
                 } catch (e: Exception) {
-                    println("JWH $e")
                     emit(mapOf())
                 }
             }

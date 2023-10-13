@@ -144,7 +144,6 @@ object CommonRaidHelper {
 
                 value.documents.forEach {
                     val raidId = it.id
-                    println("JWH Listen raidId : $raidId")
                     val title = it.data!!["title"] as String
                     val typeString = it.data!!["type"] as String
                     val difficultyString = it.data!!["difficulty"] as String
@@ -157,7 +156,6 @@ object CommonRaidHelper {
                     val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
                     val hour = runCatching { it.data?.get("hour") as Long?}.getOrNull()
                     val minute = runCatching { it.data?.get("minute") as Long?}.getOrNull()
-                    println("JWH $raidId none day: $day hour : $hour minute : $minute")
 
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
@@ -202,7 +200,7 @@ object CommonRaidHelper {
                 }
             },
             failAction = {
-                println("JWH Fail with error : ${it?.errorMsg}")
+
             }
         )
     }

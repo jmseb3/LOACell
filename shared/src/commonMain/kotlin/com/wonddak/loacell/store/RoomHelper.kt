@@ -3,7 +3,8 @@ package com.wonddak.loacell.store
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.model.RoomRole
 
-data class FBRoomInfo(
+data class
+FBRoomInfo(
     val title: String = "",
     val description: String = "",
     val owner: String = "",
@@ -96,7 +97,6 @@ object CommonRoomHelper {
             .get(
                 successAction = {
                     if (it.exist) {
-                        println("JWH Check ${it.data}")
                         val roomInfo = FBRoomInfo(
                             title = it.data!!["title"] as String,
                             description = it.data!!["description"] as String,
@@ -243,7 +243,6 @@ object CommonRoomHelper {
         return RefHelper.getRoomRef(roomId).getListenerRegistration(
             successAction = {
                 it.data?.let { data ->
-                    println("JWH Observe.. $data")
                     val title = data["title"] as String
                     val description = data["description"] as String
                     val owner = data["owner"] as String
@@ -262,7 +261,6 @@ object CommonRoomHelper {
                 }
             },
             failAction = {
-                println("JWH Fail with error : ${it?.errorMsg}")
             }
         )
     }
@@ -294,12 +292,10 @@ object CommonRoomHelper {
                 it.update(roomDoc, "enterUser", CommonFieldValue.arrayRemove(newOwnerUid))
             },
             successAction = {
-                println("JWH change Success")
                 commonAction()
                 successAction()
             },
             failAction = {
-                println("JWH change fail with Error ${it.errorMsg}")
                 commonAction()
                 failAction(it)
             }
