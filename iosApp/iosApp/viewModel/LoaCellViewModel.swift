@@ -32,6 +32,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
     
+    @Published var showLoading : Bool = false
+    @Published var msg :String = ""
+    
     let sc : SnackbarController = SnackbarController()
     
     lazy var config :Config = Config()
@@ -75,9 +78,12 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         commonViewModel.characterList.collect { value in
             self.characterList = value as! [Character]
         }
-    }
-    func closeLoading() {
-        
+        commonViewModel.showLoading.collect { value in
+            self.showLoading = value as! Bool
+        }
+        commonViewModel.msg.collect { value in
+            self.msg = value! as String
+        }
     }
     
     func closeSetting() {

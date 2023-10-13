@@ -12,9 +12,13 @@ struct UserFocusView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
 
     var body: some View {
-        VStack {
+        ZStack {
             if(viewModel.userInfo != nil) {
                 UserInfoCharacters(userInfo: viewModel.userInfo!, characterList: viewModel.characterList)
+                
+                if(viewModel.showLoading) {
+                    LoadingView(info: viewModel.msg)
+                }
             }
         }.frame(maxWidth: .infinity,maxHeight: .infinity)
             .background(Color.white)

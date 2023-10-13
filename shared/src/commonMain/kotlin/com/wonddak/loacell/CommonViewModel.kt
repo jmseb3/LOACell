@@ -14,11 +14,16 @@ import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.firebase.model.FBDataItem
+import com.wonddak.sharedapi.lostark.LostArkApi
+import com.wonddak.sharedapi.onFail
+import com.wonddak.sharedapi.onFailOnlyMsg
+import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -59,6 +64,7 @@ open class CommonViewModel(
         _roomId.value = roomId
         updateTabState(RoomState.Raid)
     }
+
     //owner가 사용자 정보를 볼경우 저장되는 temp값
     var tempOfFBData: List<FBDataItem> = emptyList()
 
@@ -101,7 +107,9 @@ open class CommonViewModel(
 
     val characterList = userInfo.transform { userInfo ->
         if (userInfo != null) {
-           emit(dataBase.characterQueriesHelper.getAllList(userInfo).sortedByDescending { it.level.replace(",","").toFloat() })
+            emit(
+                dataBase.characterQueriesHelper.getAllList(userInfo)
+                    .sortedByDescending { it.level.replace(",", "").toFloat() })
         } else {
             emit(emptyList())
         }
@@ -136,6 +144,7 @@ open class CommonViewModel(
         hideAllDialog()
         updateTabState(state)
     }
+
     private fun updateTabState(state: RoomState) {
         _tabState.value = state
     }
@@ -148,9 +157,9 @@ open class CommonViewModel(
     private var observeRaid: CommonListenerRegistration? = null
 
     //region Role
-    val myRole  = totalRoomInfo.transform { info->
+    val myRole = totalRoomInfo.transform { info ->
         val uid = viewModelImpl.getUserUid()
-        val res = if (uid!= null && info.roomInfo != null) {
+        val res = if (uid != null && info.roomInfo != null) {
             info.roomInfo!!.getRole(uid)
         } else {
             RoomRole.NONE
@@ -254,16 +263,12 @@ open class CommonViewModel(
     fun updateFilterRaidType(type: RaidType) =
         updateFilter(_filter.value.updateRaidType(type))
 
-    fun updateFilterFinish(finish: Filter.FINISH)
-    = updateFilter(_filter.value.updateFinish(finish))
-    fun updateFilterUser(user: String)
-    = updateFilter(_filter.value.updateUser(user))
+    fun updateFilterFinish(finish: Filter.FINISH) = updateFilter(_filter.value.updateFinish(finish))
+    fun updateFilterUser(user: String) = updateFilter(_filter.value.updateUser(user))
 
-    fun updateTimeStep(step :Int)
-     = updateFilter(_filter.value.updateTimeStep(step))
+    fun updateTimeStep(step: Int) = updateFilter(_filter.value.updateTimeStep(step))
 
-    fun updateShowEmptyRow(show:Boolean)
-            = updateFilter(_filter.value.updateEmptyCalendarRow(show))
+    fun updateShowEmptyRow(show: Boolean) = updateFilter(_filter.value.updateEmptyCalendarRow(show))
 
     fun clearFilter() {
         _filter.value = Filter()
@@ -280,7 +285,7 @@ open class CommonViewModel(
         )
         .toCommonStateFlow()
 
-    fun showDialog(status:DialogStatus) {
+    fun showDialog(status: DialogStatus) {
         _dialogStatus.value = status
     }
 
@@ -294,7 +299,7 @@ open class CommonViewModel(
     fun setNowUserInfo(userName: String) {
         hideAllDialog()
         clearFocusItem()
-        viewModelImpl.closeLoading()
+        _showLoading.value = false
         updateFocusUserName(userName)
     }
 
@@ -308,6 +313,7 @@ open class CommonViewModel(
         updateFocusRaidId("")
         updateFocusUserName("")
     }
+
     fun bottomAddAction() {
         if (roomId.value.isEmpty()) {
             viewModelImpl.fbUserIsAnonymous()?.let { result ->
@@ -358,6 +364,46 @@ open class CommonViewModel(
         hideRoom()
         dataBase.clearAll()
     }
+
+    private var _showLoading = MutableStateFlow(false)
+    val showLoading = _showLoading.toCommonStateFlow()
+    private var _msg = MutableStateFlow("")
+    val msg = _msg.toCommonStateFlow()
+
+    fun updateCharacter(roomId: String, userInfo: UserInfo) {
+        viewModelScope.launch {
+            _showLoading.value = true
+            _msg.value = "캐릭터 정보를 갱신합니다."
+            val characterResult = LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
+            characterResult.onSuccess { list ->
+                CommonUserHelper.addOrUpdate(
+                    roomId = roomId,
+                    name = userInfo.name,
+                    representativeCharacter = userInfo.representativeCharacter,
+                    characterList = list,
+                    failAction = { e ->
+                        launch {
+                            _msg.value = "서버 데이터 저장에 실패했습니다."
+                            delay(1_500L)
+                            _showLoading.value = false
+                        }
+
+                    }
+                ) {
+                    _showLoading.value = false
+                }
+            }
+            characterResult.onFail { code, message ->
+                delay(1_500L)
+                _msg.value = message
+                _showLoading.value
+            }
+            characterResult.onFailOnlyMsg { message ->
+                _msg.value = message
+                _showLoading.value
+            }
+        }
+    }
     //endregion
 
 }
@@ -365,12 +411,10 @@ open class CommonViewModel(
 interface ViewModelImpl {
     fun showSnackBar(msg: String)
 
-    fun fbUserIsAnonymous() : Boolean?
+    fun fbUserIsAnonymous(): Boolean?
 
-    fun getUserUid():String?
+    fun getUserUid(): String?
 
     fun closeSetting()
-    fun getSetting() :Boolean
-
-    fun closeLoading()
+    fun getSetting(): Boolean
 }

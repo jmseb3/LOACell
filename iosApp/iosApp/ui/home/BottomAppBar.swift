@@ -37,7 +37,16 @@ struct BottomAppBar: View {
                                     viewModel.commonViewModel.setTabStatus(state: RoomState.setting)
                                 }
                             }
-                           
+                            
+                        }
+                    } else if(viewModel.userInfo != nil) {
+                        HStack {
+                            IconButton(resource: \.change_person) {
+                                viewModel.commonViewModel.showDialog(status: DialogStatus.characterEdit)
+                            }
+                            IconButton(resource: \.refresh, enabled: viewModel.userInfo!.checkTimeOver()) {
+                                viewModel.commonViewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
+                            }
                         }
                     }
                 }
@@ -59,9 +68,4 @@ struct BottomAppBar: View {
         .frame(height: 80)
         .background(ColorManager.BackgroundColor)
     }
-}
-
-
-#Preview {
-    BottomAppBar().environmentObject(LoaCellViewModel())
 }

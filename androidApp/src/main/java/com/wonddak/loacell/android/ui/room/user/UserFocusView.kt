@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
@@ -22,12 +18,6 @@ import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.lostark.LostArkApi
-import com.wonddak.sharedapi.onFail
-import com.wonddak.sharedapi.onFailOnlyMsg
-import com.wonddak.sharedapi.onSuccess
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 //유저를 선택했을때 보여질 화면
 @Composable
@@ -39,6 +29,8 @@ fun UserFocusView(
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
     val characterList by loaCellViewModel.characterList.collectAsState()
     val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val showLoading by loaCellViewModel.showLoading.collectAsState()
+    val msg by loaCellViewModel.msg.collectAsState()
 
     userInfo?.let { userInfo ->
         Box {
@@ -92,49 +84,12 @@ fun UserFocusView(
                     }
                 }
             }
-        }
+            if (showLoading) {
+                BackHandler() {
 
-        var msg by remember {
-            mutableStateOf("캐릭터 정보를 갱신합니다.")
-        }
-
-        LaunchedEffect(loaCellViewModel.showLoading) {
-            if (loaCellViewModel.showLoading) {
-                val characterResult = LostArkApi().getCharacterInfo(userInfo.representativeCharacter)
-                characterResult.onSuccess { list ->
-                    CommonUserHelper.addOrUpdate(
-                        roomId = roomId,
-                        name = userInfo.name,
-                        representativeCharacter = userInfo.representativeCharacter,
-                        characterList = list,
-                        failAction = { e ->
-                            launch {
-                                msg = "서버 데이터 저장에 실패했습니다."
-                                delay(1_500L)
-                                loaCellViewModel.showLoading = false
-                            }
-                        }
-                    ) {
-                        loaCellViewModel.showLoading = false
-                    }
                 }
-                characterResult.onFail { code, message ->
-                    delay(1_500L)
-                    msg = message
-                    loaCellViewModel.showLoading = false
-                }
-                characterResult.onFailOnlyMsg {  message ->
-                    msg = message
-                    loaCellViewModel.showLoading = false
-                }
+                LoadingView(msg)
             }
-        }
-        if (loaCellViewModel.showLoading) {
-            BackHandler() {
-
-            }
-
-            LoadingView(msg)
         }
     }
 }

@@ -13,18 +13,27 @@ struct UserInfoCharacters: View {
     let characterList : [Character]
     
     var body: some View {
-        LazyVStack {
-            ForEach(characterList,id: \.name) {character in
-                VStack {
-                    Text(character.name)
-                        .fontWeight(userInfo.representativeCharacter == character.name ? .bold : .regular)
-                    HStack {
-                        Text(character.className)
-                        Text(character.level)
+        VStack {
+            ScrollView {
+                LazyVStack {
+                    ForEach(characterList,id: \.name) {character in
+                        VStack(alignment: .leading) {
+                            Text(character.name)
+                                .fontWeight(userInfo.representativeCharacter == character.name ? .bold : .regular)
+                            HStack() {
+                                Text(character.className)
+                                    .frame(minWidth: 0, maxWidth: .infinity,alignment: .leading)
+                                Text(character.level)
+                                    .frame(minWidth: 0, maxWidth: .infinity,alignment: .leading)
+                            }
+                            Divider()
+                        }
                     }
                 }
             }
-        }.frame(maxWidth: .infinity,maxHeight: .infinity)
+            Spacer()
+        }
+        
     }
 }
 

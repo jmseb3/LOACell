@@ -27,6 +27,7 @@ kotlin {
                 implementation(Dependencies.KMM.Kotlinx.Coroutines)
                 implementation(Dependencies.KMM.SQLDelight.Adapter)
                 implementation(Dependencies.KMM.SQLDelight.Coroutine)
+                implementation(Dependencies.KMM.Kotlinx.DateTime)
             }
         }
         val androidMain by getting {

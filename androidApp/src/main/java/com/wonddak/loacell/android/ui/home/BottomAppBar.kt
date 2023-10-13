@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -101,9 +99,6 @@ fun BottomAppBar(
                 ) {
                     focusUserInfo?.let {
                         Row() {
-                            IconButton(onClick = { clearFocusItem() }) {
-                                Icon(Icons.Filled.ArrowBack, contentDescription = null)
-                            }
                             MyIconButton(
                                 imageResource = SharedRes.images.change_person
                             ) {
@@ -111,9 +106,9 @@ fun BottomAppBar(
                             }
                             MyIconButton(
                                 imageResource = SharedRes.images.refresh,
-                                enabled = it.checkTimeOver(System.currentTimeMillis())
+                                enabled = it.checkTimeOver()
                             ) {
-                                showLoading = true
+                                updateCharacter(selectedRoomId,it)
                             }
                         }
                     }
@@ -122,9 +117,6 @@ fun BottomAppBar(
                     selectedRoomId.isNotEmpty() && focusRaidInfo != null
                 ) {
                     Row() {
-                        IconButton(onClick = { clearFocusItem() }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = null)
-                        }
                         focusRaidInfo?.let { info ->
                             MyIconButton(
                                 imageResource = SharedRes.images.room_setting

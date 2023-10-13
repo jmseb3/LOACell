@@ -11,6 +11,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
+import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.model.DialogStatus
@@ -184,15 +185,13 @@ class LoaCellViewModel(
     // endregion
 
     var showSetting by mutableStateOf(false)
-    var showLoading by mutableStateOf(false)
+    val showLoading get() = common.showLoading
+    val msg get() = common.msg
+    fun updateCharacter(roomId: String,userInfo: UserInfo) = common.updateCharacter(roomId, userInfo)
     override fun getSetting() :Boolean = showSetting
 
     override fun closeSetting() {
         showSetting = false
-    }
-
-    override fun closeLoading() {
-        showLoading = false
     }
 
     override fun fbUserIsAnonymous(): Boolean? {

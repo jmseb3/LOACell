@@ -13,7 +13,7 @@ struct LoadingView: View {
     var body: some View {
         ProgressView(label: {
             Text(info)
-        })
+        }).frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
     }
 }
 
