@@ -29,6 +29,8 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     @Published var tabState : RoomState = RoomState.raid
     @Published var myRole : RoomRole = RoomRole.none
+    
+    @Published var dialogStatus : DialogStatus = DialogStatus.none
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
     
@@ -83,6 +85,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         commonViewModel.msg.collect { value in
             self.msg = value! as String
+        }
+        commonViewModel.dialogStatus.collect { value in
+            self.dialogStatus = value!
         }
     }
     

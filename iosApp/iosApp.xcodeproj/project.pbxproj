@@ -22,6 +22,7 @@
 		07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7D2AD90CAC0081E5FE /* UserView.swift */; };
 		07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7F2AD90CC80081E5FE /* UserFocusView.swift */; };
 		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
+		07DA532B2AD940C60066EF40 /* CustomAlert in Frameworks */ = {isa = PBXBuildFile; productRef = 07DA532A2AD940C60066EF40 /* CustomAlert */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
@@ -67,6 +68,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */,
+				07DA532B2AD940C60066EF40 /* CustomAlert in Frameworks */,
 				0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */,
 				07125FAC2A5653CE003F8FCC /* GoogleSignIn in Frameworks */,
 				55F1E67DA43416D3F48D3F6F /* Pods_iosApp.framework in Frameworks */,
@@ -242,6 +244,7 @@
 				07125FAB2A5653CE003F8FCC /* GoogleSignIn */,
 				07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */,
 				0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */,
+				07DA532A2AD940C60066EF40 /* CustomAlert */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -274,6 +277,7 @@
 			packageReferences = (
 				07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */,
+				07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -519,6 +523,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -557,6 +562,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -617,6 +623,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/divadretlaw/CustomAlert.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -634,6 +648,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		07DA532A2AD940C60066EF40 /* CustomAlert */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */;
+			productName = CustomAlert;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

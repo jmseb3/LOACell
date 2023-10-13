@@ -11,16 +11,21 @@ import shared
 
 struct RoomView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
-
+    
+    var showTitle :Bool {
+        withAnimation {
+            return viewModel.focusRaidId.isEmpty && viewModel.focusUserName.isEmpty
+        }
+    }
     var body: some View {
         VStack {
-            if (viewModel.focusRaidId.isEmpty && viewModel.focusUserName.isEmpty) {
+            if (showTitle) {
                 ZStack {
                     VStack(alignment: .leading) {
                         Text(viewModel.totalRoomInfo.roomInfo?.description_ ?? "")
                         Text(viewModel.totalRoomInfo.roomInfo?.uniqueId ?? "")
                         Divider()
-                    }.padding()
+                    }.padding(EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3))
                     
                     VStack() {
                         if(viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.none) {
@@ -34,7 +39,7 @@ struct RoomView: View {
                     .frame(maxWidth: .infinity , alignment: .trailing)
                     .padding()
                     
-                }
+                }.animation(.easeInOut)
             }
             if(viewModel.tabState == RoomState.user) {
                 UserView()

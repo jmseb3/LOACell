@@ -12,4 +12,5 @@ import SwiftUI
 struct ColorManager {
     static let BackgroundColor = Color("Background")
     static let BackgroundContainerColor = Color("BackgroundContainer")
+    static let BackgroundContainerColor2 = Color("BackgroundContainer")
 }
