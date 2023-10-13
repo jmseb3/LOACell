@@ -36,6 +36,9 @@ struct RoomView: View {
                     
                 }
             }
+            if(viewModel.tabState == RoomState.user) {
+                UserView()
+            }
         }
     }
 }

@@ -70,6 +70,7 @@ class LoaCellViewModel(
     //포커싱된 유저 정보
     val focusUserName get() = common.focusUserName
     val userInfo get() = common.userInfo
+    val characterList get() = common.characterList
 
     //포커싱된 레이드 정
     val focusRaidId get() = common.focusRaidId

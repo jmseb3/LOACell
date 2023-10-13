@@ -19,6 +19,9 @@
 		072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072AA1102ABBD6880060414E /* LoginHelper.swift */; };
 		07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B772AD8E16E0081E5FE /* RoomView.swift */; };
 		07420B7B2AD901C30081E5FE /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7A2AD901C30081E5FE /* IconButton.swift */; };
+		07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7D2AD90CAC0081E5FE /* UserView.swift */; };
+		07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7F2AD90CC80081E5FE /* UserFocusView.swift */; };
+		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
@@ -40,6 +43,9 @@
 		072AA1102ABBD6880060414E /* LoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHelper.swift; sourceTree = "<group>"; };
 		07420B772AD8E16E0081E5FE /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
 		07420B7A2AD901C30081E5FE /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
+		07420B7D2AD90CAC0081E5FE /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
+		07420B7F2AD90CC80081E5FE /* UserFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFocusView.swift; sourceTree = "<group>"; };
+		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
@@ -118,6 +124,7 @@
 		07179F412ACD52FD003A415E /* room */ = {
 			isa = PBXGroup;
 			children = (
+				07420B7C2AD90CA00081E5FE /* user */,
 				07420B792AD8E1FB0081E5FE /* raid */,
 				07179F422ACD530D003A415E /* RoomListView.swift */,
 				07420B772AD8E16E0081E5FE /* RoomView.swift */,
@@ -138,6 +145,16 @@
 			children = (
 			);
 			path = raid;
+			sourceTree = "<group>";
+		};
+		07420B7C2AD90CA00081E5FE /* user */ = {
+			isa = PBXGroup;
+			children = (
+				07420B7F2AD90CC80081E5FE /* UserFocusView.swift */,
+				07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */,
+				07420B7D2AD90CAC0081E5FE /* UserView.swift */,
+			);
+			path = user;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -352,11 +369,14 @@
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
+				07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */,
 				07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */,
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
 				07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */,
+				07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);

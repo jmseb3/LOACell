@@ -98,6 +98,18 @@ open class CommonViewModel(
         started = SharingStarted.WhileSubscribed(),
         initialValue = null
     ).toCommonStateFlow()
+
+    val characterList = userInfo.transform { userInfo ->
+        if (userInfo != null) {
+           emit(dataBase.characterQueriesHelper.getAllList(userInfo).sortedByDescending { it.level.replace(",","").toFloat() })
+        } else {
+            emit(emptyList())
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
+    ).toCommonStateFlow()
     //endregion
 
     //region 레이드 선택시
@@ -334,6 +346,10 @@ open class CommonViewModel(
         if (viewModelImpl.getSetting()) {
             viewModelImpl.closeSetting()
         } else {
+            if (focusUserName.value.isNotEmpty() || focusRaidId.value.isNotEmpty()) {
+                clearFocusItem()
+                return
+            }
             hideRoom()
         }
     }

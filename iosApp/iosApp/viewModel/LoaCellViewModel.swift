@@ -22,6 +22,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     @Published var focusUserName : String = ""
     @Published var userInfo : shared.UserInfo? = nil
+    @Published var characterList : [Character] = []
     
     @Published var focusRaidId : String = ""
     @Published var raidInfo : shared.RaidInfo? = nil
@@ -70,6 +71,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         commonViewModel.myRole.collect { value in
             self.myRole = value!
+        }
+        commonViewModel.characterList.collect { value in
+            self.characterList = value as! [Character]
         }
     }
     func closeLoading() {

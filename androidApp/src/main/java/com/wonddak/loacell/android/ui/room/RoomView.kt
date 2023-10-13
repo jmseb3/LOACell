@@ -63,8 +63,6 @@ fun RoomView(
 
                 RoomState.User -> {
                     UserView(
-                        db = db,
-                        roomId = roomInfo.uniqueId,
                         loaCellViewModel = loaCellViewModel
                     )
                 }
