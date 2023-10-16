@@ -25,6 +25,7 @@
 		07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD32ADCC894009358D8 /* UserDialog.swift */; };
 		07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD52ADCD142009358D8 /* DialogHost.swift */; };
 		07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD72ADCD650009358D8 /* BaseDialog.swift */; };
+		07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FDB2ADD10FC009358D8 /* BaseSheet.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
@@ -52,6 +53,7 @@
 		07773FD32ADCC894009358D8 /* UserDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDialog.swift; sourceTree = "<group>"; };
 		07773FD52ADCD142009358D8 /* DialogHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogHost.swift; sourceTree = "<group>"; };
 		07773FD72ADCD650009358D8 /* BaseDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDialog.swift; sourceTree = "<group>"; };
+		07773FDB2ADD10FC009358D8 /* BaseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSheet.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
@@ -102,12 +104,14 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				07773FD02ADCC734009358D8 /* dialog */,
-				07179F412ACD52FD003A415E /* room */,
+				07773FD52ADCD142009358D8 /* DialogHost.swift */,
+				07773FDA2ADD10EE009358D8 /* bottomSheet */,
+				07FE61472AD7BE20004701DF /* ColorManager.swift */,
 				070CF3232AC148340099F2D6 /* common */,
+				07773FD02ADCC734009358D8 /* dialog */,
 				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
-				07FE61472AD7BE20004701DF /* ColorManager.swift */,
+				07179F412ACD52FD003A415E /* room */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -168,10 +172,17 @@
 			isa = PBXGroup;
 			children = (
 				07773FD72ADCD650009358D8 /* BaseDialog.swift */,
-				07773FD52ADCD142009358D8 /* DialogHost.swift */,
 				07773FD32ADCC894009358D8 /* UserDialog.swift */,
 			);
 			path = dialog;
+			sourceTree = "<group>";
+		};
+		07773FDA2ADD10EE009358D8 /* bottomSheet */ = {
+			isa = PBXGroup;
+			children = (
+				07773FDB2ADD10FC009358D8 /* BaseSheet.swift */,
+			);
+			path = bottomSheet;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -385,6 +396,7 @@
 				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
 				07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
+				07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */,
 				07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */,
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,

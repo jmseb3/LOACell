@@ -29,7 +29,7 @@ struct RoomView: View {
                     
                     VStack() {
                         if(viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.none) {
-                      
+                            
                         } else {
                             IconButton(resource: \.room_exit) {
                                 
@@ -39,7 +39,7 @@ struct RoomView: View {
                     .frame(maxWidth: .infinity , alignment: .trailing)
                     .padding()
                     
-                }.animation(.easeInOut)
+                }
             }
             if(viewModel.tabState == RoomState.user) {
                 UserView()

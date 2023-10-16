@@ -32,6 +32,14 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     @Published var myRole : RoomRole = RoomRole.none
     
     @Published var dialogStatus : DialogStatus = DialogStatus.none
+    func getDialogShow(dialogStatus: DialogStatus) -> Binding<Bool> {
+        return Binding {
+            self.dialogStatus.isEqual(dialogStatus)
+        } set: { _ in
+            self.commonViewModel.hideAllDialog()
+        }
+
+    }
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
     

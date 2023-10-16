@@ -390,7 +390,10 @@ open class CommonViewModel(
 
                     }
                 ) {
-                    _showLoading.value = false
+                    launch {
+                        delay(1_500L)
+                        _showLoading.value = false
+                    }
                 }
             }
             characterResult.onFail { code, message ->

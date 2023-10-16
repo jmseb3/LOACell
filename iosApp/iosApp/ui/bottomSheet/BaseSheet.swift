@@ -1,0 +1,50 @@
+//
+//  BaseSheet.swift
+//  iosApp
+//
+//  Created by WonHee Jung on 2023/10/16.
+//  Copyright © 2023 orgName. All rights reserved.
+//
+
+import SwiftUI
+
+
+struct BaseSheet<Content: View>: View {
+    var title :String? = nil
+    var text :String = "추가"
+    var action :() -> Void
+    
+    @Binding var enabled : Bool
+    
+    let content: () -> Content
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            VStack {
+                if title != nil {
+                    Text(title!)
+                        .font(.title3)
+                    Divider()
+                }
+                Spacer().frame(height: 20)
+                content()
+                Spacer().frame(height: 20)
+                
+                Button(action: {
+                    action()
+                }, label: {
+                    Text(text)
+                        .foregroundColor(enabled ? .black : .gray)
+                })
+                .frame(maxWidth: .infinity)
+                .disabled(!enabled)
+            }
+            .padding()
+            .background(.white)
+            .frame(alignment: .bottom)
+            .cornerRadius(20, corners: [.topLeft,.topRight])
+            .shadow(radius: 20)
+        }
+    }
+}

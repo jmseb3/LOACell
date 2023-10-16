@@ -22,7 +22,7 @@ struct BaseDialog<Content: View>: View {
     let content: () -> Content
     
     var body: some View {
-        VStack {
+        VStack(alignment : .center) {
             if title != nil {
                 Text(title!)
                     .font(.title3)
@@ -51,7 +51,9 @@ struct BaseDialog<Content: View>: View {
         }
         .padding()
         .frame(alignment: .center)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .background(.white)
+        .cornerRadius(20)
+        .shadow(radius: 20)
     }
 }
 
