@@ -22,7 +22,9 @@
 		07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7D2AD90CAC0081E5FE /* UserView.swift */; };
 		07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7F2AD90CC80081E5FE /* UserFocusView.swift */; };
 		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
-		07DA532B2AD940C60066EF40 /* CustomAlert in Frameworks */ = {isa = PBXBuildFile; productRef = 07DA532A2AD940C60066EF40 /* CustomAlert */; };
+		07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD32ADCC894009358D8 /* UserDialog.swift */; };
+		07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD52ADCD142009358D8 /* DialogHost.swift */; };
+		07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD72ADCD650009358D8 /* BaseDialog.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
@@ -47,6 +49,9 @@
 		07420B7D2AD90CAC0081E5FE /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		07420B7F2AD90CC80081E5FE /* UserFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFocusView.swift; sourceTree = "<group>"; };
 		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
+		07773FD32ADCC894009358D8 /* UserDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDialog.swift; sourceTree = "<group>"; };
+		07773FD52ADCD142009358D8 /* DialogHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogHost.swift; sourceTree = "<group>"; };
+		07773FD72ADCD650009358D8 /* BaseDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDialog.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
@@ -68,7 +73,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				07125FAE2A5653CE003F8FCC /* GoogleSignInSwift in Frameworks */,
-				07DA532B2AD940C60066EF40 /* CustomAlert in Frameworks */,
 				0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */,
 				07125FAC2A5653CE003F8FCC /* GoogleSignIn in Frameworks */,
 				55F1E67DA43416D3F48D3F6F /* Pods_iosApp.framework in Frameworks */,
@@ -98,6 +102,7 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				07773FD02ADCC734009358D8 /* dialog */,
 				07179F412ACD52FD003A415E /* room */,
 				070CF3232AC148340099F2D6 /* common */,
 				07DE600A2A57B2E400A122B2 /* home */,
@@ -157,6 +162,16 @@
 				07420B7D2AD90CAC0081E5FE /* UserView.swift */,
 			);
 			path = user;
+			sourceTree = "<group>";
+		};
+		07773FD02ADCC734009358D8 /* dialog */ = {
+			isa = PBXGroup;
+			children = (
+				07773FD72ADCD650009358D8 /* BaseDialog.swift */,
+				07773FD52ADCD142009358D8 /* DialogHost.swift */,
+				07773FD32ADCC894009358D8 /* UserDialog.swift */,
+			);
+			path = dialog;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -244,7 +259,6 @@
 				07125FAB2A5653CE003F8FCC /* GoogleSignIn */,
 				07125FAD2A5653CE003F8FCC /* GoogleSignInSwift */,
 				0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */,
-				07DA532A2AD940C60066EF40 /* CustomAlert */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -277,7 +291,6 @@
 			packageReferences = (
 				07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */,
-				07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -370,7 +383,9 @@
 				07179F432ACD530D003A415E /* RoomListView.swift in Sources */,
 				07420B7B2AD901C30081E5FE /* IconButton.swift in Sources */,
 				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
+				07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
+				07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */,
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
@@ -379,6 +394,7 @@
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
+				07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */,
 				07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */,
 				07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
@@ -623,14 +639,6 @@
 				minimumVersion = 7.0.0;
 			};
 		};
-		07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/divadretlaw/CustomAlert.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -648,11 +656,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07125FAA2A5653CE003F8FCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
-		};
-		07DA532A2AD940C60066EF40 /* CustomAlert */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07DA53292AD940C60066EF40 /* XCRemoteSwiftPackageReference "CustomAlert" */;
-			productName = CustomAlert;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

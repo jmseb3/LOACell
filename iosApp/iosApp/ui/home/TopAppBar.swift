@@ -23,7 +23,6 @@ struct TopAppBar: View {
                     Image(systemName: "arrow.left")
                 }
                 .foregroundColor(.black)
-                .animation(.default)
                 .transition(.slide)
             }
             HStack {
@@ -49,8 +48,4 @@ struct TopAppBar: View {
             }
         }.padding()
     }
-}
-
-#Preview {
-    TopAppBar().environmentObject(LoaCellViewModel())
 }

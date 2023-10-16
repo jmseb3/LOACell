@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseAuth
 import shared
+import SwiftUI
 import SwiftUI_Snackbar
 
 class LoaCellViewModel: ObservableObject, ViewModelImpl {
@@ -48,7 +49,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
             self.user = auth.currentUser
         }
         commonViewModel.syncData.collect { value in
-            self.syncData = value!.boolValue
+            withAnimation {
+                self.syncData = value!.boolValue
+            }
         }
         commonViewModel.roomList.collect { value in
             self.roomList = value as! [RoomInfo]
@@ -60,13 +63,17 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
             self.totalRoomInfo = value!
         }
         commonViewModel.focusUserName.collect { value in
-            self.focusUserName = value! as String
+            withAnimation {
+                self.focusUserName = value! as String
+            }
         }
         commonViewModel.userInfo.collect { value in
             self.userInfo = value
         }
         commonViewModel.focusRaidId.collect { value in
-            self.focusRaidId = value! as String
+            withAnimation {
+                self.focusRaidId = value! as String
+            }
         }
         commonViewModel.raidInfo.collect { value in
             self.raidInfo = value
@@ -81,13 +88,17 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
             self.characterList = value as! [Character]
         }
         commonViewModel.showLoading.collect { value in
-            self.showLoading = value as! Bool
+            withAnimation {
+                self.showLoading = value as! Bool
+            }
         }
         commonViewModel.msg.collect { value in
             self.msg = value! as String
         }
         commonViewModel.dialogStatus.collect { value in
-            self.dialogStatus = value!
+            withAnimation {
+                self.dialogStatus = value!
+            }
         }
     }
     

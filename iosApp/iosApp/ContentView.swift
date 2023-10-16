@@ -5,17 +5,22 @@ import shared
 struct ContentView: View {
     @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
 
+    let bottomHeight : CGFloat = 80
     var body: some View {
         VStack {
             if(viewModel.user == nil) {
                 LoginView()
             } else {
-                SnackBarHost() {
-                    TopAppBar()
-                    Divider()
-                    MainContent()
+                VStack {
+                    DialogHost() {
+                        SnackBarHost(bottomSpace: bottomHeight) {
+                            TopAppBar()
+                            Divider()
+                            MainContent()
+                            BottomAppBar(height: bottomHeight)
+                        }
+                    }
                 }
-                BottomAppBar()
             }
         }
         .environmentObject(viewModel)

@@ -14,7 +14,7 @@ struct IconButton: View {
     var enabled :Bool = true
     let iconSize :CGFloat = 30
     let action : () -> Void
-
+    
     var body: some View {
         Button {
             withAnimation {
@@ -23,6 +23,7 @@ struct IconButton: View {
         } label: {
             Image(resource: resource)
                 .resizable()
+                .renderingMode(.template)
                 .foregroundColor(enabled ? .black : .gray)
                 .frame(width: iconSize, height: iconSize)
         }.disabled(!enabled)

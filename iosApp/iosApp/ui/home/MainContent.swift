@@ -44,8 +44,3 @@ struct MainContent: View {
     }
 
 }
-
-#Preview {
-    MainContent().environmentObject(LoaCellViewModel())
-}
-

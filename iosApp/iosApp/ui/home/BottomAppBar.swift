@@ -11,7 +11,7 @@ import shared
 
 struct BottomAppBar: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
-    
+    let height :CGFloat
     let iconSize : CGFloat = 30
     
     var body: some View {
@@ -46,7 +46,7 @@ struct BottomAppBar: View {
                             }
                             IconButton(resource: \.refresh, enabled: viewModel.userInfo!.checkTimeOver()) {
                                 viewModel.commonViewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
-                            }
+                            }.disabled(!viewModel.userInfo!.checkTimeOver())
                         }
                     }
                 }
@@ -65,7 +65,7 @@ struct BottomAppBar: View {
             
         }
         .padding()
-        .frame(height: 80)
+        .frame(height: height)
         .background(ColorManager.BackgroundColor)
     }
 }
