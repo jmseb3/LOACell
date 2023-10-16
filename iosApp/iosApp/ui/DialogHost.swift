@@ -30,7 +30,6 @@ struct DialogHost<Content: View>: View {
     var body: some View {
         ZStack {
             GeometryReader {gemetryReader in
-                let sheet = Sheet(gemetryReader: gemetryReader)
                 let dialog = Dialog(gemetryReader: gemetryReader)
                 ZStack {
                     Color(.white)
@@ -38,7 +37,6 @@ struct DialogHost<Content: View>: View {
                         content()
                     }
                 }
-                
                 if viewModel.dialogStatus != DialogStatus.none {
                     ZStack {
                         Color(.black)
@@ -89,10 +87,11 @@ struct DialogHost<Content: View>: View {
                             }, enabled: .constant(true)) {
                                 Text("유저 추가")
                             }
+                            .ignoresSafeArea()
                         }
                         
                     }
-                    .animation(.smooth, value: viewModel.dialogStatus)
+                    .animation(.spring, value: viewModel.dialogStatus)
                 }
             }
         }
@@ -108,16 +107,6 @@ struct Dialog: ViewModifier {
             .frame(width: gemetryReader.size.width * 0.8 , alignment: .center)
             .position(x: gemetryReader.size.width / 2, y : gemetryReader.size.height / 2)
 
-    }
-}
-struct Sheet: ViewModifier {
-    let gemetryReader : GeometryProxy
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .frame(width: gemetryReader.size.width , alignment: .bottom)
-            .position(x: gemetryReader.size.width / 2)
-            .ignoresSafeArea()
     }
 }
 

@@ -36,8 +36,13 @@ struct BaseSheet<Content: View>: View {
                 }, label: {
                     Text(text)
                         .foregroundColor(enabled ? .black : .gray)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(.black, lineWidth: 1)
+                        )
                 })
-                .frame(maxWidth: .infinity)
                 .disabled(!enabled)
             }
             .padding()
