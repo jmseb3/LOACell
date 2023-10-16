@@ -23,7 +23,7 @@ struct EditCharacterDialog: View {
             rightText: "변경",
             leftAction: {
                 self.leftAction()
-            }, 
+            },
             rightAction: {
                 self.rightAction(now)
             },
@@ -50,4 +50,24 @@ struct EditCharacterDialog: View {
         }
     }
     
+}
+
+struct DeleteCharacterDialog :  View {
+    
+    let name: String
+    let confirm: () -> Void
+    let dismiss: () -> Void
+    
+    var body: some View {
+        DeleteDialog(
+            title: "유저 정보 삭제",
+            leftAction: dismiss,
+            rightAction: confirm,
+            rightEnabled: .constant(true)
+        ) {
+            Text("\(name)님 의 정보를 삭제 하시겠습니까?")
+                .font(.system(size: 13))
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
 }

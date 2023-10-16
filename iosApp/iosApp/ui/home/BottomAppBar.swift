@@ -55,8 +55,16 @@ struct BottomAppBar: View {
             Button {
                 viewModel.commonViewModel.bottomAddAction()
             } label: {
-                Image(systemName: "plus")
-                    .foregroundColor(.black)
+                if !viewModel.focusUserName.isEmpty || !viewModel.focusRaidId.isEmpty {
+                    Image(resource: \.delete_)
+                        .resizable()
+                        .foregroundColor(.black)
+                        .frame(width: 18, height: 18)
+                } else {
+                    Image(systemName: "plus")
+                        .foregroundColor(.black)
+                }
+                
             }
             .frame(width: 40, height: 40)
             .background(ColorManager.BackgroundContainerColor)

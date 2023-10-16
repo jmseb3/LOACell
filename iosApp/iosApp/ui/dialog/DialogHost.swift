@@ -32,7 +32,7 @@ struct DialogHost<Content: View>: View {
                         content()
                     }
                 }
-             
+                
                 if viewModel.dialogStatus != DialogStatus.none {
                     ZStack {
                         Color(.black)
@@ -59,6 +59,23 @@ struct DialogHost<Content: View>: View {
                                             )
                                         dismiss()
                                     })
+                            case .characterDelete:
+                                if viewModel.userInfo != nil {
+                                    let name = viewModel.userInfo!.name
+                                    DeleteCharacterDialog(name: name) {
+                                        CommonUserHelper().delete(
+                                            roomId: viewModel.roomId,
+                                            name: name
+                                        ) { error in
+                                            viewModel.showSnackBar(msg: error)
+                                        } successAction: {
+                                            viewModel.commonViewModel.clearFocusItem()
+                                            dismiss()
+                                        }
+                                    } dismiss: {
+                                        dismiss()
+                                    }
+                                }
                             default:
                                 Text("\(viewModel.dialogStatus.name)")
                             }

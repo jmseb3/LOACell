@@ -25,10 +25,12 @@ struct BaseDialog<Content: View>: View {
         VStack {
             if title != nil {
                 Text(title!)
-                    .font(.title2)
+                    .font(.title3)
                 Divider()
             }
+            Spacer().frame(height: 20)
             content()
+            Spacer().frame(height: 20)
             HStack {
                 Spacer()
                 Button(action: {
@@ -50,5 +52,26 @@ struct BaseDialog<Content: View>: View {
         .padding()
         .frame(alignment: .center)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+}
+
+struct DeleteDialog<Content: View>: View {
+    var title :String? = nil
+    var leftAction : () -> Void
+    var rightAction :() -> Void
+    @Binding var rightEnabled : Bool
+    
+    let content: () -> Content
+    var body: some View {
+        BaseDialog(
+            title: title,
+            leftText: "취소",
+            rightText: "삭제",
+            leftAction: leftAction,
+            rightAction: rightAction,
+            rightEnabled: $rightEnabled
+        ) {
+            content()
+        }
     }
 }

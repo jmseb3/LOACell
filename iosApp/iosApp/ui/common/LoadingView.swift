@@ -10,10 +10,21 @@ import SwiftUI
 
 struct LoadingView: View {
     var info : String = ""
+    var color : Color = .gray
     var body: some View {
-        ProgressView(label: {
-            Text(info)
-        }).frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
+        ZStack {
+            color
+                .opacity(0.5)
+                .onTapGesture {
+                    
+                }
+                .ignoresSafeArea()
+            
+            ProgressView(label: {
+                Text(info)
+            }).frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
+        }
+       
     }
 }
 

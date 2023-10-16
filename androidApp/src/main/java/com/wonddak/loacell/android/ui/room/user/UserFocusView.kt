@@ -24,8 +24,7 @@ import com.wonddak.loacell.store.CommonUserHelper
 fun UserFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val roomId = totalRoomInfo.roomInfo?.uniqueId ?: ""
+    val roomId by loaCellViewModel.roomId.collectAsState()
     val userInfo: UserInfo? by loaCellViewModel.userInfo.collectAsState(null)
     val characterList by loaCellViewModel.characterList.collectAsState()
     val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
