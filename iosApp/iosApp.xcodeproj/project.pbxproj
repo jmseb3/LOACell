@@ -27,6 +27,8 @@
 		07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD72ADCD650009358D8 /* BaseDialog.swift */; };
 		07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FDB2ADD10FC009358D8 /* BaseSheet.swift */; };
 		0785E4EB2ADE14950084E711 /* AddUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EA2ADE14950084E711 /* AddUserSheet.swift */; };
+		0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */; };
+		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
@@ -56,6 +58,8 @@
 		07773FD72ADCD650009358D8 /* BaseDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDialog.swift; sourceTree = "<group>"; };
 		07773FDB2ADD10FC009358D8 /* BaseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSheet.swift; sourceTree = "<group>"; };
 		0785E4EA2ADE14950084E711 /* AddUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserSheet.swift; sourceTree = "<group>"; };
+		0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidItemRow.swift; sourceTree = "<group>"; };
+		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
@@ -156,6 +160,8 @@
 		07420B792AD8E1FB0081E5FE /* raid */ = {
 			isa = PBXGroup;
 			children = (
+				0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */,
+				0785E4EE2ADE69F00084E711 /* RaidView.swift */,
 			);
 			path = raid;
 			sourceTree = "<group>";
@@ -405,8 +411,10 @@
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
+				0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */,
 				07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */,
 				07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */,
+				0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */,
 				072AA1112ABBD6880060414E /* LoginHelper.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,

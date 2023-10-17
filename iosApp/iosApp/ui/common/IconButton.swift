@@ -26,7 +26,9 @@ struct IconButton: View {
                 .renderingMode(.template)
                 .foregroundColor(enabled ? .black : .gray)
                 .frame(width: iconSize, height: iconSize)
-        }.disabled(!enabled)
+        }
+        .frame(width: iconSize, height: iconSize)
+        .disabled(!enabled)
     }
 }
 

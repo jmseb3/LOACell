@@ -41,7 +41,9 @@ struct RoomView: View {
                     
                 }
             }
-            if(viewModel.tabState == RoomState.user) {
+            if viewModel.tabState == RoomState.raid {
+                RaidView()
+            } else if(viewModel.tabState == RoomState.user) {
                 UserView()
             }
         }
