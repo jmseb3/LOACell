@@ -15,7 +15,10 @@ struct BaseSheet<Content: View>: View {
     var action :() -> Void
     
     @Binding var enabled : Bool
-    
+    @Binding var errorMsg :String
+    func clearErrorMsg() {
+        errorMsg = ""
+    }
     let content: () -> Content
     
     var body: some View {
@@ -30,7 +33,16 @@ struct BaseSheet<Content: View>: View {
                 Spacer().frame(height: 20)
                 content()
                 Spacer().frame(height: 20)
-                
+                if !errorMsg.isEmpty {
+                    Text(errorMsg)
+                        .foregroundColor(.red)
+                        .animation(.spring, value: errorMsg)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                clearErrorMsg()
+                            }
+                        }
+                }
                 Button(action: {
                     action()
                 }, label: {

@@ -85,8 +85,7 @@ fun RoomView(
                     DialogStatus.USER_ADD -> {
                         AddUserSheet(
                             roomId = roomInfo.uniqueId,
-                            onDismissRequest = close,
-                            addAction = close
+                            onDismissRequest = close
                         )
                     }
                     else -> {

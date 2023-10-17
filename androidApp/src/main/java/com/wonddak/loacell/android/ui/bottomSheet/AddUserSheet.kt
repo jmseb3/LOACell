@@ -36,7 +36,6 @@ fun AddUserSheet(
     modifier: Modifier = Modifier,
     roomId: String,
     onDismissRequest: () -> Unit,
-    addAction: () -> Unit
 ) {
 
     var searchCharacterName by remember {
@@ -86,7 +85,7 @@ fun AddUserSheet(
                 searchCharacterName,
                 searchResult,
                 { error -> errorMsg = error },
-                addAction
+                onDismissRequest
             )
         }
     }

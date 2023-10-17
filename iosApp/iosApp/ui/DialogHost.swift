@@ -82,12 +82,12 @@ struct DialogHost<Content: View>: View {
 
                             }
                         } else if viewModel.dialogStatus == DialogStatus.userAdd {
-                            BaseSheet(action: {
+                            AddUserSheet(
+                                roomId : viewModel.roomId
+                            ) {
                                 dismiss()
-                            }, enabled: .constant(true)) {
-                                Text("유저 추가")
                             }
-                            .ignoresSafeArea()
+
                         }
                         
                     }

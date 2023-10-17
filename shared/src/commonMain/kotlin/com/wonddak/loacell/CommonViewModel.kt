@@ -382,7 +382,7 @@ open class CommonViewModel(
                     representativeCharacter = userInfo.representativeCharacter,
                     characterList = list,
                     failAction = { e ->
-                        launch {
+                        viewModelScope.launch {
                             _msg.value = "서버 데이터 저장에 실패했습니다."
                             delay(1_500L)
                             _showLoading.value = false
@@ -390,8 +390,8 @@ open class CommonViewModel(
 
                     }
                 ) {
-                    launch {
-                        delay(1_500L)
+                    viewModelScope.launch {
+                        delay(1_000L)
                         _showLoading.value = false
                     }
                 }

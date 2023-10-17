@@ -60,7 +60,7 @@ class LostArkApi {
             }
         }
     }
-
+    @Throws(Throwable::class)
     suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
         val result: ApiResult<List<CharacterInfo>> = httpClient.safeRequest {
             url.path("characters/${characterName.encodeURLPath()}/siblings")
