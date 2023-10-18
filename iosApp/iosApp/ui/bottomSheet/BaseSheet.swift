@@ -14,7 +14,7 @@ struct BaseSheet<Content: View>: View {
     var text :String = "추가"
     var action :() -> Void
     
-    @Binding var enabled : Bool
+    var enabled : Bool
     @Binding var errorMsg :String
     func clearErrorMsg() {
         errorMsg = ""

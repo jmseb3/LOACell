@@ -78,13 +78,7 @@ struct AddUserSheet: View {
                     initAction()
                 }
             },
-            enabled: Binding(
-                get: {
-                    (searchResult.isEmpty && !user.isEmpty && !searchCharacterName.isEmpty) || !searchResult.isEmpty
-                }, set: { _ in
-                    
-                }
-            ),
+            enabled:(searchResult.isEmpty && !user.isEmpty && !searchCharacterName.isEmpty) || !searchResult.isEmpty,
             errorMsg: $errorMsg
         )
         {

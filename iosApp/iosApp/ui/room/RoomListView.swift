@@ -23,7 +23,6 @@ struct RoomListView: View {
                     Spacer()
                         .frame(height: 10)
                 }
-                
             }
         }).padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
     }

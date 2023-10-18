@@ -89,7 +89,9 @@ struct DialogHost<Content: View>: View {
                             }
 
                         } else if viewModel.dialogStatus == DialogStatus.raidAdd {
-                            AddRaidSheet {
+                            AddRaidSheet(
+                                roomId : viewModel.roomId
+                            ) {
                                 dismiss()
                             }
                         }

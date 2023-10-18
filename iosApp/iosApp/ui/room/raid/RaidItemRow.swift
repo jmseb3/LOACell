@@ -35,7 +35,7 @@ struct RaidItemRow: View {
                     Text(raidInfo.getRaidText())
                     Text(raidInfo.makeGateText())
                     Spacer()
-                }
+                }.padding(3)
                 Spacer()
             }
             .background(rShape.fill(Color.gray).opacity(0.75))
@@ -48,7 +48,7 @@ struct RaidItemRow: View {
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            .padding()
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 5))
         }
         .frame(height: size)
     }
