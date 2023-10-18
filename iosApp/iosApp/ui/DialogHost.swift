@@ -88,6 +88,10 @@ struct DialogHost<Content: View>: View {
                                 dismiss()
                             }
 
+                        } else if viewModel.dialogStatus == DialogStatus.raidAdd {
+                            AddRaidSheet {
+                                dismiss()
+                            }
                         }
                         
                     }

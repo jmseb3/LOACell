@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -143,7 +142,7 @@ fun RaidSheetBase(
                     imeAction = ImeAction.Next
                 ),
                 textChange = {
-                    update(fbRaidInfo.copy(title = it))
+                    update(fbRaidInfo.updateTitle(title = it))
                 })
             //타입
             ExposedDropdownMenuBox(
@@ -171,38 +170,7 @@ fun RaidSheetBase(
                                 fontWeight = if (fbRaidInfo.type == item) FontWeight.Bold else FontWeight.Normal
                             )
                         }, onClick = {
-                            if (!item.accessibleDifficulty().contains(fbRaidInfo.difficulty)) {
-                                if (item != RaidType.ABRELSHUD) {
-                                    val maxGate = fbRaidInfo.type.getMaxGate()
-                                    update(
-                                        fbRaidInfo.copy(
-                                            type = item,
-                                            difficulty = Difficulty.Normal,
-                                            startGateNumber = 1,
-                                            endGateNumber = maxGate
-                                        )
-                                    )
-                                } else {
-                                    update(
-                                        fbRaidInfo.copy(
-                                            type = item, difficulty = Difficulty.Normal
-                                        )
-                                    )
-                                }
-                            } else {
-                                if (item != RaidType.ABRELSHUD) {
-                                    val maxGate = fbRaidInfo.type.getMaxGate()
-                                    update(
-                                        fbRaidInfo.copy(
-                                            type = item,
-                                            startGateNumber = 1,
-                                            endGateNumber = maxGate
-                                        )
-                                    )
-                                } else {
-                                    update(fbRaidInfo.copy(type = item))
-                                }
-                            }
+                            update(fbRaidInfo.updateType(item))
                             expanded = false
                         })
                     }
@@ -221,7 +189,7 @@ fun RaidSheetBase(
                             Difficulty.Normal, Difficulty.Hard, Difficulty.Hell
                         )
                     ) { difficulty ->
-                        update(fbRaidInfo.copy(difficulty = difficulty))
+                        update(fbRaidInfo.updateDifficulty(difficulty))
                     }
                     if (Const.useExtreme) {
                         DifficultyRow(
@@ -229,7 +197,7 @@ fun RaidSheetBase(
                                 Difficulty.ExtremeNormal, Difficulty.ExtremeHard
                             )
                         ) { difficulty ->
-                            update(fbRaidInfo.copy(difficulty = difficulty))
+                            update(fbRaidInfo.updateDifficulty(difficulty))
                         }
                     }
                 }
@@ -269,7 +237,7 @@ fun RaidSheetBase(
                                             abEnd = 1
                                         }
                                     }
-                                    update(fbRaidInfo.copy(startGateNumber = abStart, endGateNumber = abEnd))
+                                    update(fbRaidInfo.updateGate(abStart,abEnd))
                                 })
                         }
                     }
@@ -408,8 +376,8 @@ fun DifficultyRow(
         modifier = Modifier.fillMaxWidth()
     ) {
         difficultyList.forEach { difficulty ->
-            val selected = difficulty == fbRaidInfo.difficulty
-            val enabled = fbRaidInfo.type.accessibleDifficulty().contains(difficulty)
+            val selected = fbRaidInfo.difficultySelected(difficulty)
+            val enabled = fbRaidInfo.difficultyEnabled(difficulty)
             Row(
                 modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {

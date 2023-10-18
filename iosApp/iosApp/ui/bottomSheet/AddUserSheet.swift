@@ -89,20 +89,8 @@ struct AddUserSheet: View {
         )
         {
             VStack {
-                TextField("유저 이름 입력", text: $user)
-                    .padding()
-                    .autocapitalization(.none)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.gray,lineWidth: 2)
-                    )
-                TextField("대표 캐릭터 입력", text : $searchCharacterName)
-                    .padding()
-                    .autocapitalization(.none)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.gray,lineWidth: 2)
-                    )
+                LengthLimitTextField(maxLength: 5, placeHolder: "유저 이름 입력", text: $user)
+                LengthLimitTextField(maxLength: 12, placeHolder: "대표 캐릭터 입력", text: $searchCharacterName)
                 if(showLoading) {
                     HStack{
                         Text("\(user)님의 캐릭터 정보를 불러옵니다.")

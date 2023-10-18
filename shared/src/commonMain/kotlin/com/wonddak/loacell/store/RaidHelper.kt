@@ -42,6 +42,37 @@ data class FBRaidInfo(
         val minLevel =  this.type.getMinLevel(difficulty,endGateNumber)
         return if (minLevel == 0) "제한 없음" else minLevel.toString()
     }
+
+    fun updateTitle(title: String) = this.copy(title = title)
+    fun updateType(type: RaidType): FBRaidInfo {
+        if (!type.accessibleDifficulty().contains(this.difficulty)) {
+            return if (type != RaidType.ABRELSHUD) {
+                this.copy(
+                    type = type,
+                    difficulty = Difficulty.Normal,
+                    startGateNumber = 1,
+                    endGateNumber = type.getMaxGate()
+                )
+            } else {
+                this.copy(type = type, difficulty = Difficulty.Normal)
+            }
+        } else {
+            return if (type != RaidType.ABRELSHUD) {
+                this.copy(
+                    type = type,
+                    startGateNumber = 1,
+                    endGateNumber = type.getMaxGate()
+                )
+            } else {
+                this.copy(type = type)
+            }
+        }
+    }
+    fun updateDifficulty(difficulty: Difficulty) = this.copy(difficulty = difficulty)
+
+    fun updateGate(start:Int,end:Int)  = this.copy(startGateNumber = start, endGateNumber = end)
+    fun difficultySelected(difficulty: Difficulty) :Boolean = this.difficulty == difficulty
+    fun difficultyEnabled(difficulty: Difficulty) :Boolean = this.type.accessibleDifficulty().contains(difficulty)
 }
 
 object CommonRaidHelper {
