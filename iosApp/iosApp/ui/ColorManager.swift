@@ -13,4 +13,6 @@ struct ColorManager {
     static let BackgroundColor = Color("Background")
     static let BackgroundContainerColor = Color("BackgroundContainer")
     static let BackgroundContainerColor2 = Color("BackgroundContainer")
+    static let WheelBg = Color("wheelBg")
+    static let WheelBorder = Color("wheelBorder")
 }

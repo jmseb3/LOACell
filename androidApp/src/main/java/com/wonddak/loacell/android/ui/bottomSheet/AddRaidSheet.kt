@@ -310,9 +310,9 @@ fun RaidSheetBase(
                         val updateAction = { day: Day ->
                             update(
                                 if (fbRaidInfo.day == day) {
-                                    fbRaidInfo.copy(day = Day.NONE)
+                                    fbRaidInfo.updateDay(day = Day.NONE)
                                 } else {
-                                    fbRaidInfo.copy(day = day)
+                                    fbRaidInfo.updateDay(day = day)
                                 }
                             )
                         }
