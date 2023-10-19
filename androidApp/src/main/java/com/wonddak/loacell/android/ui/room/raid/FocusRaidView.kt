@@ -62,7 +62,6 @@ fun FocusRaidView(
             loaCellViewModel.apply {
                 RaidPartyView(characterList, openAction = { index ->
                     val userAndCharacterMap = totalRoomInfo.userAndCharacterMap
-                    Log.d("JWH",userAndCharacterMap.toString())
                     if (userAndCharacterMap.isEmpty()) {
                         showSnackBar(
                             message = "추가 가능한 인원이 없습니다.",

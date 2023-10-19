@@ -162,39 +162,39 @@ data class TotalRoomInfo(
         return null
     }
 
-    fun makeFilterList(filter: Filter): List<RaidInfo> {
-        val filterByFinish = when (filter.finish) {
-            Filter.FINISH.CLEAR -> raidInfoList.filter { it.isFinish }
-            Filter.FINISH.NOT_CLEAR -> raidInfoList.filter { !it.isFinish }
-            else -> raidInfoList
-        }
-        val filterByType =
-            filterByFinish.filter { filter.raidType.contains(it.type) }
+    val filterList : List<RaidInfo>
+        get() {
+            val filterByFinish = when (filter.finish) {
+                Filter.FINISH.CLEAR -> raidInfoList.filter { it.isFinish }
+                Filter.FINISH.NOT_CLEAR -> raidInfoList.filter { !it.isFinish }
+                else -> raidInfoList
+            }
+            val filterByType =
+                filterByFinish.filter { filter.raidType.contains(it.type) }
 
-        val filterByUser = if (filter.userList.isEmpty()) {
-            filterByType
-        } else {
-            filterByType.filter {
-                val names = mutableListOf<String>()
-                val filterUser = userInfoList.filter { filter.userList.contains(it.name) }
-                it.getAllPartyList().forEach { character ->
-                    if (character.isNotEmpty()) {
-                        for (userInfo in filterUser) {
-                            val characterList =
-                                (characterMap[userInfo]?.map { it.name } ?: emptyList())
-                            if (characterList.contains(character)) {
-                                names.add(userInfo.name)
-                                break
+            val filterByUser = if (filter.userList.isEmpty()) {
+                filterByType
+            } else {
+                filterByType.filter {
+                    val names = mutableListOf<String>()
+                    val filterUser = userInfoList.filter { filter.userList.contains(it.name) }
+                    it.getAllPartyList().forEach { character ->
+                        if (character.isNotEmpty()) {
+                            for (userInfo in filterUser) {
+                                val characterList =
+                                    (characterMap[userInfo]?.map { it.name } ?: emptyList())
+                                if (characterList.contains(character)) {
+                                    names.add(userInfo.name)
+                                    break
+                                }
                             }
                         }
                     }
+                    names.sorted() == filter.userList.sorted()
                 }
-                names.sorted() == filter.userList.sorted()
             }
+            return filterByUser
         }
-        return filterByUser
-    }
-
     val partyCharacterList: List<Character?>
         get() = raidInfo?.let { info ->
             val maxParty = info.getMaxParty()

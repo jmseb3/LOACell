@@ -14,3 +14,15 @@ extension Image {
         self.init(uiImage: SharedRes.images()[keyPath: resource].toUIImage()!)
     }
 }
+
+extension String {
+    var isNotEmpty : Bool {
+        return !self.isEmpty
+    }
+}
+
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+}

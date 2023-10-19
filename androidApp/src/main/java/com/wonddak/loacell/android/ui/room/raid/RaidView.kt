@@ -83,7 +83,7 @@ fun RaidView(
                 type = showType,
                 timeStep = filter.timeStep,
                 showEmptyRow = filter.showEmptyCalendarRow,
-                filterRaidInfoList = totalRoomInfo.makeFilterList(filter),
+                filterRaidInfoList = totalRoomInfo.filterList,
                 loaCellViewModel = loaCellViewModel
             )
         }
