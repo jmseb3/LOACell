@@ -13,100 +13,79 @@ import SwiftUI
 import SwiftUI_Snackbar
 
 class LoaCellViewModel: ObservableObject, ViewModelImpl {
-        
+    
+    let sc : SnackbarController = SnackbarController()
+    
+    lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
+    lazy var config :Config = Config()
+    private lazy var common : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, viewModelImpl: self)
     
     @Published var logginIn :Bool = false
     @Published var roomList : [RoomInfo] = []
     @Published var user : User? = nil
+    
     @Published var roomId : String = ""
-    @Published var totalRoomInfo : TotalRoomInfo = TotalRoomInfo(roomInfo: nil, raidInfoList: [], userInfoList: [])
+    @Published var totalRoomInfo : TotalRoomInfo = TotalRoomInfo.companion.getInit()
+    var roomInfo :RoomInfo? {
+        totalRoomInfo.roomInfo
+    }
+    var userInfo : shared.UserInfo? {
+        totalRoomInfo.userInfo
+    }
+    var raidInfo : RaidInfo? {
+        totalRoomInfo.raidInfo
+    }
+    var focusUserName : String {
+        totalRoomInfo.focusUserName
+    }
+    var focusRaidId :String {
+        totalRoomInfo.focusRaidId
+    }
+    var tabState : RoomState {
+        totalRoomInfo.tabState
+    }
+    var dialogStatus : DialogStatus {
+        totalRoomInfo.dialogState
+    }
+    var characterList : [Character] {
+        totalRoomInfo.characterList
+    }
     
-    @Published var focusUserName : String = ""
-    @Published var userInfo : shared.UserInfo? = nil
-    @Published var characterList : [Character] = []
-    
-    @Published var focusRaidId : String = ""
-    @Published var raidInfo : shared.RaidInfo? = nil
-    
-    @Published var tabState : RoomState = RoomState.raid
     @Published var myRole : RoomRole = RoomRole.none
     
-    @Published var dialogStatus : DialogStatus = DialogStatus.none
-    func getDialogShow(dialogStatus: DialogStatus) -> Binding<Bool> {
-        return Binding {
-            self.dialogStatus.isEqual(dialogStatus)
-        } set: { _ in
-            self.commonViewModel.hideAllDialog()
-        }
-
-    }
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
     
     @Published var showLoading : Bool = false
     @Published var msg :String = ""
     
-    let sc : SnackbarController = SnackbarController()
-    
-    lazy var config :Config = Config()
-    lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
-    lazy var commonViewModel : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, viewModelImpl: self)
-
     init() {
         Auth.auth().addStateDidChangeListener { auth, getUser in
             self.user = auth.currentUser
         }
-        commonViewModel.syncData.collect { value in
+        common.syncData.collect { value in
             withAnimation {
                 self.syncData = value!.boolValue
             }
         }
-        commonViewModel.roomList.collect { value in
+        common.roomList.collect { value in
             self.roomList = value as! [RoomInfo]
         }
-        commonViewModel.roomId.collect { value in
+        common.roomId.collect { value in
             self.roomId = value! as String
         }
-        commonViewModel.totalRoomInfo.collect { value in
-            self.totalRoomInfo = value!
-        }
-        commonViewModel.focusUserName.collect { value in
+        common.totalRoomInfo.collect { value in
             withAnimation {
-                self.focusUserName = value! as String
+                self.totalRoomInfo = value!
             }
         }
-        commonViewModel.userInfo.collect { value in
-            self.userInfo = value
-        }
-        commonViewModel.focusRaidId.collect { value in
-            withAnimation {
-                self.focusRaidId = value! as String
-            }
-        }
-        commonViewModel.raidInfo.collect { value in
-            self.raidInfo = value
-        }
-        commonViewModel.tabState.collect { value in
-            self.tabState = value!
-        }
-        commonViewModel.myRole.collect { value in
-            self.myRole = value!
-        }
-        commonViewModel.characterList.collect { value in
-            self.characterList = value as! [Character]
-        }
-        commonViewModel.showLoading.collect { value in
+        common.showLoading.collect { value in
             withAnimation {
                 self.showLoading = value as! Bool
             }
         }
-        commonViewModel.msg.collect { value in
+        common.msg.collect { value in
             self.msg = value! as String
-        }
-        commonViewModel.dialogStatus.collect { value in
-            withAnimation {
-                self.dialogStatus = value!
-            }
         }
     }
     
@@ -114,8 +93,12 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         showSetting = false
     }
     
+    
     func fbUserIsAnonymous() -> KotlinBoolean? {
-        return KotlinBoolean(bool: true)
+        guard let user = user else {
+            return nil
+        }
+        return KotlinBoolean(bool: user.isAnonymous)
     }
     
     func getSetting() -> Bool {
@@ -130,10 +113,10 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         guard let userUid = user?.uid else {
             return
         }
-        commonViewModel.syncStart(uid: userUid , force:force)
+        common.syncStart(uid: userUid , force:force)
     }
     
-
+    
     func showRoomEnterError() {
         
     }
@@ -144,5 +127,43 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     func resetSnackBar() {
         self.sc.resetSnackBar()
+    }
+    
+    func showDialog(dialogStatus: DialogStatus) {
+        common.showDialog(dialogStatus: dialogStatus)
+    }
+    func hideDialog() {
+        common.hideDialog()
+    }
+    
+    func topBackAction() {
+        common.topBackAction()
+    }
+    
+    func bottomAddAction() {
+        common.bottomAddAction()
+    }
+    
+    func setNowRaidInfo(raidId:String) {
+        common.setNowRaidInfo(raidId: raidId)
+    }
+    func setNowUserInfo(userName:String){
+        common.setNowUserInfo(userName: userName)
+    }
+    
+    func showRoom(roomId:String) {
+        common.showRoom(roomId: roomId)
+    }
+    
+    func setTabStatus(state:RoomState) {
+        common.setTabStatus(state: state)
+    }
+    
+    func clearFocusItem() {
+        common.clearFocusItem()
+    }
+    
+    func updateCharacter(roomId:String,userInfo:shared.UserInfo) {
+        common.updateCharacter(roomId: roomId, userInfo: userInfo)
     }
 }

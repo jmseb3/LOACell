@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
@@ -43,7 +42,6 @@ import com.wonddak.sharedapi.firebase.model.FBDataItem
 
 @Composable
 fun SettingRoomView(
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     var fetch by remember {
@@ -97,8 +95,7 @@ fun SettingRoomView(
                     CommonRoomHelper.deleteRoom(
                         info.uniqueId,
                         successAction = {
-                            loaCellViewModel.hideRoomInfo()
-                            db.roomInfoQueriesHelper.deleteRoomInfo(info.uniqueId)
+                            loaCellViewModel.deleteRoom(info.uniqueId)
                             showExitAlert = false
                         },
                         failAction = {
@@ -185,7 +182,8 @@ fun SettingRoomInfo(
     var showPassword by remember {
         mutableStateOf(false)
     }
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val dialogStatus = totalRoomInfo.dialogState
 
     SectionCardView(
         title = "방 정보",

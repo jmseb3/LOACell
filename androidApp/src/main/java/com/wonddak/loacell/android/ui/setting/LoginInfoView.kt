@@ -41,7 +41,8 @@ fun LoginInfoView(
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
     val user by loaCellViewModel.user.collectAsState(null)
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val dialogStatus = totalRoomInfo.dialogState
 
     user?.let { userInfo ->
         var displayName by remember {
@@ -87,7 +88,9 @@ fun LoginInfoView(
             val roomList = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val buttonWeight = Modifier.weight(1f)

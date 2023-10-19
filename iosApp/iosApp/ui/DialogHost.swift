@@ -24,7 +24,7 @@ struct DialogHost<Content: View>: View {
     }
     
     func dismiss() {
-        viewModel.commonViewModel.hideAllDialog()
+        viewModel.hideDialog()
     }
     
     var body: some View {
@@ -72,7 +72,7 @@ struct DialogHost<Content: View>: View {
                                     ) { error in
                                         viewModel.showSnackBar(msg: error)
                                     } successAction: {
-                                        viewModel.commonViewModel.clearFocusItem()
+                                        viewModel.clearFocusItem()
                                         dismiss()
                                     }
                                 } dismiss: {

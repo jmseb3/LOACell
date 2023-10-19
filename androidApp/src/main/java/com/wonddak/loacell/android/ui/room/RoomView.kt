@@ -13,8 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
@@ -33,15 +31,14 @@ import com.wonddak.loacell.store.CommonRoomHelper
 
 @Composable
 fun RoomView(
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomInfo = totalRoomInfo.roomInfo
-    val tabState by loaCellViewModel.tabState.collectAsState()
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val tabState = totalRoomInfo.tabState
+    val dialogStatus = totalRoomInfo.dialogState
 
-    BackHandler(dialogStatus != DialogStatus.RAID_ADD  && dialogStatus != DialogStatus.USER_ADD) {
+    BackHandler(dialogStatus != DialogStatus.RAID_ADD && dialogStatus != DialogStatus.USER_ADD) {
         loaCellViewModel.hideRoomInfo()
     }
     Column(
@@ -50,31 +47,25 @@ fun RoomView(
     ) {
         roomInfo?.let { roomInfo ->
             AnimatedVisibility(tabState != RoomState.Setting) {
-                RoomTitleView(db, loaCellViewModel, roomInfo)
+                RoomTitleView(loaCellViewModel)
             }
             when (tabState) {
                 RoomState.Raid -> {
-                    RaidView(
-                        db = db,
-                        roomId = roomInfo.uniqueId,
-                        loaCellViewModel = loaCellViewModel
-                    )
+                    RaidView(loaCellViewModel)
                 }
 
                 RoomState.User -> {
-                    UserView(
-                        loaCellViewModel = loaCellViewModel
-                    )
+                    UserView(loaCellViewModel)
                 }
 
                 RoomState.Setting -> {
-                    SettingRoomView(db,loaCellViewModel)
+                    SettingRoomView(loaCellViewModel)
                 }
             }
 
             loaCellViewModel.apply {
                 val close = { hideDialog() }
-                when(dialogStatus) {
+                when (dialogStatus) {
                     DialogStatus.RAID_ADD -> {
                         AddRaidSheet(
                             roomId = roomInfo.uniqueId,
@@ -82,12 +73,14 @@ fun RoomView(
                             successAction = close
                         )
                     }
+
                     DialogStatus.USER_ADD -> {
                         AddUserSheet(
                             roomId = roomInfo.uniqueId,
                             onDismissRequest = close
                         )
                     }
+
                     else -> {
 
                     }
@@ -99,81 +92,86 @@ fun RoomView(
 
 @Composable
 fun RoomTitleView(
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel,
-    roomInfo: RoomInfo
 ) {
-    val focusUserName by loaCellViewModel.focusUserName.collectAsState()
-    val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
     val user by loaCellViewModel.user.collectAsState(null)
-    val role by loaCellViewModel.myRole.collectAsState()
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
 
-    AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(
-                modifier = Modifier.align(Alignment.CenterStart)
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val roomInfo = totalRoomInfo.roomInfo
+    val focusUserName = totalRoomInfo.focusUserName
+    val focusRaidId = totalRoomInfo.focusRaidId
+    val dialogStatus = totalRoomInfo.dialogState
+
+    val role = loaCellViewModel.myRole
+
+    roomInfo?.let {
+        AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(
-                    text = roomInfo.description,
-                    modifier = Modifier
-                )
-                Text(
-                    text = roomInfo.uniqueId,
-                    modifier = Modifier.noRippleClickable {
-                        loaCellViewModel.showDialog(DialogStatus.SHARE_SHEET)
-                    },
-                )
-                Divider()
-            }
-
-            when (role) {
-                RoomRole.OWNER -> {
-
+                Column(
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Text(
+                        text = roomInfo.description,
+                        modifier = Modifier
+                    )
+                    Text(
+                        text = roomInfo.uniqueId,
+                        modifier = Modifier.noRippleClickable {
+                            loaCellViewModel.showDialog(DialogStatus.SHARE_SHEET)
+                        },
+                    )
+                    Divider()
                 }
-                RoomRole.NONE -> {
 
-                }
-                else -> {
-                    MyIconButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        imageResource = SharedRes.images.room_exit
-                    ) {
-                        loaCellViewModel.showDialog(DialogStatus.ROOM_EXIT)
+                when (role) {
+                    RoomRole.OWNER -> {
+
+                    }
+
+                    RoomRole.NONE -> {
+
+                    }
+
+                    else -> {
+                        MyIconButton(
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            imageResource = SharedRes.images.room_exit
+                        ) {
+                            loaCellViewModel.showDialog(DialogStatus.ROOM_EXIT)
+                        }
                     }
                 }
-            }
 
-            if (dialogStatus == DialogStatus.ROOM_EXIT && user != null) {
-                RoomExitDialog(
-                    success = {
-                        CommonRoomHelper.exitRoom(
-                            roomInfo.uniqueId,
-                            user!!.uid,
-                            role,
-                            successAction = {
-                                loaCellViewModel.hideRoomInfo()
-                                db.roomInfoQueriesHelper.deleteRoomInfo(roomInfo.uniqueId)
-                            },
-                            failAction = {
+                if (dialogStatus == DialogStatus.ROOM_EXIT && user != null) {
+                    RoomExitDialog(
+                        success = {
+                            CommonRoomHelper.exitRoom(
+                                roomInfo.uniqueId,
+                                user!!.uid,
+                                role,
+                                successAction = {
+                                    loaCellViewModel.deleteRoom(roomInfo.uniqueId)
+                                },
+                                failAction = {
 
-                            }
-                        )
-                    },
-                    dismiss = {
-                        loaCellViewModel.hideDialog()
-                    }
-                )
+                                }
+                            )
+                        },
+                        dismiss = {
+                            loaCellViewModel.hideDialog()
+                        }
+                    )
+                }
             }
         }
-    }
 
-    if (dialogStatus == DialogStatus.SHARE_SHEET) {
-        ShareSheet(roomInfo = roomInfo) {
-            loaCellViewModel.hideDialog()
+        if (dialogStatus == DialogStatus.SHARE_SHEET) {
+            ShareSheet(roomInfo = roomInfo) {
+                loaCellViewModel.hideDialog()
+            }
         }
-    }
 
+    }
 }

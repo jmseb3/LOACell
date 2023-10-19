@@ -2,8 +2,6 @@ package com.wonddak.database.queriesHelper;
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.UserInfoQueries
 import kotlinx.coroutines.Dispatchers
@@ -41,12 +39,6 @@ class UserInfoQueriesHelper(
         return queries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.Main)
     }
-
-    fun getUsersByName(roomId: String, userName: String): Flow<UserInfo?> {
-        return queries.selectByName(roomId, userName).asFlow()
-            .mapToOneOrNull(Dispatchers.Main)
-    }
-
     fun getUsersByRoomIdValue(roomId: String): List<UserInfo> {
         return queries.selectByRoomId(roomId).executeAsList()
     }

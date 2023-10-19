@@ -16,7 +16,7 @@ struct RaidView: View {
             LazyVStack(){
                 ForEach(viewModel.totalRoomInfo.raidInfoList,id: \.raidId) { raidInfo in
                     RaidItemRow(raidInfo: raidInfo) {
-                        viewModel.commonViewModel.setNowRaidInfo(raidId: raidInfo.raidId)
+                        viewModel.setNowRaidInfo(raidId: raidInfo.raidId)
                     }
                 }
             }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))

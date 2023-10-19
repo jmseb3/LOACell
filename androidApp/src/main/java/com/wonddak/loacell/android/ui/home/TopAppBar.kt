@@ -23,11 +23,12 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 fun TopAppBar(
     loaCellViewModel: LoaCellViewModel,
 ) {
+    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomInfo = totalRoomInfo.roomInfo
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val raidInfo by loaCellViewModel.raidInfo.collectAsState()
-    val focusUserName by loaCellViewModel.focusUserName.collectAsState("")
+    val raidInfo = totalRoomInfo.raidInfo
+    val focusUserName = totalRoomInfo.focusUserName
     TopAppBar(
         title = {
             if (loaCellViewModel.showSetting) {

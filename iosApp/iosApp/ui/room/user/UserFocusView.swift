@@ -11,10 +11,19 @@ import shared
 
 struct UserFocusView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
+    var totalRoomInfo : TotalRoomInfo {
+        viewModel.totalRoomInfo
+    }
+    var userInfo : UserInfo? {
+        totalRoomInfo.userInfo
+    }
+    var characterList : [Character] {
+        totalRoomInfo.characterList
+    }
     var body: some View {
         ZStack {
-            if(viewModel.userInfo != nil) {
-                UserInfoCharacters(userInfo: viewModel.userInfo!, characterList: viewModel.characterList)
+            if(userInfo != nil) {
+                UserInfoCharacters(userInfo: userInfo!, characterList: characterList)
                 if(viewModel.showLoading) {
                     LoadingView(info: viewModel.msg)
                 }

@@ -4,7 +4,6 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
-import com.wonddak.loacell.ext.getRole
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RoomRole
@@ -26,9 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -62,7 +59,6 @@ open class CommonViewModel(
 
     fun showRoom(roomId: String) {
         _roomId.value = roomId
-        updateTabState(RoomState.Raid)
     }
 
     //owner가 사용자 정보를 볼경우 저장되는 temp값
@@ -70,84 +66,42 @@ open class CommonViewModel(
 
     fun hideRoom() {
         _roomId.value = ""
-        updateTabState(RoomState.Raid)
         tempOfFBData = emptyList()
-        hideAllDialog()
-        clearFocusItem()
         clearFilter()
     }
     //endregion
 
     //region 방 id 선택시 불러오는 정보
-    private var _totalRoomInfo: MutableStateFlow<TotalRoomInfo> = MutableStateFlow(TotalRoomInfo())
+    private var _totalRoomInfo: MutableStateFlow<TotalRoomInfo> = MutableStateFlow(TotalRoomInfo.getInit())
     val totalRoomInfo = _totalRoomInfo
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
-            initialValue = TotalRoomInfo()
+            initialValue = TotalRoomInfo.getInit()
         )
         .toCommonStateFlow()
 
-    //endregion
-
-    //region 유저 이름 선택시
-    private var _focusUserName = MutableStateFlow("")
-    val focusUserName get() = _focusUserName.toCommonStateFlow()
-    fun updateFocusUserName(name: String) {
-        _focusUserName.value = name
+    private fun updateFocusUserName(name: String) {
+        _totalRoomInfo.value = _totalRoomInfo.value.showUserName(name)
     }
-
-    val userInfo = totalRoomInfo.combine(focusUserName) { info, name ->
-        info.findUserInfoByName(name)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = null
-    ).toCommonStateFlow()
-
-    val characterList = userInfo.transform { userInfo ->
-        if (userInfo != null) {
-            emit(
-                dataBase.characterQueriesHelper.getAllList(userInfo)
-                    .sortedByDescending { it.level.replace(",", "").toFloat() })
-        } else {
-            emit(emptyList())
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList()
-    ).toCommonStateFlow()
-    //endregion
-
-    //region 레이드 선택시
-    private var _focusRaidId = MutableStateFlow("")
-    val focusRaidId get() = _focusRaidId.toCommonStateFlow()
-    fun updateFocusRaidId(id: String) {
-        _focusRaidId.value = id
+    private fun updateFocusRaidId(id: String) {
+        _totalRoomInfo.value = _totalRoomInfo.value.showRaidId(id)
     }
-
-    val raidInfo = totalRoomInfo.combine(focusRaidId) { info, id ->
-        info.findRaidInfoById(id)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = null
-    ).toCommonStateFlow()
-    //endregion
-
-    //region tabState
-    private var _tabState = MutableStateFlow(RoomState.Raid)
-    val tabState = _tabState.toCommonStateFlow()
 
     fun setTabStatus(state: RoomState) {
-        hideAllDialog()
-        updateTabState(state)
+        _totalRoomInfo.value = _totalRoomInfo.value.setTabStatus(state)
     }
 
-    private fun updateTabState(state: RoomState) {
-        _tabState.value = state
+    fun showDialog(dialogStatus: DialogStatus) {
+        println("JWH show dialog - ${dialogStatus.name}")
+        _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)
     }
+    fun hideDialog() {
+        _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
+    }
+    val myRole :RoomRole
+        get() = _totalRoomInfo.value.getMyRole(viewModelImpl.getUserUid())
+
     //endregion
 
     private var totalRoomJob: Job? = null
@@ -155,22 +109,6 @@ open class CommonViewModel(
     private var observeRoom: CommonListenerRegistration? = null
     private var observeUser: CommonListenerRegistration? = null
     private var observeRaid: CommonListenerRegistration? = null
-
-    //region Role
-    val myRole = totalRoomInfo.transform { info ->
-        val uid = viewModelImpl.getUserUid()
-        val res = if (uid != null && info.roomInfo != null) {
-            info.roomInfo!!.getRole(uid)
-        } else {
-            RoomRole.NONE
-        }
-        emit(res)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = RoomRole.NONE
-    ).toCommonStateFlow()
-    //endregion
 
     init {
         viewModelScope.launch {
@@ -187,13 +125,13 @@ open class CommonViewModel(
                                     start = CoroutineStart.LAZY
                                 ) {
                                     dataBase.getAllInfoByRoomId(id).collect {
-                                        _totalRoomInfo.value = it
+                                        _totalRoomInfo.value = _totalRoomInfo.value.update(it)
                                     }
                                 }
                                 totalRoomJob?.start()
                             },
                             failAction = {
-                                showDialog(DialogStatus.ROOM_ENTER_ERROR)
+                                _totalRoomInfo.value = _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
                             }
                         )
                     } else {
@@ -203,7 +141,7 @@ open class CommonViewModel(
                         observeUser?.remove()
                         observeRaid?.remove()
 
-                        _totalRoomInfo.value = TotalRoomInfo()
+                        _totalRoomInfo.value = TotalRoomInfo.getInit()
                     }
                 }
             }
@@ -252,60 +190,35 @@ open class CommonViewModel(
     //endregion
 
     //region filter
-
-    private var _filter = MutableStateFlow(Filter())
-    val filter get() = _filter.toCommonStateFlow()
-
-    private fun updateFilter(filter: Filter) {
-        _filter.value = filter
+    fun updateFilterRaidType(type: RaidType) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterRaidType(type)
+    }
+    fun updateFilterFinish(finish: Filter.FINISH) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterFinish(finish)
+    }
+    fun updateFilterUser(user: String) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterUser(user)
+    }
+    fun updateTimeStep(step: Int) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterTimeStep(step)
     }
 
-    fun updateFilterRaidType(type: RaidType) =
-        updateFilter(_filter.value.updateRaidType(type))
-
-    fun updateFilterFinish(finish: Filter.FINISH) = updateFilter(_filter.value.updateFinish(finish))
-    fun updateFilterUser(user: String) = updateFilter(_filter.value.updateUser(user))
-
-    fun updateTimeStep(step: Int) = updateFilter(_filter.value.updateTimeStep(step))
-
-    fun updateShowEmptyRow(show: Boolean) = updateFilter(_filter.value.updateEmptyCalendarRow(show))
+    fun updateShowEmptyRow(show: Boolean) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterShowEmptyRow(show)
+    }
 
     fun clearFilter() {
-        _filter.value = Filter()
+        _totalRoomInfo.value = _totalRoomInfo.value.clearFilter()
     }
     //endregion
-
-    //region dialog
-    private var _dialogStatus = MutableStateFlow(DialogStatus.NONE)
-    val dialogStatus = _dialogStatus
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = DialogStatus.NONE
-        )
-        .toCommonStateFlow()
-
-    fun showDialog(status: DialogStatus) {
-        _dialogStatus.value = status
-    }
-
-    fun hideAllDialog() {
-        _dialogStatus.value = DialogStatus.NONE
-    }
-    //endregion
-
 
     //region setAction
     fun setNowUserInfo(userName: String) {
-        hideAllDialog()
-        clearFocusItem()
         _showLoading.value = false
         updateFocusUserName(userName)
     }
 
     fun setNowRaidInfo(raidId: String) {
-        hideAllDialog()
-        clearFocusItem()
         updateFocusRaidId(raidId)
     }
 
@@ -315,36 +228,8 @@ open class CommonViewModel(
     }
 
     fun bottomAddAction() {
-        if (roomId.value.isEmpty()) {
-            viewModelImpl.fbUserIsAnonymous()?.let { result ->
-                if (result) {
-                    showDialog(DialogStatus.ROOM_ENTER)
-                } else {
-                    showDialog(DialogStatus.ROOM_ACTION)
-                }
-            }
-        } else {
-            if (focusUserName.value.isNotEmpty()) {
-                showDialog(DialogStatus.CHARACTER_DELETE)
-                return
-            }
-            if (focusRaidId.value.isNotEmpty()) {
-                showDialog(DialogStatus.RAID_DELETE)
-                return
-            }
-            when (tabState.value) {
-                RoomState.Raid -> {
-                    showDialog(DialogStatus.RAID_ADD)
-                }
-
-                RoomState.User -> {
-                    showDialog(DialogStatus.USER_ADD)
-                }
-
-                RoomState.Setting -> {
-
-                }
-            }
+        _totalRoomInfo.value.bottomAction(roomId.value,viewModelImpl.fbUserIsAnonymous())?.let {
+            _totalRoomInfo.value = it
         }
     }
 
@@ -352,7 +237,7 @@ open class CommonViewModel(
         if (viewModelImpl.getSetting()) {
             viewModelImpl.closeSetting()
         } else {
-            if (focusUserName.value.isNotEmpty() || focusRaidId.value.isNotEmpty()) {
+            if (totalRoomInfo.value.isFocus()) {
                 clearFocusItem()
                 return
             }
@@ -409,6 +294,10 @@ open class CommonViewModel(
     }
     //endregion
 
+    fun deleteRoom(roomId:String) {
+        hideRoom()
+        dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
+    }
 }
 
 interface ViewModelImpl {

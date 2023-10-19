@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.room.raid
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -7,22 +8,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
-import com.wonddak.loacell.Character
-import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
@@ -37,7 +32,7 @@ import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable
 fun FocusRaidView(
-    db: AppDataBase, roomId: String, loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel
 ) {
     Column(modifier = Modifier
         .fillMaxSize()
@@ -46,43 +41,17 @@ fun FocusRaidView(
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
-        val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-        val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
-
-        val raidInfo: RaidInfo? by loaCellViewModel.raidInfo.collectAsState(null)
-        val userInfoList = totalRoomInfo.userInfoList
-
         val context = LocalContext.current
-        var focusIndex by remember { mutableIntStateOf(-1) }
-        var characterList: List<Character?> by remember {
-            mutableStateOf(emptyList())
-        }
-        LaunchedEffect(raidInfo) {
-            raidInfo?.let { info ->
-                val maxParty = info.getMaxParty()
-                val findList = info.party1characterList.toMutableList()
-                if (maxParty == 2) {
-                    findList.addAll(info.party2characterList)
-                }
-                val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
-                val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
 
-                for (userInfo in userInfoList) {
-                    val iterator = findNames.iterator()
-                    while (iterator.hasNext()) {
-                        val name = iterator.next()
-                        val find = db.characterQueriesHelper.getCharacterInfo(userInfo, name)
-                        if (find != null) {
-                            result[findList.indexOf(name)] = find
-                        }
-                    }
-                }
-                characterList = result
-            }
-        }
+        val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+        val roomId = totalRoomInfo.roomId!!
+        val dialogStatus = totalRoomInfo.dialogState
+        val raidInfo = totalRoomInfo.raidInfo
+        var characterList = totalRoomInfo.partyCharacterList
+
+        var focusIndex by remember { mutableIntStateOf(-1) }
+
         raidInfo?.let { raidInfo ->
-            val userAndCharacterMap by db.getUsersByRoomIdFilterCharacterAndType(roomId, raidInfo)
-                .collectAsState(initial = mapOf())
 
             Column() {
                 Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
@@ -92,6 +61,8 @@ fun FocusRaidView(
             }
             loaCellViewModel.apply {
                 RaidPartyView(characterList, openAction = { index ->
+                    val userAndCharacterMap = totalRoomInfo.userAndCharacterMap
+                    Log.d("JWH",userAndCharacterMap.toString())
                     if (userAndCharacterMap.isEmpty()) {
                         showSnackBar(
                             message = "추가 가능한 인원이 없습니다.",
@@ -130,6 +101,7 @@ fun FocusRaidView(
                         )
                     }
                     DialogStatus.RAID_USER_ADD -> {
+                        val userAndCharacterMap = totalRoomInfo.userAndCharacterMap
                         if (userAndCharacterMap.isNotEmpty()) {
                             AddRaidUserSheet(
                                 userAndCharacterMap = userAndCharacterMap,

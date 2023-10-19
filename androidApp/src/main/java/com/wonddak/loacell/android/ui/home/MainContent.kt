@@ -41,7 +41,8 @@ fun MainContent(
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val userInfo by loaCellViewModel.user.collectAsState()
     val showRoomEnterPasswordByIntent by loaCellViewModel.showRoomEnterPasswordByIntent.collectAsState()
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val dialogStatus = totalRoomInfo.dialogState
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {
@@ -103,10 +104,7 @@ fun MainContent(
                                 AnimatedVisibility(selectedRoomId.isNotEmpty()) {
                                     if (selectedRoomId.isNotEmpty()) {
                                         Column() {
-                                            RoomView(
-                                                db,
-                                                loaCellViewModel
-                                            )
+                                            RoomView(loaCellViewModel)
                                         }
                                     }
                                 }

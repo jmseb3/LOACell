@@ -17,7 +17,7 @@ struct TopAppBar: View {
             if (!viewModel.roomId.isEmpty || viewModel.showSetting) {
                 Button {
                     withAnimation {
-                        viewModel.commonViewModel.topBackAction()
+                        viewModel.topBackAction()
                     }
                 } label: {
                     Image(systemName: "arrow.left")
@@ -31,7 +31,7 @@ struct TopAppBar: View {
                 } else if(!viewModel.focusUserName.isEmpty) {
                     Text("\(viewModel.focusUserName)님 캐릭터 정보")
                 } else {
-                    Text(viewModel.raidInfo?.title ?? viewModel.totalRoomInfo.roomInfo?.title ?? "LoaCell")
+                    Text(viewModel.raidInfo?.title ?? viewModel.roomInfo?.title ?? "LoaCell")
                 }
             }.transition(.slide)
             Spacer()

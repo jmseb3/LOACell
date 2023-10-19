@@ -2,7 +2,6 @@ package com.wonddak.database.queriesHelper
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.wonddak.database.model.Day
 import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
@@ -22,12 +21,6 @@ class RaidInfoQueriesHelper(
     fun getAllByRoomIdValue(roomId: String): List<RaidInfo> {
         return queries.selectByRoomId(roomId).executeAsList()
     }
-
-    fun getRaidInfoById(roomId: String, raidId: String): Flow<RaidInfo?> {
-        return queries.selectByRaidId(roomId, raidId).asFlow()
-            .mapToOneOrNull(Dispatchers.Main)
-    }
-
     fun addRaidInfo(
         raidId: String,
         roomId: String,

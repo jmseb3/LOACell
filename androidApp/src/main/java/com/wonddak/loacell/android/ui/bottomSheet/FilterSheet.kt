@@ -51,9 +51,8 @@ import com.wonddak.loacell.model.Filter
 fun FilterSheet(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val filter by loaCellViewModel.filter.collectAsState()
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-
+    val filter = totalRoomInfo.filter
     val userInfoList = totalRoomInfo.userInfoList
     val raidTypes = RaidType.values()
     BaseSheet(title = "필터 설정",

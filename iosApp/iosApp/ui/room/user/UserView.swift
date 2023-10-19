@@ -7,17 +7,17 @@
 //
 
 import SwiftUI
+import shared
 
 struct UserView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
-    
     var body: some View {
         ZStack {
             ScrollView {
                 LazyVStack {
                     ForEach(viewModel.totalRoomInfo.userInfoList , id: \.name) { item in
                         Button {
-                            viewModel.commonViewModel.setNowUserInfo(userName: item.name)
+                            viewModel.setNowUserInfo(userName: item.name)
                         } label: {
                             Text("\(item.name) - \(item.representativeCharacter)")
                                 .foregroundColor(.black)

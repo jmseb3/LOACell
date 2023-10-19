@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.AppDataBase
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
@@ -40,15 +39,12 @@ import com.wonddak.loacell.model.RoomType
 
 @Composable
 fun RaidView(
-    db: AppDataBase, roomId: String, loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-
-    val raidInfoList = totalRoomInfo.raidInfoList
-    val userInfoList = totalRoomInfo.userInfoList
-    val filter by loaCellViewModel.filter.collectAsState()
-    val focusRaidId by loaCellViewModel.focusRaidId.collectAsState()
-    val dialogStatus by loaCellViewModel.dialogStatus.collectAsState()
+    val focusRaidId = totalRoomInfo.focusRaidId
+    val dialogStatus = totalRoomInfo.dialogState
+    val filter = totalRoomInfo.filter
 
     var showType by remember {
         mutableStateOf(RoomType.Default)
@@ -87,12 +83,12 @@ fun RaidView(
                 type = showType,
                 timeStep = filter.timeStep,
                 showEmptyRow = filter.showEmptyCalendarRow,
-                filterRaidInfoList = filter.filterList(raidInfoList, userInfoList, db),
+                filterRaidInfoList = totalRoomInfo.makeFilterList(filter),
                 loaCellViewModel = loaCellViewModel
             )
         }
         if (focusRaidId.isNotEmpty()) {
-            FocusRaidView(db, roomId, loaCellViewModel)
+            FocusRaidView(loaCellViewModel)
         }
         if (dialogStatus == DialogStatus.RAID_FILTER) {
             FilterSheet(loaCellViewModel = loaCellViewModel)

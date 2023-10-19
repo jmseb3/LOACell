@@ -31,12 +31,14 @@ import com.wonddak.loacell.store.CommonRaidHelper
 fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val role by loaCellViewModel.myRole.collectAsState()
-    val focusUserInfo by loaCellViewModel.userInfo.collectAsState()
-    val focusRaidInfo by loaCellViewModel.raidInfo.collectAsState()
+    val role = loaCellViewModel.myRole
+
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val selectedRoomId= totalRoomInfo.roomId
+    val focusUserInfo = totalRoomInfo.userInfo
+    val focusRaidInfo  = totalRoomInfo.raidInfo
+    val tabState = totalRoomInfo.tabState
     val syncData by loaCellViewModel.syncData.collectAsState()
-    val tabState by loaCellViewModel.tabState.collectAsState()
 
     loaCellViewModel.apply {
         BottomAppBar(

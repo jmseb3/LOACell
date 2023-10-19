@@ -8,7 +8,10 @@ import com.wonddak.sharedapi.firebase.model.FBDataItem
 import com.wonddak.sharedapi.firebase.model.FBRequest
 import kotlinx.coroutines.delay
 
-fun RoomInfo.getRole(id: String): RoomRole {
+fun RoomInfo.getRole(id: String?): RoomRole {
+    if (id == null) {
+        return  RoomRole.NONE
+    }
     return if (this.owner == id) {
         RoomRole.OWNER
     } else if (this.editableUser.contains(id)) {

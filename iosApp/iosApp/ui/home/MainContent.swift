@@ -23,7 +23,7 @@ struct MainContent: View {
                         //방리스트
                         VStack {
                             RoomListView(roomList: viewModel.roomList) { roomId in
-                                viewModel.commonViewModel.showRoom(roomId: roomId)
+                                viewModel.showRoom(roomId: roomId)
                             }
                             Spacer()
                         }

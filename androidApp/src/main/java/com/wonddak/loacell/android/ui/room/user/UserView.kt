@@ -26,7 +26,7 @@ fun UserView(
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val userList  = totalRoomInfo.userInfoList
-    val focusUserName by loaCellViewModel.focusUserName.collectAsState()
+    val focusUserName = totalRoomInfo.focusUserName
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn {

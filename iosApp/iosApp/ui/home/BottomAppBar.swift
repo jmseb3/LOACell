@@ -14,6 +14,10 @@ struct BottomAppBar: View {
     let height :CGFloat
     let iconSize : CGFloat = 30
     
+    var totalRoomInfo : TotalRoomInfo {
+        viewModel.totalRoomInfo
+    }
+
     var body: some View {
         HStack {
             HStack {
@@ -27,14 +31,14 @@ struct BottomAppBar: View {
                     if (viewModel.userInfo == nil && viewModel.raidInfo == nil) {
                         HStack {
                             IconButton(resource: \.room) {
-                                viewModel.commonViewModel.setTabStatus(state: RoomState.raid)
+                                viewModel.setTabStatus(state: RoomState.raid)
                             }
                             IconButton(resource: \.person) {
-                                viewModel.commonViewModel.setTabStatus(state: RoomState.user)
+                                viewModel.setTabStatus(state: RoomState.user)
                             }
                             if (viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.manager) {
                                 IconButton(resource: \.room_setting) {
-                                    viewModel.commonViewModel.setTabStatus(state: RoomState.setting)
+                                    viewModel.setTabStatus(state: RoomState.setting)
                                 }
                             }
                             
@@ -42,10 +46,10 @@ struct BottomAppBar: View {
                     } else if(viewModel.userInfo != nil) {
                         HStack {
                             IconButton(resource: \.change_person) {
-                                viewModel.commonViewModel.showDialog(status: DialogStatus.characterEdit)
+                                viewModel.showDialog(dialogStatus: DialogStatus.characterEdit)
                             }
                             IconButton(resource: \.refresh, enabled: viewModel.userInfo!.checkTimeOver()) {
-                                viewModel.commonViewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
+                                viewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
                             }.disabled(!viewModel.userInfo!.checkTimeOver())
                         }
                     }
@@ -53,7 +57,7 @@ struct BottomAppBar: View {
             }
             Spacer()
             Button {
-                viewModel.commonViewModel.bottomAddAction()
+                viewModel.bottomAddAction()
             } label: {
                 if !viewModel.focusUserName.isEmpty || !viewModel.focusRaidId.isEmpty {
                     Image(resource: \.delete_)

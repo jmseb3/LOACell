@@ -57,10 +57,11 @@ class LoaCellViewModel(
     //로그인 요청후 로그인 프로그레스 출력..
     var loggingIn by mutableStateOf(false)
 
-    val roomList get() = common.roomList
-
     //현재 로그인된 유저 정보
     val user get() = LoaCellApp.user
+
+    // 전체 room 정보
+    val roomList get() = common.roomList
 
     //방 클릭시 매핑되는 방 id
     val roomId get() = common.roomId
@@ -68,17 +69,6 @@ class LoaCellViewModel(
     //선택된 방의 정보
     val totalRoomInfo get() = common.totalRoomInfo
 
-    //포커싱된 유저 정보
-    val focusUserName get() = common.focusUserName
-    val userInfo get() = common.userInfo
-    val characterList get() = common.characterList
-
-    //포커싱된 레이드 정
-    val focusRaidId get() = common.focusRaidId
-    val raidInfo get() = common.raidInfo
-
-    //방에서 탭 선택
-    val tabState get() = common.tabState
     fun setTabStatus(state: RoomState) = common.setTabStatus(state)
 
     //방에 들어갈경우
@@ -87,18 +77,20 @@ class LoaCellViewModel(
     //방에서 나갈경우
     fun hideRoomInfo() = common.hideRoom()
 
+    fun showDialog(dialogStatus: DialogStatus) = common.showDialog(dialogStatus)
+    fun hideDialog() = common.hideDialog()
+
+    val myRole
+        get()= common.myRole
     var tempOfFBData
         get() = common.tempOfFBData
         set(value) {
             common.tempOfFBData = value
         }
 
-    //현재 유저id와 roominfo로 나의 권한 체크
     override fun getUserUid(): String? {
         return user.value?.uid
     }
-
-    val myRole get() = common.myRole
 
     private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
     val showRoomEnterByIntent get() = _showRoomEnterByIntent
@@ -160,29 +152,16 @@ class LoaCellViewModel(
 
     val syncData get() = common.syncData
     fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
-
     fun signOut() = common.signOut()
     fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
     fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)
     fun clearFocusItem() = common.clearFocusItem()
-
-    val filter get() = common.filter
-
     fun clearFilter() = common.clearFilter()
     fun updateFilterRaidType(raidType: RaidType) = common.updateFilterRaidType(raidType)
-
     fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
     fun updateFilterUser(user: String) = common.updateFilterUser(user)
     fun updateFilterTimeStep(step: Int) = common.updateTimeStep(step)
     fun updateFilterShowEmptyRow(show: Boolean) = common.updateShowEmptyRow(show)
-
-    //region dialog status
-    val dialogStatus get() = common.dialogStatus
-
-    fun showDialog(dialogStatus: DialogStatus) = common.showDialog(dialogStatus)
-    fun hideDialog() = common.hideAllDialog()
-
-    // endregion
 
     var showSetting by mutableStateOf(false)
     val showLoading get() = common.showLoading
@@ -200,5 +179,7 @@ class LoaCellViewModel(
 
     fun bottomAddAction() = common.bottomAddAction()
     fun topBackAction() = common.topBackAction()
+
+    fun deleteRoom(roomId:String) = common.deleteRoom(roomId)
 
 }
