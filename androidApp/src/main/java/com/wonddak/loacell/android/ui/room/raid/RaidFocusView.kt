@@ -1,6 +1,5 @@
 package com.wonddak.loacell.android.ui.room.raid
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -31,7 +30,7 @@ import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable
-fun FocusRaidView(
+fun RaidFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
     Column(modifier = Modifier

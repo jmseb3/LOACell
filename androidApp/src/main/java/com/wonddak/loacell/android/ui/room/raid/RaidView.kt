@@ -88,7 +88,7 @@ fun RaidView(
             )
         }
         if (focusRaidId.isNotEmpty()) {
-            FocusRaidView(loaCellViewModel)
+            RaidFocusView(loaCellViewModel)
         }
         if (dialogStatus == DialogStatus.RAID_FILTER) {
             FilterSheet(loaCellViewModel = loaCellViewModel)
