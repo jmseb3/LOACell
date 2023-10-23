@@ -12,6 +12,8 @@ import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.loacell.store.FBRoomInfo
+import com.wonddak.loacell.store.initFBRoomInfo
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.onFail
@@ -72,7 +74,8 @@ open class CommonViewModel(
     //endregion
 
     //region 방 id 선택시 불러오는 정보
-    private var _totalRoomInfo: MutableStateFlow<TotalRoomInfo> = MutableStateFlow(TotalRoomInfo.getInit())
+    private var _totalRoomInfo: MutableStateFlow<TotalRoomInfo> =
+        MutableStateFlow(TotalRoomInfo.getInit())
     val totalRoomInfo = _totalRoomInfo
         .stateIn(
             scope = viewModelScope,
@@ -81,9 +84,14 @@ open class CommonViewModel(
         )
         .toCommonStateFlow()
 
+    fun updatePartyFocusIndex(index: Int) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updatePartyFocusIndex(index)
+    }
+
     private fun updateFocusUserName(name: String) {
         _totalRoomInfo.value = _totalRoomInfo.value.showUserName(name)
     }
+
     private fun updateFocusRaidId(id: String) {
         _totalRoomInfo.value = _totalRoomInfo.value.showRaidId(id)
     }
@@ -92,14 +100,7 @@ open class CommonViewModel(
         _totalRoomInfo.value = _totalRoomInfo.value.setTabStatus(state)
     }
 
-    fun showDialog(dialogStatus: DialogStatus) {
-        println("JWH show dialog - ${dialogStatus.name}")
-        _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)
-    }
-    fun hideDialog() {
-        _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
-    }
-    val myRole :RoomRole
+    val myRole: RoomRole
         get() = _totalRoomInfo.value.getMyRole(viewModelImpl.getUserUid())
 
     //endregion
@@ -131,7 +132,8 @@ open class CommonViewModel(
                                 totalRoomJob?.start()
                             },
                             failAction = {
-                                _totalRoomInfo.value = _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
+                                _totalRoomInfo.value =
+                                    _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
                             }
                         )
                     } else {
@@ -193,12 +195,15 @@ open class CommonViewModel(
     fun updateFilterRaidType(type: RaidType) {
         _totalRoomInfo.value = _totalRoomInfo.value.updateFilterRaidType(type)
     }
+
     fun updateFilterFinish(finish: Filter.FINISH) {
         _totalRoomInfo.value = _totalRoomInfo.value.updateFilterFinish(finish)
     }
+
     fun updateFilterUser(user: String) {
         _totalRoomInfo.value = _totalRoomInfo.value.updateFilterUser(user)
     }
+
     fun updateTimeStep(step: Int) {
         _totalRoomInfo.value = _totalRoomInfo.value.updateFilterTimeStep(step)
     }
@@ -228,7 +233,7 @@ open class CommonViewModel(
     }
 
     fun bottomAddAction() {
-        _totalRoomInfo.value.bottomAction(roomId.value,viewModelImpl.fbUserIsAnonymous())?.let {
+        _totalRoomInfo.value.bottomAction(roomId.value, viewModelImpl.fbUserIsAnonymous())?.let {
             _totalRoomInfo.value = it
         }
     }
@@ -294,9 +299,182 @@ open class CommonViewModel(
     }
     //endregion
 
-    fun deleteRoom(roomId:String) {
+    fun deleteRoom(roomId: String) {
         hideRoom()
         dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
+    }
+
+    //DialogAction
+
+    val dialogAction = object : DialogAction {
+        override fun showDialog(dialogStatus: DialogStatus) {
+            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)
+        }
+
+        override fun hideDialog() {
+            _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
+        }
+
+        override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
+        override fun getTotalRoomInfo(): TotalRoomInfo = _totalRoomInfo.value
+
+        override fun dialogRoomAction(status: Int) {
+            when (status) {
+                1 -> showDialog(DialogStatus.ROOM_ENTER)
+                2 -> showDialog(DialogStatus.ROOM_ADD)
+            }
+        }
+
+        override fun dialogRoomAdd(title: String, description: String, password: String) {
+            viewModelImpl.getUserUid()?.let { owner ->
+                CommonRoomHelper.makeInfo(
+                    title, description, password, owner
+                ) { id ->
+                    dataBase.roomInfoQueriesHelper.addRoomInfo(
+                        title,
+                        description,
+                        id,
+                        owner,
+                        password,
+                        emptyList(),
+                        emptyList(),
+                    )
+                }
+                hideDialog()
+            }
+        }
+
+        override fun dialogRoomEnter(roomId: String, roomInfo: FBRoomInfo) {
+            CommonRoomHelper.enterRoom(
+                roomId,
+                viewModelImpl.getUserUid()!!,
+                successAction = {
+                    hideDialog()
+                },
+                failAction = { error ->
+                    viewModelImpl.showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
+                    hideDialog()
+                }
+            )
+            dataBase.initFBRoomInfo(roomInfo, roomId)
+        }
+
+        override fun dialogRoomEnterError() {
+            dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
+            hideRoom()
+            hideDialog()
+        }
+
+        override fun dialogRoomExit() {
+            val roomInfo = totalRoomInfo.value.roomInfo!!
+            CommonRoomHelper.exitRoom(
+                roomInfo.uniqueId,
+                viewModelImpl.getUserUid()!!,
+                myRole,
+                successAction = {
+                    deleteRoom(roomInfo.uniqueId)
+                },
+                failAction = {
+
+                }
+            )
+        }
+
+        override fun dialogRoomEdit(title: String, description: String, password: String) {
+            CommonRoomHelper.updateRoom(
+                getRoomInfoUniqueId(), title, description, password,
+                successAction = {
+                    hideDialog()
+                },
+                failAction = {
+                    hideDialog()
+                    viewModelImpl.showSnackBar("변경에 실패했습니다(${it.errorMsg}")
+                }
+            )
+        }
+
+        override fun dialogRaidDelete() {
+            CommonRaidHelper.delete(
+                roomId.value,
+                getRaidInfo().raidId,
+                failAction = { error ->
+                    viewModelImpl.showSnackBar(error.errorMsg)
+                }) {
+                clearFocusItem()
+                hideDialog()
+            }
+        }
+
+        override fun dialogUserAdd(character: Character) {
+            val focusIndex = _totalRoomInfo.value.focusIndex
+            val raidInfo = getRaidInfo()
+            val partyIndex = focusIndex / 4
+
+            val partyTemp = (
+                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                    )
+                .toMutableList().also {
+                    it[focusIndex % 4] = character.name
+                }
+            CommonRaidHelper.updatePartList(
+                roomId.value,
+                raidInfo.raidId,
+                partyIndex + 1,
+                partyTemp,
+                failAction = { error ->
+                    viewModelImpl.showSnackBar("인원 추가에 실패했습니다.\n${error.errorMsg}")
+                })
+            {
+                updatePartyFocusIndex(focusIndex - 1)
+                hideDialog()
+            }
+        }
+
+        override fun dialogUserDelete() {
+            val focusIndex = _totalRoomInfo.value.focusIndex
+            val raidInfo = getRaidInfo()
+            val partyIndex = focusIndex / 4
+            val partyTemp = (
+                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
+                    )
+                .toMutableList().also {
+                    it[focusIndex % 4] = ""
+                }
+            CommonRaidHelper.updatePartList(
+                roomId.value,
+                raidInfo.raidId,
+                partyIndex + 1,
+                partyTemp,
+                failAction = { error ->
+                    viewModelImpl.showSnackBar("유저 삭제에 실패했습니다.")
+                })
+            {
+                hideDialog()
+            }
+        }
+
+        override fun dialogCharacterEdit(name: String) {
+            CommonUserHelper.updateRepresentativeCharacter(
+                roomId.value,
+                getUserInfo().name,
+                name
+            )
+            hideDialog()
+        }
+
+        override fun dialogCharacterDelete() {
+            CommonUserHelper.delete(
+                roomId.value,
+                getUserInfo().name,
+                failAction = { e ->
+                    viewModelImpl.showSnackBar(e)
+                },
+                successAction = {
+                    clearFocusItem()
+                    hideDialog()
+                }
+            )
+        }
     }
 }
 

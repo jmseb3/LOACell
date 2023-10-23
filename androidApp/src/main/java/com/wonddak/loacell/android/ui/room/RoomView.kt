@@ -15,11 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
-import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
-import com.wonddak.loacell.android.ui.dialog.RoomExitDialog
 import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.setting.SettingRoomView
 import com.wonddak.loacell.android.ui.room.user.UserView
@@ -27,7 +23,6 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
-import com.wonddak.loacell.store.CommonRoomHelper
 
 @Composable
 fun RoomView(
@@ -62,30 +57,6 @@ fun RoomView(
                     SettingRoomView(loaCellViewModel)
                 }
             }
-
-            loaCellViewModel.apply {
-                val close = { hideDialog() }
-                when (dialogStatus) {
-                    DialogStatus.RAID_ADD -> {
-                        AddRaidSheet(
-                            roomId = roomInfo.uniqueId,
-                            onDismissRequest = close,
-                            successAction = close
-                        )
-                    }
-
-                    DialogStatus.USER_ADD -> {
-                        AddUserSheet(
-                            roomId = roomInfo.uniqueId,
-                            onDismissRequest = close
-                        )
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
         }
     }
 }
@@ -94,13 +65,10 @@ fun RoomView(
 fun RoomTitleView(
     loaCellViewModel: LoaCellViewModel,
 ) {
-    val user by loaCellViewModel.user.collectAsState(null)
-
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomInfo = totalRoomInfo.roomInfo
     val focusUserName = totalRoomInfo.focusUserName
     val focusRaidId = totalRoomInfo.focusRaidId
-    val dialogStatus = totalRoomInfo.dialogState
 
     val role = loaCellViewModel.myRole
 
@@ -143,35 +111,7 @@ fun RoomTitleView(
                         }
                     }
                 }
-
-                if (dialogStatus == DialogStatus.ROOM_EXIT && user != null) {
-                    RoomExitDialog(
-                        success = {
-                            CommonRoomHelper.exitRoom(
-                                roomInfo.uniqueId,
-                                user!!.uid,
-                                role,
-                                successAction = {
-                                    loaCellViewModel.deleteRoom(roomInfo.uniqueId)
-                                },
-                                failAction = {
-
-                                }
-                            )
-                        },
-                        dismiss = {
-                            loaCellViewModel.hideDialog()
-                        }
-                    )
-                }
             }
         }
-
-        if (dialogStatus == DialogStatus.SHARE_SHEET) {
-            ShareSheet(roomInfo = roomInfo) {
-                loaCellViewModel.hideDialog()
-            }
-        }
-
     }
 }

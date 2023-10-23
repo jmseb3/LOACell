@@ -39,8 +39,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun RoomActionDialog(
-    confirm: (status: Int) -> Unit,
     dismiss: () -> Unit,
+    confirm: (status: Int) -> Unit,
 ) {
     BaseDialog(
         titleText = "작업을 선택해 주세요",
@@ -100,8 +100,8 @@ fun EnterButton(
 
 @Composable
 fun RoomEnterErrorDialog(
-    confirm: () -> Unit,
     dismiss: () -> Unit,
+    confirm: () -> Unit,
 ) {
     BaseDialog(
         modifier = Modifier.wrapContentHeight(),
@@ -121,8 +121,8 @@ fun RoomEnterErrorDialog(
 @Composable
 fun RoomEnterDialog(
     nowEnterRoomList: List<String>,
-    success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
     dismiss: () -> Unit,
+    success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
 ) {
     var roomId by remember {
         mutableStateOf("")
@@ -322,8 +322,8 @@ fun RoomEnterPasswordDialog(
 
 @Composable
 fun RoomExitDialog(
-    success: () -> Unit,
     dismiss: () -> Unit,
+    success: () -> Unit,
 ) {
     BaseDialog(
         dismiss = dismiss,

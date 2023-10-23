@@ -14,8 +14,8 @@ import com.wonddak.loacell.UserInfo
 fun EditCharacterDialog(
     userInfo: UserInfo,
     characterList: List<Character>,
-    confirm: (name: String) -> Unit,
-    dismiss: () -> Unit
+    dismiss: () -> Unit,
+    confirm: (name: String) -> Unit
 ) {
     val representativeCharacter = userInfo.representativeCharacter
     var expanded by remember { mutableStateOf(false) }
@@ -76,8 +76,8 @@ fun EditCharacterDialog(
 @Composable
 fun DeleteCharacterDialog(
     name: String,
-    confirm: () -> Unit,
-    dismiss: () -> Unit
+    dismiss: () -> Unit,
+    confirm: () -> Unit
 ) {
     DeleteDialog(
         title = "유저 정보 삭제",

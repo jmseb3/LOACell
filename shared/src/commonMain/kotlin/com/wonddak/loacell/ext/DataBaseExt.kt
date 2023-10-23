@@ -30,7 +30,8 @@ data class TotalRoomInfo(
     val focusUserName: String = "",
     val tabState: RoomState = RoomState.Raid,
     val dialogState: DialogStatus = DialogStatus.NONE,
-    val filter: Filter = Filter()
+    val filter: Filter = Filter(),
+    val focusIndex : Int = -1
 ) {
     companion object {
         fun getInit(): TotalRoomInfo = TotalRoomInfo()
@@ -100,8 +101,9 @@ data class TotalRoomInfo(
     )
 
     fun showRaidId(raidId: String) =
-        this.copy(focusRaidId = raidId, focusUserName = "", dialogState = DialogStatus.NONE)
+        this.copy(focusRaidId = raidId, focusUserName = "", dialogState = DialogStatus.NONE, focusIndex = -1)
 
+    fun updatePartyFocusIndex(index:Int) = this.copy(focusIndex = index)
     fun showUserName(userName: String) =
         this.copy(focusRaidId = "", focusUserName = userName, dialogState = DialogStatus.NONE)
 

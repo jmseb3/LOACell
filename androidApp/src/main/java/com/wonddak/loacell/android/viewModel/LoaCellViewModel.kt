@@ -77,8 +77,8 @@ class LoaCellViewModel(
     //방에서 나갈경우
     fun hideRoomInfo() = common.hideRoom()
 
-    fun showDialog(dialogStatus: DialogStatus) = common.showDialog(dialogStatus)
-    fun hideDialog() = common.hideDialog()
+    fun showDialog(dialogStatus: DialogStatus) = getDialogAction().showDialog(dialogStatus)
+    fun hideDialog() = getDialogAction().hideDialog()
 
     val myRole
         get()= common.myRole
@@ -181,5 +181,9 @@ class LoaCellViewModel(
     fun topBackAction() = common.topBackAction()
 
     fun deleteRoom(roomId:String) = common.deleteRoom(roomId)
+
+    fun getDialogAction() = common.dialogAction
+
+    fun updatePartyFocusIndex(index:Int) = common.updatePartyFocusIndex(index)
 
 }

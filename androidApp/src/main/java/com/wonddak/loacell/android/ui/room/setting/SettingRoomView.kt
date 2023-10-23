@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.SectionCardView
@@ -182,9 +181,6 @@ fun SettingRoomInfo(
     var showPassword by remember {
         mutableStateOf(false)
     }
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val dialogStatus = totalRoomInfo.dialogState
-
     SectionCardView(
         title = "방 정보",
         icon = SharedRes.images.edit.drawableResId,
@@ -211,27 +207,6 @@ fun SettingRoomInfo(
                 }
             }
         }
-    }
-    if (dialogStatus == DialogStatus.ROOM_EDIT) {
-        EditRoomSheet(
-            getTitle = roomInfo.title,
-            getDescription = roomInfo.description,
-            getPassword = roomInfo.enterPassword,
-            onDismissRequest = { loaCellViewModel.hideDialog() },
-            editAction = { title, description, password ->
-                CommonRoomHelper.updateRoom(
-                    roomInfo.uniqueId, title, description, password,
-                    successAction = {
-                        loaCellViewModel.hideDialog()
-                        showPassword = false
-                    },
-                    failAction = {
-                        loaCellViewModel.hideDialog()
-                        loaCellViewModel.showSnackBar("변경에 실패했습니다(${it.errorMsg}")
-                    }
-                )
-            }
-        )
     }
 }
 

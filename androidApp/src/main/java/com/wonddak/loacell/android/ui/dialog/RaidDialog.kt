@@ -21,8 +21,8 @@ import com.wonddak.loacell.RaidInfo
 
 @Composable
 fun DeleteRaidDialog(
-    confirm: () -> Unit,
-    dismiss: () -> Unit
+    dismiss: () -> Unit,
+    confirm: () -> Unit
 ) {
     DeleteDialog(
         title = "레이드 정보 삭제",
@@ -37,8 +37,8 @@ fun DeleteRaidDialog(
 
 @Composable
 fun DeleteRaidUserDialog(
-    confirm: () -> Unit,
-    dismiss: () -> Unit
+    dismiss: () -> Unit,
+    confirm: () -> Unit
 ) {
     DeleteDialog(
         title = "레이드 유저 정보 삭제",
