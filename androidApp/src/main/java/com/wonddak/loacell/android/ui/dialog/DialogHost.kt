@@ -107,10 +107,11 @@ fun DialogHost(
                 FilterSheet(
                     dialogAction.getTotalRoomInfo(),
                     dismiss = dismiss
-                ) {filter ->
+                ) { filter ->
                     dialogAction.dialogFilterUpdate(filter)
                 }
             }
+
             DialogStatus.RAID_DELETE -> {
                 DeleteRaidDialog(
                     dismiss = dismiss

@@ -13,17 +13,14 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.DriverFactory
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.android.ui.home.MainContent
-import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private lateinit var loginHelper: LoginHelper
     private lateinit var loaCellViewModel: LoaCellViewModel
     private var waitTime = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
         val config = Config(this)
 
