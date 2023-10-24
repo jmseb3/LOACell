@@ -9,6 +9,7 @@ interface DialogAction {
     fun showDialog(dialogStatus: DialogStatus)
     fun hideDialog()
 
+    fun getDisplayName() :String
     fun getRoomListToUniqueId(): List<String>
     fun getTotalRoomInfo() : TotalRoomInfo
     fun getRoomInfo(): RoomInfo = getTotalRoomInfo().roomInfo!!
@@ -36,6 +37,9 @@ interface DialogAction {
     //character
     fun dialogCharacterEdit(name:String)
     fun dialogCharacterDelete()
+
+    //setting
+    fun dialogEditName(name:String)
 
     //filter
     fun dialogFilterUpdate(filter: Filter)

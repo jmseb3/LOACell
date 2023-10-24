@@ -12,7 +12,7 @@ import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.ViewModelImpl
-import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
     private val dataBase: AppDataBase,
-    private val config: Config
+    private val config: Config,
+    val loginHelper: LoginHelper
 ) : ViewModel(), ViewModelImpl {
 
     private val common by lazy {
@@ -31,6 +32,7 @@ class LoaCellViewModel(
             viewModelScope,
             dataBase,
             config,
+            loginHelper,
             this@LoaCellViewModel
         )
     }
@@ -53,7 +55,7 @@ class LoaCellViewModel(
     fun resetSnackBar() = snackBarController.resetSnackBar()
 
     //현재 로그인된 유저 정보
-    val user get() = LoaCellApp.loginHelper.auth.user
+    val user get() = common.user
 
     // 전체 room 정보
     val roomList get() = common.roomList
@@ -82,10 +84,6 @@ class LoaCellViewModel(
         set(value) {
             common.tempOfFBData = value
         }
-
-    override fun getUserUid(): String? {
-        return user.value?.uid
-    }
 
     private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
     val showRoomEnterByIntent get() = _showRoomEnterByIntent
@@ -162,10 +160,6 @@ class LoaCellViewModel(
         showSetting = false
     }
 
-    override fun fbUserIsAnonymous(): Boolean? {
-        return user?.value?.isAnonymous
-    }
-
     fun bottomAddAction() = common.bottomAddAction()
     fun topBackAction() = common.topBackAction()
 
@@ -174,5 +168,7 @@ class LoaCellViewModel(
     fun getDialogAction() = common.dialogAction
 
     fun updatePartyFocusIndex(index:Int) = common.updatePartyFocusIndex(index)
+
+    fun outOrSignOut() = common.outOrSignOut()
 
 }

@@ -155,7 +155,12 @@ fun DialogHost(
             }
 
             DialogStatus.SETTING_EDIT_NAME -> {
-
+                ProfileNameDialog(
+                    dialogAction.getDisplayName(),
+                    dismiss = dismiss
+                ) {
+                    dialogAction.dialogEditName(it)
+                }
             }
             DialogStatus.SHARE_SHEET -> {
                 ShareSheet(roomInfo = dialogAction.getRoomInfo()) {

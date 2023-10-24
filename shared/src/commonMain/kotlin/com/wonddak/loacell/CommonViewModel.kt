@@ -1,6 +1,7 @@
 package com.wonddak.loacell
 
 import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
 import com.wonddak.loacell.model.DialogStatus
@@ -35,10 +36,16 @@ open class CommonViewModel(
     coroutineScope: CoroutineScope? = null,
     private val dataBase: AppDataBase,
     private val config: Config,
+    val loginHelper: LoginHelper,
     private val viewModelImpl: ViewModelImpl
 ) {
     // Ios 의 경우 CoroutineScope(Dispatchers.Main)로 작동
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
+
+    //현재 로그인된 유저 정보
+    val user get() = loginHelper.auth.user
+
+
 
     val roomList = dataBase.roomInfoQueriesHelper.getAll()
         .stateIn(
@@ -100,7 +107,7 @@ open class CommonViewModel(
     }
 
     val myRole: RoomRole
-        get() = _totalRoomInfo.value.getMyRole(viewModelImpl.getUserUid())
+        get() = _totalRoomInfo.value.getMyRole(user?.value?.uid)
 
     //endregion
 
@@ -212,7 +219,7 @@ open class CommonViewModel(
     }
 
     fun bottomAddAction() {
-        _totalRoomInfo.value.bottomAction(roomId.value, viewModelImpl.fbUserIsAnonymous())?.let {
+        _totalRoomInfo.value.bottomAction(roomId.value,user.value?.isAnonymous)?.let {
             _totalRoomInfo.value = it
         }
     }
@@ -283,6 +290,16 @@ open class CommonViewModel(
         hideRoom()
         dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
     }
+    //login/out
+    fun outOrSignOut() {
+        if (user.value!!.isAnonymous) {
+            loginHelper.delete()
+        } else {
+            loginHelper.signOut()
+        }
+        signOut()
+    }
+
 
     //DialogAction
 
@@ -295,6 +312,9 @@ open class CommonViewModel(
             _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
         }
 
+        override fun getDisplayName(): String {
+            return user?.value?.displayName?: ""
+        }
         override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
         override fun getTotalRoomInfo(): TotalRoomInfo = _totalRoomInfo.value
 
@@ -306,7 +326,7 @@ open class CommonViewModel(
         }
 
         override fun dialogRoomAdd(title: String, description: String, password: String) {
-            viewModelImpl.getUserUid()?.let { owner ->
+            user?.value?.uid?.let { owner ->
                 CommonRoomHelper.makeInfo(
                     title, description, password, owner
                 ) { id ->
@@ -327,7 +347,7 @@ open class CommonViewModel(
         override fun dialogRoomEnter(roomId: String, roomInfo: FBRoomInfo) {
             CommonRoomHelper.enterRoom(
                 roomId,
-                viewModelImpl.getUserUid()!!,
+                user.value!!.uid,
                 successAction = {
                     hideDialog()
                 },
@@ -349,7 +369,7 @@ open class CommonViewModel(
             val roomInfo = totalRoomInfo.value.roomInfo!!
             CommonRoomHelper.exitRoom(
                 roomInfo.uniqueId,
-                viewModelImpl.getUserUid()!!,
+                user.value!!.uid,
                 myRole,
                 successAction = {
                     deleteRoom(roomInfo.uniqueId)
@@ -459,16 +479,16 @@ open class CommonViewModel(
         override fun dialogFilterUpdate(filter: Filter) {
             _totalRoomInfo.value = _totalRoomInfo.value.updateFilter(filter)
         }
+
+        override fun dialogEditName(name:String) {
+           loginHelper.auth.updateDisplayName(name)
+            hideDialog()
+        }
     }
 }
 
 interface ViewModelImpl {
     fun showSnackBar(msg: String)
-
-    fun fbUserIsAnonymous(): Boolean?
-
-    fun getUserUid(): String?
-
     fun closeSetting()
     fun getSetting(): Boolean
 }

@@ -13,20 +13,14 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.ui.common.MyIconButton
-import com.wonddak.loacell.android.ui.dialog.ProfileNameDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.DialogStatus
 
@@ -34,34 +28,12 @@ import com.wonddak.loacell.model.DialogStatus
 fun LoginInfoView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val loginHelper = LoaCellApp.loginHelper
+    val loginHelper = loaCellViewModel.loginHelper
     val user by loaCellViewModel.user.collectAsState(null)
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomLists by loaCellViewModel.roomList.collectAsState()
     val roomList = roomLists.filter { it.owner == user?.uid }
 
-    val dialogStatus = totalRoomInfo.dialogState
-
     user?.let { userInfo ->
-        var displayName by remember {
-            mutableStateOf("")
-        }
-        LaunchedEffect(true) {
-            displayName = user?.displayName ?: ""
-        }
-        if (dialogStatus == DialogStatus.SETTING_EDIT_NAME) {
-            ProfileNameDialog(
-                displayName,
-                success = {
-                    loginHelper.auth.updateDisplayName(it)
-                    displayName = it
-                    loaCellViewModel.hideDialog()
-                },
-                dismiss = {
-                    loaCellViewModel.hideDialog()
-                }
-            )
-        }
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -71,7 +43,7 @@ fun LoginInfoView(
             ) {
                 Column {
                     Text(
-                        text = displayName.ifEmpty { "이름 없음" },
+                        text = (user?.displayName ?: "") .ifEmpty{ "이름 없음" },
                         fontWeight = FontWeight.Bold
                     )
                     Text(
@@ -94,12 +66,7 @@ fun LoginInfoView(
                 OutlinedButton(
                     modifier = buttonWeight,
                     onClick = {
-                        if (userInfo.isAnonymous) {
-                            loginHelper.delete()
-                        } else {
-                            loginHelper.signOut()
-                        }
-                        loaCellViewModel.signOut()
+                        loaCellViewModel.outOrSignOut()
                     }
                 ) {
                     Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
