@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -73,7 +75,7 @@ fun MainContent(
                 }
             ) {
                 DialogHost(dialogStatus, loaCellViewModel.getDialogAction()) {
-                    MainContentView(db, loaCellViewModel)
+                    MainContentView(it, db, loaCellViewModel)
                 }
             }
         }
@@ -82,6 +84,7 @@ fun MainContent(
 
 @Composable
 private fun MainContentView(
+    padding: PaddingValues,
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
@@ -89,7 +92,7 @@ private fun MainContentView(
     val showRoomEnterPasswordByIntent by loaCellViewModel.showRoomEnterPasswordByIntent.collectAsState()
     val syncData by loaCellViewModel.syncData.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(padding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -112,26 +115,22 @@ private fun MainContentView(
                     }
                     AnimatedVisibility(selectedRoomId.isNotEmpty()) {
                         if (selectedRoomId.isNotEmpty()) {
-                            Column() {
-                                RoomView(loaCellViewModel)
-                            }
+                            RoomView(loaCellViewModel)
                         }
                     }
                 }
             }
 
-            if (showRoomEnterPasswordByIntent != null) {
-                showRoomEnterPasswordByIntent?.let {
-                    RoomEnterPasswordDialog(
-                        roomId = it.first,
-                        fbRoomInfo = it.second,
-                        success = { id, roomInfo ->
-                            db.initFBRoomInfo(roomInfo, id)
-                            loaCellViewModel.clearEnterPasswordByIntent()
-                        }
-                    ) {
+            showRoomEnterPasswordByIntent?.let {
+                RoomEnterPasswordDialog(
+                    roomId = it.first,
+                    fbRoomInfo = it.second,
+                    success = { id, roomInfo ->
+                        db.initFBRoomInfo(roomInfo, id)
                         loaCellViewModel.clearEnterPasswordByIntent()
                     }
+                ) {
+                    loaCellViewModel.clearEnterPasswordByIntent()
                 }
             }
         }

@@ -70,7 +70,7 @@ fun SettingRoomView(
                     FBDataItem(
                         userInfo.uid,
                         userInfo.displayName,
-                        userInfo.photoUrl.toString()
+                        userInfo.photoUrl
                     )
                 )
             }

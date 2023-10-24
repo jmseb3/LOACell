@@ -25,7 +25,8 @@ struct RaidView: View {
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             }
             if viewModel.focusRaidId.isNotEmpty {
-                RaidPartyView(characterList: viewModel.totalRoomInfo.partyCharacterList as! [shared.Character?]) { index in
+                let characterList  = viewModel.totalRoomInfo.partyCharacterList as! [shared.Character?]
+                RaidPartyView(characterList: characterList) { index in
                     
                 } deleteAction: { index in
                     

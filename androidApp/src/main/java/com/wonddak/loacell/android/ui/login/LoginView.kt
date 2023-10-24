@@ -22,53 +22,41 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
-import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.sharedresources.store.CommonString
 
 @Composable
 fun LoginView(loaCellViewModel: LoaCellViewModel) {
-    val context = LocalContext.current
-    val loginHelper = LoginHelper(context)
+    val loginHelper =  LoaCellApp.loginHelper
+    val loggingIn by loginHelper.loginIn.collectAsState()
 
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         loaCellViewModel.apply {
-            loginHelper.registerGoogleToken(
-                result,
-                commonAction = {
-                    loggingIn = true
-                },
-                failRegisterAction = {e ->
-                    loggingIn = false
-                },
-                successAction = {
-                    syncStart(force = true)
-                    loggingIn = false
-                },
-                failAction = {
-                    loggingIn = false
-                }
-            )
+            loginHelper.registerGoogleToken(result) {
+                syncStart(force = true)
+            }
         }
-
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -110,9 +98,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 GoogleLoginButton(
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    loginHelper.requestGoogleLogin { intent ->
-                        googleLoginLauncher.launch(intent)
-                    }
+                    loginHelper.requestGoogleLogin(googleLoginLauncher)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -120,13 +106,13 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     color = Color.Black,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
-                        .noRippleClickable { loginHelper.requestAnonymousLogin() }
+                        .noRippleClickable { loginHelper.auth.requestAnonymousLogin() }
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
             }
         }
-        if (loaCellViewModel.loggingIn) {
+        if (loggingIn) {
             LoadingView(info = CommonString.Login.getProgress().toText(), color = Color.Gray.copy(0.5f))
         }
     }

@@ -52,11 +52,8 @@ class LoaCellViewModel(
 
     fun resetSnackBar() = snackBarController.resetSnackBar()
 
-    //로그인 요청후 로그인 프로그레스 출력..
-    var loggingIn by mutableStateOf(false)
-
     //현재 로그인된 유저 정보
-    val user get() = LoaCellApp.user
+    val user get() = LoaCellApp.loginHelper.auth.user
 
     // 전체 room 정보
     val roomList get() = common.roomList
@@ -121,7 +118,7 @@ class LoaCellViewModel(
                                     if (roomInfo.enterPassword.isEmpty()) {
                                         CommonRoomHelper.enterRoom(
                                             roomId,
-                                            user.value!!.uid,
+                                            user.value!!.uid!!,
                                             successAction = {
                                                 dataBase.initFBRoomInfo(roomInfo, roomId)
                                                 _showRoomEnterByIntent.value = ""
@@ -149,7 +146,7 @@ class LoaCellViewModel(
 
 
     val syncData get() = common.syncData
-    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
+    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid!!, force)
     fun signOut() = common.signOut()
     fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
     fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)

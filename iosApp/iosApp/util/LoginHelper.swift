@@ -22,7 +22,7 @@ class LoginHelper {
         failAction: @escaping () -> Void = {}
     ) {
         guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {return}
-        
+//        
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
         // Create Google Sign In configuration object.
@@ -56,24 +56,24 @@ class LoginHelper {
     }
     
     func requestAnonymousLogin() {
-        firebaseAuth.signInAnonymously { authResult, error in
-            if (error == nil) {
-                self.updateDisplayName(name: NameHelper().makeName())
-            }
-        }
+//        firebaseAuth.signInAnonymously { authResult, error in
+//            if (error == nil) {
+//                self.updateDisplayName(name: NameHelper().makeName())
+//            }
+//        }
     }
     
     func updateDisplayName(name: String) {
-        let cr = firebaseAuth.currentUser?.createProfileChangeRequest()
-        cr?.displayName = name
-        cr?.commitChanges()
+//        let cr = firebaseAuth.currentUser?.createProfileChangeRequest()
+//        cr?.displayName = name
+//        cr?.commitChanges()
     }
     
     func signOut() {
-        do {
-            try firebaseAuth.signOut()
-        } catch let signOutError as NSError {
-            print("Error signing out: %@", signOutError)
-        }
+//        do {
+//            try firebaseAuth.signOut()
+//        } catch let signOutError as NSError {
+//            print("Error signing out: %@", signOutError)
+//        }
     }
 }
