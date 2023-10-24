@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.SharedRes
@@ -44,7 +43,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingView(
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     BackHandler() {
@@ -59,14 +57,11 @@ fun SettingView(
     var showSlider by remember {
         mutableStateOf(false)
     }
-    var showCalendar by remember {
-        mutableStateOf(false)
-    }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         SectionCardView(title = "로그인 정보") {
-            LoginInfoView(db, loaCellViewModel)
+            LoginInfoView(loaCellViewModel)
         }
         SectionText(
             title = "시트 하단 여백 조정",

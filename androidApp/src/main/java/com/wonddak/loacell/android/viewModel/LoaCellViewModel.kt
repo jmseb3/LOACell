@@ -8,14 +8,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.model.DialogStatus
-import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
@@ -156,12 +154,6 @@ class LoaCellViewModel(
     fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
     fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)
     fun clearFocusItem() = common.clearFocusItem()
-    fun clearFilter() = common.clearFilter()
-    fun updateFilterRaidType(raidType: RaidType) = common.updateFilterRaidType(raidType)
-    fun updateFilterFinish(finish: Filter.FINISH) = common.updateFilterFinish(finish)
-    fun updateFilterUser(user: String) = common.updateFilterUser(user)
-    fun updateFilterTimeStep(step: Int) = common.updateTimeStep(step)
-    fun updateFilterShowEmptyRow(show: Boolean) = common.updateShowEmptyRow(show)
 
     var showSetting by mutableStateOf(false)
     val showLoading get() = common.showLoading

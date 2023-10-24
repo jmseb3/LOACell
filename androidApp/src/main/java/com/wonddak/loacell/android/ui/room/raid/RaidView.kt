@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.SelectIdDialog
 import com.wonddak.loacell.android.ui.room.raid.calendar.RaidCalendarView
@@ -89,9 +88,6 @@ fun RaidView(
         }
         if (focusRaidId.isNotEmpty()) {
             RaidFocusView(loaCellViewModel)
-        }
-        if (dialogStatus == DialogStatus.RAID_FILTER) {
-            FilterSheet(loaCellViewModel = loaCellViewModel)
         }
     }
 }

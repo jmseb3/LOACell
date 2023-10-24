@@ -9,10 +9,6 @@ data class Filter(
     val timeStep : Int = 60,
     val showEmptyCalendarRow :Boolean = false
 ) {
-    companion object {
-        fun getInitFilter() :Filter = Filter()
-    }
-
     enum class FINISH(val title:String) {
         ALL("전체"),CLEAR("완료"),NOT_CLEAR("미완료"),
     }

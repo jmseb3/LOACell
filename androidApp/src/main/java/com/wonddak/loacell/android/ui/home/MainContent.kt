@@ -97,7 +97,7 @@ private fun MainContentView(
             val roomList by loaCellViewModel.roomList.collectAsState()
 
             if (loaCellViewModel.showSetting) {
-                SettingView(db, loaCellViewModel)
+                SettingView(loaCellViewModel)
             } else {
                 Column(Modifier.fillMaxSize()) {
                     AnimatedVisibility(selectedRoomId.isEmpty()) {

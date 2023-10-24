@@ -11,6 +11,7 @@ import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
+import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
 import com.wonddak.loacell.model.DialogStatus
 
@@ -103,7 +104,12 @@ fun DialogHost(
             }
 
             DialogStatus.RAID_FILTER -> {
-
+                FilterSheet(
+                    dialogAction.getTotalRoomInfo(),
+                    dismiss = dismiss
+                ) {filter ->
+                    dialogAction.dialogFilterUpdate(filter)
+                }
             }
             DialogStatus.RAID_DELETE -> {
                 DeleteRaidDialog(

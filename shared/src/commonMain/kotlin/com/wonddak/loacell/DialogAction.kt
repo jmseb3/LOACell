@@ -2,6 +2,7 @@ package com.wonddak.loacell
 
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.store.FBRoomInfo
 
 interface DialogAction {
@@ -35,4 +36,7 @@ interface DialogAction {
     //character
     fun dialogCharacterEdit(name:String)
     fun dialogCharacterDelete()
+
+    //filter
+    fun dialogFilterUpdate(filter: Filter)
 }

@@ -4,7 +4,6 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.getLevel
 import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getMinLevel
-import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
@@ -219,14 +218,7 @@ data class TotalRoomInfo(
             result
         } ?: emptyList()
 
-    private fun updateFilter(filter: Filter) = this.copy(filter = filter)
-    fun updateFilterRaidType(type: RaidType) = updateFilter(this.filter.updateRaidType(type))
-    fun updateFilterFinish(finish: Filter.FINISH) = updateFilter(this.filter.updateFinish(finish))
-    fun updateFilterUser(user: String) = updateFilter(this.filter.updateUser(user))
-    fun updateFilterTimeStep(step: Int) = updateFilter(this.filter.updateTimeStep(step))
-    fun updateFilterShowEmptyRow(show: Boolean) =
-        updateFilter(this.filter.updateEmptyCalendarRow(show))
-
+    fun updateFilter(filter: Filter) = this.copy(filter = filter)
     fun clearFilter() = updateFilter(Filter())
 
 }

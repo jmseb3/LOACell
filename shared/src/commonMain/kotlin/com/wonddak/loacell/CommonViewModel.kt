@@ -1,7 +1,6 @@
 package com.wonddak.loacell
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
 import com.wonddak.loacell.model.DialogStatus
@@ -192,27 +191,7 @@ open class CommonViewModel(
     //endregion
 
     //region filter
-    fun updateFilterRaidType(type: RaidType) {
-        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterRaidType(type)
-    }
-
-    fun updateFilterFinish(finish: Filter.FINISH) {
-        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterFinish(finish)
-    }
-
-    fun updateFilterUser(user: String) {
-        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterUser(user)
-    }
-
-    fun updateTimeStep(step: Int) {
-        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterTimeStep(step)
-    }
-
-    fun updateShowEmptyRow(show: Boolean) {
-        _totalRoomInfo.value = _totalRoomInfo.value.updateFilterShowEmptyRow(show)
-    }
-
-    fun clearFilter() {
+    private fun clearFilter() {
         _totalRoomInfo.value = _totalRoomInfo.value.clearFilter()
     }
     //endregion
@@ -474,6 +453,10 @@ open class CommonViewModel(
                     hideDialog()
                 }
             )
+        }
+
+        override fun dialogFilterUpdate(filter: Filter) {
+            _totalRoomInfo.value = _totalRoomInfo.value.updateFilter(filter)
         }
     }
 }

@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.ProfileNameDialog
@@ -35,13 +34,15 @@ import com.wonddak.loacell.model.DialogStatus
 
 @Composable
 fun LoginInfoView(
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val context = LocalContext.current
     val loginHelper = LoginHelper(context)
     val user by loaCellViewModel.user.collectAsState(null)
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val roomLists by loaCellViewModel.roomList.collectAsState()
+    val roomList = roomLists.filter { it.owner == user?.uid }
+
     val dialogStatus = totalRoomInfo.dialogState
 
     user?.let { userInfo ->
@@ -85,7 +86,6 @@ fun LoginInfoView(
                 }
             }
             Divider()
-            val roomList = db.roomInfoQueriesHelper.getAllRoomListByOwnerId(userInfo.uid)
 
             Row(
                 modifier = Modifier

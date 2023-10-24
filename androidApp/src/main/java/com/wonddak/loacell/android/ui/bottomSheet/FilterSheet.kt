@@ -27,7 +27,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,21 +42,25 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.model.Filter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterSheet(
-    loaCellViewModel: LoaCellViewModel
+    totalRoomInfo: TotalRoomInfo,
+    dismiss : () -> Unit,
+    updateFilter : (Filter) -> Unit
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val filter = totalRoomInfo.filter
     val userInfoList = totalRoomInfo.userInfoList
     val raidTypes = RaidType.values()
-    BaseSheet(title = "필터 설정",
+
+    BaseSheet(
+        title = "필터 설정",
         useCloseIcon = true,
-        onDismissRequest = { loaCellViewModel.hideDialog() }) {
+        onDismissRequest = dismiss
+    ) {
         Column {
             FilterSection(section = "레이드 종류") {
                 LazyVerticalGrid(
@@ -67,7 +70,7 @@ fun FilterSheet(
                         items(raidTypes) { type ->
                             ElevatedFilterChip(
                                 selected = filter.isSelected(type),
-                                onClick = { loaCellViewModel.updateFilterRaidType(type) },
+                                onClick = { updateFilter(filter.updateRaidType(type)) },
                                 label = {
                                     Text(
                                         text = type.toKorString(),
@@ -89,7 +92,7 @@ fun FilterSheet(
                         val selected = filter.isSelected(finish)
 
                         val updateFilter = {
-                            loaCellViewModel.updateFilterFinish(finish)
+                            updateFilter(filter.updateFinish(finish))
                         }
                         Row(
                             modifier = Modifier
@@ -126,7 +129,7 @@ fun FilterSheet(
                             ElevatedFilterChip(
                                 selected = filter.isSelected(name),
                                 onClick = {
-                                    loaCellViewModel.updateFilterUser(name)
+                                    updateFilter(filter.updateUser(name))
                                 },
                                 label = {
                                     Text(
@@ -147,7 +150,7 @@ fun FilterSheet(
                         listOf(60, 30, 15).forEach {
                             TextButton(
                                 onClick = {
-                                    loaCellViewModel.updateFilterTimeStep(it)
+                                    updateFilter(filter.updateTimeStep(it))
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
@@ -163,7 +166,7 @@ fun FilterSheet(
                     ) {
                         Switch(
                             checked = filter.showEmptyCalendarRow,
-                            onCheckedChange = { loaCellViewModel.updateFilterShowEmptyRow(it) }
+                            onCheckedChange = { updateFilter(filter.updateEmptyCalendarRow(it)) }
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(text = "빈 행 보이기")
@@ -175,7 +178,7 @@ fun FilterSheet(
                 Text(
                     text = "필터 초기화",
                     modifier = Modifier.noRippleClickable {
-                        loaCellViewModel.clearFilter()
+                        updateFilter(Filter())
                     }
                 )
             }
