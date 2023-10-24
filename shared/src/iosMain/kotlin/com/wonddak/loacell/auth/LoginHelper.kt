@@ -1,0 +1,193 @@
+package com.wonddak.loacell.auth
+
+import cocoapods.FirebaseAuth.FIRAuth
+import cocoapods.FirebaseAuth.FIRAuthCredential
+import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
+import cocoapods.FirebaseAuth.FIRUser
+import cocoapods.FirebaseCore.FIRApp
+import cocoapods.GoogleSignIn.GIDConfiguration
+import cocoapods.GoogleSignIn.GIDSignIn
+import cocoapods.GoogleSignIn.GIDSignInResult
+import com.wonddak.loacell.CommonStateFlow
+import com.wonddak.loacell.toCommonStateFlow
+import com.wonddak.loacell.util.NameHelper
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCObjectVar
+import kotlinx.coroutines.flow.MutableStateFlow
+import platform.Foundation.NSError
+import platform.UIKit.UIApplication
+import platform.UIKit.UIWindow
+import platform.UIKit.UIWindowScene
+
+actual class LoginHelper {
+    private var _loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    actual val loginIn: CommonStateFlow<Boolean>
+        get() = _loginIn.toCommonStateFlow()
+    actual val auth: FBAuth = FBAuth(FIRAuth.auth())
+
+    actual fun signOut() {
+        auth.signOut()
+    }
+
+    actual fun delete() {
+        auth.delete()
+    }
+
+    actual fun registerToken(
+        result: GoogleResult,
+        failAction: (msg:String) -> Unit,
+        successAction: (credential: FBAuthCredential) -> Unit,
+    ) {
+        val user = result.user()
+        val token = user.idToken?.tokenString
+        if (token == null) {
+            _loginIn.value = false
+        } else {
+            val credential = FIRGoogleAuthProvider.credentialWithIDToken(
+                IDToken = token,
+                accessToken = user.accessToken.tokenString
+            )
+            successAction(FBAuthCredential(credential))
+        }
+    }
+    fun requestGoogleLogin(
+        successAction: () -> Unit
+    ) {
+        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
+            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
+            ?: return
+        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
+        val config = GIDConfiguration(clientID = clientID)
+        GIDSignIn.sharedInstance().configuration = config
+        GIDSignIn.sharedInstance()
+            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
+                if (result == null || error != null) {
+                    return@signInWithPresentingViewController
+                }
+
+                registerGoogleToken(result,successAction = successAction)
+            }
+    }
+
+    actual fun registerGoogleToken(
+        result : GoogleResult,
+        successAction: () -> Unit,
+    ) {
+        _loginIn.value = true
+        registerToken(result,{}) { credential ->
+            auth.signInWithCredential(credential, { _loginIn.value = false }) {
+                _loginIn.value = true
+                successAction()
+            }
+        }
+    }
+    actual fun registerAnonymousToGoogle(
+        result: GoogleResult,
+        failAction: (msg: String) -> Unit
+    ) {
+        registerToken(result, failAction) { credential ->
+            auth.linkWithCredential(credential, failAction) {
+
+            }
+        }
+    }
+}
+actual class FBAuthCredential(
+    val credential: FIRAuthCredential
+)
+actual typealias GoogleResult = GIDSignInResult
+
+actual class FBAuth(
+    val auth: FIRAuth
+) {
+    private var _user: MutableStateFlow<FBUser?> = MutableStateFlow(null)
+
+    actual val user: CommonStateFlow<FBUser?>
+        get() = _user.toCommonStateFlow()
+
+    init {
+        auth.addAuthStateDidChangeListener { _, firUser ->
+            _user.value = firUser?.let { FBUser(it) }
+        }
+    }
+
+
+    actual fun signInWithCredential(
+        credential: FBAuthCredential,
+        failAction: () -> Unit,
+        successAction: () -> Unit
+    ) {
+        auth.signInWithCredential(credential = credential.credential) { _, error ->
+            if (error == null) {
+                successAction()
+            } else {
+                failAction()
+            }
+        }
+    }
+    actual fun linkWithCredential(
+        credential: FBAuthCredential,
+        failAction: (msg: String) -> Unit,
+        successAction: () -> Unit
+    ) {
+        auth.currentUser!!.linkWithCredential(credential.credential){ result, error ->
+            if (error == null) {
+                successAction()
+            } else {
+                failAction(error?.localizedDescription() ?: "unknown Error")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    actual fun signOut() {
+        val error: CPointer<ObjCObjectVar<NSError?>>? = null
+        auth.signOut(error).let { result ->
+            if (!result) {
+
+            }
+        }
+    }
+
+    actual fun delete() {
+        auth.currentUser!!.deleteWithCompletion { error ->
+            if (error == null) {
+                signOut()
+            } else {
+
+            }
+        }
+    }
+
+    actual fun requestAnonymousLogin() {
+        auth.signInAnonymouslyWithCompletion { _, error ->
+            if (error == null) {
+                updateDisplayName(NameHelper.makeName())
+            }
+        }
+    }
+
+    actual fun updateDisplayName(name: String) {
+        val cr = auth.currentUser?.profileChangeRequest()
+        cr?.displayName = name
+        cr?.commitChangesWithCompletion {
+
+        }
+    }
+
+}
+
+actual class FBUser(
+    val user: FIRUser
+) {
+    actual val uid: String
+        get() = user.uid()
+    actual val displayName: String?
+        get() = user.displayName()
+    actual val photoUrl: String
+        get() = user.photoURL().toString()
+    actual val isAnonymous: Boolean
+        get() = user.isAnonymous()
+}

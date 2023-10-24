@@ -628,6 +628,12 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - AppAuth (1.6.2):
+    - AppAuth/Core (= 1.6.2)
+    - AppAuth/ExternalUserAgent (= 1.6.2)
+  - AppAuth/Core (1.6.2)
+  - AppAuth/ExternalUserAgent (1.6.2):
+    - AppAuth/Core
   - BoringSSL-GRPC (0.0.24):
     - BoringSSL-GRPC/Implementation (= 0.0.24)
     - BoringSSL-GRPC/Interface (= 0.0.24)
@@ -726,6 +732,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleSignIn (7.0.0):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (< 3.0, >= 1.3)
+    - GTMSessionFetcher/Core (< 4.0, >= 1.1)
+  - GoogleSignInSwiftSupport (7.0.0):
+    - GoogleSignIn (~> 7.0)
   - GoogleUtilities/AppDelegateSwizzler (7.11.5):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -806,6 +818,9 @@ PODS:
     - BoringSSL-GRPC (= 0.0.24)
     - gRPC-Core/Interface (= 1.49.1)
   - gRPC-Core/Interface (1.49.1)
+  - GTMAppAuth (2.0.0):
+    - AppAuth/Core (~> 1.6)
+    - GTMSessionFetcher/Core (< 4.0, >= 1.5)
   - GTMSessionFetcher/Core (3.1.1)
   - leveldb-library (1.22.2)
   - nanopb (2.30909.0):
@@ -818,17 +833,22 @@ PODS:
     - PromisesObjC (= 2.3.1)
   - RecaptchaInterop (100.0.0)
   - shared (1.0):
-    - FirebaseFirestore
+    - FirebaseAuth (= 10.16)
+    - FirebaseCore (= 10.16)
+    - FirebaseFirestore (= 10.16)
+    - GoogleSignIn (= 7.0)
 
 DEPENDENCIES:
   - FirebaseAnalytics
-  - FirebaseAuth
   - FirebaseCrashlytics
+  - GoogleSignIn
+  - GoogleSignInSwiftSupport
   - shared (from `../shared`)
 
 SPEC REPOS:
   trunk:
     - abseil
+    - AppAuth
     - BoringSSL-GRPC
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -842,9 +862,12 @@ SPEC REPOS:
     - FirebaseSessions
     - GoogleAppMeasurement
     - GoogleDataTransport
+    - GoogleSignIn
+    - GoogleSignInSwiftSupport
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
+    - GTMAppAuth
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
@@ -858,6 +881,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: 926fb7a82dc6d2b8e1f2ed7f3a718bce691d1e46
+  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   FirebaseAnalytics: 7b41efc4eba5ff841cc94d5994b5f339361258f4
   FirebaseAppCheckInterop: 82358cff9f33452dd44259e88eea5e562500b1cb
@@ -871,17 +895,20 @@ SPEC CHECKSUMS:
   FirebaseSessions: 96e7781e545929cde06dd91088ddbb0841391b43
   GoogleAppMeasurement: 079d7632810e9d9704a99932547ba1554acc4342
   GoogleDataTransport: 54dee9d48d14580407f8f5fbf2f496e92437a2f2
+  GoogleSignIn: b232380cf495a429b8095d3178a8d5855b42e842
+  GoogleSignInSwiftSupport: 6ca6e5a978faa4cd43451b6b9b38b96ab5db1734
   GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
   "gRPC-C++": 2df8cba576898bdacd29f0266d5236fa0e26ba6a
   gRPC-Core: a21a60aefc08c68c247b439a9ef97174b0c54f96
+  GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
   GTMSessionFetcher: e8647203b65cee28c5f73d0f473d096653945e72
   leveldb-library: f03246171cce0484482ec291f88b6d563699ee06
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  shared: 76a4a8ef27e2b25ae7d18bcb370bc8229f656bd5
+  shared: 4680ec7d88912d42b4222cc1bc54a123991c31ce
 
-PODFILE CHECKSUM: 1a513361cea03b0bc6655f92240b4cf4bcb5f3c3
+PODFILE CHECKSUM: 006d7d9a8593b4577295ef5673b84567f21a0d43
 
 COCOAPODS: 1.13.0

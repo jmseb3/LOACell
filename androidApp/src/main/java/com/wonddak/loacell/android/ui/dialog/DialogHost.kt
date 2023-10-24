@@ -1,9 +1,7 @@
 package com.wonddak.loacell.android.ui.dialog
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
@@ -23,7 +21,7 @@ fun DialogHost(
     content: @Composable () -> Unit
 ) {
     val dismiss = { dialogAction.hideDialog() }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box() {
         content()
         when (dialogStatus) {
             DialogStatus.NONE -> {}

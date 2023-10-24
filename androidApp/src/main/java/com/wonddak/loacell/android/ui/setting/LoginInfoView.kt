@@ -21,14 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.ProfileNameDialog
-import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.model.DialogStatus
 
@@ -36,8 +34,7 @@ import com.wonddak.loacell.model.DialogStatus
 fun LoginInfoView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val context = LocalContext.current
-    val loginHelper = LoginHelper(context)
+    val loginHelper = LoaCellApp.loginHelper
     val user by loaCellViewModel.user.collectAsState(null)
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val roomLists by loaCellViewModel.roomList.collectAsState()
@@ -56,7 +53,7 @@ fun LoginInfoView(
             ProfileNameDialog(
                 displayName,
                 success = {
-                    loginHelper.updateDisplayName(it)
+                    loginHelper.auth.updateDisplayName(it)
                     displayName = it
                     loaCellViewModel.hideDialog()
                 },
@@ -98,13 +95,11 @@ fun LoginInfoView(
                     modifier = buttonWeight,
                     onClick = {
                         if (userInfo.isAnonymous) {
-                            loginHelper.delete {
-                                loaCellViewModel.signOut()
-                            }
+                            loginHelper.delete()
                         } else {
                             loginHelper.signOut()
-                            loaCellViewModel.signOut()
                         }
+                        loaCellViewModel.signOut()
                     }
                 ) {
                     Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
@@ -114,29 +109,14 @@ fun LoginInfoView(
                     val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.StartIntentSenderForResult()
                     ) { result ->
-                        loginHelper.registerAnonymousToGoogle(
-                            result,
-                            failRegisterAction = { error ->
-                                loaCellViewModel.showSnackBar(
-                                    error.localizedMessage ?: "unknown Error"
-                                )
-                            }
-                        ) { error ->
-                            if (error is FirebaseAuthUserCollisionException) {
-                                loaCellViewModel.showSnackBar("이미 등록된 계정입니다.")
-                            } else {
-                                loaCellViewModel.showSnackBar(
-                                    error?.localizedMessage ?: "unknown Error"
-                                )
-                            }
+                        loginHelper.registerAnonymousToGoogle(result) {
+                            loaCellViewModel.showSnackBar(it)
                         }
                     }
                     OutlinedButton(
                         modifier = buttonWeight,
                         onClick = {
-                            loginHelper.requestGoogleLogin {
-                                anonymousToGoogleLoginLauncher.launch(it)
-                            }
+                            loginHelper.requestGoogleLogin(anonymousToGoogleLoginLauncher)
                         }
                     ) {
                         Text(text = "Google 계정 연동")
@@ -145,9 +125,7 @@ fun LoginInfoView(
                     OutlinedButton(
                         modifier = buttonWeight,
                         onClick = {
-                            loginHelper.delete {
-                                loaCellViewModel.signOut()
-                            }
+                            loginHelper.delete()
                         },
                         enabled = roomList.isEmpty()
                     ) {

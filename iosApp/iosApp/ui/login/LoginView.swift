@@ -13,7 +13,10 @@ import shared
 struct LoginView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-    let loginHelper = LoginHelper.instance
+    var loginHelper : LoginHelper {
+        self.viewModel.loginHelper
+    }
+    @State var loginIn = false
     
     var body: some View {
         ZStack {
@@ -25,31 +28,25 @@ struct LoginView: View {
                     Text(CommonString.Login().getInfo2().localized())
                 }
                 Spacer()
-                GoogleSignInButton(action: {
-                    loginHelper.requestGoogleLogin(
-                        commonAction : {
-                            viewModel.logginIn = true
-                        },
-                        successAction: {
-                            viewModel.syncStart(force: true)
-                            viewModel.logginIn = false
-                        },
-                        failAction: {
-                            viewModel.logginIn = false
-                        }
-                    )
-                })
-                Button(action: {loginHelper.requestAnonymousLogin()}) {
+                GoogleSignInButton() {
+                    loginHelper.requestGoogleLogin {
+                        viewModel.syncStart(force: true)
+                    }
+                }
+                Button(action: {loginHelper.auth.requestAnonymousLogin()}) {
                     Text(CommonString.Login().getAnonymous().localized())
+                }
+            }.onAppear {
+                loginHelper.loginIn.collect { value in
+                    self.loginIn = value as! Bool
                 }
             }
             VStack {
-                if (viewModel.logginIn) {
+                if (loginIn) {
                     LoadingView(info: CommonString.Login().getProgress().localized())
                 }
             }
         }
-        
     }
     
 }

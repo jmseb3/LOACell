@@ -25,7 +25,10 @@ kotlin {
             export(project(Modules.database))
             transitiveExport = true
         }
-        pod("FirebaseFirestore")
+        pod("FirebaseCore", Versions.Dependencies.iOS.Firebase.core)
+        pod("FirebaseFirestore", Versions.Dependencies.iOS.Firebase.firestore)
+        pod("FirebaseAuth", Versions.Dependencies.iOS.Firebase.auth)
+        pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
     }
     sourceSets {
         val commonMain by getting {
@@ -49,6 +52,8 @@ kotlin {
             dependencies {
                 implementation(platform(Dependencies.Android.Firebase.Bom))
                 implementation(Dependencies.Android.Firebase.Firestore)
+                implementation(Dependencies.Android.Firebase.Auth)
+                implementation(Dependencies.Android.Firebase.AuthGoogle)
                 implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
             }

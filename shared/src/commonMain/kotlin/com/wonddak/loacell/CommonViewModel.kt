@@ -230,6 +230,7 @@ open class CommonViewModel(
     }
 
     fun signOut() {
+        viewModelImpl.closeSetting()
         hideRoom()
         dataBase.clearAll()
     }

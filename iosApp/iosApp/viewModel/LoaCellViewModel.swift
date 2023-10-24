@@ -18,9 +18,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
     lazy var config :Config = Config()
+    lazy var loginHelper :LoginHelper = LoginHelper()
     private lazy var common : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, viewModelImpl: self)
     
-    @Published var logginIn :Bool = false
     @Published var roomList : [RoomInfo] = []
     @Published var user : User? = nil
     
@@ -60,8 +60,8 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     @Published var msg :String = ""
     
     init() {
-        Auth.auth().addStateDidChangeListener { auth, getUser in
-            self.user = auth.currentUser
+        loginHelper.auth.user.collect { user in
+            self.user = user?.user
         }
         common.syncData.collect { value in
             withAnimation {
@@ -130,10 +130,10 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     
     func showDialog(dialogStatus: DialogStatus) {
-        common.showDialog(dialogStatus: dialogStatus)
+        common.dialogAction.showDialog(dialogStatus: dialogStatus)
     }
     func hideDialog() {
-        common.hideDialog()
+        common.dialogAction.hideDialog()
     }
     
     func topBackAction() {

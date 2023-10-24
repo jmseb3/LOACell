@@ -4,8 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.MyIconButton
@@ -29,7 +32,6 @@ fun RoomView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val roomInfo = totalRoomInfo.roomInfo
     val tabState = totalRoomInfo.tabState
     val dialogStatus = totalRoomInfo.dialogState
 
@@ -40,22 +42,21 @@ fun RoomView(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        roomInfo?.let { roomInfo ->
-            AnimatedVisibility(tabState != RoomState.Setting) {
-                RoomTitleView(loaCellViewModel)
+        AnimatedVisibility(tabState != RoomState.Setting) {
+            RoomTitleView(loaCellViewModel)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        when (tabState) {
+            RoomState.Raid -> {
+                RaidView(loaCellViewModel)
             }
-            when (tabState) {
-                RoomState.Raid -> {
-                    RaidView(loaCellViewModel)
-                }
 
-                RoomState.User -> {
-                    UserView(loaCellViewModel)
-                }
+            RoomState.User -> {
+                UserView(loaCellViewModel)
+            }
 
-                RoomState.Setting -> {
-                    SettingRoomView(loaCellViewModel)
-                }
+            RoomState.Setting -> {
+                SettingRoomView(loaCellViewModel)
             }
         }
     }
