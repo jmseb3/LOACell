@@ -88,17 +88,19 @@ fun DialogHost(
             DialogStatus.RAID_ADD -> {
                 AddRaidSheet(
                     roomId = dialogAction.getRoomInfoUniqueId(),
-                    onDismissRequest = dismiss,
-                    successAction = dismiss
-                )
+                    onDismissRequest = dismiss
+                ) { fbRaidInfo ->
+                    dialogAction.dialogRaidAdd(fbRaidInfo)
+                }
             }
 
             DialogStatus.RAID_EDIT -> {
                 EditRaidSheet(
                     raidInfo = dialogAction.getRaidInfo(),
-                    onDismissRequest = dismiss,
-                    successAction = dismiss
-                )
+                    onDismissRequest = dismiss
+                ) {fbRaidInfo ->
+                    dialogAction.dialogRaidEdit(fbRaidInfo)
+                }
             }
 
             DialogStatus.RAID_FILTER -> {

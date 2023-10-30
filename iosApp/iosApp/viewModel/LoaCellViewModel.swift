@@ -19,7 +19,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     lazy var db : AppDataBase = AppDataBase(driverFactory: DriverFactory())
     lazy var config :Config = Config()
     lazy var loginHelper :LoginHelper = LoginHelper()
-    private lazy var common : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, viewModelImpl: self)
+    private lazy var common : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, loginHelper: loginHelper, viewModelImpl: self)
     
     @Published var roomList : [RoomInfo] = []
     @Published var user : User? = nil
@@ -165,5 +165,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     func updateCharacter(roomId:String,userInfo:shared.UserInfo) {
         common.updateCharacter(roomId: roomId, userInfo: userInfo)
+    }
+    
+    func getDialogAction() -> DialogAction {
+        return common.dialogAction
     }
 }

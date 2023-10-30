@@ -10,12 +10,17 @@ import SwiftUI
 import shared
 
 struct DialogHost<Content: View>: View {
-    @EnvironmentObject var viewModel: LoaCellViewModel
+    private let dialogStatus : DialogStatus
+    private let dialogAction :DialogAction
     private let content: () -> Content
     
     public init(
+        dialogStatus: DialogStatus,
+        dialogAction : DialogAction,
         @ViewBuilder content: @escaping () -> Content
     ) {
+        self.dialogStatus = dialogStatus
+        self.dialogAction = dialogAction
         self.content = content
     }
     
@@ -24,7 +29,7 @@ struct DialogHost<Content: View>: View {
     }
     
     func dismiss() {
-        viewModel.hideDialog()
+        dialogAction.hideDialog()
     }
     
     var body: some View {
@@ -37,7 +42,7 @@ struct DialogHost<Content: View>: View {
                         content()
                     }
                 }
-                if viewModel.dialogStatus != DialogStatus.none {
+                if dialogStatus != DialogStatus.none {
                     ZStack {
                         Color(.black)
                             .opacity(0.5)
@@ -45,59 +50,68 @@ struct DialogHost<Content: View>: View {
                                 dismiss()
                             }
                             .ignoresSafeArea()
-                        if viewModel.dialogStatus == DialogStatus.characterEdit {
-                            EditCharacterDialog(
-                                characterList: viewModel.characterList,
-                                representativeCharacter: viewModel.userInfo?.representativeCharacter ?? "",
-                                leftAction: {
-                                    dismiss()
-                                },
-                                rightAction: {name in
-                                    CommonUserHelper()
-                                        .updateRepresentativeCharacter(
-                                            roomId: viewModel.roomId,
-                                            name: viewModel.userInfo!.name,
-                                            representativeCharacter: name
-                                        )
-                                    dismiss()
-                                })
-                            .modifier(dialog)
-                        } else if (viewModel.dialogStatus == DialogStatus.characterDelete) {
-                            if viewModel.userInfo != nil {
-                                let name = viewModel.userInfo!.name
-                                DeleteCharacterDialog(name: name) {
-                                    CommonUserHelper().delete(
-                                        roomId: viewModel.roomId,
-                                        name: name
-                                    ) { error in
-                                        viewModel.showSnackBar(msg: error)
-                                    } successAction: {
-                                        viewModel.clearFocusItem()
-                                        dismiss()
-                                    }
-                                } dismiss: {
-                                    dismiss()
-                                }                            
-                                .modifier(dialog)
-
-                            }
-                        } else if viewModel.dialogStatus == DialogStatus.userAdd {
+                        switch(dialogStatus){
+                        case DialogStatus.roomAction:
+                            EmptyView()
+                        case DialogStatus.roomAdd:
+                            EmptyView()
+                        case DialogStatus.roomEnter:
+                            EmptyView()
+                        case DialogStatus.roomEnterError:
+                            EmptyView()
+                        case DialogStatus.roomExit:
+                            EmptyView()
+                        case DialogStatus.roomEdit:
+                            EmptyView()
+                        case DialogStatus.userAdd:
                             AddUserSheet(
-                                roomId : viewModel.roomId
+                                roomId : dialogAction.getRoomInfoUniqueId()
                             ) {
                                 dismiss()
                             }
-
-                        } else if viewModel.dialogStatus == DialogStatus.raidAdd {
+                        case DialogStatus.raidAdd:
                             AddRaidSheet(
-                                roomId : viewModel.roomId
-                            ) {
-                                dismiss()
+                                roomId : dialogAction.getRoomInfoUniqueId()
+                            ) { fbRaidInfo in
+                                dialogAction.dialogRaidAdd(fbRaidInfo : fbRaidInfo)
                             }
+                        case DialogStatus.raidEdit:
+                            EmptyView()
+                        case DialogStatus.raidFilter:
+                            EmptyView()
+                        case DialogStatus.raidDelete:
+                            EmptyView()
+                        case DialogStatus.raidUserAdd:
+                            EmptyView()
+                        case DialogStatus.raidUserDelete:
+                            EmptyView()
+                        case DialogStatus.characterEdit:
+                            EditCharacterDialog(
+                                userInfo: dialogAction.getUserInfo(),
+                                characterList: dialogAction.getCharacterList(),
+                                dismiss: dismiss
+                            ) { name in
+                                dialogAction.dialogEditName(name: name)
+                            }
+                            .modifier(dialog)
+                        case DialogStatus.characterDelete:
+                            DeleteCharacterDialog(
+                                name: dialogAction.getUserInfo().name,
+                                dismiss: dismiss
+                            ) {
+                                dialogAction.dialogCharacterDelete()
+                            }
+                            .modifier(dialog)
+                            
+                        case DialogStatus.settingEditName:
+                            EmptyView()
+                        case DialogStatus.shareSheet:
+                            EmptyView()
+                        default:
+                            EmptyView()
                         }
-                        
                     }
-                    .animation(.spring, value: viewModel.dialogStatus)
+                    .animation(.spring, value: dialogStatus)
                 }
             }
         }
@@ -112,7 +126,7 @@ struct Dialog: ViewModifier {
             .padding()
             .frame(width: gemetryReader.size.width * 0.8 , alignment: .center)
             .position(x: gemetryReader.size.width / 2, y : gemetryReader.size.height / 2)
-
+        
     }
 }
 

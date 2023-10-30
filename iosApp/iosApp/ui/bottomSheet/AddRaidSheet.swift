@@ -25,24 +25,15 @@ struct AddRaidSheet: View {
         hour: 0,
         minute: 0
     )
-    let successAction :() -> Void
+    let addAction : (FBRaidInfo) -> Void
     var body: some View {
         RaidSheetBase(
             fbRaidInfo: $fbRaidInfo,
             title: "레이드 정보 추가",
-            buttonText: "추가",
-            onDismiss: {}) {
-                //
-                print("JWH",fbRaidInfo)
-                CommonRaidHelper().add(
-                    roomId: roomId,
-                    fbRaidInfo: fbRaidInfo
-                ) { error in
-                    print(error)
-                } successAction: {
-                    successAction()
-                }
-            }
+            buttonText: "추가"
+        ) {
+            addAction(fbRaidInfo)
+        }
     }
 }
 
@@ -50,7 +41,6 @@ private struct RaidSheetBase: View {
     @Binding var fbRaidInfo :FBRaidInfo
     let title :String
     let buttonText :String
-    let onDismiss :() -> Void
     let buttonAction :() -> Void
     
     @State private var titleText : String = ""

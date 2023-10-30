@@ -12,7 +12,10 @@ struct ContentView: View {
                 LoginView()
             } else {
                 VStack {
-                    DialogHost() {
+                    DialogHost(
+                        dialogStatus: viewModel.dialogStatus,
+                        dialogAction: viewModel.getDialogAction()
+                    ) {
                         SnackBarHost(bottomSpace: bottomHeight) {
                             TopAppBar()
                             Divider()

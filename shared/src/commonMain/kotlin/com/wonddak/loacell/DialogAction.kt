@@ -3,6 +3,7 @@ package com.wonddak.loacell
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.store.FBRaidInfo
 import com.wonddak.loacell.store.FBRoomInfo
 
 interface DialogAction {
@@ -28,6 +29,9 @@ interface DialogAction {
     fun dialogRoomEdit(title: String, description: String, password: String)
 
     // raid
+
+    fun dialogRaidAdd(fbRaidInfo: FBRaidInfo)
+    fun dialogRaidEdit(fbRaidInfo: FBRaidInfo)
     fun dialogRaidDelete()
 
     // user

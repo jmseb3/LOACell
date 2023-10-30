@@ -10,22 +10,26 @@ import SwiftUI
 import shared
 
 struct EditCharacterDialog: View {
-    
+    @State private var now :String = ""
+
+    let userInfo : shared.UserInfo
     let characterList : [Character]
-    let representativeCharacter : String
-    @State var now :String = ""
-    var leftAction : () -> Void
-    var rightAction :(_ name:String) -> Void
+    var dismiss : () -> Void
+    var success :(_ name:String) -> Void
+    
+    private var representativeCharacter : String {
+        userInfo.representativeCharacter
+    }
     
     var body: some View {
         BaseDialog(
             title: "대표 캐릭터 변경",
             rightText: "변경",
             leftAction: {
-                self.leftAction()
+                self.dismiss()
             },
             rightAction: {
-                self.rightAction(now)
+                self.success(now)
             },
             rightEnabled: Binding {
                 now != representativeCharacter
@@ -55,8 +59,8 @@ struct EditCharacterDialog: View {
 struct DeleteCharacterDialog :  View {
     
     let name: String
-    let confirm: () -> Void
     let dismiss: () -> Void
+    let confirm: () -> Void
     
     var body: some View {
         DeleteDialog(

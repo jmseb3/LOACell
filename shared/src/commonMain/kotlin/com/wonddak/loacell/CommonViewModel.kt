@@ -12,6 +12,7 @@ import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.CommonUserHelper
+import com.wonddak.loacell.store.FBRaidInfo
 import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
 import com.wonddak.sharedapi.firebase.model.FBDataItem
@@ -391,6 +392,28 @@ open class CommonViewModel(
                     viewModelImpl.showSnackBar("변경에 실패했습니다(${it.errorMsg}")
                 }
             )
+        }
+
+        override fun dialogRaidAdd(fbRaidInfo: FBRaidInfo) {
+            CommonRaidHelper.add(
+                roomId.value,
+                fbRaidInfo,
+                { e -> }
+            ) {
+                hideDialog()
+            }
+        }
+
+        override fun dialogRaidEdit(fbRaidInfo: FBRaidInfo) {
+            val raidInfo = getRaidInfo()
+            CommonRaidHelper.update(
+                raidInfo.roomId,
+                raidInfo.raidId,
+                fbRaidInfo,
+                { e -> }
+            ) {
+                hideDialog()
+            }
         }
 
         override fun dialogRaidDelete() {

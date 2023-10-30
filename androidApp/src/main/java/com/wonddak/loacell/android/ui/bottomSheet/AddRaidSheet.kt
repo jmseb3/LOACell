@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import Const
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -37,7 +36,6 @@ import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
-import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.FBRaidInfo
 import java.lang.Integer.min
 import java.lang.Math.max
@@ -45,7 +43,7 @@ import java.time.LocalTime
 
 @Composable
 fun AddRaidSheet(
-    roomId: String, onDismissRequest: () -> Unit, successAction: () -> Unit
+    roomId: String, onDismissRequest: () -> Unit, addAction: (fbRaidInfo: FBRaidInfo) -> Unit
 ) {
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
@@ -62,20 +60,21 @@ fun AddRaidSheet(
         )
     }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo, title = "레이드 정보 추가", buttonText = "추가", update = {
+        fbRaidInfo = fbRaidInfo,
+        title = "레이드 정보 추가",
+        buttonText = "추가",
+        update = {
             fbRaidInfo = it
-            Log.i("JWH", fbRaidInfo.toString())
-        }, onDismissRequest = onDismissRequest
+        },
+        onDismissRequest = onDismissRequest
     ) {
-        CommonRaidHelper.add(
-            roomId, fbRaidInfo, { e -> }, successAction
-        )
+        addAction(fbRaidInfo)
     }
 }
 
 @Composable
 fun EditRaidSheet(
-    raidInfo: RaidInfo, onDismissRequest: () -> Unit, successAction: () -> Unit
+    raidInfo: RaidInfo, onDismissRequest: () -> Unit, editAction: (fbRaidInfo: FBRaidInfo) -> Unit
 ) {
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
@@ -95,15 +94,15 @@ fun EditRaidSheet(
         )
     }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo, title = "레이드 정보 수정", buttonText = "수정", update = {
+        fbRaidInfo = fbRaidInfo,
+        title = "레이드 정보 수정",
+        buttonText = "수정",
+        update = {
             fbRaidInfo = it
-            Log.i("JWH", fbRaidInfo.toString())
-        }, onDismissRequest = onDismissRequest
+        },
+        onDismissRequest = onDismissRequest
     ) {
-        println(fbRaidInfo.toString())
-        CommonRaidHelper.update(
-            raidInfo.roomId, raidInfo.raidId, fbRaidInfo, { e -> }, successAction
-        )
+        editAction(fbRaidInfo)
     }
 }
 
@@ -237,7 +236,7 @@ fun RaidSheetBase(
                                             abEnd = 1
                                         }
                                     }
-                                    update(fbRaidInfo.updateGate(abStart,abEnd))
+                                    update(fbRaidInfo.updateGate(abStart, abEnd))
                                 })
                         }
                     }
