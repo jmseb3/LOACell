@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct RaidPartyView: View {
-    let characterList :[shared.Character?]
+    let characterList : [shared.Character?]
     var openAction : (_ index:Int) -> Void
     var deleteAction : (_ index:Int) -> Void
     
@@ -18,41 +18,38 @@ struct RaidPartyView: View {
     
     var body: some View {
         VStack {
-            ScrollView {
-                LazyVStack {
-//                    ForEach(Array(zip(characterList.indices, characterList)), id: \.0) { index, item in
-//                        VStack {
-//                            if index == 4 {
-//                                Divider()
-//                            }
-//                            
-//                            if item == nil {
-//                                HStack{
-//                                    Text("캐릭터를 추가해 주세요")
-//                                    IconButton(resource: \.add) {
-//                                        openAction(index)
-//                                    }
-//                                }
-//                            } else {
-//                                HStack{
-//                                    VStack{
-//                                        Text(item!.name)
-//                                        HStack{
-//                                            Text(item!.className)
-//                                            Text(item!.level)
-//                                        }
-//                                    }
-//                                    IconButton(resource: \.delete) {
-//                                        deleteAction(index)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
+            LazyVStack {
+                ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
+                    VStack {
+                        if idx == 4 {
+                            Divider()
+                        }
+                        HStack{
+                            if item == nil {
+                                Text("캐릭터를 추가해 주세요")
+                                IconButton(resource: \.add) {
+                                    openAction(idx)
+                                }
+                            } else {
+                                VStack{
+                                    Text(item!.name)
+                                    HStack{
+                                        Text(item!.className)
+                                        Text(item!.level)
+                                    }
+                                }
+                                IconButton(resource: \.delete_) {
+                                    deleteAction(idx)
+                                }
+                            }
+                            
+                        }
+                    }
+                    
                 }
-                .cornerRadius(20)
-                .border(.black)
             }
+            .cornerRadius(20)
+            .border(.black)
         }
     }
 }

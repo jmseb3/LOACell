@@ -76,7 +76,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         common.totalRoomInfo.collect { value in
             withAnimation {
-                self.totalRoomInfo = value!
+                self.totalRoomInfo = value!  
             }
         }
         common.showLoading.collect { value in
@@ -87,6 +87,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         common.msg.collect { value in
             self.msg = value! as String
         }
+        
     }
     
     func closeSetting() {
@@ -123,6 +124,10 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     func showSnackBar(msg: String) {
         self.sc.showSnackBar(message: msg,label: "확인")
+    }
+    
+    func showSnackBar(msg: String,label:String,action:@escaping () -> Void) {
+        self.sc.showSnackBar(message: msg,label: label, perfromAction : action)
     }
     
     func resetSnackBar() {
@@ -170,4 +175,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func getDialogAction() -> DialogAction {
         return common.dialogAction
     }
+    
+    func updatePartyFocusIndex(index:Int) {
+        common.updatePartyFocusIndex(index: Int32(index))
+    }
+
 }

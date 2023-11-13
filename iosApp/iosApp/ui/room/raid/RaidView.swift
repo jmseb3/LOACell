@@ -12,12 +12,15 @@ import shared
 struct RaidView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-
+    var totalRoomInfo : TotalRoomInfo {
+        viewModel.totalRoomInfo
+    }
+    
     var body: some View {
         ZStack {
             ScrollView {
                 LazyVStack(){
-                    ForEach(viewModel.totalRoomInfo.raidInfoList,id: \.raidId) { raidInfo in
+                    ForEach(totalRoomInfo.raidInfoList,id: \.raidId) { raidInfo in
                         RaidItemRow(raidInfo: raidInfo) {
                             viewModel.setNowRaidInfo(raidId: raidInfo.raidId)
                         }
@@ -25,13 +28,7 @@ struct RaidView: View {
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             }
             if viewModel.focusRaidId.isNotEmpty {
-                let characterList  = viewModel.totalRoomInfo.partyCharacterList as! [shared.Character?]
-                RaidPartyView(characterList: characterList) { index in
-                    
-                } deleteAction: { index in
-                    
-                }
-
+                RaidFocusView()
             }
         }
     }

@@ -10,7 +10,7 @@ import SwiftUI
 import shared
 
 struct RaidItemRow: View {
-    let raidInfo :RaidInfo
+    let raidInfo : RaidInfo
     var onClick :() -> Void
     
     private let size : CGFloat = 100
@@ -39,6 +39,9 @@ struct RaidItemRow: View {
                 Spacer()
             }
             .background(rShape.fill(Color.gray).opacity(0.75))
+            .onTapGesture {
+                onClick()
+            }
             .frame(maxWidth: .infinity)
             IconButton(resource: raidInfo.isFinish ? \.task_finish_done : \.task_finish_not) {
                 CommonRaidHelper().updateFinish(

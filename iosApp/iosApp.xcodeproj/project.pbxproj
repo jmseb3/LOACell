@@ -19,6 +19,7 @@
 		07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7D2AD90CAC0081E5FE /* UserView.swift */; };
 		07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7F2AD90CC80081E5FE /* UserFocusView.swift */; };
 		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
+		075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075377E92B0210F7003872EF /* RaidFocusView.swift */; };
 		0768B75B2ADF69BC00122AA2 /* AddRaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */; };
 		0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */; };
 		07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD32ADCC894009358D8 /* UserDialog.swift */; };
@@ -52,6 +53,7 @@
 		07420B7D2AD90CAC0081E5FE /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		07420B7F2AD90CC80081E5FE /* UserFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFocusView.swift; sourceTree = "<group>"; };
 		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
+		075377E92B0210F7003872EF /* RaidFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidFocusView.swift; sourceTree = "<group>"; };
 		0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidSheet.swift; sourceTree = "<group>"; };
 		0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthLimitTextField.swift; sourceTree = "<group>"; };
 		07773FD32ADCC894009358D8 /* UserDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDialog.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */,
 				0785E4EE2ADE69F00084E711 /* RaidView.swift */,
 				0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */,
+				075377E92B0210F7003872EF /* RaidFocusView.swift */,
 			);
 			path = raid;
 			sourceTree = "<group>";
@@ -402,6 +405,7 @@
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
+				075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */,
 				0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */,
 				0783E9ED2AE0D4750074D231 /* RaidPartyView.swift in Sources */,
 				0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */,
