@@ -37,6 +37,48 @@ struct AddRaidSheet: View {
     }
 }
 
+struct EditRaidSheet: View {
+    let raidInfo :RaidInfo
+    let editAction : (FBRaidInfo) -> Void
+    @State private var fbRaidInfo = FBRaidInfo(
+        title: "",
+        type: RaidType.valtan,
+        difficulty: Difficulty.normal,
+        startGateNumber: 1,
+        endGateNumber: 1,
+        isFinish: false,
+        party1: [String](repeating: "", count: 4),
+        party2: [String](repeating: "", count: 4),
+        day: Day.none,
+        hour: 0,
+        minute: 0
+    )
+    var body: some View {
+        RaidSheetBase(
+            fbRaidInfo: $fbRaidInfo,
+            title: "레이드 정보 수정",
+            buttonText: "수정"
+        ) {
+            editAction(fbRaidInfo)
+        }.onAppear {
+            print(raidInfo)
+            fbRaidInfo =  FBRaidInfo(
+                title: raidInfo.title,
+                type: raidInfo.type,
+                difficulty: raidInfo.Difficulty,
+                startGateNumber: Int32(raidInfo.startGateNumber),
+                endGateNumber: Int32(raidInfo.endGateNumber),
+                isFinish: raidInfo.isFinish,
+                party1: raidInfo.party1characterList,
+                party2: raidInfo.party2characterList,
+                day: raidInfo.day,
+                hour: raidInfo.hour,
+                minute: raidInfo.minute
+            )
+        }
+    }
+}
+
 private struct RaidSheetBase: View {
     @Binding var fbRaidInfo :FBRaidInfo
     let title :String
@@ -212,6 +254,9 @@ private struct RaidSheetBase: View {
                     self.showGateEdit = (value.type == RaidType.abrelshud) && (value.difficulty != Difficulty.hell)
                 }
             }
+            .onAppear {
+                titleText = fbRaidInfo.title
+            }
         }
     }
     
@@ -325,6 +370,7 @@ private struct DayButton :View {
             Text(day == Day.none ? "" : day.text)
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity,alignment: .center)
+                .padding(4)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.black, lineWidth: selected ? 1 : 0)

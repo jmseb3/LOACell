@@ -76,15 +76,25 @@ struct DialogHost<Content: View>: View {
                                 dialogAction.dialogRaidAdd(fbRaidInfo : fbRaidInfo)
                             }
                         case DialogStatus.raidEdit:
-                            EmptyView()
+                            EditRaidSheet(
+                                raidInfo : dialogAction.getRaidInfo()
+                            ) { fbRaidInfo in
+                                dialogAction.dialogRaidEdit(fbRaidInfo : fbRaidInfo)
+                            }
                         case DialogStatus.raidFilter:
                             EmptyView()
                         case DialogStatus.raidDelete:
-                            EmptyView()
+                            DeleteRaidDialog(dismiss: dismiss) {
+                                dialogAction.dialogRaidDelete()
+                            }
+                            .modifier(dialog)
                         case DialogStatus.raidUserAdd:
                             EmptyView()
                         case DialogStatus.raidUserDelete:
-                            EmptyView()
+                            DeleteRaidUserDialog(dismiss : dismiss) {
+                                dialogAction.dialogUserDelete()
+                            }
+                            .modifier(dialog)
                         case DialogStatus.characterEdit:
                             EditCharacterDialog(
                                 userInfo: dialogAction.getUserInfo(),

@@ -52,6 +52,20 @@ struct BottomAppBar: View {
                                 viewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
                             }.disabled(!viewModel.userInfo!.checkTimeOver())
                         }
+                    } else if(viewModel.raidInfo != nil) {
+                        HStack {
+                            IconButton(resource: \.room_setting) {
+                                viewModel.showDialog(dialogStatus: DialogStatus.raidEdit)
+                            }
+                            let info = viewModel.raidInfo!
+                            IconButton(resource: info.isFinish ? \.task_finish_done : \.task_finish_not) {
+                                CommonRaidHelper().updateFinish(
+                                    roomId: info.roomId,
+                                    raidId: info.raidId,
+                                    isFinish: !info.isFinish
+                                )
+                            }
+                        }
                     }
                 }
             }
