@@ -32,6 +32,7 @@
 		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94532B0336FC00446087 /* RaidDialog.swift */; };
+		07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94552B035B9100446087 /* AddRaidUserSheet.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
 		07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61472AD7BE20004701DF /* ColorManager.swift */; };
@@ -67,6 +68,7 @@
 		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07FD94532B0336FC00446087 /* RaidDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidDialog.swift; sourceTree = "<group>"; };
+		07FD94552B035B9100446087 /* AddRaidUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidUserSheet.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
 		07FE61472AD7BE20004701DF /* ColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorManager.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				07773FDB2ADD10FC009358D8 /* BaseSheet.swift */,
 				0785E4EA2ADE14950084E711 /* AddUserSheet.swift */,
 				0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */,
+				07FD94552B035B9100446087 /* AddRaidUserSheet.swift */,
 			);
 			path = bottomSheet;
 			sourceTree = "<group>";
@@ -418,6 +421,7 @@
 				0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
+				07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */,
 				07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */,
 				07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */,
 				0768B75B2ADF69BC00122AA2 /* AddRaidSheet.swift in Sources */,

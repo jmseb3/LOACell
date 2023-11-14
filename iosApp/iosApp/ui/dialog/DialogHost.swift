@@ -89,7 +89,13 @@ struct DialogHost<Content: View>: View {
                             }
                             .modifier(dialog)
                         case DialogStatus.raidUserAdd:
-                            EmptyView()
+                            let userAndCharacterMap = dialogAction.getUserAndCharacterMap()
+                            if !userAndCharacterMap.isEmpty {
+                                AddRaidUserSheet(userAndCharacterMap: userAndCharacterMap) { character in
+                                    dialogAction.dialogUserAdd(character : character)
+                                }
+                            }
+
                         case DialogStatus.raidUserDelete:
                             DeleteRaidUserDialog(dismiss : dismiss) {
                                 dialogAction.dialogUserDelete()
