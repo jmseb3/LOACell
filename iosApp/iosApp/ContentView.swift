@@ -16,7 +16,7 @@ struct ContentView: View {
                         dialogStatus: viewModel.dialogStatus,
                         dialogAction: viewModel.getDialogAction()
                     ) {
-                        SnackBarHost(bottomSpace: bottomHeight) {
+                        SnackBarHost(bottomSpace: bottomHeight + 20) {
                             TopAppBar()
                             Divider()
                             MainContent()

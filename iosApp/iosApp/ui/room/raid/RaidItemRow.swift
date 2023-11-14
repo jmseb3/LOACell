@@ -50,9 +50,10 @@ struct RaidItemRow: View {
                     isFinish: !raidInfo.isFinish
                 )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 5))
         }
+        .frame(maxWidth: .infinity)
         .frame(height: size)
     }
 }

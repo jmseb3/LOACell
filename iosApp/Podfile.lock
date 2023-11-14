@@ -658,7 +658,7 @@ PODS:
     - GoogleUtilities/Network (~> 7.11)
     - "GoogleUtilities/NSData+zlib (~> 7.11)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseAppCheckInterop (10.16.0)
+  - FirebaseAppCheckInterop (10.17.0)
   - FirebaseAuth (10.16.0):
     - FirebaseAppCheckInterop (~> 10.0)
     - FirebaseCore (~> 10.0)
@@ -884,7 +884,7 @@ SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   FirebaseAnalytics: 7b41efc4eba5ff841cc94d5994b5f339361258f4
-  FirebaseAppCheckInterop: 82358cff9f33452dd44259e88eea5e562500b1cb
+  FirebaseAppCheckInterop: 534d033d8d0436b4ab066a8205013d271e18a2b9
   FirebaseAuth: 3862d87d4d58deff08f705d471896a2f66e8bbf0
   FirebaseCore: 65a801af84cca84361ef9eac3fd868656968a53b
   FirebaseCoreExtension: 2dbc745b337eb99d2026a7a309ae037bd873f45e
