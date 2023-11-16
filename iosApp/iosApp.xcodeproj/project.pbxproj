@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		070625312B05AAED00B9E95F /* RoomDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625302B05AAED00B9E95F /* RoomDialog.swift */; };
+		070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625322B05B2F000B9E95F /* RoomSheet.swift */; };
+		070625352B05B50400B9E95F /* CheckButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625342B05B50400B9E95F /* CheckButton.swift */; };
 		070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070CF3242AC148440099F2D6 /* LoadingView.swift */; };
 		0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */ = {isa = PBXBuildFile; productRef = 0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */; };
 		07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07125FB22A5658B6003F8FCC /* LoginView.swift */; };
@@ -46,6 +49,9 @@
 /* Begin PBXFileReference section */
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		070625302B05AAED00B9E95F /* RoomDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomDialog.swift; sourceTree = "<group>"; };
+		070625322B05B2F000B9E95F /* RoomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSheet.swift; sourceTree = "<group>"; };
+		070625342B05B50400B9E95F /* CheckButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckButton.swift; sourceTree = "<group>"; };
 		070CF3242AC148440099F2D6 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		07125FB22A5658B6003F8FCC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		07125FB72A565CC7003F8FCC /* LoaCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaCellViewModel.swift; sourceTree = "<group>"; };
@@ -107,9 +113,10 @@
 		070CF3232AC148340099F2D6 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				070CF3242AC148440099F2D6 /* LoadingView.swift */,
 				07420B7A2AD901C30081E5FE /* IconButton.swift */,
 				0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */,
+				070CF3242AC148440099F2D6 /* LoadingView.swift */,
+				070625342B05B50400B9E95F /* CheckButton.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -157,10 +164,10 @@
 		07420B792AD8E1FB0081E5FE /* raid */ = {
 			isa = PBXGroup;
 			children = (
-				0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */,
-				0785E4EE2ADE69F00084E711 /* RaidView.swift */,
-				0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */,
 				075377E92B0210F7003872EF /* RaidFocusView.swift */,
+				0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */,
+				0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */,
+				0785E4EE2ADE69F00084E711 /* RaidView.swift */,
 			);
 			path = raid;
 			sourceTree = "<group>";
@@ -180,8 +187,9 @@
 			children = (
 				07773FD72ADCD650009358D8 /* BaseDialog.swift */,
 				07773FD52ADCD142009358D8 /* DialogHost.swift */,
-				07773FD32ADCC894009358D8 /* UserDialog.swift */,
 				07FD94532B0336FC00446087 /* RaidDialog.swift */,
+				07773FD32ADCC894009358D8 /* UserDialog.swift */,
+				070625302B05AAED00B9E95F /* RoomDialog.swift */,
 			);
 			path = dialog;
 			sourceTree = "<group>";
@@ -193,6 +201,7 @@
 				0785E4EA2ADE14950084E711 /* AddUserSheet.swift */,
 				0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */,
 				07FD94552B035B9100446087 /* AddRaidUserSheet.swift */,
+				070625322B05B2F000B9E95F /* RoomSheet.swift */,
 			);
 			path = bottomSheet;
 			sourceTree = "<group>";
@@ -200,9 +209,9 @@
 		07DE600A2A57B2E400A122B2 /* home */ = {
 			isa = PBXGroup;
 			children = (
+				07FE61452AD7BA35004701DF /* BottomAppBar.swift */,
 				07DE600B2A57B2F300A122B2 /* MainContent.swift */,
 				07FE61432AD781DC004701DF /* TopAppBar.swift */,
-				07FE61452AD7BA35004701DF /* BottomAppBar.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -403,12 +412,15 @@
 				07179F432ACD530D003A415E /* RoomListView.swift in Sources */,
 				0785E4EB2ADE14950084E711 /* AddUserSheet.swift in Sources */,
 				07420B7B2AD901C30081E5FE /* IconButton.swift in Sources */,
+				070625312B05AAED00B9E95F /* RoomDialog.swift in Sources */,
 				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
+				070625352B05B50400B9E95F /* CheckButton.swift in Sources */,
 				07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */,
 				07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */,
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
+				070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
 				075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */,

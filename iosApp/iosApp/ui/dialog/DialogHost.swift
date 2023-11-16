@@ -52,9 +52,13 @@ struct DialogHost<Content: View>: View {
                             .ignoresSafeArea()
                         switch(dialogStatus){
                         case DialogStatus.roomAction:
-                            EmptyView()
+                            RoomActionDialog(dismiss: dismiss) { status in
+                                dialogAction.dialogRoomAction(status: status)
+                            }
                         case DialogStatus.roomAdd:
-                            EmptyView()
+                            AddRoomSheet(dismiss: dismiss) { title, description, password in
+                                dialogAction.dialogRoomAdd(title: title, description: description, password: password)
+                            }
                         case DialogStatus.roomEnter:
                             EmptyView()
                         case DialogStatus.roomEnterError:
@@ -62,7 +66,10 @@ struct DialogHost<Content: View>: View {
                         case DialogStatus.roomExit:
                             EmptyView()
                         case DialogStatus.roomEdit:
-                            EmptyView()
+                            let info = dialogAction.getRoomInfo()
+                           EditRoomSheet(dismiss: dismiss, title: info.title, desctiption: info.description_, password: info.enterPassword) { title, description, password in
+                               dialogAction.dialogRoomEdit(title: title, description: description, password: password)
+                           }
                         case DialogStatus.userAdd:
                             AddUserSheet(
                                 roomId : dialogAction.getRoomInfoUniqueId()

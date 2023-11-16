@@ -342,23 +342,6 @@ private struct RadioButton :View {
     }
 }
 
-private struct CheckButton :View {
-    let isOn :Bool
-    let text :String
-    let action :() -> Void
-    var body: some View {
-        Button(action: action){
-            HStack {
-                Image(systemName: isOn ? "checkmark.square" : "square")
-                    .foregroundColor(isOn ? .blue :.gray)
-                Text(text)
-                    .foregroundColor(.black)
-                Spacer()
-            }
-        }.frame(maxWidth: .infinity)
-    }
-}
-
 private struct DayButton :View {
     let day : Day
     let selected :Bool

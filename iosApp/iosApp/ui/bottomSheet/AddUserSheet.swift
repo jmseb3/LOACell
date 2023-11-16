@@ -11,14 +11,14 @@ import shared
 
 struct AddUserSheet: View {
     let roomId :String
-    @State private var searchCharacterName : String = "test" {
+    @State private var searchCharacterName : String = "" {
         didSet {
             if searchCharacterName.count > 12 && oldValue.count <= 12 {
                 searchCharacterName = oldValue
             }
         }
     }
-    @State private var user :String = "test"{
+    @State private var user :String = ""{
         didSet {
             if searchCharacterName.count > 5 && oldValue.count <= 5 {
                 searchCharacterName = oldValue

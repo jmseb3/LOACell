@@ -8,6 +8,29 @@
 
 import SwiftUI
 
+
+struct BaseDialogNoButton<Content: View>: View {
+    var title :String? = nil
+    let content: () -> Content
+    
+    var body: some View {
+        VStack(alignment : .center) {
+            if title != nil {
+                Text(title!)
+                    .font(.title3)
+                Divider()
+            }
+            Spacer().frame(height: 20)
+            content()
+        }
+        .padding()
+        .frame(alignment: .center)
+        .background(.white)
+        .cornerRadius(20)
+        .shadow(radius: 20)
+    }
+}
+
 struct BaseDialog<Content: View>: View {
     var title :String? = nil
     
@@ -22,38 +45,29 @@ struct BaseDialog<Content: View>: View {
     let content: () -> Content
     
     var body: some View {
-        VStack(alignment : .center) {
-            if title != nil {
-                Text(title!)
-                    .font(.title3)
-                Divider()
-            }
-            Spacer().frame(height: 20)
-            content()
-            Spacer().frame(height: 20)
-            HStack {
-                Spacer()
-                Button(action: {
-                    leftAction()
-                }, label: {
-                    Text(leftText)
-                        .foregroundColor(.black)
-                })
-                Spacer().frame(width: 20)
-                Button(action: {
-                    rightAction()
-                }, label: {
-                    Text(rightText)
-                        .foregroundColor(rightEnabled ? .black : .gray)
-                })
-                .disabled(!rightEnabled)
+        BaseDialogNoButton(title: title) {
+            VStack {
+                content()
+                Spacer().frame(height: 20)
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        leftAction()
+                    }, label: {
+                        Text(leftText)
+                            .foregroundColor(.black)
+                    })
+                    Spacer().frame(width: 20)
+                    Button(action: {
+                        rightAction()
+                    }, label: {
+                        Text(rightText)
+                            .foregroundColor(rightEnabled ? .black : .gray)
+                    })
+                    .disabled(!rightEnabled)
+                }
             }
         }
-        .padding()
-        .frame(alignment: .center)
-        .background(.white)
-        .cornerRadius(20)
-        .shadow(radius: 20)
     }
 }
 
