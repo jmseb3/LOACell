@@ -7,9 +7,11 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,44 +34,53 @@ import com.wonddak.loacell.android.noRippleClickable
 
 @Composable
 fun ShareSheet(
-    roomInfo: RoomInfo,
     onDismissRequest: () -> Unit,
+    roomInfo: RoomInfo,
 ) {
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
     val uniqueId: String = roomInfo.uniqueId
 
     BaseSheet(
         title = "공유하기",
         useCloseIcon = true,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = {
+            onDismissRequest()
+            println("@@@ Shared")
+        }
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal =  10.dp, vertical = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 10.dp, vertical = 20.dp),
         ) {
-            Image(
+            Row(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        copyToClipBoard(context,uniqueId)
-                    },
-                painter = painterResource(id = SharedRes.images.ic_share_link.drawableResId),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Image(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .noRippleClickable {
-                        shareToKakao(context,roomInfo)
-                    },
-                painter = painterResource(id = SharedRes.images.ic_share_kakaotalk.drawableResId),
-                contentDescription = null
-            )
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            copyToClipBoard(context, uniqueId)
+                        },
+                    painter = painterResource(id = SharedRes.images.ic_share_link.drawableResId),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Image(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .noRippleClickable {
+                            shareToKakao(context, roomInfo)
+                        },
+                    painter = painterResource(id = SharedRes.images.ic_share_kakaotalk.drawableResId),
+                    contentDescription = null
+                )
+            }
+            Spacer(modifier = Modifier.height(25.dp))
         }
     }
 }
@@ -88,7 +99,7 @@ internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
         text = """LoaCell의 ${roomInfo.title}방으로 초대합니다.""".trimIndent(),
         link = Link(
             androidExecutionParams = mapOf("uniqueId" to uniqueId),
-            iosExecutionParams  = mapOf("uniqueId" to uniqueId)
+            iosExecutionParams = mapOf("uniqueId" to uniqueId)
         )
     )
     if (ShareClient.instance.isKakaoTalkSharingAvailable(context)) {
@@ -96,8 +107,7 @@ internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
         ShareClient.instance.shareDefault(context, defaultText) { sharingResult, error ->
             if (error != null) {
                 Log.e(TAG, "카카오톡 공유 실패", error)
-            }
-            else if (sharingResult != null) {
+            } else if (sharingResult != null) {
                 Log.d(TAG, "카카오톡 공유 성공 ${sharingResult.intent}")
                 context.startActivity(sharingResult.intent)
 
@@ -117,7 +127,7 @@ internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
         // ex) Chrome, 삼성 인터넷, FireFox, 웨일 등
         try {
             KakaoCustomTabsClient.openWithDefault(context, sharerUrl)
-        } catch(e: UnsupportedOperationException) {
+        } catch (e: UnsupportedOperationException) {
             // CustomTabsServiceConnection 지원 브라우저가 없을 때 예외처리
         }
 

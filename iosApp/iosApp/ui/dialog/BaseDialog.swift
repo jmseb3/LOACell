@@ -34,10 +34,10 @@ struct BaseDialogNoButton<Content: View>: View {
 struct BaseDialog<Content: View>: View {
     var title :String? = nil
     
-    var leftText :String = "취소"
+    var leftText :String? = "취소"
     var rightText :String = "확인"
     
-    var leftAction : () -> Void
+    var leftAction : () -> Void = {}
     var rightAction :() -> Void
     
     @Binding var rightEnabled : Bool
@@ -51,13 +51,15 @@ struct BaseDialog<Content: View>: View {
                 Spacer().frame(height: 20)
                 HStack {
                     Spacer()
-                    Button(action: {
-                        leftAction()
-                    }, label: {
-                        Text(leftText)
-                            .foregroundColor(.black)
-                    })
-                    Spacer().frame(width: 20)
+                    if leftText != nil {
+                        Button(action: {
+                            leftAction()
+                        }, label: {
+                            Text(leftText!)
+                                .foregroundColor(.black)
+                        })
+                        Spacer().frame(width: 20)
+                    }
                     Button(action: {
                         rightAction()
                     }, label: {

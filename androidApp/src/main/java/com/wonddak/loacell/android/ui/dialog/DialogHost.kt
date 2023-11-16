@@ -98,7 +98,7 @@ fun DialogHost(
                 EditRaidSheet(
                     raidInfo = dialogAction.getRaidInfo(),
                     onDismissRequest = dismiss
-                ) {fbRaidInfo ->
+                ) { fbRaidInfo ->
                     dialogAction.dialogRaidEdit(fbRaidInfo)
                 }
             }
@@ -164,10 +164,12 @@ fun DialogHost(
                     dialogAction.dialogEditName(it)
                 }
             }
+
             DialogStatus.SHARE_SHEET -> {
-                ShareSheet(roomInfo = dialogAction.getRoomInfo()) {
-                    dismiss
-                }
+                ShareSheet(
+                    roomInfo = dialogAction.getRoomInfo(),
+                    onDismissRequest = dismiss
+                )
             }
         }
     }

@@ -55,6 +55,7 @@ struct DialogHost<Content: View>: View {
                             RoomActionDialog(dismiss: dismiss) { status in
                                 dialogAction.dialogRoomAction(status: status)
                             }
+                            .modifier(dialog)
                         case DialogStatus.roomAdd:
                             AddRoomSheet(dismiss: dismiss) { title, description, password in
                                 dialogAction.dialogRoomAdd(title: title, description: description, password: password)
@@ -62,9 +63,15 @@ struct DialogHost<Content: View>: View {
                         case DialogStatus.roomEnter:
                             EmptyView()
                         case DialogStatus.roomEnterError:
-                            EmptyView()
+                            RoomEnterErrorDialog {
+                                dialogAction.dialogRoomEnterError()
+                            }
+                            .modifier(dialog)
                         case DialogStatus.roomExit:
-                            EmptyView()
+                            RoomExitDialog(dismiss: dismiss) {
+                                dialogAction.dialogRoomExit()
+                            }
+                            .modifier(dialog)
                         case DialogStatus.roomEdit:
                             let info = dialogAction.getRoomInfo()
                            EditRoomSheet(dismiss: dismiss, title: info.title, desctiption: info.description_, password: info.enterPassword) { title, description, password in
