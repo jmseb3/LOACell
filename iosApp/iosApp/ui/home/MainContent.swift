@@ -17,22 +17,21 @@ struct MainContent: View {
             VStack {
                 if viewModel.showSetting {
                     //설정화면
-                    Spacer()
+                    SettingView()
                 } else {
                     if viewModel.roomId.isEmpty {
                         //방리스트
-                        VStack {
                             RoomListView(roomList: viewModel.roomList) { roomId in
                                 viewModel.showRoom(roomId: roomId)
                             }
-                            Spacer()
-                        }
+                        
                     } else {
                         // 방정보
                         RoomView()
-                        Spacer()
                     }
                 }
+                Spacer()
+
             }
             VStack {
                 if(viewModel.syncData) {

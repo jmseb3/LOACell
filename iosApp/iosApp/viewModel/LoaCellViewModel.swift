@@ -26,6 +26,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     @Published var roomId : String = ""
     @Published var totalRoomInfo : TotalRoomInfo = TotalRoomInfo.companion.getInit()
+    @Published var showSplash :Bool = true
     var roomInfo :RoomInfo? {
         totalRoomInfo.roomInfo
     }
@@ -62,6 +63,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     init() {
         loginHelper.auth.user.collect { user in
             self.user = user?.user
+            self.showSplash = false
         }
         common.syncData.collect { value in
             withAnimation {

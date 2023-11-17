@@ -89,6 +89,9 @@ struct RoomEnterDialog :View {
     @State private var password : String = ""
     @State private var enterPassword :String = ""
     
+    var enabled : Bool {
+        password.isEmpty ? roomId.count == 20 : false
+    }
     var body: some View {
         BaseDialog(
             title: password.isEmpty ? "입장하기" : "비밀번호 입력",
@@ -130,7 +133,7 @@ struct RoomEnterDialog :View {
                     }
                 }
             },
-            rightEnabled: .constant(true)
+            rightEnabled: .constant(enabled)
         ) {
             VStack {
                 LengthLimitTextField(maxLength: 20, placeHolder: "방 ID를 입력해주세요.", text: $roomId)

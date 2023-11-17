@@ -33,7 +33,10 @@
 		0785E4EB2ADE14950084E711 /* AddUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EA2ADE14950084E711 /* AddUserSheet.swift */; };
 		0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */; };
 		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
+		078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B02B06F51100661943 /* LoginInfoView.swift */; };
+		078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B22B06F6A800661943 /* SectionCardView.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
+		07EA9A8C2B0728E800F9FC25 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA9A8B2B0728E800F9FC25 /* SettingView.swift */; };
 		07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94532B0336FC00446087 /* RaidDialog.swift */; };
 		07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94552B035B9100446087 /* AddRaidUserSheet.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
@@ -72,7 +75,10 @@
 		0785E4EA2ADE14950084E711 /* AddUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserSheet.swift; sourceTree = "<group>"; };
 		0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidItemRow.swift; sourceTree = "<group>"; };
 		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
+		078A12B02B06F51100661943 /* LoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
+		078A12B22B06F6A800661943 /* SectionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCardView.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
+		07EA9A8B2B0728E800F9FC25 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		07FD94532B0336FC00446087 /* RaidDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidDialog.swift; sourceTree = "<group>"; };
 		07FD94552B035B9100446087 /* AddRaidUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidUserSheet.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
@@ -113,10 +119,11 @@
 		070CF3232AC148340099F2D6 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				070625342B05B50400B9E95F /* CheckButton.swift */,
 				07420B7A2AD901C30081E5FE /* IconButton.swift */,
 				0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */,
 				070CF3242AC148440099F2D6 /* LoadingView.swift */,
-				070625342B05B50400B9E95F /* CheckButton.swift */,
+				078A12B22B06F6A800661943 /* SectionCardView.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -124,6 +131,7 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				078A12AF2B06F4FF00661943 /* setting */,
 				07773FDA2ADD10EE009358D8 /* bottomSheet */,
 				070CF3232AC148340099F2D6 /* common */,
 				07773FD02ADCC734009358D8 /* dialog */,
@@ -204,6 +212,15 @@
 				070625322B05B2F000B9E95F /* RoomSheet.swift */,
 			);
 			path = bottomSheet;
+			sourceTree = "<group>";
+		};
+		078A12AF2B06F4FF00661943 /* setting */ = {
+			isa = PBXGroup;
+			children = (
+				078A12B02B06F51100661943 /* LoginInfoView.swift */,
+				07EA9A8B2B0728E800F9FC25 /* SettingView.swift */,
+			);
+			path = setting;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -414,6 +431,7 @@
 				07420B7B2AD901C30081E5FE /* IconButton.swift in Sources */,
 				070625312B05AAED00B9E95F /* RoomDialog.swift in Sources */,
 				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
+				078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */,
 				070625352B05B50400B9E95F /* CheckButton.swift in Sources */,
 				07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
@@ -433,10 +451,12 @@
 				0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
+				078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */,
 				07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */,
 				07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */,
 				07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */,
 				0768B75B2ADF69BC00122AA2 /* AddRaidSheet.swift in Sources */,
+				07EA9A8C2B0728E800F9FC25 /* SettingView.swift in Sources */,
 				07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
@@ -569,7 +589,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = MYFH54RH8Y;
 				ENABLE_PREVIEWS = YES;
@@ -585,7 +604,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -608,7 +626,6 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = MYFH54RH8Y;
 				ENABLE_PREVIEWS = YES;
@@ -624,7 +641,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

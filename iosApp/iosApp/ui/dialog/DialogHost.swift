@@ -61,7 +61,12 @@ struct DialogHost<Content: View>: View {
                                 dialogAction.dialogRoomAdd(title: title, description: description, password: password)
                             }
                         case DialogStatus.roomEnter:
-                            EmptyView()
+                            RoomEnterDialog(
+                                nowEnterRoomList: dialogAction.getRoomListToUniqueId(),
+                                dismiss: dismiss) { roomId, roomInfo in
+                                    dialogAction.dialogRoomEnter(roomId: roomId, roomInfo: roomInfo)
+                                }
+                                .modifier(dialog)
                         case DialogStatus.roomEnterError:
                             RoomEnterErrorDialog {
                                 dialogAction.dialogRoomEnterError()
@@ -74,9 +79,9 @@ struct DialogHost<Content: View>: View {
                             .modifier(dialog)
                         case DialogStatus.roomEdit:
                             let info = dialogAction.getRoomInfo()
-                           EditRoomSheet(dismiss: dismiss, title: info.title, desctiption: info.description_, password: info.enterPassword) { title, description, password in
-                               dialogAction.dialogRoomEdit(title: title, description: description, password: password)
-                           }
+                            EditRoomSheet(dismiss: dismiss, title: info.title, desctiption: info.description_, password: info.enterPassword) { title, description, password in
+                                dialogAction.dialogRoomEdit(title: title, description: description, password: password)
+                            }
                         case DialogStatus.userAdd:
                             AddUserSheet(
                                 roomId : dialogAction.getRoomInfoUniqueId()
@@ -109,7 +114,6 @@ struct DialogHost<Content: View>: View {
                                     dialogAction.dialogUserAdd(character : character)
                                 }
                             }
-
                         case DialogStatus.raidUserDelete:
                             DeleteRaidUserDialog(dismiss : dismiss) {
                                 dialogAction.dialogUserDelete()
