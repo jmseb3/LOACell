@@ -2,6 +2,7 @@ package com.wonddak.loacell.auth
 
 import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
+import cocoapods.FirebaseAuth.FIRAuthDataResult
 import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
 import cocoapods.FirebaseCore.FIRApp
@@ -53,7 +54,7 @@ actual class LoginHelper {
         }
     }
     fun requestGoogleLogin(
-        successAction: () -> Unit
+        successAction: (result:FBAuthResult) -> Unit
     ) {
         val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
             .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
@@ -73,13 +74,13 @@ actual class LoginHelper {
 
     actual fun registerGoogleToken(
         result : GoogleResult,
-        successAction: () -> Unit,
+        successAction: (result:FBAuthResult) -> Unit,
     ) {
         _loginIn.value = true
         registerToken(result,{}) { credential ->
             auth.signInWithCredential(credential, { _loginIn.value = false }) {
-                _loginIn.value = true
-                successAction()
+                _loginIn.value = false
+                successAction(it)
             }
         }
     }
@@ -117,11 +118,11 @@ actual class FBAuth(
     actual fun signInWithCredential(
         credential: FBAuthCredential,
         failAction: () -> Unit,
-        successAction: () -> Unit
+        successAction: (result:FBAuthResult) -> Unit
     ) {
-        auth.signInWithCredential(credential = credential.credential) { _, error ->
+        auth.signInWithCredential(credential = credential.credential) {  FIRAuthDataResult, error ->
             if (error == null) {
-                successAction()
+                successAction(FBAuthResult(FIRAuthDataResult!!))
             } else {
                 failAction()
             }
@@ -190,4 +191,13 @@ actual class FBUser(
         get() = user.photoURL().toString()
     actual val isAnonymous: Boolean
         get() = user.isAnonymous()
+}
+
+
+actual class FBAuthResult(
+    val result : FIRAuthDataResult
+) {
+    actual val user: FBUser?
+        get() = result.user?.let { FBUser(it) }
+
 }

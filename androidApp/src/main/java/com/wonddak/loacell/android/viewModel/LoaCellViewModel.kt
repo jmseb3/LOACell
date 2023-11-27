@@ -145,6 +145,7 @@ class LoaCellViewModel(
 
     val syncData get() = common.syncData
     fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid!!, force)
+    fun syncStartForce(uuid:String) = common.syncStart(uuid,true)
     fun signOut() = common.signOut()
     fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
     fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)

@@ -16,7 +16,7 @@ expect class LoginHelper {
 
     fun registerGoogleToken(
         result : GoogleResult,
-        successAction: () -> Unit,
+        successAction: (FBAuthResult) -> Unit,
     )
     fun registerAnonymousToGoogle(
         result: GoogleResult,
@@ -32,7 +32,7 @@ expect class FBAuth {
     fun signInWithCredential(
         credential: FBAuthCredential,
         failAction: () -> Unit,
-        successAction: () -> Unit
+        successAction: (result:FBAuthResult) -> Unit
     )
 
     fun linkWithCredential(
@@ -53,4 +53,9 @@ expect class FBUser {
     val displayName :String?
     val photoUrl : String
     val isAnonymous :Boolean
+}
+
+expect class FBAuthResult {
+
+    val user :FBUser?
 }

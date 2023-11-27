@@ -43,7 +43,7 @@ fun LoginInfoView(
             ) {
                 Column {
                     Text(
-                        text = (user?.displayName ?: "") .ifEmpty{ "이름 없음" },
+                        text = (userInfo.displayName ?: "").ifEmpty{ "이름 없음" },
                         fontWeight = FontWeight.Bold
                     )
                     Text(

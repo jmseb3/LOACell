@@ -52,7 +52,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
     ) { result ->
         loaCellViewModel.apply {
             loginHelper.registerGoogleToken(result) {
-                syncStart(force = true)
+                syncStartForce(it.user!!.uid)
             }
         }
     }

@@ -8,7 +8,6 @@ import com.russhwolf.settings.coroutines.FlowSettings
 expect class Config {
     val settings: FlowSettings
 }
-
 suspend fun Config.clear() = this.settings.clear()
 fun Config.getLongFlow(key: String, defaultValue: Long = 0L) =
     this.settings.getLongFlow(key, defaultValue)
@@ -19,7 +18,7 @@ suspend fun Config.getLong(key: String, defaultValue: Long = 0L) =
 suspend fun Config.putLong(key: String, value: Long) = this.settings.putLong(key, value)
 
 fun Config.getFloatFlow(key: String, defaultValue: Float = 0f) =
-    this.settings.getFloatFlow(key, defaultValue)
+    this.settings.getFloatFlow(key, defaultValue).toCommonFlow()
 
 suspend fun Config.getFloat(key: String, defaultValue: Float = 0f) =
     this.settings.getFloat(key, defaultValue)

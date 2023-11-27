@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
@@ -113,7 +114,7 @@ actual class LoginHelper(
 
     actual fun registerGoogleToken(
         result: GoogleResult,
-        successAction: () -> Unit,
+        successAction: (result:FBAuthResult) -> Unit,
     ) {
         _loginIn.value = true
         registerToken(
@@ -121,8 +122,8 @@ actual class LoginHelper(
             {}
         ) { credential ->
             auth.signInWithCredential(credential, { _loginIn.value = false }) {
-                _loginIn.value = true
-                successAction()
+                _loginIn.value = false
+                successAction(it)
             }
         }
     }
@@ -162,11 +163,11 @@ actual class FBAuth(
     actual fun signInWithCredential(
         credential: FBAuthCredential,
         failAction: () -> Unit,
-        successAction: () -> Unit
+        successAction: (result:FBAuthResult) -> Unit
     ) {
         auth.signInWithCredential(credential.credential)
             .addOnSuccessListener {
-                successAction()
+                successAction(FBAuthResult(it))
             }
             .addOnFailureListener {
                 failAction()
@@ -233,4 +234,11 @@ actual class FBUser(
         get() = user.isAnonymous
     actual val photoUrl: String
         get() = user.photoUrl.toString()
+}
+
+actual class FBAuthResult(
+    val result : AuthResult
+) {
+    actual val user: FBUser?
+        get() = result.user?.let { FBUser(it) }
 }

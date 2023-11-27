@@ -10,7 +10,13 @@ import SwiftUI
 import shared
 
 struct SettingView: View {
+    @EnvironmentObject var viewModel: LoaCellViewModel
+
     @State private var showSlider :Bool = false
+    @Environment(\.openURL) private var openURL
+    private let config = Config()
+    @State private var defaultSpace = 0.0
+
     var body: some View {
         VStack {
             SectionCardView(title:"로그인 정보") {
@@ -24,17 +30,19 @@ struct SettingView: View {
                 clikced: $showSlider
             ) {
                 VStack{
-                    Text("hihi")
+                    Slider(value: $defaultSpace, in: 0...40, step: 1)
                 }
             }
             SectionText(title: "버그 제보 및 건의하기") {
                 if let link = URL(string: "https://discord.gg/acD6rQ9Tja") {
-                    UIApplication.shared.open(link)
+                    openURL(link)
                 }
             }
             SectionText(title: "앱 버전 : \(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
         }
         .padding(10)
+        .onAppear {
+        }
     }
 }
 

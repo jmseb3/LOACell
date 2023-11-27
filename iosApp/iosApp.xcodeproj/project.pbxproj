@@ -131,13 +131,13 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				078A12AF2B06F4FF00661943 /* setting */,
 				07773FDA2ADD10EE009358D8 /* bottomSheet */,
 				070CF3232AC148340099F2D6 /* common */,
 				07773FD02ADCC734009358D8 /* dialog */,
 				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
 				07179F412ACD52FD003A415E /* room */,
+				078A12AF2B06F4FF00661943 /* setting */,
 			);
 			path = ui;
 			sourceTree = "<group>";
