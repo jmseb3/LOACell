@@ -8,14 +8,21 @@
 
 import SwiftUI
 import shared
+import Combine
 
 struct SettingView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
-
+    
     @State private var showSlider :Bool = false
     @Environment(\.openURL) private var openURL
-    private let config = Config()
-    @State private var defaultSpace = 0.0
+    
+    private var defaultValue : Binding<CGFloat> {
+        Binding {
+            return viewModel.defaultSpace
+        } set: { value in
+            viewModel.setSheetSpace(space: value)
+        }
+    }
 
     var body: some View {
         VStack {
@@ -30,7 +37,22 @@ struct SettingView: View {
                 clikced: $showSlider
             ) {
                 VStack{
-                    Slider(value: $defaultSpace, in: 0...40, step: 1)
+                    Slider(value: defaultValue, in: 0...40, step: 1)
+                    HStack() {
+                        Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
+                        Spacer()
+                        Button(action: {
+                            viewModel.showDialog(dialogStatus: DialogStatus.testSheet)
+                        }, label: {
+                            Text("테스트")
+                                .foregroundColor(.black)
+                                .padding()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(.black, lineWidth: 1)
+                                )
+                        })
+                    }
                 }
             }
             SectionText(title: "버그 제보 및 건의하기") {
@@ -41,8 +63,6 @@ struct SettingView: View {
             SectionText(title: "앱 버전 : \(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
         }
         .padding(10)
-        .onAppear {
-        }
     }
 }
 

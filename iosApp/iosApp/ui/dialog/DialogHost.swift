@@ -138,9 +138,24 @@ struct DialogHost<Content: View>: View {
                             .modifier(dialog)
                             
                         case DialogStatus.settingEditName:
-                            EmptyView()
+                            ProfileNameDialog(
+                                nowName: dialogAction.getDisplayName(),
+                                dismiss: dismiss
+                            ) { name in
+                                dialogAction.dialogEditName(name: name)
+                            }
                         case DialogStatus.shareSheet:
                             EmptyView()
+                        case DialogStatus.testSheet:
+                            BaseSheet(
+                                title: "여백 테스트",
+                                text: "확인",
+                                action: dismiss,
+                                enabled: true,
+                                errorMsg: .constant("")
+                            ) {
+                                Text("테스트 문구")
+                            }
                         default:
                             EmptyView()
                         }

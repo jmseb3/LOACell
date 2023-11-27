@@ -35,6 +35,7 @@
 		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
 		078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B02B06F51100661943 /* LoginInfoView.swift */; };
 		078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B22B06F6A800661943 /* SectionCardView.swift */; };
+		07D2221B2B146D8D00E06766 /* SettingDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D2221A2B146D8D00E06766 /* SettingDialog.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07EA9A8C2B0728E800F9FC25 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA9A8B2B0728E800F9FC25 /* SettingView.swift */; };
 		07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94532B0336FC00446087 /* RaidDialog.swift */; };
@@ -77,6 +78,7 @@
 		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
 		078A12B02B06F51100661943 /* LoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
 		078A12B22B06F6A800661943 /* SectionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCardView.swift; sourceTree = "<group>"; };
+		07D2221A2B146D8D00E06766 /* SettingDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingDialog.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07EA9A8B2B0728E800F9FC25 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		07FD94532B0336FC00446087 /* RaidDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidDialog.swift; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				07FD94532B0336FC00446087 /* RaidDialog.swift */,
 				07773FD32ADCC894009358D8 /* UserDialog.swift */,
 				070625302B05AAED00B9E95F /* RoomDialog.swift */,
+				07D2221A2B146D8D00E06766 /* SettingDialog.swift */,
 			);
 			path = dialog;
 			sourceTree = "<group>";
@@ -437,6 +440,7 @@
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */,
 				07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */,
+				07D2221B2B146D8D00E06766 /* SettingDialog.swift in Sources */,
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
@@ -586,7 +590,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49D85A15BA0EC0178B386DAD /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -622,7 +626,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D433CF56FB8131925783EE38 /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;

@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-
+import shared
 
 struct BaseSheet<Content: View>: View {
     var title :String? = nil
@@ -20,6 +20,8 @@ struct BaseSheet<Content: View>: View {
         errorMsg = ""
     }
     let content: () -> Content
+    
+    @State private var space :CGFloat = 20.0
     
     var body: some View {
         VStack {
@@ -56,12 +58,18 @@ struct BaseSheet<Content: View>: View {
                         )
                 })
                 .disabled(!enabled)
+                Spacer()
+                    .frame(height: space)
             }
             .padding()
             .background(.white)
             .frame(alignment: .bottom)
             .cornerRadius(20, corners: [.topLeft,.topRight])
             .shadow(radius: 20)
+        }.onAppear {
+            Config().getFloatFlow(key: ConfigKeys().SheetSpace, defaultValue: 20.0).collect { value in
+                space = value as! CGFloat
+            }
         }
     }
 }

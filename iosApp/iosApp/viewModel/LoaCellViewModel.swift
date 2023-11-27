@@ -51,6 +51,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     var characterList : [Character] {
         totalRoomInfo.characterList
     }
+    @Published var defaultSpace : CGFloat = 20.0
     
     @Published var myRole : RoomRole = RoomRole.none
     
@@ -89,7 +90,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         common.msg.collect { value in
             self.msg = value! as String
         }
-        
+        common.sheetSpace.collect { value in
+            self.defaultSpace = value as! CGFloat
+        }
     }
     
     func closeSetting() {
@@ -187,5 +190,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
 
     func outOrSignOut() {
         common.outOrSignOut()
+    }
+    
+    func setSheetSpace(space:CGFloat) {
+        common.setSheetSpace(space: Float(space))
     }
 }
