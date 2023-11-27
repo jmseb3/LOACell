@@ -172,4 +172,8 @@ class LoaCellViewModel(
 
     fun outOrSignOut() = common.outOrSignOut()
 
+    val sheetSpace get() =  common.sheetSpace
+
+    fun setSheetSpace(space:Float) = common.setSheetSpace(space)
+
 }

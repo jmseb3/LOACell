@@ -21,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,17 +28,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.Config
-import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.BuildConfig
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.common.SectionCardView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.getFloatFlow
-import com.wonddak.loacell.putFloat
-import kotlinx.coroutines.launch
+import com.wonddak.loacell.model.DialogStatus
 
 @Composable
 fun SettingView(
@@ -49,10 +43,7 @@ fun SettingView(
         loaCellViewModel.showSetting = false
     }
     val context = LocalContext.current
-    val config = Config(context)
-
-    val defaultSpace by config.getFloatFlow(ConfigKeys.SheetSpace, 20f).collectAsState(20f)
-    val scope = rememberCoroutineScope()
+    val defaultSpace by loaCellViewModel.sheetSpace.collectAsState(initial = 20f)
 
     var showSlider by remember {
         mutableStateOf(false)
@@ -73,9 +64,7 @@ fun SettingView(
             Slider(
                 value = defaultSpace,
                 onValueChange = {
-                    scope.launch {
-                        config.putFloat(ConfigKeys.SheetSpace, it)
-                    }
+                    loaCellViewModel.setSheetSpace(it)
                 },
                 valueRange = 0f..40f,
                 steps = 39
@@ -85,23 +74,9 @@ fun SettingView(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-
-                var showTestSheet by remember {
-                    mutableStateOf(false)
-                }
                 Text(text = "하단 여백 크기 : $defaultSpace")
-                OutlinedButton(onClick = { showTestSheet = true }) {
+                OutlinedButton(onClick = { loaCellViewModel.showDialog(DialogStatus.TEST_SHEET) }) {
                     Text(text = "테스트")
-                }
-                if (showTestSheet) {
-                    BaseSheet(
-                        title = "여백 테스트",
-                        buttonText = "확인",
-                        onDismissRequest = { showTestSheet = false },
-                        buttonClickAction = { showTestSheet = false }
-                    ) {
-                        Text(text = "테스트 문구")
-                    }
                 }
             }
         }

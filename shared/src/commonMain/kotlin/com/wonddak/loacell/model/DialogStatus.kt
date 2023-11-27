@@ -18,7 +18,8 @@ enum class DialogStatus {
     CHARACTER_EDIT,
     CHARACTER_DELETE,
     SETTING_EDIT_NAME,
-    SHARE_SHEET
+    SHARE_SHEET,
+    TEST_SHEET
 //
 //    fun sheetType(): Set<DialogStatus> = setOf(
 //        ROOM_ADD,

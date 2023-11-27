@@ -301,8 +301,14 @@ open class CommonViewModel(
         signOut()
     }
 
-
     //DialogAction
+
+    val sheetSpace = config.getFloatFlow(ConfigKeys.SheetSpace,20f)
+    fun setSheetSpace(space:Float) {
+        viewModelScope.launch {
+            config.putFloat(ConfigKeys.SheetSpace,space)
+        }
+    }
 
     val dialogAction = object : DialogAction {
         override fun showDialog(dialogStatus: DialogStatus) {

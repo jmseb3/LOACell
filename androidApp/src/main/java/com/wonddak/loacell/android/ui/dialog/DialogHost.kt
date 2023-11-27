@@ -1,12 +1,14 @@
 package com.wonddak.loacell.android.ui.dialog
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
+import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
@@ -170,6 +172,16 @@ fun DialogHost(
                     roomInfo = dialogAction.getRoomInfo(),
                     onDismissRequest = dismiss
                 )
+            }
+            DialogStatus.TEST_SHEET -> {
+                BaseSheet(
+                    title = "여백 테스트",
+                    buttonText = "확인",
+                    onDismissRequest = dismiss,
+                    buttonClickAction = dismiss
+                ) {
+                    Text(text = "테스트 문구")
+                }
             }
         }
     }
