@@ -19,7 +19,16 @@ extension String {
     var isNotEmpty : Bool {
         return !self.isEmpty
     }
+    
+    func ifEmpty(defaultValue : () -> String) -> String {
+        if self != "" {
+            return self
+        } else {
+            return defaultValue()
+        }
+    }
 }
+
 
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {

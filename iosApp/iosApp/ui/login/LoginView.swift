@@ -29,9 +29,10 @@ struct LoginView: View {
                 }
                 Spacer()
                 GoogleSignInButton() {
-                    loginHelper.requestGoogleLogin {
-                        viewModel.syncStart(force: true)
-                    }
+                    loginHelper.requestGoogleLogin(successAction: { result in
+                        self.loginIn = false
+                        viewModel.syncStartForce(uuid: result.user!.uid)
+                    })
                 }
                 Button(action: {loginHelper.auth.requestAnonymousLogin()}) {
                     Text(CommonString.Login().getAnonymous().localized())

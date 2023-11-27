@@ -118,6 +118,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         common.syncStart(uid: userUid , force:force)
     }
+    func syncStartForce(uuid:String) {
+        common.syncStart(uid: uuid , force:true)
+    }
     
     
     func showRoomEnterError() {
@@ -182,4 +185,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         common.updatePartyFocusIndex(index: Int32(index))
     }
 
+    func outOrSignOut() {
+        common.outOrSignOut()
+    }
 }

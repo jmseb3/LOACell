@@ -19,7 +19,7 @@ struct SectionCardView<Content: View>: View {
             ZStack {
                 if let title = title {
                     Text(title)
-                        .frame(maxWidth: .infinity,alignment: .center)
+                        .frame(maxWidth: .infinity,alignment: .leading)
                         .font(.system(size: 20))
                 }
                 if let icon = iconSrc {
@@ -36,6 +36,7 @@ struct SectionCardView<Content: View>: View {
         }
         .frame(maxWidth: .infinity)
         .padding(10)
+        .background(ColorManager.WheelBorder)
         .cornerRadius(20)
         .overlay {
             RoundedRectangle(cornerRadius: 20)

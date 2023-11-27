@@ -84,6 +84,28 @@ actual class LoginHelper {
             }
         }
     }
+
+    fun requestAnonymousToGoogleLogin(
+        failAction: (msg: String) -> Unit
+    ) {
+        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
+            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
+            ?: return
+        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
+        val config = GIDConfiguration(clientID = clientID)
+        GIDSignIn.sharedInstance().configuration = config
+        GIDSignIn.sharedInstance()
+            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
+                if (result == null || error != null) {
+                    return@signInWithPresentingViewController
+                }
+
+                registerAnonymousToGoogle(result) {
+                    failAction(it)
+                }
+            }
+    }
+
     actual fun registerAnonymousToGoogle(
         result: GoogleResult,
         failAction: (msg: String) -> Unit
