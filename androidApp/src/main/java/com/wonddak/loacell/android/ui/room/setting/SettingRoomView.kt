@@ -108,7 +108,6 @@ fun SettingRoomView(
                 }
             )
         }
-
         if (showChangeAlert) {
             ChangeOwnerDialog(
                 owner = info.owner,
@@ -134,6 +133,7 @@ fun SettingRoomView(
                 }
             )
         }
+
         Column {
             SettingRoomInfo(loaCellViewModel, info)
             Divider()
@@ -269,11 +269,7 @@ fun UserUidItem(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (find != null) {
-            Text(text = find.getName())
-        } else {
-            Text(text = uid)
-        }
+        Text(text = find?.getName() ?: uid)
         Spacer(modifier = Modifier.weight(1f))
         if ((name != RoomRole.OWNER.toName)) {
             MyIconButton(imageResource = SharedRes.images.room_exit, size = 22.dp) {

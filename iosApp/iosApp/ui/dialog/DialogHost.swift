@@ -144,6 +144,7 @@ struct DialogHost<Content: View>: View {
                             ) { name in
                                 dialogAction.dialogEditName(name: name)
                             }
+                            .modifier(dialog)
                         case DialogStatus.shareSheet:
                             EmptyView()
                         case DialogStatus.testSheet:

@@ -334,6 +334,7 @@ open class CommonViewModel(
 
         override fun dialogRoomAdd(title: String, description: String, password: String) {
             user?.value?.uid?.let { owner ->
+                println("JWH _ make Room Owner : $owner")
                 CommonRoomHelper.makeInfo(
                     title, description, password, owner
                 ) { id ->
