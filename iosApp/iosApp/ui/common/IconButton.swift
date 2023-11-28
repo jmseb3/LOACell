@@ -12,7 +12,7 @@ import shared
 struct IconButton: View {
     let resource :KeyPath<SharedRes.images, shared.ImageResource>
     var enabled :Bool = true
-    let iconSize :CGFloat = 30
+    var iconSize :CGFloat = 30
     let action : () -> Void
     
     var body: some View {

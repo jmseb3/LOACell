@@ -14,7 +14,7 @@ struct RoomView: View {
     
     var showTitle :Bool {
         withAnimation {
-            return viewModel.focusRaidId.isEmpty && viewModel.focusUserName.isEmpty
+            return viewModel.focusRaidId.isEmpty && viewModel.focusUserName.isEmpty && viewModel.tabState != RoomState.setting
         }
     }
     var body: some View {
@@ -45,6 +45,8 @@ struct RoomView: View {
                 RaidView()
             } else if(viewModel.tabState == RoomState.user) {
                 UserView()
+            } else if (viewModel.tabState == RoomState.setting) {
+                SettingRoomView()
             }
         }
     }

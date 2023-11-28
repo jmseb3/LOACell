@@ -22,7 +22,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     private lazy var common : CommonViewModel = CommonViewModel(coroutineScope: nil, dataBase: db, config: config, loginHelper: loginHelper, viewModelImpl: self)
     
     @Published var roomList : [RoomInfo] = []
-    @Published var user : User? = nil
+    @Published var user : FBUser? = nil
     
     @Published var roomId : String = ""
     @Published var totalRoomInfo : TotalRoomInfo = TotalRoomInfo.companion.getInit()
@@ -53,7 +53,18 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     }
     @Published var defaultSpace : CGFloat = 20.0
     
-    @Published var myRole : RoomRole = RoomRole.none
+    var myRole : RoomRole {
+        totalRoomInfo.getMyRole(uid: user?.uid)
+    }
+    
+    var tempOfFBData : [FBDataItem] {
+        get {
+            common.tempOfFBData
+        }
+        set(value) {
+            common.tempOfFBData = value
+        }
+    }
     
     @Published var syncData : Bool = false
     @Published var showSetting :Bool = false
@@ -63,7 +74,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     init() {
         loginHelper.auth.user.collect { user in
-            self.user = user?.user
+            self.user = user
             self.showSplash = false
         }
         common.syncData.collect { value in
@@ -194,5 +205,13 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     func setSheetSpace(space:CGFloat) {
         common.setSheetSpace(space: Float(space))
+    }
+    
+    func deleteRoom(roomId:String) {
+        common.deleteRoom(roomId: roomId)
+    }
+    
+    func hideRoomInfo() {
+        common.hideRoom()
     }
 }

@@ -24,12 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.SectionCardView
-import com.wonddak.loacell.android.ui.dialog.ChangeOwnerDialog
 import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
@@ -37,6 +38,7 @@ import com.wonddak.loacell.ext.getAllUidList
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
+import com.wonddak.loacell.store.Error
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 
 @Composable
@@ -53,14 +55,6 @@ fun SettingRoomView(
     val roomInfo = totalRoomInfo.roomInfo
     val raidList = totalRoomInfo.raidInfoList
     val userList = totalRoomInfo.userInfoList
-
-    var showExitAlert by remember {
-        mutableStateOf(false)
-    }
-
-    var showChangeAlert by remember() {
-        mutableStateOf(false)
-    }
 
     roomInfo?.let { info ->
         //유저 정보랑 owner랑 같은 경우 바로 가져오기 가능
@@ -85,90 +79,16 @@ fun SettingRoomView(
                 loaCellViewModel.tempOfFBData = data
             }
         }
-        if (showExitAlert) {
-            ConfirmDialog(
-                title = "나가기",
-                bodyText = "정말 해당 방에서 나갈까요?\n 삭제된 데이터는 복구가 불가능합니다.",
-                confirmButtonText = "나가기",
-                confirm = {
-                    CommonRoomHelper.deleteRoom(
-                        info.uniqueId,
-                        successAction = {
-                            loaCellViewModel.deleteRoom(info.uniqueId)
-                            showExitAlert = false
-                        },
-                        failAction = {
-                            loaCellViewModel.showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
-                            showExitAlert = false
-                        }
-                    )
-                },
-                dismiss = {
-                    showExitAlert = false
-                }
-            )
-        }
-        if (showChangeAlert) {
-            ChangeOwnerDialog(
-                owner = info.owner,
-                fbDataList = result,
-                confirm = { uid ->
-                    CommonRoomHelper.changeOwner(
-                        roomId = info.uniqueId,
-                        preOwner = info.owner,
-                        newOwnerUid = uid,
-                        commonAction = {
-                            showChangeAlert = false
-                        },
-                        successAction = {
-                            loaCellViewModel.hideRoomInfo()
-                        },
-                        failAction =  {
-                            loaCellViewModel.showSnackBar("변경에 실패했습니다.${it.errorMsg}")
-                        }
-                    )
-                },
-                dismiss =  {
-                    showChangeAlert = false
-                }
-            )
-        }
-
         Column {
-            SettingRoomInfo(loaCellViewModel, info)
+            SettingRoomInfo(loaCellViewModel, info, raidList, userList)
             Divider()
-            if (fetch) {
-                SectionCardView("방 관리") {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        val otherMemberList = info.enterUser + info.editableUser
-                        TextButton(
-                            onClick = {
-                                if (raidList.isEmpty() && userList.isEmpty()) {
-                                    showExitAlert = true
-                                } else {
-                                    loaCellViewModel.showSnackBar("레이드 정보/유저 정보를 모두 삭제해주세요.")
-                                }
-                            },
-                            enabled = otherMemberList.isEmpty()
-                        ) {
-                            Text(text = "나가기")
-                        }
-                        TextButton(
-                            onClick = {
-                                showChangeAlert = true
-                            },
-                            enabled = otherMemberList.isNotEmpty()
-                        ) {
-                            Text(text = "소유자 위임")
-                        }
-                    }
-                }
+            UserUidList(
+                fetch,
+                info,
+                result,
+                ownerChangeSuccess = { loaCellViewModel.hideRoomInfo() }) { err ->
+                loaCellViewModel.showSnackBar(msg = "변경에 실패했습니다.${err.errorMsg}")
             }
-            Divider()
-            UserUidList(fetch, info, result)
         }
     }
 }
@@ -176,9 +96,15 @@ fun SettingRoomView(
 @Composable
 fun SettingRoomInfo(
     loaCellViewModel: LoaCellViewModel,
-    roomInfo: RoomInfo
+    roomInfo: RoomInfo,
+    raidList: List<RaidInfo>,
+    userList: List<UserInfo>
 ) {
     var showPassword by remember {
+        mutableStateOf(false)
+    }
+
+    var showExitAlert by remember {
         mutableStateOf(false)
     }
     SectionCardView(
@@ -188,6 +114,21 @@ fun SettingRoomInfo(
             loaCellViewModel.showDialog(DialogStatus.ROOM_EDIT)
         }
     ) {
+        val otherMemberList = roomInfo.enterUser + roomInfo.editableUser
+        TextButton(
+            onClick = {
+                if (raidList.isEmpty() && userList.isEmpty()) {
+                    showExitAlert = true
+                } else {
+                    loaCellViewModel.showSnackBar("레이드 정보/유저 정보를 모두 삭제해주세요.")
+                }
+            },
+            enabled = otherMemberList.isEmpty()
+        ) {
+            Text(text = "나가기")
+        }
+        Divider()
+
         Text(text = "제목")
         Text(text = roomInfo.title)
         Text(text = "설명")
@@ -208,6 +149,29 @@ fun SettingRoomInfo(
             }
         }
     }
+    if (showExitAlert) {
+        ConfirmDialog(
+            title = "나가기",
+            bodyText = "정말 해당 방에서 나갈까요?\n 삭제된 데이터는 복구가 불가능합니다.",
+            confirmButtonText = "나가기",
+            confirm = {
+                CommonRoomHelper.deleteRoom(
+                    roomInfo.uniqueId,
+                    successAction = {
+                        loaCellViewModel.deleteRoom(roomInfo.uniqueId)
+                        showExitAlert = false
+                    },
+                    failAction = {
+                        loaCellViewModel.showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
+                        showExitAlert = false
+                    }
+                )
+            },
+            dismiss = {
+                showExitAlert = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -215,7 +179,9 @@ fun SettingRoomInfo(
 fun UserUidList(
     fetch: Boolean,
     roomInfo: RoomInfo,
-    result: List<FBDataItem>
+    result: List<FBDataItem>,
+    ownerChangeSuccess: () -> Unit,
+    ownerChangeFail: (error: Error) -> Unit
 ) {
     if (!fetch) {
         LoadingView("유저 정보를 가져옵니다.", Color.White.copy(0.3f))
@@ -239,13 +205,22 @@ fun UserUidList(
                                 fontSize = 16.sp
                             )
                         }
-                        items(filter) { id ->
+                        items(filter) { uid ->
                             UserUidItem(
                                 roomId = roomInfo.uniqueId,
                                 name = name,
-                                uid = id,
+                                uid = uid,
                                 fbData = result
-                            )
+                            ) {
+                                CommonRoomHelper.changeOwner(
+                                    roomId = roomInfo.uniqueId,
+                                    preOwner = roomInfo.owner,
+                                    newOwnerUid = uid,
+                                    commonAction = {},
+                                    successAction = ownerChangeSuccess,
+                                    failAction = ownerChangeFail
+                                )
+                            }
                         }
                     }
                 }
@@ -260,9 +235,13 @@ fun UserUidItem(
     name: String,
     uid: String,
     fbData: List<FBDataItem>,
+    changeOwner: () -> Unit
 ) {
     val find = fbData.find { it.uid == uid }
     var showConfirm by remember {
+        mutableStateOf(false)
+    }
+    var showChangeAlert by remember() {
         mutableStateOf(false)
     }
     Row(
@@ -272,6 +251,13 @@ fun UserUidItem(
         Text(text = find?.getName() ?: uid)
         Spacer(modifier = Modifier.weight(1f))
         if ((name != RoomRole.OWNER.toName)) {
+            TextButton(
+                onClick = {
+                    showChangeAlert = true
+                },
+            ) {
+                Text(text = "위임")
+            }
             MyIconButton(imageResource = SharedRes.images.room_exit, size = 22.dp) {
                 showConfirm = true
             }
@@ -295,6 +281,19 @@ fun UserUidItem(
             },
             dismiss = {
                 showConfirm = false
+            }
+        )
+    }
+    if (showChangeAlert) {
+        ConfirmDialog(
+            title = "소유자 위임",
+            bodyText = "해당 유저에게 소유자권한을 위임 하시겠습니까?",
+            confirm = {
+                changeOwner()
+                showChangeAlert = false
+            },
+            dismiss = {
+                showChangeAlert = false
             }
         )
     }

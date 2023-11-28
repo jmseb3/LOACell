@@ -13,7 +13,7 @@ import FirebaseAuth
 struct LoginInfoView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-    var user : User?  {
+    var user : FBUser?  {
         viewModel.user
     }
     var loginHelper : LoginHelper {

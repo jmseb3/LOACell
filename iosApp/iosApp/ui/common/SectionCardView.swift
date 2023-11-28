@@ -23,10 +23,13 @@ struct SectionCardView<Content: View>: View {
                         .font(.system(size: 20))
                 }
                 if let icon = iconSrc {
-                    IconButton(resource: icon) {
+                    IconButton(
+                        resource: icon,
+                        iconSize: 20
+                    ) {
                         iconAction()
                     }
-                    .frame(alignment: .trailing)
+                    .frame(maxWidth: .infinity,alignment: .trailing)
                 }
             }
             if (title != nil || iconSrc != nil) {
