@@ -20,25 +20,10 @@ struct RoomView: View {
     var body: some View {
         VStack {
             if (showTitle) {
-                ZStack {
-                    VStack(alignment: .leading) {
-                        Text(viewModel.totalRoomInfo.roomInfo?.description_ ?? "")
-                        Text(viewModel.totalRoomInfo.roomInfo?.uniqueId ?? "")
-                        Divider()
-                    }.padding(EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3))
-                    
-                    VStack() {
-                        if(viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.none) {
-                            
-                        } else {
-                            IconButton(resource: \.room_exit) {
-                                
-                            }
-                        }
+                if let room = viewModel.roomInfo {
+                    RoomTitleView(roomInfo: room, role: viewModel.myRole) { status in
+                        viewModel.showDialog(dialogStatus: status)
                     }
-                    .frame(maxWidth: .infinity , alignment: .trailing)
-                    .padding()
-                    
                 }
             }
             if viewModel.tabState == RoomState.raid {
@@ -48,6 +33,38 @@ struct RoomView: View {
             } else if (viewModel.tabState == RoomState.setting) {
                 SettingRoomView()
             }
+        }
+    }
+}
+
+struct RoomTitleView : View {
+    @EnvironmentObject var viewModel: LoaCellViewModel
+    let roomInfo : RoomInfo
+    let role : RoomRole
+    let showDialog : (_ status : DialogStatus) -> Void
+    var body: some View {
+        ZStack {
+            VStack(alignment: .leading) {
+                Text(viewModel.totalRoomInfo.roomInfo?.description_ ?? "")
+                Text(viewModel.totalRoomInfo.roomInfo?.uniqueId ?? "")
+                    .onTapGesture {
+                        showDialog(DialogStatus.shareSheet)
+                    }
+                Divider()
+            }.padding(EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3))
+            
+            VStack() {
+                if(viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.none) {
+                    
+                } else {
+                    IconButton(resource: \.room_exit) {
+                        showDialog(DialogStatus.roomExit)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity , alignment: .trailing)
+            .padding()
+            
         }
     }
 }

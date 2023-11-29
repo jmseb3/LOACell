@@ -146,7 +146,7 @@ struct DialogHost<Content: View>: View {
                             }
                             .modifier(dialog)
                         case DialogStatus.shareSheet:
-                            EmptyView()
+                            ShareSheet(roomInfo: dialogAction.getRoomInfo())
                         case DialogStatus.testSheet:
                             BaseSheet(
                                 title: "여백 테스트",

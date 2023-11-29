@@ -11,10 +11,10 @@ import shared
 
 struct BaseSheet<Content: View>: View {
     var title :String? = nil
-    var text :String = "추가"
-    var action :() -> Void
+    var text :String? = "추가"
+    var action :() -> Void = {}
+    var enabled : Bool = true
     
-    var enabled : Bool
     @Binding var errorMsg :String
     func clearErrorMsg() {
         errorMsg = ""
@@ -45,19 +45,21 @@ struct BaseSheet<Content: View>: View {
                             }
                         }
                 }
-                Button(action: {
-                    action()
-                }, label: {
-                    Text(text)
-                        .foregroundColor(enabled ? .black : .gray)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(.black, lineWidth: 1)
-                        )
-                })
-                .disabled(!enabled)
+                if let buttonText = text {
+                    Button(action: {
+                        action()
+                    }, label: {
+                        Text(buttonText)
+                            .foregroundColor(enabled ? .black : .gray)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(.black, lineWidth: 1)
+                            )
+                    })
+                    .disabled(!enabled)
+                }
                 Spacer()
                     .frame(height: space)
             }

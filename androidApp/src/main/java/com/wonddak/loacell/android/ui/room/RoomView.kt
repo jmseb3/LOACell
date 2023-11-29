@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.MyIconButton
@@ -34,6 +35,12 @@ fun RoomView(
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val tabState = totalRoomInfo.tabState
     val dialogStatus = totalRoomInfo.dialogState
+    val roomInfo = totalRoomInfo.roomInfo
+    val focusUserName = totalRoomInfo.focusUserName
+    val focusRaidId = totalRoomInfo.focusRaidId
+
+    val role = loaCellViewModel.myRole
+
 
     BackHandler(dialogStatus != DialogStatus.RAID_ADD && dialogStatus != DialogStatus.USER_ADD) {
         loaCellViewModel.hideRoomInfo()
@@ -42,8 +49,12 @@ fun RoomView(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        AnimatedVisibility(tabState != RoomState.Setting) {
-            RoomTitleView(loaCellViewModel)
+        AnimatedVisibility(tabState != RoomState.Setting && focusRaidId.isEmpty() && focusUserName.isEmpty()) {
+            roomInfo?.let {
+                RoomTitleView(roomInfo,role) {
+                    loaCellViewModel.showDialog(it)
+                }
+            }
         }
         Spacer(modifier = Modifier.height(10.dp))
         when (tabState) {
@@ -64,55 +75,47 @@ fun RoomView(
 
 @Composable
 fun RoomTitleView(
-    loaCellViewModel: LoaCellViewModel,
+    roomInfo: RoomInfo,
+    role: RoomRole,
+    showDialog: (status: DialogStatus) -> Unit
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val roomInfo = totalRoomInfo.roomInfo
-    val focusUserName = totalRoomInfo.focusUserName
-    val focusRaidId = totalRoomInfo.focusRaidId
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.CenterStart)
+        ) {
+            Text(
+                text = roomInfo.description,
+                modifier = Modifier
+            )
+            Text(
+                text = roomInfo.uniqueId,
+                modifier = Modifier.noRippleClickable {
+                    showDialog(DialogStatus.SHARE_SHEET)
+                },
+            )
+            Divider()
+        }
 
-    val role = loaCellViewModel.myRole
+        when (role) {
+            RoomRole.OWNER -> {
 
-    roomInfo?.let {
-        AnimatedVisibility(focusRaidId.isEmpty() && focusUserName.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Column(
-                    modifier = Modifier.align(Alignment.CenterStart)
+            }
+
+            RoomRole.NONE -> {
+
+            }
+
+            else -> {
+                MyIconButton(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    imageResource = SharedRes.images.room_exit
                 ) {
-                    Text(
-                        text = roomInfo.description,
-                        modifier = Modifier
-                    )
-                    Text(
-                        text = roomInfo.uniqueId,
-                        modifier = Modifier.noRippleClickable {
-                            loaCellViewModel.showDialog(DialogStatus.SHARE_SHEET)
-                        },
-                    )
-                    Divider()
-                }
-
-                when (role) {
-                    RoomRole.OWNER -> {
-
-                    }
-
-                    RoomRole.NONE -> {
-
-                    }
-
-                    else -> {
-                        MyIconButton(
-                            modifier = Modifier.align(Alignment.CenterEnd),
-                            imageResource = SharedRes.images.room_exit
-                        ) {
-                            loaCellViewModel.showDialog(DialogStatus.ROOM_EXIT)
-                        }
-                    }
+                    showDialog(DialogStatus.ROOM_EXIT)
                 }
             }
         }
     }
+
 }
