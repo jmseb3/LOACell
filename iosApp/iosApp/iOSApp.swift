@@ -4,9 +4,12 @@ import FirebaseAuth
 import shared
 import GoogleSignIn
 import SwiftUI_Snackbar
+import KakaoSDKCommon
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {    
     func application(_ application: UIApplication,didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        KakaoSDK.initSDK(appKey: "eaad613c8a32160c49991040e94170f9")
         FirebaseApp.configure()
         return true
     }

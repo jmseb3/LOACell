@@ -36,15 +36,14 @@ struct TopAppBar: View {
             }.transition(.slide)
             Spacer()
             
-            Button {
-                viewModel.showSetting = true
-            } label: {
-                Image(systemName: "gearshape.fill")
-            }
-            .foregroundColor(viewModel.showSetting ? .gray : .black)
-            .disabled(viewModel.showSetting)
-            .onTapGesture {
-                
+            if viewModel.roomId.isEmpty {
+                Button {
+                    viewModel.showSetting = true
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                }
+                .foregroundColor(viewModel.showSetting ? .gray : .black)
+                .disabled(viewModel.showSetting)
             }
         }.padding()
     }

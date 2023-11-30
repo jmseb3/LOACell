@@ -72,6 +72,6 @@ struct BaseSheet<Content: View>: View {
             Config().getFloatFlow(key: ConfigKeys().SheetSpace, defaultValue: 20.0).collect { value in
                 space = value as! CGFloat
             }
-        }
+        }.ignoresSafeArea()
     }
 }
