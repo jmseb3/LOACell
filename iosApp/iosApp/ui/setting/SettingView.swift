@@ -41,17 +41,9 @@ struct SettingView: View {
                     HStack() {
                         Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
                         Spacer()
-                        Button(action: {
+                        RoundCornerButton(text: "테스트") {
                             viewModel.showDialog(dialogStatus: DialogStatus.testSheet)
-                        }, label: {
-                            Text("테스트")
-                                .foregroundColor(.black)
-                                .padding()
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(.black, lineWidth: 1)
-                                )
-                        })
+                        }
                     }
                 }
             }

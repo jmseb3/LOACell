@@ -40,6 +40,7 @@
 		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
 		078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B02B06F51100661943 /* LoginInfoView.swift */; };
 		078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B22B06F6A800661943 /* SectionCardView.swift */; };
+		07C4F5942B1D6A9D00C63AAA /* RoundCornerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */; };
 		07D2221B2B146D8D00E06766 /* SettingDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D2221A2B146D8D00E06766 /* SettingDialog.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07EA9A8C2B0728E800F9FC25 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA9A8B2B0728E800F9FC25 /* SettingView.swift */; };
@@ -85,6 +86,7 @@
 		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
 		078A12B02B06F51100661943 /* LoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
 		078A12B22B06F6A800661943 /* SectionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCardView.swift; sourceTree = "<group>"; };
+		07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundCornerButton.swift; sourceTree = "<group>"; };
 		07D2221A2B146D8D00E06766 /* SettingDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingDialog.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07EA9A8B2B0728E800F9FC25 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */,
 				070CF3242AC148440099F2D6 /* LoadingView.swift */,
 				078A12B22B06F6A800661943 /* SectionCardView.swift */,
+				07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -173,10 +176,10 @@
 		07179F412ACD52FD003A415E /* room */ = {
 			isa = PBXGroup;
 			children = (
-				07540B672B15875500DABAFA /* setting */,
 				07179F422ACD530D003A415E /* RoomListView.swift */,
 				07420B772AD8E16E0081E5FE /* RoomView.swift */,
 				07420B792AD8E1FB0081E5FE /* raid */,
+				07540B672B15875500DABAFA /* setting */,
 				07420B7C2AD90CA00081E5FE /* user */,
 			);
 			path = room;
@@ -471,6 +474,7 @@
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
 				075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */,
+				07C4F5942B1D6A9D00C63AAA /* RoundCornerButton.swift in Sources */,
 				0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */,
 				0783E9ED2AE0D4750074D231 /* RaidPartyView.swift in Sources */,
 				07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */,

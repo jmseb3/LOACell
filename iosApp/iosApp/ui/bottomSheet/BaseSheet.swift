@@ -46,18 +46,9 @@ struct BaseSheet<Content: View>: View {
                         }
                 }
                 if let buttonText = text {
-                    Button(action: {
+                    RoundCornerButton(text: buttonText) {
                         action()
-                    }, label: {
-                        Text(buttonText)
-                            .foregroundColor(enabled ? .black : .gray)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.black, lineWidth: 1)
-                            )
-                    })
+                    }
                     .disabled(!enabled)
                 }
                 Spacer()

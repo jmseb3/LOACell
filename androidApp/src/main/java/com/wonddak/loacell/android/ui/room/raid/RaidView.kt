@@ -42,7 +42,6 @@ fun RaidView(
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val focusRaidId = totalRoomInfo.focusRaidId
-    val dialogStatus = totalRoomInfo.dialogState
     val filter = totalRoomInfo.filter
 
     var showType by remember {

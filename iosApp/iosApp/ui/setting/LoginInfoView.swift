@@ -36,21 +36,12 @@ struct LoginInfoView: View {
                 Divider()
                 
                 HStack {
-                    Button(action: {
+                    RoundCornerButton(text: userInfo.isAnonymous ? "나가기" : "로그아웃") {
                         viewModel.outOrSignOut()
-                    }, label: {
-                        Text(userInfo.isAnonymous ? "나가기" : "로그아웃")
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.black, lineWidth: 1)
-                            )
-                    })
+                    }
                     Spacer()
                         .frame(width: 15)
-                    Button(action: {
+                    RoundCornerButton(text: userInfo.isAnonymous ? "Google 계정 연동" : "탈퇴") {
                         if userInfo.isAnonymous {
                             loginHelper.requestAnonymousToGoogleLogin(failAction: { msg in
                                 viewModel.showSnackBar(msg: msg)
@@ -58,16 +49,7 @@ struct LoginInfoView: View {
                         } else {
                             loginHelper.delete()
                         }
-                    }, label: {
-                        Text(userInfo.isAnonymous ? "Google 계정 연동" : "탈퇴")
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.black, lineWidth: 1)
-                            )
-                    })
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(5)

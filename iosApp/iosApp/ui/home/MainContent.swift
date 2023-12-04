@@ -21,17 +21,16 @@ struct MainContent: View {
                 } else {
                     if viewModel.roomId.isEmpty {
                         //방리스트
-                            RoomListView(roomList: viewModel.roomList) { roomId in
-                                viewModel.showRoom(roomId: roomId)
-                            }
-                        
+                        RoomListView(roomList: viewModel.roomList) { roomId in
+                            viewModel.showRoom(roomId: roomId)
+                        }
                     } else {
                         // 방정보
                         RoomView()
                     }
                 }
                 Spacer()
-
+                
             }
             VStack {
                 if(viewModel.syncData) {
@@ -39,7 +38,7 @@ struct MainContent: View {
                 }
             }
         }
-       
+        
     }
-
+    
 }
