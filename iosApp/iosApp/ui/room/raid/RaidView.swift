@@ -43,7 +43,7 @@ struct RaidView: View {
                                 Text("Filter")
                                     .foregroundColor(.black)
                             }
-                            .padding()
+                            .padding(EdgeInsets(top: 3, leading: 10, bottom: 3, trailing: 10))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
                                     .stroke(.black, lineWidth: 1)
@@ -54,7 +54,7 @@ struct RaidView: View {
                 Divider()
                 ScrollView {
                     LazyVStack(){
-                        ForEach(totalRoomInfo.raidInfoList,id: \.raidId) { raidInfo in
+                        ForEach(totalRoomInfo.filterList,id: \.raidId) { raidInfo in
                             RaidItemRow(raidInfo: raidInfo) {
                                 viewModel.setNowRaidInfo(raidId: raidInfo.raidId)
                             }

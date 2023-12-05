@@ -54,7 +54,7 @@ fun FilterSheet(
 ) {
     val filter = totalRoomInfo.filter
     val userInfoList = totalRoomInfo.userInfoList
-    val raidTypes = RaidType.values()
+    val raidTypes = RaidType.entries.toTypedArray()
 
     BaseSheet(
         title = "필터 설정",
@@ -88,7 +88,7 @@ fun FilterSheet(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Filter.FINISH.values().forEach { finish ->
+                    Filter.FINISH.entries.forEach { finish ->
                         val selected = filter.isSelected(finish)
 
                         val updateFilter = {
@@ -178,7 +178,7 @@ fun FilterSheet(
                 Text(
                     text = "필터 초기화",
                     modifier = Modifier.noRippleClickable {
-                        updateFilter(Filter())
+                        updateFilter(filter.clear())
                     }
                 )
             }

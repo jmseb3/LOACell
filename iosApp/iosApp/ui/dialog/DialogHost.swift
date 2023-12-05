@@ -101,7 +101,11 @@ struct DialogHost<Content: View>: View {
                                 dialogAction.dialogRaidEdit(fbRaidInfo : fbRaidInfo)
                             }
                         case DialogStatus.raidFilter:
-                            EmptyView()
+                            FilterSheet(
+                                totalRoomInfo: dialogAction.getTotalRoomInfo()
+                            ) { filter in
+                                dialogAction.dialogFilterUpdate(filter: filter)
+                            }
                         case DialogStatus.raidDelete:
                             DeleteRaidDialog(dismiss: dismiss) {
                                 dialogAction.dialogRaidDelete()

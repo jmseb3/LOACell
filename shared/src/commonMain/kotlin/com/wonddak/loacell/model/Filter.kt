@@ -57,4 +57,6 @@ data class Filter(
     fun isSelected(user: String) :Boolean {
         return  this.userList.contains(user)
     }
+
+    fun clear() : Filter = Filter()
 }
