@@ -51,16 +51,11 @@ struct RaidView: View {
                         })
                 }
                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                
                 Divider()
-                ScrollView {
-                    LazyVStack(){
-                        ForEach(totalRoomInfo.filterList,id: \.raidId) { raidInfo in
-                            RaidItemRow(raidInfo: raidInfo) {
-                                viewModel.setNowRaidInfo(raidId: raidInfo.raidId)
-                            }
-                        }
-                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                }
+                RaidTypeView(
+                    type: $showType
+                )
             }
             .frame(maxWidth: .infinity,maxHeight: .infinity)
             
@@ -69,4 +64,57 @@ struct RaidView: View {
             }
         }
     }
+}
+
+struct RaidTypeView : View {
+    @EnvironmentObject var viewModel: LoaCellViewModel
+    @Binding var type :RoomType
+    
+    private var totalRoomInfo : TotalRoomInfo {
+        viewModel.totalRoomInfo
+    }
+    private var filter : Filter {
+        totalRoomInfo.filter
+    }
+    private var timeStep : Int {
+        Int(filter.timeStep)
+    }
+    private var showEmptyRow :Bool {
+        filter.showEmptyCalendarRow
+    }
+    private var filterRaidInfoList : [RaidInfo] {
+        totalRoomInfo.filterList
+    }
+    
+    var body: some View {
+        VStack{
+            if (type == RoomType.default_) {
+                ScrollView {
+                    LazyVStack(){
+                        ForEach(filterRaidInfoList ,id: \.raidId) { raidInfo in
+                            RaidItemRow(raidInfo: raidInfo) {
+                                viewModel.setNowRaidInfo(raidId: raidInfo.raidId)
+                            }
+                        }
+                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                }
+            } else {
+                RaidCalendarView(
+                    timeStep: timeStep,
+                    timeSteps: filter.timeSteps as! [Int],
+                    showEmptyRow: filter.showEmptyCalendarRow,
+                    table: filter.makeTable(filterRaidInfoList: filterRaidInfoList) as! [[[RaidInfo]]]
+                ) { filterDay in
+                    if (filterDay.isEmpty) {
+                        
+                    } else if (filterDay.count  == 1) {
+                        viewModel.setNowRaidInfo(raidId: filterDay[0].raidId)
+                    } else {
+                        
+                    }
+                }
+            }
+        }
+    }
+    
 }

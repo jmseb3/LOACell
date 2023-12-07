@@ -93,7 +93,9 @@ private struct RaidSheetBase: View {
     @State private var dayHour :Int = 0
     @State private var dayMin :Int = 0
     
-    @State private var showGateEdit : Bool = false
+    private var showGateEdit : Bool {
+        (fbRaidInfo.type == RaidType.abrelshud) && (fbRaidInfo.difficulty != Difficulty.hell)
+    }
     @State private var showDayUse :Bool = false
     
     var body: some View {
@@ -121,10 +123,6 @@ private struct RaidSheetBase: View {
                         }
                     }
                     .accentColor(.black)
-                    .onAppear{
-                        raidType = fbRaidInfo.type
-                    }
-                    
                 }
                 VStack{
                     RaidSheetHeadeerText(text: "난이도 선택")
@@ -249,12 +247,14 @@ private struct RaidSheetBase: View {
             .onChange(of: raidType) { value in
                 fbRaidInfo = fbRaidInfo.updateType(type: value)
             }
-            .onChange(of: fbRaidInfo) {value in
-                withAnimation {
-                    self.showGateEdit = (value.type == RaidType.abrelshud) && (value.difficulty != Difficulty.hell)
-                }
+            .onChange(of: dayMin) {value in
+                fbRaidInfo = fbRaidInfo.updateTimeMinute(minute : Int64(value))
+            }
+            .onChange(of: dayHour) {value in
+                fbRaidInfo = fbRaidInfo.updateTimeHour(hour : Int64(value))
             }
             .onAppear {
+                raidType = fbRaidInfo.type
                 titleText = fbRaidInfo.title
             }
         }
@@ -305,42 +305,6 @@ private struct DifficultyRow : View {
     }
 }
 
-private struct RadioButton :View {
-    let selected : Bool
-    let text :String
-    let enabled :Bool
-    let action : () -> Void
-    var body: some View {
-        HStack {
-            Button {
-                action()
-            } label: {
-                HStack{
-                    if selected {
-                        ZStack{
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 20, height: 20)
-                                .overlay(Circle().stroke(Color.blue, lineWidth: 1))
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 8, height: 8)
-                        }
-                    } else {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 20, height: 20)
-                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                    }
-                    Text(text)
-                        .frame(alignment: .center)
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(enabled ? .black : .gray)
-                }
-            }.disabled(!enabled)
-        }
-    }
-}
 
 private struct DayButton :View {
     let day : Day

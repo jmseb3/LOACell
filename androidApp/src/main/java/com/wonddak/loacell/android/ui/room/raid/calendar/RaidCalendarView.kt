@@ -35,6 +35,18 @@ fun RaidCalendarView(
     table: List<List<List<RaidInfo>>>,
     itemClick: (filterDay: List<RaidInfo>) -> Unit
 ) {
+    fun makeCalendarText(result : List<RaidInfo>,day:Day): Pair<String,() -> Unit> {
+        val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
+        val text = if (filterDay.isEmpty()) {
+            ""
+        } else if (filterDay.size == 1) {
+            filterDay.first().title
+        } else {
+            "${filterDay.first().title} 외 ${filterDay.size - 1}"
+        }
+        return Pair(text) {itemClick(filterDay)}
+    }
+
     val listState = rememberLazyListState()
 
     LaunchedEffect(timeStep) {
@@ -47,14 +59,9 @@ fun RaidCalendarView(
                 CalendarRow(
                     modifier = Modifier.background(Color.White),
                     timeText = "시간"
-                ) { modifier, day ->
-                    Text(
-                        modifier = modifier,
-                        text = day.text,
-                        textAlign = TextAlign.Center
-                    )
+                ) { day ->
+                    Pair(day.text) {  }
                 }
-                Divider()
             }
         }
         items(timeSteps) { totalMin ->
@@ -72,68 +79,62 @@ fun RaidCalendarView(
                     minute,
                     timeStep
                 )
-            ) { modifier, day ->
-                val filterDay = result.filter { it.day == day }.sortedBy { it.minute }
-                val text = if (filterDay.isEmpty()) {
-                    ""
-                } else if (filterDay.size == 1) {
-                    filterDay.first().title
-                } else {
-                    "${filterDay.first().title} 외 ${filterDay.size - 1}"
-                }
-
-                Text(
-                    modifier = modifier.noRippleClickable {
-                        itemClick(filterDay)
-                    },
-                    text = text,
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
-                )
-
+            ) { day ->
+                makeCalendarText(result,day)
             }
-            Divider()
-
         }
     }
-
 }
 
 @Composable
 fun CalendarRow(
     modifier: Modifier = Modifier,
     timeText: String,
-    dayItem: @Composable (modifier: Modifier, day: Day) -> Unit
+    dayItem: (day: Day) -> Pair<String, () -> Unit>
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = timeText,
-            modifier = Modifier.weight(2f),
-            textAlign = TextAlign.Center,
-            fontSize = 13.sp
-        )
-        Divider(
-            modifier = Modifier
-                .height(20.dp)
-                .width(1.dp)
-        )
+    Column {
         Row(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(7f),
+            modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Day.MON.getList().forEach { day ->
-                dayItem(Modifier.weight(1f), day)
-                Divider(
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width(1.dp)
-                )
+            Text(
+                text = timeText,
+                modifier = Modifier.weight(2f),
+                textAlign = TextAlign.Center,
+                fontSize = 13.sp
+            )
+            Divider(
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(1.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(7f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Day.MON.getList().forEach { day ->
+                    val (text, action) = dayItem(day)
+                    Text(
+                        modifier = Modifier
+                            .weight(1f)
+                            .noRippleClickable {
+                                action()
+                            },
+                        text = text,
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.sp
+                    )
+                    Divider(
+                        modifier = Modifier
+                            .height(20.dp)
+                            .width(1.dp)
+                    )
+                }
             }
         }
+        Divider()
     }
+
 }

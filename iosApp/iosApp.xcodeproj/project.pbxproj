@@ -46,6 +46,7 @@
 		07D2221B2B146D8D00E06766 /* SettingDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D2221A2B146D8D00E06766 /* SettingDialog.swift */; };
 		07DE600C2A57B2F300A122B2 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DE600B2A57B2F300A122B2 /* MainContent.swift */; };
 		07EA9A8C2B0728E800F9FC25 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA9A8B2B0728E800F9FC25 /* SettingView.swift */; };
+		07F769542B2189BB008574E3 /* RaidCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F769532B2189BB008574E3 /* RaidCalendarView.swift */; };
 		07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94532B0336FC00446087 /* RaidDialog.swift */; };
 		07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FD94552B035B9100446087 /* AddRaidUserSheet.swift */; };
 		07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61432AD781DC004701DF /* TopAppBar.swift */; };
@@ -94,6 +95,7 @@
 		07D2221A2B146D8D00E06766 /* SettingDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingDialog.swift; sourceTree = "<group>"; };
 		07DE600B2A57B2F300A122B2 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
 		07EA9A8B2B0728E800F9FC25 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		07F769532B2189BB008574E3 /* RaidCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidCalendarView.swift; sourceTree = "<group>"; };
 		07FD94532B0336FC00446087 /* RaidDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidDialog.swift; sourceTree = "<group>"; };
 		07FD94552B035B9100446087 /* AddRaidUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidUserSheet.swift; sourceTree = "<group>"; };
 		07FE61432AD781DC004701DF /* TopAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAppBar.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */,
 				0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */,
 				0785E4EE2ADE69F00084E711 /* RaidView.swift */,
+				07F769522B21899C008574E3 /* calendar */,
 			);
 			path = raid;
 			sourceTree = "<group>";
@@ -263,6 +266,14 @@
 				07FE61432AD781DC004701DF /* TopAppBar.swift */,
 			);
 			path = home;
+			sourceTree = "<group>";
+		};
+		07F769522B21899C008574E3 /* calendar */ = {
+			isa = PBXGroup;
+			children = (
+				07F769532B2189BB008574E3 /* RaidCalendarView.swift */,
+			);
+			path = calendar;
 			sourceTree = "<group>";
 		};
 		60823FB2992DCA43E2906BC0 /* Pods */ = {
@@ -480,6 +491,7 @@
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				07F769542B2189BB008574E3 /* RaidCalendarView.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
 				075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */,
 				07C4F5942B1D6A9D00C63AAA /* RoundCornerButton.swift in Sources */,

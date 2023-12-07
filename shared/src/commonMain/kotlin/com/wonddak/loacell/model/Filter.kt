@@ -1,6 +1,8 @@
 package com.wonddak.loacell.model
 
+import com.wonddak.database.model.Day
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.RaidInfo
 
 data class Filter(
     val raidType: List<RaidType> = RaidType.values().toList(),
@@ -59,4 +61,18 @@ data class Filter(
     }
 
     fun clear() : Filter = Filter()
+
+    val timeSteps : List<Int>
+        get() = (0 until (1440 / timeStep)).map { it * timeStep }
+    fun makeTable(filterRaidInfoList :List<RaidInfo>) : MutableList<MutableList<MutableList<RaidInfo>>> {
+        val table =  MutableList(24) { MutableList(60 / timeStep) { mutableListOf<RaidInfo>() } }
+
+        filterRaidInfoList.forEach {
+            if (it.day != Day.NONE) {
+                table[it.hour.toInt()][(it.minute / timeStep).toInt()].add(it)
+            }
+        }
+        return table
+    }
+
 }

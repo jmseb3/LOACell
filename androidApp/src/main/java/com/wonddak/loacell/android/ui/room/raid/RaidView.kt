@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
@@ -42,7 +41,6 @@ fun RaidView(
 ) {
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val focusRaidId = totalRoomInfo.focusRaidId
-    val filter = totalRoomInfo.filter
 
     var showType by remember {
         mutableStateOf(RoomType.Default)
@@ -78,11 +76,8 @@ fun RaidView(
             }
             Divider()
             RaidTypeView(
-                type = showType,
-                timeStep = filter.timeStep,
-                showEmptyRow = filter.showEmptyCalendarRow,
-                filterRaidInfoList = totalRoomInfo.filterList,
-                loaCellViewModel = loaCellViewModel
+                loaCellViewModel = loaCellViewModel,
+                type = showType
             )
         }
         if (focusRaidId.isNotEmpty()) {
@@ -93,24 +88,19 @@ fun RaidView(
 
 @Composable
 fun RaidTypeView(
-    type: RoomType,
-    timeStep: Int,
-    showEmptyRow: Boolean,
-    filterRaidInfoList: List<RaidInfo>,
-    loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel,
+    type: RoomType
 ) {
-    val timeSteps = (0 until (1440 / timeStep)).map { it * timeStep }
 
-    val table = MutableList(24) { MutableList(60 / timeStep) { mutableListOf<RaidInfo>() } }
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val filter = totalRoomInfo.filter
+
+    val timeStep = filter.timeStep
+    val showEmptyRow: Boolean = filter.showEmptyCalendarRow
+    val filterRaidInfoList = totalRoomInfo.filterList
 
     var showCalendarView: List<RaidInfo>? by remember {
         mutableStateOf(null)
-    }
-
-    filterRaidInfoList.forEach {
-        if (it.day != Day.NONE) {
-            table[it.hour.toInt()][(it.minute / timeStep).toInt()].add(it)
-        }
     }
 
     if (type == RoomType.Default) {
@@ -127,9 +117,9 @@ fun RaidTypeView(
     } else {
         RaidCalendarView(
             timeStep = timeStep,
-            timeSteps = timeSteps,
+            timeSteps = filter.timeSteps,
             showEmptyRow = showEmptyRow,
-            table = table
+            table = filter.makeTable(filterRaidInfoList)
         ) { filterDay ->
             if (filterDay.isEmpty()) {
 

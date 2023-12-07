@@ -72,6 +72,10 @@ data class FBRaidInfo(
 
     fun updateGate(start:Int,end:Int)  = this.copy(startGateNumber = start, endGateNumber = end)
     fun updateDay(day: Day)  = this.copy(day = day)
+
+    fun updateTime(hour:Long,minute: Long) = this.copy(hour= hour, minute = minute)
+    fun updateTimeHour(hour:Long) = this.copy(hour= hour)
+    fun updateTimeMinute(minute: Long) = this.copy(minute = minute)
     fun difficultySelected(difficulty: Difficulty) :Boolean = this.difficulty == difficulty
     fun difficultyEnabled(difficulty: Difficulty) :Boolean = this.type.accessibleDifficulty().contains(difficulty)
 }
