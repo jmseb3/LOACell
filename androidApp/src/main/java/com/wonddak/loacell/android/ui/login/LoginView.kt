@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.login
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,9 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,22 +42,15 @@ import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.sharedresources.store.CommonString
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginView(loaCellViewModel: LoaCellViewModel) {
     val loginHelper =  LoaCellApp.loginHelper
     val loggingIn by loginHelper.loginIn.collectAsState()
+    val context = LocalContext.current
 
-    val googleLoginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        loaCellViewModel.apply {
-            loginHelper.registerGoogleToken(result) {
-                syncStartForce(it.user!!.uid)
-            }
-        }
-    }
-
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -98,7 +92,11 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 GoogleLoginButton(
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    loginHelper.requestGoogleLogin(googleLoginLauncher)
+                    scope.launch {
+                        loginHelper.requestGoogleLogin(context as Activity) { result ->
+                            loaCellViewModel.syncStartForce(result.user!!.uid)
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
