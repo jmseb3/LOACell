@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.auth.delete
 import com.wonddak.loacell.model.DialogStatus
 import kotlinx.coroutines.launch
 

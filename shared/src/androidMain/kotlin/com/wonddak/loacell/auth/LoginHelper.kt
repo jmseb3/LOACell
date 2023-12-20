@@ -1,3 +1,4 @@
+@file:JvmName("LoginHelperJvm")
 package com.wonddak.loacell.auth
 
 import android.app.Activity

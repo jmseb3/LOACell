@@ -12,7 +12,6 @@ expect class LoginHelper {
         successAction: (credential : FBAuthCredential) -> Unit,
     )
 }
-
 fun LoginHelper.registerGoogleToken(
     result : GoogleResult,
     successAction: (FBAuthResult) -> Unit,
@@ -45,7 +44,6 @@ fun LoginHelper.signOut() {
 fun LoginHelper.delete() {
     this.auth.delete()
 }
-
 expect class FBAuthCredential
 expect class GoogleResult
 

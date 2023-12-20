@@ -4,6 +4,7 @@ import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
 import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
+import cocoapods.FirebaseAuth.FIROAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
 import cocoapods.FirebaseCore.FIRApp
 import cocoapods.GoogleSignIn.GIDConfiguration
@@ -14,11 +15,16 @@ import com.wonddak.loacell.CommonStateFlow
 import com.wonddak.loacell.toCommonMutableStateFlow
 import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.coroutines.flow.MutableStateFlow
+import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.Foundation.NSError
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
 import platform.UIKit.UIApplication
 import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
@@ -86,6 +92,40 @@ actual class LoginHelper {
             }
     }
 }
+
+@OptIn(BetaInteropApi::class)
+fun LoginHelper.registerAppleToken(
+    nonce: NSString,
+    credential: ASAuthorizationAppleIDCredential,
+    successAction: (FBAuthResult) -> Unit,
+) {
+    loginIn.value = true
+    val appleIDToken = credential.identityToken()
+    if (appleIDToken == null) {
+        loginIn.value = false
+        println("error with firebase")
+        return
+    }
+
+    val idTokenString = NSString.create(appleIDToken, NSUTF8StringEncoding)
+
+    if (idTokenString == null) {
+        loginIn.value = false
+        println("error with token")
+        return
+    }
+
+    val firebaseCredential = FIROAuthProvider.appleCredentialWithIDToken(
+        IDToken = idTokenString.toString(),
+        rawNonce = nonce.toString(),
+        fullName = credential.fullName()
+    )
+    auth.signInWithCredential(FBAuthCredential(firebaseCredential),{ loginIn.value = false }) {
+        loginIn.value = false
+        successAction(it)
+    }
+}
+
 actual class FBAuthCredential(
     val credential: FIRAuthCredential
 )
