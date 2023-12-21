@@ -43,9 +43,13 @@ struct LoginInfoView: View {
                         .frame(width: 15)
                     RoundCornerButton(text: userInfo.isAnonymous ? "Google 계정 연동" : "탈퇴") {
                         if userInfo.isAnonymous {
-                            loginHelper.requestAnonymousToGoogleLogin(failAction: { msg in
-                                viewModel.showSnackBar(msg: msg)
-                            })
+                            loginHelper.requestAnonymousToGoogleLogin(
+                                failAction: { msg in
+                                    viewModel.showSnackBar(msg: msg)
+                                },successAction: {
+                                    
+                                }
+                            )
                         } else {
                             loginHelper.delete()
                         }
