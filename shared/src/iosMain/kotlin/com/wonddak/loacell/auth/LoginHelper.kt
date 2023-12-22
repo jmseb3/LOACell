@@ -4,39 +4,37 @@ import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
 import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
+import cocoapods.FirebaseAuth.FIROAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
 import cocoapods.FirebaseCore.FIRApp
 import cocoapods.GoogleSignIn.GIDConfiguration
 import cocoapods.GoogleSignIn.GIDSignIn
 import cocoapods.GoogleSignIn.GIDSignInResult
+import com.wonddak.loacell.CommonMutableStateFlow
 import com.wonddak.loacell.CommonStateFlow
+import com.wonddak.loacell.toCommonMutableStateFlow
 import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.coroutines.flow.MutableStateFlow
+import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.Foundation.NSError
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.create
 import platform.UIKit.UIApplication
 import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
 
 actual class LoginHelper {
-    private var _loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    actual val loginIn: CommonMutableStateFlow<Boolean> = MutableStateFlow(false).toCommonMutableStateFlow()
 
-    actual val loginIn: CommonStateFlow<Boolean>
-        get() = _loginIn.toCommonStateFlow()
     actual val auth: FBAuth = FBAuth(FIRAuth.auth())
 
-    actual fun signOut() {
-        auth.signOut()
-    }
-
-    actual fun delete() {
-        auth.delete()
-    }
-
-    actual fun registerToken(
+    actual fun registerTokenAction(
         result: GoogleResult,
         failAction: (msg:String) -> Unit,
         successAction: (credential: FBAuthCredential) -> Unit,
@@ -44,7 +42,7 @@ actual class LoginHelper {
         val user = result.user()
         val token = user.idToken?.tokenString
         if (token == null) {
-            _loginIn.value = false
+            loginIn.value = false
         } else {
             val credential = FIRGoogleAuthProvider.credentialWithIDToken(
                 IDToken = token,
@@ -72,21 +70,9 @@ actual class LoginHelper {
             }
     }
 
-    actual fun registerGoogleToken(
-        result : GoogleResult,
-        successAction: (result:FBAuthResult) -> Unit,
-    ) {
-        _loginIn.value = true
-        registerToken(result,{}) { credential ->
-            auth.signInWithCredential(credential, { _loginIn.value = false }) {
-                _loginIn.value = false
-                successAction(it)
-            }
-        }
-    }
-
     fun requestAnonymousToGoogleLogin(
-        failAction: (msg: String) -> Unit
+        failAction: (msg: String) -> Unit,
+        successAction: () -> Unit
     ) {
         val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
             .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
@@ -100,23 +86,46 @@ actual class LoginHelper {
                     return@signInWithPresentingViewController
                 }
 
-                registerAnonymousToGoogle(result) {
-                    failAction(it)
+                registerAnonymousToGoogle(result,failAction) {
+                    successAction()
                 }
             }
     }
+}
 
-    actual fun registerAnonymousToGoogle(
-        result: GoogleResult,
-        failAction: (msg: String) -> Unit
-    ) {
-        registerToken(result, failAction) { credential ->
-            auth.linkWithCredential(credential, failAction) {
+@OptIn(BetaInteropApi::class)
+fun LoginHelper.registerAppleToken(
+    nonce: NSString,
+    credential: ASAuthorizationAppleIDCredential,
+    successAction: (FBAuthResult) -> Unit,
+) {
+    loginIn.value = true
+    val appleIDToken = credential.identityToken()
+    if (appleIDToken == null) {
+        loginIn.value = false
+        println("error with firebase")
+        return
+    }
 
-            }
-        }
+    val idTokenString = NSString.create(appleIDToken, NSUTF8StringEncoding)
+
+    if (idTokenString == null) {
+        loginIn.value = false
+        println("error with token")
+        return
+    }
+
+    val firebaseCredential = FIROAuthProvider.appleCredentialWithIDToken(
+        IDToken = idTokenString.toString(),
+        rawNonce = nonce.toString(),
+        fullName = credential.fullName()
+    )
+    auth.signInWithCredential(FBAuthCredential(firebaseCredential),{ loginIn.value = false }) {
+        loginIn.value = false
+        successAction(it)
     }
 }
+
 actual class FBAuthCredential(
     val credential: FIRAuthCredential
 )

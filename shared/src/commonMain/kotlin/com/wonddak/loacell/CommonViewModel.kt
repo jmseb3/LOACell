@@ -2,6 +2,8 @@ package com.wonddak.loacell
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.auth.LoginHelper
+import com.wonddak.loacell.auth.delete
+import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
 import com.wonddak.loacell.model.DialogStatus

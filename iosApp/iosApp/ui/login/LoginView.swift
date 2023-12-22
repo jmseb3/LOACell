@@ -7,11 +7,15 @@
 //
 
 import SwiftUI
-import GoogleSignInSwift
 import shared
+import GoogleSignInSwift
+import AuthenticationServices
+import CryptoKit
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
+    @State private var nonce :String = ""
+    let appleHelper : AppleLoginHelper = AppleLoginHelper()
     
     var loginHelper : LoginHelper {
         self.viewModel.loginHelper
@@ -28,15 +32,46 @@ struct LoginView: View {
                     Text(CommonString.Login().getInfo2().localized())
                 }
                 Spacer()
-                GoogleSignInButton() {
-                    loginHelper.requestGoogleLogin(successAction: { result in
-                        self.loginIn = false
-                        viewModel.syncStartForce(uuid: result.user!.uid)
-                    })
+                
+                VStack {
+                    SignInWithAppleButton { (request) in
+                        nonce = appleHelper.randomNonceString()
+                        request.requestedScopes = [.email,.fullName]
+                        request.nonce = appleHelper.sha256(nonce)
+                    } onCompletion: { (result) in
+                        switch result {
+                        case .success(let user):
+                            print("success")
+                            guard let credential = user.credential as? ASAuthorizationAppleIDCredential else {
+                                print("error with firebase")
+                                return
+                            }
+                            viewModel.loginHelper.registerAppleToken(nonce: nonce, credential: credential) { result in
+                                self.loginIn = false
+                                viewModel.syncStartForce(uuid: result.user!.uid)
+                            }
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
+                    }
+                    .frame(height:50)
+                    .cornerRadius(5)
+                    
+                    GoogleSignInButton(
+                        viewModel: GoogleSignInButtonViewModel(
+                            style: GoogleSignInButtonStyle.wide
+                        )
+                    ) {
+                        loginHelper.requestGoogleLogin(successAction: { result in
+                            self.loginIn = false
+                            viewModel.syncStartForce(uuid: result.user!.uid)
+                        })
+                    }
+                    Button(action: {loginHelper.auth.requestAnonymousLogin()}) {
+                        Text(CommonString.Login().getAnonymous().localized())
+                    }
                 }
-                Button(action: {loginHelper.auth.requestAnonymousLogin()}) {
-                    Text(CommonString.Login().getAnonymous().localized())
-                }
+                .padding(.horizontal)
             }.onAppear {
                 loginHelper.loginIn.collect { value in
                     self.loginIn = value as! Bool
@@ -49,7 +84,6 @@ struct LoginView: View {
             }
         }
     }
-    
 }
 
 #Preview {

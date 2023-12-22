@@ -1,15 +1,16 @@
+@file:JvmName("LoginHelperJvm")
 package com.wonddak.loacell.auth
 
+import android.app.Activity
 import android.content.Context
-import android.content.IntentSender
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -19,60 +20,40 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.wonddak.loacell.CommonMutableStateFlow
 import com.wonddak.loacell.CommonStateFlow
+import com.wonddak.loacell.toCommonMutableStateFlow
 import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 
 actual class LoginHelper(
-    context: Context
+    private val context: Context
 ) {
-    private lateinit var oneTapClient: SignInClient
-    private lateinit var signInRequest: BeginSignInRequest
-    private var _loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    actual val loginIn: CommonStateFlow<Boolean>
-        get() = _loginIn.toCommonStateFlow()
+    private val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(false)
+        .setServerClientId("631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com")
+        .build()
+
+    private val credentialManager  by lazy {
+        CredentialManager.create(context)
+    }
+
+    actual val loginIn: CommonMutableStateFlow<Boolean> = MutableStateFlow(false).toCommonMutableStateFlow()
 
     actual val auth: FBAuth = FBAuth(Firebase.auth)
-
-    init {
-        oneTapClient = Identity.getSignInClient(context)
-        signInRequest = BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setServerClientId("631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com")
-                    .setFilterByAuthorizedAccounts(false)
-                    .build()
-            )
-            .build()
-    }
-
-    actual fun signOut() {
-        auth.signOut()
-    }
-
-    actual fun delete() {
-        auth.delete()
-    }
-
-    actual fun registerToken(
+    actual fun registerTokenAction(
         result: GoogleResult,
         failAction: (msg: String) -> Unit,
         successAction: (credential: FBAuthCredential) -> Unit
     ) {
+        val token = result.idToken
         try {
-            val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
-            val idToken = credential.googleIdToken
-            if (idToken == null) {
-                _loginIn.value = false
-            } else {
-                val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                successAction(FBAuthCredential(firebaseCredential))
-            }
+            val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
+            successAction(FBAuthCredential(firebaseCredential))
         } catch (e: ApiException) {
-            _loginIn.value = false
+            loginIn.value = false
             when (e.statusCode) {
                 CommonStatusCodes.CANCELED -> {
 //                    failAction("One-tap dialog was closed.")
@@ -89,62 +70,78 @@ actual class LoginHelper(
         }
     }
 
-    fun requestGoogleLogin(
-        launcher: ActivityResultLauncher<IntentSenderRequest>
+    suspend fun requestGoogleLogin(
+        activity :Activity,
+        successAction: (result: FBAuthResult) -> Unit,
     ) {
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener { result ->
-                try {
-                    val intentSender =
-                        IntentSenderRequest.Builder(
-                            result.pendingIntent.intentSender
-                        ).apply {
-                            setFillInIntent(null)
-                        }.build()
-                    launcher.launch(intentSender)
-
-                } catch (e: IntentSender.SendIntentException) {
-                    println("Couldn't start One Tap UI: ${e.localizedMessage}")
-                }
-            }
-            .addOnFailureListener { e ->
-                e.localizedMessage?.let { println(it) }
-            }
-    }
-
-    actual fun registerGoogleToken(
-        result: GoogleResult,
-        successAction: (result:FBAuthResult) -> Unit,
-    ) {
-        _loginIn.value = true
-        registerToken(
-            result,
-            {}
-        ) { credential ->
-            auth.signInWithCredential(credential, { _loginIn.value = false }) {
-                _loginIn.value = false
+        startGoogleLogin(activity) { cred ->
+            registerGoogleToken(cred) {
                 successAction(it)
             }
         }
     }
 
-    actual fun registerAnonymousToGoogle(
-        result: GoogleResult,
-        failAction: (msg: String) -> Unit
+    suspend fun requestAnonymousToGoogle(
+        activity :Activity,
+        failAction: (msg: String) -> Unit,
+        successAction: () -> Unit
     ) {
-        registerToken(result, failAction) { credential ->
-            auth.linkWithCredential(credential, failAction) {
-
+        startGoogleLogin(activity) { cred ->
+            registerAnonymousToGoogle(cred,failAction) {
+                successAction()
             }
         }
     }
+    private suspend fun startGoogleLogin(
+        activity :Activity,
+        successAction: (result: GoogleIdTokenCredential) -> Unit
+    ) {
+        val request: GetCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
 
+        runCatching {
+            val result = credentialManager.getCredential(
+                request = request,
+                context = activity
+            )
+            val credential = result.credential
+
+            when (credential) {
+                is CustomCredential -> {
+                    if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                        try {
+                            // Use googleIdTokenCredential and extract id to validate and
+                            // authenticate on your server.
+                            val googleIdTokenCredential = GoogleIdTokenCredential
+                                .createFrom(credential.data)
+                            successAction(googleIdTokenCredential)
+                        } catch (e: GoogleIdTokenParsingException) {
+//                            Log.e(TAG, "Received an invalid google id token response", e)
+                        }
+                    } else {
+                        // Catch any unrecognized custom credential type here.
+//                        Log.e(TAG, "Unexpected type of credential")
+                    }
+                }
+
+                else -> {
+                    // Catch any unrecognized credential type here.
+//                    Log.e(TAG, "Unexpected type of credential")
+                }
+            }
+        }.onFailure { e ->
+            e.printStackTrace()
+        }.onSuccess {
+            println("Login2 Success")
+        }
+    }
 }
+
 actual class FBAuthCredential(
     val credential: AuthCredential
 )
-actual typealias GoogleResult = ActivityResult
-
+actual typealias GoogleResult = GoogleIdTokenCredential
 
 actual class FBAuth(
     private val auth: FirebaseAuth
@@ -155,7 +152,7 @@ actual class FBAuth(
         get() = _user.toCommonStateFlow()
 
     init {
-        auth.addAuthStateListener {fAtuh ->
+        auth.addAuthStateListener { fAtuh ->
             _user.value = fAtuh.currentUser?.let { it -> FBUser(it) }
         }
     }
@@ -163,7 +160,7 @@ actual class FBAuth(
     actual fun signInWithCredential(
         credential: FBAuthCredential,
         failAction: () -> Unit,
-        successAction: (result:FBAuthResult) -> Unit
+        successAction: (result: FBAuthResult) -> Unit
     ) {
         auth.signInWithCredential(credential.credential)
             .addOnSuccessListener {
@@ -230,14 +227,14 @@ actual class FBUser(
         get() = user.uid
     actual val displayName: String?
         get() = user.displayName
-    actual val isAnonymous : Boolean
+    actual val isAnonymous: Boolean
         get() = user.isAnonymous
     actual val photoUrl: String
         get() = user.photoUrl.toString()
 }
 
 actual class FBAuthResult(
-    val result : AuthResult
+    val result: AuthResult
 ) {
     actual val user: FBUser?
         get() = result.user?.let { FBUser(it) }

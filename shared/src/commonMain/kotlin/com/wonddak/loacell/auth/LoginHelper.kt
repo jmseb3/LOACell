@@ -1,29 +1,49 @@
 package com.wonddak.loacell.auth
 
+import com.wonddak.loacell.CommonMutableStateFlow
 import com.wonddak.loacell.CommonStateFlow
 
 expect class LoginHelper {
-    val loginIn : CommonStateFlow<Boolean>
+    val loginIn : CommonMutableStateFlow<Boolean>
     val auth : FBAuth
-    fun signOut()
-    fun delete()
-
-    fun registerToken(
+    fun registerTokenAction(
         result : GoogleResult,
         failAction: (msg:String) -> Unit,
         successAction: (credential : FBAuthCredential) -> Unit,
     )
-
-    fun registerGoogleToken(
-        result : GoogleResult,
-        successAction: (FBAuthResult) -> Unit,
-    )
-    fun registerAnonymousToGoogle(
-        result: GoogleResult,
-        failAction: (msg:String) -> Unit
-    )
+}
+fun LoginHelper.registerGoogleToken(
+    result : GoogleResult,
+    successAction: (FBAuthResult) -> Unit,
+) {
+    loginIn.value = true
+    registerTokenAction(result, {}) { credential ->
+        auth.signInWithCredential(credential, { loginIn.value = false }) {
+            loginIn.value = false
+            successAction(it)
+        }
+    }
 }
 
+fun LoginHelper.registerAnonymousToGoogle(
+    result: GoogleResult,
+    failAction: (msg:String) -> Unit,
+    successAction: () -> Unit
+) {
+    registerTokenAction(result, failAction) { credential ->
+        auth.linkWithCredential(credential, failAction) {
+            successAction()
+        }
+    }
+}
+
+fun LoginHelper.signOut() {
+    this.auth.signOut()
+}
+
+fun LoginHelper.delete() {
+    this.auth.delete()
+}
 expect class FBAuthCredential
 expect class GoogleResult
 

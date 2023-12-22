@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.setting
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,14 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.auth.delete
 import com.wonddak.loacell.model.DialogStatus
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginInfoView(
@@ -32,6 +35,9 @@ fun LoginInfoView(
     val user by loaCellViewModel.user.collectAsState(null)
     val roomLists by loaCellViewModel.roomList.collectAsState()
     val roomList = roomLists.filter { it.owner == user?.uid }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     user?.let { userInfo ->
         Column(
@@ -73,17 +79,19 @@ fun LoginInfoView(
                 }
                 Spacer(modifier = Modifier.width(15.dp))
                 if (userInfo.isAnonymous) {
-                    val anonymousToGoogleLoginLauncher = rememberLauncherForActivityResult(
-                        contract = ActivityResultContracts.StartIntentSenderForResult()
-                    ) { result ->
-                        loginHelper.registerAnonymousToGoogle(result) {
-                            loaCellViewModel.showSnackBar(it)
-                        }
-                    }
                     OutlinedButton(
                         modifier = buttonWeight,
                         onClick = {
-                            loginHelper.requestGoogleLogin(anonymousToGoogleLoginLauncher)
+                            scope.launch {
+                                loginHelper.requestAnonymousToGoogle(
+                                    context as Activity,
+                                    failAction = { msg ->
+                                        loaCellViewModel.showSnackBar(msg)
+                                    }
+                                ) {
+                                    loaCellViewModel.closeSetting()
+                                }
+                            }
                         }
                     ) {
                         Text(text = "Google 계정 연동")

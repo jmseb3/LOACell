@@ -25,6 +25,7 @@ import com.wonddak.database.model.Day
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.util.TimeHelper
+import com.wonddak.loacell.util.makeTimeText
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
