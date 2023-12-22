@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.UserInfoQueries
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class UserInfoQueriesHelper(
@@ -37,7 +38,7 @@ class UserInfoQueriesHelper(
 
     fun getUsersByRoomId(roomId: String): Flow<List<UserInfo>> {
         return queries.selectByRoomId(roomId).asFlow()
-            .mapToList(Dispatchers.Main)
+            .mapToList(Dispatchers.IO)
     }
     fun getUsersByRoomIdValue(roomId: String): List<UserInfo> {
         return queries.selectByRoomId(roomId).executeAsList()

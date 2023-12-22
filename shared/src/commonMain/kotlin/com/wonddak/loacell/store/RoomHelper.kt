@@ -228,6 +228,8 @@ object CommonRoomHelper {
             RoomRole.USER -> "enterUser"
             else -> "owner"
         }
+        println("ROOM Helper$field")
+
         RefHelper.getRoomRef(roomId).update(
             field = field,
             value = CommonFieldValue.arrayRemove(userId),

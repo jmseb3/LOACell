@@ -9,13 +9,14 @@ import com.wonddak.database.model.convertToDay
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class RaidInfoQueriesHelper(
     private val queries: RaidInfoQueries
 ) {
     fun getAllByRoomId(roomId: String): Flow<List<RaidInfo>> {
-        return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.Main)
+        return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.IO)
     }
 
     fun getAllByRoomIdValue(roomId: String): List<RaidInfo> {

@@ -44,3 +44,22 @@ extension Bundle {
         return infoDictionary?["CFBundleVersion"] as? String
     }
 }
+
+extension URL {
+    var queryParameters: QueryParameters {
+      return QueryParameters(url: self) // 연산프로퍼티
+    }
+}
+
+class QueryParameters {
+    let queryItems: [URLQueryItem]
+    
+    init(url: URL?) {
+        queryItems = URLComponents(string: url?.absoluteString ?? "")?.queryItems ?? []
+        print(queryItems)
+    }
+    
+    subscript(name: String) -> String? {
+        return queryItems.first(where: { $0.name == name })?.value
+    }
+}

@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.Error
 import com.wonddak.sharedapi.firebase.model.FBDataItem
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingRoomView(
@@ -149,6 +151,7 @@ fun SettingRoomInfo(
             }
         }
     }
+    val scope = rememberCoroutineScope()
     if (showExitAlert) {
         ConfirmDialog(
             title = "나가기",
@@ -158,8 +161,10 @@ fun SettingRoomInfo(
                 CommonRoomHelper.deleteRoom(
                     roomInfo.uniqueId,
                     successAction = {
-                        loaCellViewModel.deleteRoom(roomInfo.uniqueId)
-                        showExitAlert = false
+                        scope.launch {
+                            loaCellViewModel.deleteRoom(roomInfo.uniqueId)
+                            showExitAlert = false
+                        }
                     },
                     failAction = {
                         loaCellViewModel.showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")

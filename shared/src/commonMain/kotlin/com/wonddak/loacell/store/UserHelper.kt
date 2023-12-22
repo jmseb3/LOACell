@@ -106,6 +106,7 @@ object CommonUserHelper {
         failAction: (e: String) -> Unit,
         successAction: () -> Unit
     ) {
+        println("--USERHELPER DELETE!!")
         RefHelper.getUserDocRef(roomId, name)
             .delete(
                 successAction = successAction,

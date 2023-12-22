@@ -8,7 +8,7 @@ object Versions {
     object Dependencies {
         //All multiplatform libraries
         object KMM {
-            const val SQLDelightVersion = "2.0.0"
+            const val SQLDelightVersion = "2.0.1"
             const val KotlinSerializationVersion = Versions.Project.Kotlin
             const val ktorVersion = "2.3.5"
             const val mokoVersion = "0.23.0"

@@ -23,14 +23,14 @@ import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -47,7 +47,6 @@ open class CommonViewModel(
 
     //현재 로그인된 유저 정보
     val user get() = loginHelper.auth.user
-
 
 
     val roomList = dataBase.roomInfoQueriesHelper.getAll()
@@ -69,7 +68,17 @@ open class CommonViewModel(
         .toCommonStateFlow()
 
     fun showRoom(roomId: String) {
-        _roomId.value = roomId
+        CommonRoomHelper.checkExist(
+            roomId,
+            successAction = {
+                _roomId.value = roomId
+            },
+            failAction = {
+                _totalRoomInfo.value =
+                    _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
+            }
+        )
+
     }
 
     //owner가 사용자 정보를 볼경우 저장되는 temp값
@@ -77,7 +86,11 @@ open class CommonViewModel(
 
     fun hideRoom() {
         _roomId.value = ""
+        observeRoom?.remove()
+        observeUser?.remove()
+        observeRaid?.remove()
         tempOfFBData = emptyList()
+        setTabStatus(RoomState.Raid)
         clearFilter()
     }
     //endregion
@@ -114,8 +127,6 @@ open class CommonViewModel(
 
     //endregion
 
-    private var totalRoomJob: Job? = null
-
     private var observeRoom: CommonListenerRegistration? = null
     private var observeUser: CommonListenerRegistration? = null
     private var observeRaid: CommonListenerRegistration? = null
@@ -123,37 +134,17 @@ open class CommonViewModel(
     init {
         viewModelScope.launch {
             launch(Dispatchers.IO) {
-                roomId.collect { id ->
-                    if (id.isNotEmpty()) {
-                        CommonRoomHelper.checkExist(
-                            id,
-                            successAction = {
-                                observeRoom = CommonRoomHelper.observe(id, dataBase)
-                                observeUser = CommonUserHelper.observe(id, dataBase)
-                                observeRaid = CommonRaidHelper.observe(id, dataBase)
-                                totalRoomJob = CoroutineScope(Dispatchers.IO).launch(
-                                    start = CoroutineStart.LAZY
-                                ) {
-                                    dataBase.getAllInfoByRoomId(id).collect {
-                                        _totalRoomInfo.value = _totalRoomInfo.value.update(it)
-                                    }
-                                }
-                                totalRoomJob?.start()
-                            },
-                            failAction = {
-                                _totalRoomInfo.value =
-                                    _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
-                            }
-                        )
+                roomId.transform {id ->
+                    if (id.isEmpty()) {
+
                     } else {
-                        totalRoomJob?.cancel()
-
-                        observeRoom?.remove()
-                        observeUser?.remove()
-                        observeRaid?.remove()
-
-                        _totalRoomInfo.value = TotalRoomInfo.getInit()
+                        observeRoom = CommonRoomHelper.observe(id, dataBase)
+                        observeUser = CommonUserHelper.observe(id, dataBase)
+                        observeRaid = CommonRaidHelper.observe(id, dataBase)
+                        emit(dataBase.getAllInfoByRoomId(id))
                     }
+                }.collect {
+                    _totalRoomInfo.value = _totalRoomInfo.value.update(it.first())
                 }
             }
         }
@@ -222,7 +213,7 @@ open class CommonViewModel(
     }
 
     fun bottomAddAction() {
-        _totalRoomInfo.value.bottomAction(roomId.value,user.value?.isAnonymous)?.let {
+        _totalRoomInfo.value.bottomAction(roomId.value, user.value?.isAnonymous)?.let {
             _totalRoomInfo.value = it
         }
     }
@@ -293,6 +284,7 @@ open class CommonViewModel(
         hideRoom()
         dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
     }
+
     //login/out
     fun outOrSignOut() {
         if (user.value!!.isAnonymous) {
@@ -305,10 +297,10 @@ open class CommonViewModel(
 
     //DialogAction
 
-    val sheetSpace = config.getFloatFlow(ConfigKeys.SheetSpace,20f)
-    fun setSheetSpace(space:Float) {
+    val sheetSpace = config.getFloatFlow(ConfigKeys.SheetSpace, 20f)
+    fun setSheetSpace(space: Float) {
         viewModelScope.launch {
-            config.putFloat(ConfigKeys.SheetSpace,space)
+            config.putFloat(ConfigKeys.SheetSpace, space)
         }
     }
 
@@ -322,8 +314,9 @@ open class CommonViewModel(
         }
 
         override fun getDisplayName(): String {
-            return user?.value?.displayName?: ""
+            return user?.value?.displayName ?: ""
         }
+
         override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
         override fun getTotalRoomInfo(): TotalRoomInfo = _totalRoomInfo.value
 
@@ -370,22 +363,26 @@ open class CommonViewModel(
         }
 
         override fun dialogRoomEnterError() {
-            dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
-            hideRoom()
-            hideDialog()
+            viewModelScope.launch {
+                dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
+                hideRoom()
+                hideDialog()
+            }
         }
 
         override fun dialogRoomExit() {
             val roomInfo = totalRoomInfo.value.roomInfo!!
+            println("ROOM VM 1")
             CommonRoomHelper.exitRoom(
                 roomInfo.uniqueId,
                 user.value!!.uid,
                 myRole,
                 successAction = {
+                    println("ROOM VM 2")
                     deleteRoom(roomInfo.uniqueId)
                 },
                 failAction = {
-
+                    println("ROOM VM 3")
                 }
             )
         }
@@ -512,9 +509,48 @@ open class CommonViewModel(
             _totalRoomInfo.value = _totalRoomInfo.value.updateFilter(filter)
         }
 
-        override fun dialogEditName(name:String) {
-           loginHelper.auth.updateDisplayName(name)
+        override fun dialogEditName(name: String) {
+            loginHelper.auth.updateDisplayName(name)
             hideDialog()
+        }
+    }
+
+    fun checkByScheme(
+        roomId: String,
+        successEnter: () -> Unit,
+        successNeedPassword: (fbRoomInfo: FBRoomInfo) -> Unit
+    ) {
+        if (roomId.isNotEmpty()) {
+            hideRoom()
+            val nowEnterRoomList = roomList.value.map { it.uniqueId }
+            if (nowEnterRoomList.contains(roomId)) {
+                viewModelImpl.showSnackBar("이미 입장한 방입니다.")
+            } else {
+                CommonRoomHelper.checkExist(
+                    roomId,
+                    successAction = { roomInfo ->
+                        if (roomInfo.enterPassword.isEmpty()) {
+                            CommonRoomHelper.enterRoom(
+                                roomId,
+                                user.value!!.uid,
+                                successAction = {
+                                    dataBase.initFBRoomInfo(roomInfo, roomId)
+                                    successEnter()
+                                    viewModelImpl.showSnackBar("방 정보가 추가되었습니다.")
+                                },
+                                failAction = { error ->
+                                    viewModelImpl.showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
+                                }
+                            )
+                        } else {
+                            successNeedPassword(roomInfo)
+                        }
+                    },
+                    failAction = {
+                        viewModelImpl.showSnackBar("방이 존재 하지 않습니다.")
+                    }
+                )
+            }
         }
     }
 }

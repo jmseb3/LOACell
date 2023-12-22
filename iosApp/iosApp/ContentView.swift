@@ -4,7 +4,7 @@ import shared
 
 struct ContentView: View {
     @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
-
+    
     let bottomHeight : CGFloat = 80
     var body: some View {
         ZStack {
@@ -37,5 +37,11 @@ struct ContentView: View {
         }
         .environmentObject(viewModel)
         .environmentObject(viewModel.sc)
+        .onOpenURL { url in
+            print("Received URL: \(url)")
+            guard let uniqueId = url.queryParameters["uniqueId"] else {return}
+            print(uniqueId)
+            viewModel.checkByScheme(roomId: uniqueId)
+        }
     }
 }

@@ -90,7 +90,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         common.totalRoomInfo.collect { value in
             withAnimation {
-                self.totalRoomInfo = value!  
+                self.totalRoomInfo = value!
             }
         }
         common.showLoading.collect { value in
@@ -198,7 +198,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func updatePartyFocusIndex(index:Int) {
         common.updatePartyFocusIndex(index: Int32(index))
     }
-
+    
     func outOrSignOut() {
         common.outOrSignOut()
     }
@@ -213,5 +213,19 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
     func hideRoomInfo() {
         common.hideRoom()
+    }
+    
+    @Published var showRoomEnterPasswordByIntent : (String,FBRoomInfo)? = nil
+    
+    func checkByScheme(
+        roomId :String
+    ) {
+        common.checkByScheme(
+            roomId: roomId,
+            successEnter: {},
+            successNeedPassword: {roomInfo in
+                self.showRoomEnterPasswordByIntent = (roomId,roomInfo)
+                print(self.showRoomEnterPasswordByIntent)
+            })
     }
 }

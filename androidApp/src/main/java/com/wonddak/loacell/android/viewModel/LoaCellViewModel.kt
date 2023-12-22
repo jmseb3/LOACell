@@ -15,9 +15,7 @@ import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomState
-import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
-import com.wonddak.loacell.store.initFBRoomInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -103,40 +101,15 @@ class LoaCellViewModel(
             //id 값을 가져온 경우
             launch {
                 showRoomEnterByIntent.collect { roomId ->
-                    if (roomId.isNotEmpty()) {
-                        hideRoomInfo()
-                        val nowEnterRoomList =
-                            dataBase.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }
-                        if (nowEnterRoomList.contains(roomId)) {
-                            showSnackBar("이미 입장한 방입니다.")
-                        } else {
-                            CommonRoomHelper.checkExist(
-                                roomId,
-                                successAction = { roomInfo ->
-                                    if (roomInfo.enterPassword.isEmpty()) {
-                                        CommonRoomHelper.enterRoom(
-                                            roomId,
-                                            user.value!!.uid!!,
-                                            successAction = {
-                                                dataBase.initFBRoomInfo(roomInfo, roomId)
-                                                _showRoomEnterByIntent.value = ""
-                                                showSnackBar("방 정보가 추가되었습니다.")
-                                            },
-                                            failAction = { error ->
-                                                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
-                                            }
-                                        )
-                                    } else {
-                                        _showRoomEnterPasswordByIntent.value =
-                                            Pair(roomId, roomInfo)
-                                    }
-                                },
-                                failAction = {
-                                    showSnackBar("방이 존재 하지 않습니다.")
-                                }
-                            )
+                    common.checkByScheme(
+                        roomId,
+                        successEnter = {
+                            _showRoomEnterByIntent.value = ""
+                        },
+                        successNeedPassword = { roomInfo ->
+                            _showRoomEnterPasswordByIntent.value = Pair(roomId, roomInfo)
                         }
-                    }
+                    )
                 }
             }
         }
@@ -164,7 +137,7 @@ class LoaCellViewModel(
     fun bottomAddAction() = common.bottomAddAction()
     fun topBackAction() = common.topBackAction()
 
-    fun deleteRoom(roomId:String) = common.deleteRoom(roomId)
+    suspend fun deleteRoom(roomId:String) = common.deleteRoom(roomId)
 
     fun getDialogAction() = common.dialogAction
 

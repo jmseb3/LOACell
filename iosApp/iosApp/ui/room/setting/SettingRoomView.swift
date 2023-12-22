@@ -123,8 +123,8 @@ struct SettingRoomInfo: View {
                                 CommonRoomHelper().deleteRoom(
                                     roomId: roomInfo.uniqueId,
                                     successAction: {
-                                        viewModel.deleteRoom(roomId: roomInfo.uniqueId)
                                         showExit = false
+                                        viewModel.deleteRoom(roomId: roomInfo.uniqueId)
                                     },
                                     failAction: {error in
                                         viewModel.showSnackBar(msg: "나가기에 실패했습니다. 관리자에게 문의하세요\(error.errorMsg)")
