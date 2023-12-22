@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         intent?.data?.let { uri ->
             if (uri.scheme == "kakaoeaad613c8a32160c49991040e94170f9") {
                 uri.getQueryParameter("uniqueId")?.let { id ->
-                    loaCellViewModel.setIntentRoomId(id)
+                    loaCellViewModel.checkByScheme(id)
                 }
             }
         }

@@ -15,9 +15,6 @@ import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomState
-import com.wonddak.loacell.store.FBRoomInfo
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
     private val dataBase: AppDataBase,
@@ -83,38 +80,7 @@ class LoaCellViewModel(
             common.tempOfFBData = value
         }
 
-    private var _showRoomEnterByIntent: MutableStateFlow<String> = MutableStateFlow("")
-    val showRoomEnterByIntent get() = _showRoomEnterByIntent
-    fun setIntentRoomId(id: String) {
-        _showRoomEnterByIntent.value = id
-    }
-
-    private var _showRoomEnterPasswordByIntent: MutableStateFlow<Pair<String, FBRoomInfo>?> =
-        MutableStateFlow(null)
-    val showRoomEnterPasswordByIntent get() = _showRoomEnterPasswordByIntent
-    fun clearEnterPasswordByIntent() {
-        _showRoomEnterPasswordByIntent.value = null
-    }
-
-    init {
-        viewModelScope.launch {
-            //id 값을 가져온 경우
-            launch {
-                showRoomEnterByIntent.collect { roomId ->
-                    common.checkByScheme(
-                        roomId,
-                        successEnter = {
-                            _showRoomEnterByIntent.value = ""
-                        },
-                        successNeedPassword = { roomInfo ->
-                            _showRoomEnterPasswordByIntent.value = Pair(roomId, roomInfo)
-                        }
-                    )
-                }
-            }
-        }
-    }
-
+    fun checkByScheme(roomId: String) = common.checkByScheme(roomId)
 
     val syncData get() = common.syncData
     fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid!!, force)

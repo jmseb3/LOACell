@@ -5,6 +5,7 @@ enum class DialogStatus {
     ROOM_ACTION,
     ROOM_ADD,
     ROOM_ENTER,
+    ROOM_ENTER_BY_SCHEME,
     ROOM_ENTER_ERROR,
     ROOM_EXIT,
     ROOM_EDIT,

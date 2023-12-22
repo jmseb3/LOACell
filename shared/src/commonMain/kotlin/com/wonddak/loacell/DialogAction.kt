@@ -1,5 +1,6 @@
 package com.wonddak.loacell
 
+import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
@@ -19,11 +20,13 @@ interface DialogAction {
     fun getUserInfo(): UserInfo = getTotalRoomInfo().userInfo!!
     fun getCharacterList(): List<Character> = getTotalRoomInfo().characterList
     fun getUserAndCharacterMap() :Map<String,List<Character>> = getTotalRoomInfo().userAndCharacterMap
+    fun getSchemeData() :SchemeData? = getTotalRoomInfo().schemeData
 
     //room
     fun dialogRoomAction(status: Int)
     fun dialogRoomAdd(title: String, description: String, password: String)
     fun dialogRoomEnter(roomId: String, roomInfo: FBRoomInfo)
+    fun dialogRoomEnterByScheme(roomId: String, roomInfo: FBRoomInfo)
     fun dialogRoomEnterError()
     fun dialogRoomExit()
     fun dialogRoomEdit(title: String, description: String, password: String)

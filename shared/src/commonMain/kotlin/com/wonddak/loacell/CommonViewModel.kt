@@ -4,6 +4,7 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.delete
 import com.wonddak.loacell.auth.signOut
+import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
 import com.wonddak.loacell.model.DialogStatus
@@ -362,6 +363,11 @@ open class CommonViewModel(
             dataBase.initFBRoomInfo(roomInfo, roomId)
         }
 
+        override fun dialogRoomEnterByScheme(roomId: String, roomInfo: FBRoomInfo) {
+            dataBase.initFBRoomInfo(roomInfo, roomId)
+            _totalRoomInfo.value = _totalRoomInfo.value.copy(schemeData = null)
+        }
+
         override fun dialogRoomEnterError() {
             viewModelScope.launch {
                 dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
@@ -516,9 +522,7 @@ open class CommonViewModel(
     }
 
     fun checkByScheme(
-        roomId: String,
-        successEnter: () -> Unit,
-        successNeedPassword: (fbRoomInfo: FBRoomInfo) -> Unit
+        roomId: String
     ) {
         if (roomId.isNotEmpty()) {
             hideRoom()
@@ -535,7 +539,6 @@ open class CommonViewModel(
                                 user.value!!.uid,
                                 successAction = {
                                     dataBase.initFBRoomInfo(roomInfo, roomId)
-                                    successEnter()
                                     viewModelImpl.showSnackBar("방 정보가 추가되었습니다.")
                                 },
                                 failAction = { error ->
@@ -543,7 +546,7 @@ open class CommonViewModel(
                                 }
                             )
                         } else {
-                            successNeedPassword(roomInfo)
+                            _totalRoomInfo.value = _totalRoomInfo.value.updateSchemeData(SchemeData(roomId,roomInfo))
                         }
                     },
                     failAction = {

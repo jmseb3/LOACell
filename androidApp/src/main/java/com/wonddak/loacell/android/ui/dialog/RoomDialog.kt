@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
@@ -121,22 +122,23 @@ fun RoomEnterErrorDialog(
 @Composable
 fun RoomEnterDialog(
     nowEnterRoomList: List<String>,
+    prevData : SchemeData? = null,
     dismiss: () -> Unit,
     success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
 ) {
     var roomId by remember {
-        mutableStateOf("")
+        mutableStateOf(prevData?.roomId ?:"")
     }
     var errorMsg by remember {
         mutableStateOf("")
     }
     var nowRoomInfo: FBRoomInfo? by remember {
-        mutableStateOf(null)
+        mutableStateOf(prevData?.fbRoomInfo)
     }
-    var password by remember {
-        mutableStateOf("")
+    var password :String by remember {
+        mutableStateOf(prevData?.fbRoomInfo?.enterPassword ?:"")
     }
-    var enterPassword by remember {
+    var enterPassword :String by remember {
         mutableStateOf("")
     }
     LaunchedEffect(errorMsg) {
@@ -157,6 +159,7 @@ fun RoomEnterDialog(
         confirmButtonEnabled = if (password.isEmpty()) roomId.length == 20 else true,
         confirmButtonAction = {
             if (password.isEmpty()) {
+                //입장하기
                 if (roomId.isEmpty()) {
                     errorMsg = "ID를 입력해주세요."
                 } else {
@@ -167,6 +170,7 @@ fun RoomEnterDialog(
                             roomId,
                             successAction = { roomInfo ->
                                 if (roomInfo.enterPassword.isEmpty()) {
+                                    dismiss()
                                     success(roomId, roomInfo)
                                 } else {
                                     nowRoomInfo = roomInfo
@@ -180,8 +184,14 @@ fun RoomEnterDialog(
                     }
                 }
             } else {
+                // 비밀번호 입력
                 if (password == enterPassword) {
-                    success(roomId, nowRoomInfo!!)
+                    if (nowEnterRoomList.contains(roomId)) {
+                        errorMsg = "이미 입장한 방입니다."
+                    } else {
+                        dismiss()
+                        success(roomId, nowRoomInfo!!)
+                    }
                 } else {
                     errorMsg = "비밀번호가 맞지 않습니다."
                 }
@@ -235,79 +245,6 @@ fun RoomEnterDialog(
                     enabled = password.isNotEmpty()
                 )
             }
-            AnimatedVisibility(errorMsg.isNotEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = errorMsg,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun RoomEnterPasswordDialog(
-    roomId: String,
-    fbRoomInfo: FBRoomInfo,
-    success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
-    dismiss: () -> Unit,
-) {
-    var enterPassword by remember {
-        mutableStateOf("")
-    }
-    var errorMsg by remember {
-        mutableStateOf("")
-    }
-    LaunchedEffect(errorMsg) {
-        if (errorMsg.isNotEmpty()) {
-            delay(2_000L)
-            errorMsg = ""
-        }
-    }
-    val regex = Regex("[a-zA-Z0-9]+")
-
-    BaseDialog(
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth(0.8f),
-        dismiss = dismiss,
-        titleText = "비밀번호 입력",
-        confirmButtonText = "확인",
-        confirmButtonAction = {
-            if (fbRoomInfo.enterPassword == enterPassword) {
-                success(roomId, fbRoomInfo)
-            } else {
-                errorMsg = "비밀번호가 맞지 않습니다."
-            }
-        },
-        dismissButtonText = "취소",
-        dialogProperties = DialogProperties(
-            dismissOnClickOutside = false,
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        val focusRequester = remember { FocusRequester() }
-        Column() {
-            LengthLimitTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                text = enterPassword,
-                label = "방 비밀번호",
-                placeHolder = "방 비밀번호를 입력해주세요.",
-                maxLine = 1,
-                maxLength = 10,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                ),
-                textChange = {
-                    if (it.isEmpty() || regex.matches(it)) {
-                        enterPassword = it
-                    }
-                },
-            )
             AnimatedVisibility(errorMsg.isNotEmpty()) {
                 Text(
                     modifier = Modifier

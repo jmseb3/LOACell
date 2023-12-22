@@ -20,14 +20,12 @@ import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.dialog.DialogHost
-import com.wonddak.loacell.android.ui.dialog.RoomEnterPasswordDialog
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.store.initFBRoomInfo
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -89,10 +87,11 @@ private fun MainContentView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val showRoomEnterPasswordByIntent by loaCellViewModel.showRoomEnterPasswordByIntent.collectAsState()
     val syncData by loaCellViewModel.syncData.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(padding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,19 +117,6 @@ private fun MainContentView(
                             RoomView(loaCellViewModel)
                         }
                     }
-                }
-            }
-
-            showRoomEnterPasswordByIntent?.let {
-                RoomEnterPasswordDialog(
-                    roomId = it.first,
-                    fbRoomInfo = it.second,
-                    success = { id, roomInfo ->
-                        db.initFBRoomInfo(roomInfo, id)
-                        loaCellViewModel.clearEnterPasswordByIntent()
-                    }
-                ) {
-                    loaCellViewModel.clearEnterPasswordByIntent()
                 }
             }
         }

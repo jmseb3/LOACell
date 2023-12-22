@@ -51,6 +51,15 @@ fun DialogHost(
                     dialogAction.dialogRoomEnter(roomId, roomInfo)
                 }
             }
+            DialogStatus.ROOM_ENTER_BY_SCHEME -> {
+                RoomEnterDialog(
+                    nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                    prevData = dialogAction.getSchemeData(),
+                    dismiss = dismiss
+                ) { roomId, roomInfo ->
+                    dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
+                }
+            }
 
             DialogStatus.ROOM_ENTER_ERROR -> {
                 RoomEnterErrorDialog(

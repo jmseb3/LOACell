@@ -12,6 +12,7 @@ import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -30,7 +31,8 @@ data class TotalRoomInfo(
     val tabState: RoomState = RoomState.Raid,
     val dialogState: DialogStatus = DialogStatus.NONE,
     val filter: Filter = Filter(),
-    val focusIndex : Int = -1
+    val focusIndex : Int = -1,
+    val schemeData: SchemeData? = null
 ) {
     companion object {
         fun getInit(): TotalRoomInfo = TotalRoomInfo()
@@ -221,7 +223,14 @@ data class TotalRoomInfo(
     fun updateFilter(filter: Filter) = this.copy(filter = filter)
     fun clearFilter() = updateFilter(Filter())
 
+    fun updateSchemeData(schemeData: SchemeData) = this.copy(schemeData = schemeData, dialogState = DialogStatus.ROOM_ENTER_BY_SCHEME)
+
 }
+
+data class SchemeData(
+    val roomId:String,
+    val fbRoomInfo: FBRoomInfo
+)
 
 data class TotalRoomInfoSimple(
     val roomInfo: RoomInfo? = null,
