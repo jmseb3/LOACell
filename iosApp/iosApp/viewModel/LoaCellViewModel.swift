@@ -220,12 +220,6 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func checkByScheme(
         roomId :String
     ) {
-        common.checkByScheme(
-            roomId: roomId,
-            successEnter: {},
-            successNeedPassword: {roomInfo in
-                self.showRoomEnterPasswordByIntent = (roomId,roomInfo)
-                print(self.showRoomEnterPasswordByIntent)
-            })
+        common.checkByScheme(roomId: roomId)
     }
 }
