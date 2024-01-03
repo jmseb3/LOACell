@@ -1,9 +1,8 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
 import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -43,10 +42,7 @@ fun ShareSheet(
     BaseSheet(
         title = "공유하기",
         useCloseIcon = true,
-        onDismissRequest = {
-            onDismissRequest()
-            println("@@@ Shared")
-        }
+        onDismissRequest = onDismissRequest
     ) {
         Column(
             modifier = Modifier
@@ -63,7 +59,8 @@ fun ShareSheet(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable {
-                            copyToClipBoard(context, uniqueId)
+                                   shareIntent(context,uniqueId)
+//                            copyToClipBoard(context, uniqueId)
                         },
                     painter = painterResource(id = SharedRes.images.ic_share_link.drawableResId),
                     contentDescription = null
@@ -84,11 +81,20 @@ fun ShareSheet(
         }
     }
 }
+internal fun shareIntent(
+    context: Context,
+    uniqueId: String
+) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, uniqueId)
+        type = "text/plain"
+    }
 
-internal fun copyToClipBoard(context: Context, uniqueId: String) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip: ClipData = ClipData.newPlainText("Room Id", uniqueId)
-    clipboard.setPrimaryClip(clip)
+    val shareIntent = Intent.createChooser(sendIntent, null).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    context.startActivity(shareIntent)
 }
 
 internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
