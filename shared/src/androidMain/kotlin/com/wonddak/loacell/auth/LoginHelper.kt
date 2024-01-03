@@ -138,6 +138,7 @@ actual class LoginHelper(
     }
 }
 
+
 actual class FBAuthCredential(
     val credential: AuthCredential
 )
@@ -203,10 +204,11 @@ actual class FBAuth(
             }
     }
 
-    actual fun requestAnonymousLogin() {
+    actual fun requestAnonymousLogin(successAction: () -> Unit) {
         auth.signInAnonymously()
             .addOnSuccessListener {
                 updateDisplayName(NameHelper.makeName())
+                successAction()
             }
     }
 

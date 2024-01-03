@@ -198,10 +198,13 @@ actual class FBAuth(
         }
     }
 
-    actual fun requestAnonymousLogin() {
+    actual fun requestAnonymousLogin(
+        successAction: () -> Unit
+    ) {
         auth.signInAnonymouslyWithCompletion { _, error ->
             if (error == null) {
                 updateDisplayName(NameHelper.makeName())
+                successAction()
             }
         }
     }

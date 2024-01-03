@@ -16,8 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,16 +34,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.R
-import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.sharedresources.store.CommonString
 import kotlinx.coroutines.launch
 
@@ -89,8 +91,51 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val widthSize = Modifier.fillMaxWidth(0.8f)
+                Button(
+                    onClick = {
+                        loginHelper.requestAnonymousLogin()
+                    },
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = widthSize,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.White,
+                        containerColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = CommonString.Login.getAnonymous().toText(),
+                        fontFamily = roboto,
+//                        color = Color.White,
+//                        textDecoration = TextDecoration.Underline,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = widthSize,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "OR",
+                        maxLines = 1,
+                        textAlign = TextAlign.Center
+                    )
+                    Divider(
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 GoogleLoginButton(
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                    modifier = widthSize
                 ) {
                     scope.launch {
                         loginHelper.requestGoogleLogin(context as Activity) { result ->
@@ -98,16 +143,6 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = CommonString.Login.getAnonymous().toText(),
-                    color = Color.Black,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier
-                        .noRippleClickable { loginHelper.auth.requestAnonymousLogin() }
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
             }
         }
         if (loggingIn) {

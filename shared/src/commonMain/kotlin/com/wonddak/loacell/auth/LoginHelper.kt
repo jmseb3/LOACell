@@ -44,6 +44,14 @@ fun LoginHelper.signOut() {
 fun LoginHelper.delete() {
     this.auth.delete()
 }
+
+fun LoginHelper.requestAnonymousLogin() {
+    loginIn.value = true
+    this.auth.requestAnonymousLogin {
+        loginIn.value = false
+    }
+}
+
 expect class FBAuthCredential
 expect class GoogleResult
 
@@ -63,7 +71,7 @@ expect class FBAuth {
     fun signOut()
     fun delete()
 
-    fun requestAnonymousLogin()
+    fun requestAnonymousLogin(successAction: () -> Unit)
 
     fun updateDisplayName(name:String)
 }
