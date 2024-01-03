@@ -81,7 +81,7 @@ actual class LoginHelper(
         }
     }
 
-    suspend fun requestAnonymousToGoogle(
+    suspend fun linkToGoogle(
         activity :Activity,
         failAction: (msg: String) -> Unit,
         successAction: () -> Unit

@@ -83,7 +83,7 @@ fun LoginInfoView(
                         modifier = buttonWeight,
                         onClick = {
                             scope.launch {
-                                loginHelper.requestAnonymousToGoogle(
+                                loginHelper.linkToGoogle(
                                     context as Activity,
                                     failAction = { msg ->
                                         loaCellViewModel.showSnackBar(msg)

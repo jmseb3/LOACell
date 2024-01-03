@@ -126,6 +126,11 @@ fun LoginHelper.registerAppleToken(
     }
 }
 
+fun LoginHelper.linkToApple() {
+
+}
+
+
 actual class FBAuthCredential(
     val credential: FIRAuthCredential
 )
