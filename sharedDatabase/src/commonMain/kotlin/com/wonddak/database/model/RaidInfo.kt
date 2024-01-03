@@ -10,6 +10,7 @@ enum class RaidType(val maxPerson: Int) {
     KAMEN(8),
     KAYANGEL(4),
     IVORYTOWER(4),
+    ECHIDNA(8),
     ETC(8);
 
     fun toKorString(): String {
@@ -22,10 +23,12 @@ enum class RaidType(val maxPerson: Int) {
             KAMEN -> "카멘"
             KAYANGEL -> "카앙겔"
             IVORYTOWER -> "상아탑"
+            ECHIDNA -> "에키드나"
             ETC -> "기타"
         }
     }
 
+    //접근 가능한 난이도 정보
     fun accessibleDifficulty(): List<Difficulty> {
         return when (this) {
             VALTAN -> listOf(
@@ -47,13 +50,14 @@ enum class RaidType(val maxPerson: Int) {
                 Difficulty.Hell
             )
 
-            ILLIAKAN, KAMEN, KAYANGEL, IVORYTOWER -> listOf(
+            ILLIAKAN, KAMEN, KAYANGEL, IVORYTOWER, ECHIDNA -> listOf(
                 Difficulty.Normal,
                 Difficulty.Hard
             )
         }
     }
 
+    //입장 레벨
     fun getMinLevel(difficulty: Difficulty, gateway: Int = 0): Int {
         return when (this) {
             VALTAN -> when (difficulty) {
@@ -79,14 +83,14 @@ enum class RaidType(val maxPerson: Int) {
 
             ABRELSHUD -> when (difficulty) {
                 Difficulty.Normal -> when (gateway) {
-                    1,2 -> 1490
+                    1, 2 -> 1490
                     3 -> 1500
                     4 -> 1520
                     else -> 0
                 }
 
                 Difficulty.Hard -> when (gateway) {
-                    1,2 -> 1540
+                    1, 2 -> 1540
                     3 -> 1550
                     4 -> 1560
                     else -> 0
@@ -120,27 +124,30 @@ enum class RaidType(val maxPerson: Int) {
                 else -> 0
             }
 
+            ECHIDNA -> when (difficulty) {
+                Difficulty.Normal -> 1620
+                Difficulty.Hard -> 1630
+                else -> 0
+            }
+
             ETC -> 0
         }
     }
 
+    //관문 수
     fun getMaxGate(): Int {
         return when (this) {
-            VALTAN -> 2
-            VYKAS -> 2
-            KOUKU -> 3
-            ABRELSHUD -> 4
-            ILLIAKAN -> 3
-            KAMEN -> 4
-            KAYANGEL -> 3
-            IVORYTOWER -> 4
+            VALTAN, VYKAS, ECHIDNA -> 2
+            KOUKU, ILLIAKAN, KAYANGEL -> 3
+            ABRELSHUD, KAMEN, IVORYTOWER -> 4
             ETC -> 0
         }
     }
 
+    //파티 수
     fun getMaxParty(): Int {
         return when (this) {
-            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, KAMEN, ETC -> 2
+            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, KAMEN, ECHIDNA, ETC -> 2
             KOUKU, KAYANGEL, IVORYTOWER -> 1
         }
     }
