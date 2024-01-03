@@ -80,6 +80,7 @@ struct RoomEnterErrorDialog : View {
 
 struct RoomEnterDialog :View {
     let nowEnterRoomList : [String]
+    let schemeData :SchemeData?
     let dismiss : () -> Void
     let confirm :(_ roomId :String,_ roomInfo :FBRoomInfo) -> Void
     
@@ -88,6 +89,29 @@ struct RoomEnterDialog :View {
     @State private var nowRoomInfo :FBRoomInfo? = nil
     @State private var password : String = ""
     @State private var enterPassword :String = ""
+    
+    init(
+        nowEnterRoomList: [String],
+        dismiss: @escaping () -> Void,
+        confirm: @escaping (_: String, _: FBRoomInfo) -> Void
+    ) {
+        self.nowEnterRoomList = nowEnterRoomList
+        self.schemeData = nil
+        self.dismiss = dismiss
+        self.confirm = confirm
+    }
+    
+    init(
+        nowEnterRoomList: [String],
+        schemeData :SchemeData?,
+        dismiss: @escaping () -> Void,
+        confirm: @escaping (_: String, _: FBRoomInfo) -> Void
+    ) {
+        self.nowEnterRoomList = nowEnterRoomList
+        self.schemeData = schemeData
+        self.dismiss = dismiss
+        self.confirm = confirm
+    }
     
     var enabled : Bool {
         password.isEmpty ? roomId.count == 20 : false
@@ -149,6 +173,12 @@ struct RoomEnterDialog :View {
                                 errorMsg = ""
                             }
                         }
+                }
+            }.onAppear{
+                if let scheme = schemeData {
+                    self.roomId = scheme.roomId
+                    self.nowRoomInfo = scheme.fbRoomInfo
+                    self.password = scheme.fbRoomInfo.enterPassword
                 }
             }
         }

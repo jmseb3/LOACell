@@ -215,11 +215,11 @@ actual class FBUser(
     val user: FIRUser
 ) {
     actual val uid: String
-        get() = user.uid()
+        get() = user.uid
     actual val displayName: String?
-        get() = user.displayName()
+        get() = user.displayName
     actual val photoUrl: String
-        get() = user.photoURL().toString()
+        get() = user.photoURL.toString()
     actual val isAnonymous: Boolean
         get() = user.isAnonymous()
 }

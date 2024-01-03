@@ -124,7 +124,7 @@ open class CommonViewModel(
     }
 
     val myRole: RoomRole
-        get() = _totalRoomInfo.value.getMyRole(user?.value?.uid)
+        get() = _totalRoomInfo.value.getMyRole(user.value?.uid)
 
     //endregion
 
@@ -329,7 +329,7 @@ open class CommonViewModel(
         }
 
         override fun dialogRoomAdd(title: String, description: String, password: String) {
-            user?.value?.uid?.let { owner ->
+            user.value?.uid?.let { owner ->
                 println("JWH _ make Room Owner : $owner")
                 CommonRoomHelper.makeInfo(
                     title, description, password, owner
@@ -364,7 +364,7 @@ open class CommonViewModel(
         }
 
         override fun dialogRoomEnterByScheme(roomId: String, roomInfo: FBRoomInfo) {
-            dataBase.initFBRoomInfo(roomInfo, roomId)
+            dialogRoomEnter(roomId,roomInfo)
             _totalRoomInfo.value = _totalRoomInfo.value.copy(schemeData = null)
         }
 

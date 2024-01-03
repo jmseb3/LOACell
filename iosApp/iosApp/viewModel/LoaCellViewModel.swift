@@ -214,12 +214,8 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func hideRoomInfo() {
         common.hideRoom()
     }
-    
-    @Published var showRoomEnterPasswordByIntent : (String,FBRoomInfo)? = nil
-    
-    func checkByScheme(
-        roomId :String
-    ) {
+
+    func checkByScheme(roomId :String) {
         common.checkByScheme(roomId: roomId)
     }
 }

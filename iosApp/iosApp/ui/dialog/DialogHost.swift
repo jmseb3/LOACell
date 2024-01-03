@@ -63,10 +63,21 @@ struct DialogHost<Content: View>: View {
                         case DialogStatus.roomEnter:
                             RoomEnterDialog(
                                 nowEnterRoomList: dialogAction.getRoomListToUniqueId(),
-                                dismiss: dismiss) { roomId, roomInfo in
-                                    dialogAction.dialogRoomEnter(roomId: roomId, roomInfo: roomInfo)
-                                }
-                                .modifier(dialog)
+                                dismiss: dismiss
+                            ) { roomId, roomInfo in
+                                dialogAction.dialogRoomEnter(roomId: roomId, roomInfo: roomInfo)
+                            }
+                            .modifier(dialog)
+                            
+                        case DialogStatus.roomEnterByScheme:
+                            RoomEnterDialog(
+                                nowEnterRoomList: dialogAction.getRoomListToUniqueId(),
+                                schemeData : dialogAction.getSchemeData(),
+                                dismiss: dismiss
+                            ) { roomId, roomInfo in
+                                dialogAction.dialogRoomEnterByScheme(roomId: roomId, roomInfo: roomInfo)
+                            }
+                            .modifier(dialog)
                         case DialogStatus.roomEnterError:
                             RoomEnterErrorDialog {
                                 dialogAction.dialogRoomEnterError()

@@ -23,8 +23,15 @@ struct RoomView: View {
                 if let room = viewModel.roomInfo {
                     RoomTitleView(roomInfo: room, role: viewModel.myRole) { status in
                         viewModel.showDialog(dialogStatus: status)
+                    }.onAppear{
+                        print("role \(viewModel.myRole)")
                     }
                 }
+                Button(action: {
+                    print("role \(viewModel.myRole)")
+                }, label: {
+                    /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
+                })
             }
             if viewModel.tabState == RoomState.raid {
                 RaidView()
@@ -38,15 +45,14 @@ struct RoomView: View {
 }
 
 struct RoomTitleView : View {
-    @EnvironmentObject var viewModel: LoaCellViewModel
     let roomInfo : RoomInfo
     let role : RoomRole
     let showDialog : (_ status : DialogStatus) -> Void
     var body: some View {
         ZStack {
             VStack(alignment: .leading) {
-                Text(viewModel.totalRoomInfo.roomInfo?.description_ ?? "")
-                Text(viewModel.totalRoomInfo.roomInfo?.uniqueId ?? "")
+                Text(roomInfo.description_)
+                Text(roomInfo.uniqueId)
                     .onTapGesture {
                         showDialog(DialogStatus.shareSheet)
                     }
@@ -54,7 +60,7 @@ struct RoomTitleView : View {
             }.padding(EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3))
             
             VStack() {
-                if(viewModel.myRole == RoomRole.owner || viewModel.myRole == RoomRole.none) {
+                if(role == RoomRole.owner) {
                     
                 } else {
                     IconButton(resource: \.room_exit) {
