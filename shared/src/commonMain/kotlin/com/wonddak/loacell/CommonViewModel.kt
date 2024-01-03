@@ -26,12 +26,11 @@ import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -90,6 +89,7 @@ open class CommonViewModel(
         observeRoom?.remove()
         observeUser?.remove()
         observeRaid?.remove()
+        totalJob?.cancel()
         tempOfFBData = emptyList()
         setTabStatus(RoomState.Raid)
         clearFilter()
@@ -131,21 +131,24 @@ open class CommonViewModel(
     private var observeRoom: CommonListenerRegistration? = null
     private var observeUser: CommonListenerRegistration? = null
     private var observeRaid: CommonListenerRegistration? = null
+    private var totalJob: Job? = null
 
     init {
         viewModelScope.launch {
             launch(Dispatchers.IO) {
-                roomId.transform {id ->
+                roomId.collect {id ->
                     if (id.isEmpty()) {
 
                     } else {
                         observeRoom = CommonRoomHelper.observe(id, dataBase)
                         observeUser = CommonUserHelper.observe(id, dataBase)
                         observeRaid = CommonRaidHelper.observe(id, dataBase)
-                        emit(dataBase.getAllInfoByRoomId(id))
+                        totalJob = viewModelScope.launch{
+                            dataBase.getAllInfoByRoomId(id).collect {
+                                _totalRoomInfo.value = _totalRoomInfo.value.update(it)
+                            }
+                        }
                     }
-                }.collect {
-                    _totalRoomInfo.value = _totalRoomInfo.value.update(it.first())
                 }
             }
         }

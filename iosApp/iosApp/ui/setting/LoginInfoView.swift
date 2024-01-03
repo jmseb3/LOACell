@@ -35,14 +35,21 @@ struct LoginInfoView: View {
                 }
                 Divider()
                 
-                HStack {
-                    RoundCornerButton(text: userInfo.isAnonymous ? "나가기" : "로그아웃") {
-                        viewModel.outOrSignOut()
+                VStack {
+                    HStack {
+                        RoundCornerButton(text: userInfo.isAnonymous ? "나가기" : "로그아웃") {
+                            viewModel.outOrSignOut()
+                        }
+                        if !userInfo.isAnonymous {
+                            Spacer()
+                                .frame(width: 15)
+                            RoundCornerButton(text: "탈퇴") {
+                                loginHelper.delete()
+                            }
+                        }
                     }
-                    Spacer()
-                        .frame(width: 15)
-                    RoundCornerButton(text: userInfo.isAnonymous ? "Google 계정 연동" : "탈퇴") {
-                        if userInfo.isAnonymous {
+                    if userInfo.isAnonymous {
+                        RoundCornerButton(text: "Google 계정 연동" ) {
                             loginHelper.requestAnonymousToGoogleLogin(
                                 failAction: { msg in
                                     viewModel.showSnackBar(msg: msg)
@@ -50,8 +57,6 @@ struct LoginInfoView: View {
                                     
                                 }
                             )
-                        } else {
-                            loginHelper.delete()
                         }
                     }
                 }

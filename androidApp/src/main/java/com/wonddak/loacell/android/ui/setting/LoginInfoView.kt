@@ -62,25 +62,45 @@ fun LoginInfoView(
             }
             Divider()
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(5.dp)
             ) {
-                val buttonWeight = Modifier.weight(1f)
-                OutlinedButton(
-                    modifier = buttonWeight,
-                    onClick = {
-                        loaCellViewModel.outOrSignOut()
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
-                }
-                Spacer(modifier = Modifier.width(15.dp))
-                if (userInfo.isAnonymous) {
+                    val buttonWeight = Modifier.weight(1f)
+
                     OutlinedButton(
                         modifier = buttonWeight,
+                        onClick = {
+                            loaCellViewModel.outOrSignOut()
+                        }
+                    ) {
+                        Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
+                    }
+                    if (!userInfo.isAnonymous) {
+                        Spacer(modifier = Modifier.width(15.dp))
+                        OutlinedButton(
+                            modifier = buttonWeight,
+                            onClick = {
+                                loginHelper.delete()
+                            },
+                            enabled = roomList.isEmpty()
+                        ) {
+                            Text(text = "탈퇴")
+                        }
+                    }
+                }
+                if (!userInfo.isAnonymous && roomList.isNotEmpty()) {
+                    Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
+                }
+                if (userInfo.isAnonymous) {
+                    OutlinedButton(
                         onClick = {
                             scope.launch {
                                 loginHelper.linkToGoogle(
@@ -94,23 +114,9 @@ fun LoginInfoView(
                             }
                         }
                     ) {
-                        Text(text = "Google 계정 연동")
-                    }
-                } else {
-                    OutlinedButton(
-                        modifier = buttonWeight,
-                        onClick = {
-                            loginHelper.delete()
-                        },
-                        enabled = roomList.isEmpty()
-                    ) {
-                        Text(text = "탈퇴")
+                        Text(text = "Google로 연동")
                     }
                 }
-            }
-
-            if (!userInfo.isAnonymous && roomList.isNotEmpty()) {
-                Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
             }
         }
     }

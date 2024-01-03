@@ -34,7 +34,7 @@ fun BottomAppBar(
     val role = loaCellViewModel.myRole
 
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val selectedRoomId= totalRoomInfo.roomId
+    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val focusUserInfo = totalRoomInfo.userInfo
     val focusRaidInfo  = totalRoomInfo.raidInfo
     val tabState = totalRoomInfo.tabState
@@ -65,79 +65,82 @@ fun BottomAppBar(
                 }
             },
             actions = {
-                AnimatedVisibility(selectedRoomId.isEmpty() && !loaCellViewModel.showSetting) {
-                    Row() {
-                        MyIconButton(
-                            imageResource = SharedRes.images.refresh,
-                            enabled = !syncData
-                        ) {
-                            syncStart()
-                        }
-                    }
-                }
-                AnimatedVisibility(
-                    selectedRoomId.isNotEmpty() && (focusUserInfo == null) && (focusRaidInfo == null),
-                ) {
-                    Row() {
-                        MyRoomIconButton(
-                            loaCellViewModel = loaCellViewModel,
-                            state = RoomState.Raid
-                        )
-                        MyRoomIconButton(
-                            loaCellViewModel = loaCellViewModel,
-                            state = RoomState.User
-                        )
-                        if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
-                            MyRoomIconButton(
-                                loaCellViewModel = loaCellViewModel,
-                                state = RoomState.Setting
-                            )
-                        }
-                    }
-
-                }
-                AnimatedVisibility(
-                    selectedRoomId.isNotEmpty() && focusUserInfo != null
-                ) {
-                    focusUserInfo?.let {
+                if (selectedRoomId.isEmpty()) {
+                    AnimatedVisibility(!loaCellViewModel.showSetting) {
                         Row() {
                             MyIconButton(
-                                imageResource = SharedRes.images.change_person
-                            ) {
-                                showDialog(DialogStatus.CHARACTER_EDIT)
-                            }
-                            MyIconButton(
                                 imageResource = SharedRes.images.refresh,
-                                enabled = it.checkTimeOver()
+                                enabled = !syncData
                             ) {
-                                updateCharacter(selectedRoomId,it)
+                                syncStart()
                             }
                         }
                     }
-                }
-                AnimatedVisibility(
-                    selectedRoomId.isNotEmpty() && focusRaidInfo != null
-                ) {
-                    Row() {
-                        focusRaidInfo?.let { info ->
-                            MyIconButton(
-                                imageResource = SharedRes.images.room_setting
-                            ) {
-                                showDialog(DialogStatus.RAID_EDIT)
-                            }
-                            val icon = if (info.isFinish) {
-                                SharedRes.images.task_finish_done
-                            } else {
-                                SharedRes.images.task_finish_not
-                            }
-                            MyIconButton(
-                                imageResource = icon
-                            ) {
-                                CommonRaidHelper.updateFinish(
-                                    info.roomId,
-                                    info.raidId,
-                                    !info.isFinish
+                } else {
+                    AnimatedVisibility(
+                        (focusUserInfo == null) && (focusRaidInfo == null),
+                    ) {
+                        Row() {
+                            MyRoomIconButton(
+                                loaCellViewModel = loaCellViewModel,
+                                state = RoomState.Raid
+                            )
+                            MyRoomIconButton(
+                                loaCellViewModel = loaCellViewModel,
+                                state = RoomState.User
+                            )
+                            if (role == RoomRole.OWNER || role == RoomRole.MANAGER) {
+                                MyRoomIconButton(
+                                    loaCellViewModel = loaCellViewModel,
+                                    state = RoomState.Setting
                                 )
+                            }
+                        }
+
+                    }
+                    AnimatedVisibility(
+                        focusUserInfo != null
+                    ) {
+                        focusUserInfo?.let {
+                            Row() {
+                                MyIconButton(
+                                    imageResource = SharedRes.images.change_person
+                                ) {
+                                    showDialog(DialogStatus.CHARACTER_EDIT)
+                                }
+                                MyIconButton(
+                                    imageResource = SharedRes.images.refresh,
+                                    enabled = it.checkTimeOver()
+                                ) {
+                                    updateCharacter(selectedRoomId,it)
+                                }
+                            }
+                        }
+                    }
+                    AnimatedVisibility(
+                        focusRaidInfo != null
+                    ) {
+                        Row() {
+                            focusRaidInfo?.let { info ->
+                                MyIconButton(
+                                    imageResource = SharedRes.images.room_setting
+                                ) {
+                                    showDialog(DialogStatus.RAID_EDIT)
+                                }
+                                val icon = if (info.isFinish) {
+                                    SharedRes.images.task_finish_done
+                                } else {
+                                    SharedRes.images.task_finish_not
+                                }
+                                MyIconButton(
+                                    imageResource = icon
+                                ) {
+                                    CommonRaidHelper.updateFinish(
+                                        info.roomId,
+                                        info.raidId,
+                                        !info.isFinish
+                                    )
+                                }
                             }
                         }
                     }

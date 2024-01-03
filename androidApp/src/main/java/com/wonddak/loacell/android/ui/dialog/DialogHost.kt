@@ -98,7 +98,6 @@ fun DialogHost(
 
             DialogStatus.RAID_ADD -> {
                 AddRaidSheet(
-                    roomId = dialogAction.getRoomInfoUniqueId(),
                     onDismissRequest = dismiss
                 ) { fbRaidInfo ->
                     dialogAction.dialogRaidAdd(fbRaidInfo)

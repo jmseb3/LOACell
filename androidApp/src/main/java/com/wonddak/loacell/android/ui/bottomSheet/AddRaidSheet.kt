@@ -51,7 +51,8 @@ import java.time.LocalTime
 
 @Composable
 fun AddRaidSheet(
-    roomId: String, onDismissRequest: () -> Unit, addAction: (fbRaidInfo: FBRaidInfo) -> Unit
+    onDismissRequest: () -> Unit,
+    addAction: (fbRaidInfo: FBRaidInfo) -> Unit
 ) {
     var fbRaidInfo: FBRaidInfo by remember {
         mutableStateOf(
