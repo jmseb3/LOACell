@@ -67,7 +67,7 @@ struct LoginView: View {
                             viewModel.syncStartForce(uuid: result.user!.uid)
                         })
                     }
-                    Button(action: {loginHelper.auth.requestAnonymousLogin()}) {
+                    Button(action: {loginHelper.requestAnonymousLogin()}) {
                         Text(CommonString.Login().getAnonymous().localized())
                     }
                 }

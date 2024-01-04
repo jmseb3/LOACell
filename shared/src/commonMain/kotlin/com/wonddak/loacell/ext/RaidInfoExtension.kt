@@ -43,7 +43,7 @@ fun RaidInfo.getImg(): ImageResource? {
         }
 
         RaidType.ECHIDNA -> {
-            SharedRes.images.raid_ivory_tower
+            SharedRes.images.raid_echidna
         }
 
         else -> {
