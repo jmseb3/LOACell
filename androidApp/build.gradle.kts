@@ -59,7 +59,6 @@ dependencies {
     val composeBom = platform(Dependencies.Android.Compose.Bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    implementation("androidx.compose.ui:ui:1.6.0-beta03")
 
     implementation(Dependencies.Android.Compose.UIPreview)
     debugImplementation(Dependencies.Android.Compose.UITooling)

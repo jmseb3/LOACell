@@ -1,6 +1,5 @@
 package com.wonddak.loacell.android.ui.room.raid
 
-import android.graphics.Picture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,9 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -106,35 +102,10 @@ fun RaidTypeView(
     var showCalendarView: List<RaidInfo>? by remember {
         mutableStateOf(null)
     }
-    val picture : Picture = Picture()
 
     if (type == RoomType.Default) {
         LazyColumn(
-            modifier = Modifier
-                .padding(10.dp)
-                .drawWithCache {
-                    // Example that shows how to redirect rendering to an Android Picture and then
-                    // draw the picture into the original destination
-                    val width = this.size.width.toInt()
-                    val height = this.size.height.toInt()
-
-                    onDrawWithContent {
-                        val pictureCanvas =
-                            androidx.compose.ui.graphics.Canvas(
-                                picture.beginRecording(
-                                    width,
-                                    height
-                                )
-                            )
-                        // requires at least 1.6.0-alpha01+
-//                        draw(this, this.layoutDirection, pictureCanvas, this.size) {
-//                            this@onDrawWithContent.drawContent()
-//                        }
-                        picture.endRecording()
-
-                        drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
-                    }
-                }
+            modifier = Modifier.padding(10.dp)
         ) {
             items(filterRaidInfoList) { raidInfo ->
                 RaidItemRow(raidInfo) {
