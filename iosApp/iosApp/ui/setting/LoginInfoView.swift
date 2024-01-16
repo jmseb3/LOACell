@@ -20,6 +20,10 @@ struct LoginInfoView: View {
         self.viewModel.loginHelper
     }
     
+    @State private var showDeleteError = false
+    @Environment(\.window) var window: UIWindow?
+    @State private var appleLinkCoordinator: AppleLinkCoordinator?
+    
     var body: some View {
         VStack {
             if let userInfo = user {
@@ -58,6 +62,19 @@ struct LoginInfoView: View {
                                 }
                             )
                         }
+                        Button(action: {
+                            appleLinkCoordinator = AppleLinkCoordinator(
+                                window: window,
+                                linkFailAction: { msg in
+                                    viewModel.showSnackBar(msg: msg)
+                                }, 
+                                linkSuccessAction: {
+                                    viewModel.closeSetting()
+                                })
+                            appleLinkCoordinator?.startLogin()
+                        }, label: {
+                            /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
+                        })
                     }
                 }
                 .frame(maxWidth: .infinity)
