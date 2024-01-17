@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.auth.delete
@@ -144,7 +143,7 @@ fun LoginInfoView(
                         ) {
                             Icon(
                                 modifier = Modifier.size(36.dp),
-                                painter = painterResource(id = R.drawable.btn_google),
+                                painter = painterResource(id = SharedRes.images.btn_google.drawableResId),
                                 contentDescription = "SignInButton",
                                 tint = Color.Unspecified
                             )

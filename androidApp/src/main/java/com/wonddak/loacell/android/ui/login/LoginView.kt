@@ -36,8 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.LoaCellApp
-import com.wonddak.loacell.android.R
 import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
@@ -178,7 +178,7 @@ fun GoogleLoginButton(
         ) {
             Spacer(modifier = Modifier.weight(1f))
             Icon(
-                painter = painterResource(id = R.drawable.btn_google),
+                painter = painterResource(id = SharedRes.images.btn_google.drawableResId),
                 contentDescription = "SignInButton",
                 tint = Color.Unspecified
             )

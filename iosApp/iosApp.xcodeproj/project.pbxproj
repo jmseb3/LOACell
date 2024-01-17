@@ -30,6 +30,7 @@
 		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
 		075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075377E92B0210F7003872EF /* RaidFocusView.swift */; };
 		07540B692B15876300DABAFA /* SettingRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07540B682B15876300DABAFA /* SettingRoomView.swift */; };
+		075E8AF62B566B5200599CBD /* AppleLinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075E8AF52B566B5200599CBD /* AppleLinkCoordinator.swift */; };
 		0768B75B2ADF69BC00122AA2 /* AddRaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */; };
 		0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */; };
 		07762A372B1EE190009F6922 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07762A362B1EE190009F6922 /* RadioButton.swift */; };
@@ -80,6 +81,7 @@
 		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
 		075377E92B0210F7003872EF /* RaidFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidFocusView.swift; sourceTree = "<group>"; };
 		07540B682B15876300DABAFA /* SettingRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingRoomView.swift; sourceTree = "<group>"; };
+		075E8AF52B566B5200599CBD /* AppleLinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLinkCoordinator.swift; sourceTree = "<group>"; };
 		0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidSheet.swift; sourceTree = "<group>"; };
 		0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthLimitTextField.swift; sourceTree = "<group>"; };
 		07762A362B1EE190009F6922 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 		070F506D2B32B7F60041C646 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				075E8AF42B566B3400599CBD /* customDelegate */,
 				070F506B2B32B5090041C646 /* AppleLoginHelper.swift */,
 			);
 			path = util;
@@ -231,6 +234,14 @@
 				07540B682B15876300DABAFA /* SettingRoomView.swift */,
 			);
 			path = setting;
+			sourceTree = "<group>";
+		};
+		075E8AF42B566B3400599CBD /* customDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				075E8AF52B566B5200599CBD /* AppleLinkCoordinator.swift */,
+			);
+			path = customDelegate;
 			sourceTree = "<group>";
 		};
 		07773FD02ADCC734009358D8 /* dialog */ = {
@@ -504,6 +515,7 @@
 				07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */,
 				070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				075E8AF62B566B5200599CBD /* AppleLinkCoordinator.swift in Sources */,
 				07F769542B2189BB008574E3 /* RaidCalendarView.swift in Sources */,
 				07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */,
 				075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */,

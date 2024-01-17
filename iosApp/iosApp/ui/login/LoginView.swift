@@ -34,6 +34,32 @@ struct LoginView: View {
                 Spacer()
                 
                 VStack {
+                    Button(action: {
+                        loginHelper.requestAnonymousLogin()
+                    }) {
+                        Text(CommonString.Login().getAnonymous().localized())
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .font(.system(size: 14))
+                            .padding()
+                            .foregroundColor(.white)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(Color.white, lineWidth: 2)
+                        )
+                    }
+                    .frame(height:40)
+                    .background(Color.black) // If you have this
+                    .cornerRadius(15)
+                    
+                    ZStack {
+                        Rectangle()
+                            .frame(height: 1)
+                            .frame(maxWidth: .infinity)
+                        
+                        Text("OR")
+                            .frame(width: 100, alignment: .center)
+                            .background(Color.white)
+                    }.padding(.vertical,10)
                     SignInWithAppleButton { (request) in
                         nonce = appleHelper.randomNonceString()
                         request.requestedScopes = [.email,.fullName]
@@ -47,15 +73,16 @@ struct LoginView: View {
                                 return
                             }
                             viewModel.loginHelper.registerAppleToken(nonce: nonce, credential: credential) { result in
-                                self.loginIn = false
-                                viewModel.syncStartForce(uuid: result.user!.uid)
+                                goMain(uid: result.user!.uid)
                             }
                         case .failure(let error):
                             print(error.localizedDescription)
                         }
                     }
-                    .frame(height:50)
+                    .frame(height:40)
                     .cornerRadius(5)
+                    
+                    Spacer().frame(height: 10)
                     
                     GoogleSignInButton(
                         viewModel: GoogleSignInButtonViewModel(
@@ -63,13 +90,10 @@ struct LoginView: View {
                         )
                     ) {
                         loginHelper.requestGoogleLogin(successAction: { result in
-                            self.loginIn = false
-                            viewModel.syncStartForce(uuid: result.user!.uid)
+                            goMain(uid: result.user!.uid)
                         })
                     }
-                    Button(action: {loginHelper.requestAnonymousLogin()}) {
-                        Text(CommonString.Login().getAnonymous().localized())
-                    }
+                    .cornerRadius(5)
                 }
                 .padding(.horizontal)
             }.onAppear {
@@ -84,8 +108,10 @@ struct LoginView: View {
             }
         }
     }
+    
+    private func goMain(uid:String) {
+        self.loginIn = false
+        viewModel.syncStartForce(uuid: uid)
+    }
 }
 
-#Preview {
-    LoginView().environmentObject(LoaCellViewModel())
-}

@@ -27,11 +27,6 @@ struct RoomView: View {
                         print("role \(viewModel.myRole)")
                     }
                 }
-                Button(action: {
-                    print("role \(viewModel.myRole)")
-                }, label: {
-                    /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
-                })
             }
             if viewModel.tabState == RoomState.raid {
                 RaidView()

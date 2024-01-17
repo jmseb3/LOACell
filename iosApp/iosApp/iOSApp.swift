@@ -8,8 +8,11 @@ import KakaoSDKCommon
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    var window: UIWindow?
+
     func application(_ application: UIApplication,didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         KakaoSDK.initSDK(appKey: "eaad613c8a32160c49991040e94170f9")
+        window = UIWindow()
         FirebaseApp.configure()
         return true
     }
@@ -39,6 +42,7 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.window,delegate.window)
         }
     }
 }
