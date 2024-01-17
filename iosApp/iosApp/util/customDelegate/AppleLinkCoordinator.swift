@@ -61,6 +61,12 @@ class AppleLinkCoordinator: AppleCoordinator {
                 }
             }
         } handleFail: { controller, error in
+            if error is NSError {
+                let error = (error as NSError)
+                if error.code == 1001 {
+                    return
+                }
+            }
             linkFailAction(error.localizedDescription ?? "unknwon error")
         }
     }
@@ -88,14 +94,10 @@ class AppleTokenRevokeCoordinator: AppleCoordinator {
                     try await Auth.auth().revokeToken(withAuthorizationCode: authCodeString)
                     revokeSuccessAction()
                 } catch {
-                    print(111)
-                    print(error)
                     failAction(error.localizedDescription ?? "unknwon error")
                 }
             }
         } handleFail: { controller, error in
-            print(123)
-            print(error)
             failAction(error.localizedDescription ?? "unknwon error")
         }
     }

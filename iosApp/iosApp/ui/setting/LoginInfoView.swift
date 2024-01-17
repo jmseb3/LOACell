@@ -32,6 +32,7 @@ struct LoginInfoView: View {
     @State private var appleRevokeCoordinator :AppleTokenRevokeCoordinator?
     @State private var isAppleProvider :Bool = false
     
+    private let iconSize : CGFloat = 36
     var body: some View {
         VStack {
             if let userInfo = user {
@@ -69,14 +70,30 @@ struct LoginInfoView: View {
                             }
                     }
                     if userInfo.isAnonymous {
-                        RoundCornerButton(text: "Google 계정 연동" ) {
-                            linkToGoogle()
+                        HStack {
+                            Text("연동하기")
+                            Spacer()
+                                .frame(width: 10)
+                            Button {
+                                linkToGoogle()
+                            } label: {
+                                Image(resource: \.btn_google)
+                                    .resizable()
+                                    .frame(width: iconSize, height: iconSize)
+                                
+                            }
+                            Button {
+                                linkToApple()
+                            } label: {
+                                Image(resource: \.logo_apple)
+                                    .resizable()
+                                    .frame(width: iconSize, height: iconSize)
+                                
+                            }
+                            Spacer()
                         }
-                        Button(action: {
-                            linkToApple()
-                        }, label: {
-                            /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
-                        })
+                      
+
                     }
                 }
                 .frame(maxWidth: .infinity)
