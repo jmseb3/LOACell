@@ -17,14 +17,24 @@ struct BottomAppBar: View {
     var totalRoomInfo : TotalRoomInfo {
         viewModel.totalRoomInfo
     }
+    
+    var tabState : RoomState {
+        totalRoomInfo.tabState
+    }
+    var showSetting :Bool {
+        viewModel.showSetting
+    }
 
+    
     var body: some View {
         HStack {
             HStack {
-                if (viewModel.roomId.isEmpty && !viewModel.showSetting) {
-                    HStack {
-                        IconButton(resource: \.refresh) {
-                            viewModel.syncStart()
+                if (viewModel.roomId.isEmpty) {
+                    if (!showSetting) {
+                        HStack {
+                            IconButton(resource: \.refresh) {
+                                viewModel.syncStart()
+                            }
                         }
                     }
                 }else {
@@ -70,25 +80,30 @@ struct BottomAppBar: View {
                 }
             }
             Spacer()
-            Button {
-                viewModel.bottomAddAction()
-            } label: {
-                if !viewModel.focusUserName.isEmpty || !viewModel.focusRaidId.isEmpty {
-                    Image(resource: \.delete_)
-                        .resizable()
-                        .foregroundColor(.black)
-                        .frame(width: 18, height: 18)
-                } else {
-                    Image(systemName: "plus")
-                        .foregroundColor(.black)
+            if (tabState == RoomState.setting || showSetting) {
+                
+            } else {
+                Button {
+                    viewModel.bottomAddAction()
+                } label: {
+                    if !viewModel.focusUserName.isEmpty || !viewModel.focusRaidId.isEmpty {
+                        Image(resource: \.delete_)
+                            .resizable()
+                            .foregroundColor(.black)
+                            .frame(width: 18, height: 18)
+                    } else {
+                        Image(systemName: "plus")
+                            .foregroundColor(.black)
+                    }
+                    
                 }
+                .frame(width: 40, height: 40)
+                .background(ColorManager.BackgroundContainerColor)
+                .shadow(radius: 5)
+                .cornerRadius(10)
                 
             }
-            .frame(width: 40, height: 40)
-            .background(ColorManager.BackgroundContainerColor)
-            .shadow(radius: 5)
-            .cornerRadius(10)
-            
+
         }
         .padding()
         .frame(height: height)

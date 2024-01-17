@@ -17,9 +17,11 @@ struct RoomListView: View {
         LazyVStack(spacing : 10, content: {
             ForEach(roomList, id: \.uniqueId) { room in
                 VStack {
-                    RoomInfoRow(room: room) {
-                        action(room.uniqueId)
-                    }
+                    RoomInfoRow(room: room)
+                        .onTapGesture {
+                            action(room.uniqueId)
+                        }
+                        
                     Spacer()
                         .frame(height: 10)
                 }
@@ -30,7 +32,6 @@ struct RoomListView: View {
 
 struct RoomInfoRow: View {
     let room : RoomInfo
-    let action :() -> Void
     
     var body: some View {
         VStack {
@@ -44,9 +45,7 @@ struct RoomInfoRow: View {
                 .font(.system(size: 14))
                 .lineLimit(2)
         }
-        .onTapGesture {
-            action()
-        }
+        .frame(maxWidth: .infinity)
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
         .clipShape(RoundedRectangle(cornerRadius : 20))
         .background(Color.gray)
