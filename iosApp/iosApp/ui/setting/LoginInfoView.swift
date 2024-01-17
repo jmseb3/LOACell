@@ -19,10 +19,18 @@ struct LoginInfoView: View {
     var loginHelper : LoginHelper {
         self.viewModel.loginHelper
     }
+    var myRoomList : [RoomInfo] {
+        viewModel.roomList.filter { info in
+            info.owner == user?.uid
+        }
+    }
+    
+    @Environment(\.window) var window: UIWindow?
     
     @State private var showDeleteError = false
-    @Environment(\.window) var window: UIWindow?
     @State private var appleLinkCoordinator: AppleLinkCoordinator?
+    @State private var appleRevokeCoordinator :AppleTokenRevokeCoordinator?
+    @State private var isAppleProvider :Bool = false
     
     var body: some View {
         VStack {
@@ -48,30 +56,24 @@ struct LoginInfoView: View {
                             Spacer()
                                 .frame(width: 15)
                             RoundCornerButton(text: "탈퇴") {
-                                loginHelper.delete()
+                                deleteAccount()
                             }
                         }
                     }
+                    if showDeleteError {
+                        Text("소유자인 방의 정보를 모두 삭제해 주세요")
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
+                                    showDeleteError = false
+                                }
+                            }
+                    }
                     if userInfo.isAnonymous {
                         RoundCornerButton(text: "Google 계정 연동" ) {
-                            loginHelper.requestAnonymousToGoogleLogin(
-                                failAction: { msg in
-                                    viewModel.showSnackBar(msg: msg)
-                                },successAction: {
-                                    
-                                }
-                            )
+                            linkToGoogle()
                         }
                         Button(action: {
-                            appleLinkCoordinator = AppleLinkCoordinator(
-                                window: window,
-                                linkFailAction: { msg in
-                                    viewModel.showSnackBar(msg: msg)
-                                }, 
-                                linkSuccessAction: {
-                                    viewModel.closeSetting()
-                                })
-                            appleLinkCoordinator?.startLogin()
+                            linkToApple()
                         }, label: {
                             /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
                         })
@@ -81,6 +83,54 @@ struct LoginInfoView: View {
                 .padding(5)
             }
         }
+        .onAppear {
+            Auth.auth().currentUser?.providerData.forEach({ info in
+                print(info.providerID)
+                if (info.providerID == "apple.com") {
+                    isAppleProvider = true
+                }
+            })
+        }
+    }
+    
+    private func linkToGoogle() {
+        loginHelper.requestAnonymousToGoogleLogin(
+            failAction: { msg in
+                viewModel.showSnackBar(msg: msg)
+            },successAction: {
+                
+            }
+        )
+    }
+    
+    private func linkToApple() {
+        appleLinkCoordinator = AppleLinkCoordinator(
+            window: window,
+            linkFailAction: { msg in
+                viewModel.showSnackBar(msg: msg)
+            },
+            linkSuccessAction: {
+                viewModel.closeSetting()
+            })
+        appleLinkCoordinator?.startLogin()
+    }
+    
+    private func deleteAccount() {
+        if !myRoomList.isEmpty {
+            showDeleteError = true
+            return
+        }
+        if !isAppleProvider {
+            loginHelper.delete()
+            return
+        }
+        appleRevokeCoordinator = AppleTokenRevokeCoordinator(window: window, failAction: { msg in
+            viewModel.showSnackBar(msg: msg)
+        }, revokeSuccessAction: {
+            print("revoke Success")
+            loginHelper.delete()
+        })
+        appleRevokeCoordinator?.startLogin()
     }
 }
 

@@ -8,6 +8,7 @@
 
 import shared
 import SwiftUI
+import Foundation
 
 extension Image {
     init(resource: KeyPath<SharedRes.images, shared.ImageResource>) {
