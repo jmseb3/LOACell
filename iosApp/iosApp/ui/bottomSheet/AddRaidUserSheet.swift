@@ -69,8 +69,8 @@ struct AddRaidUserSheet: View {
                     if selectedUser.isNotEmpty {
                         if let characterList : [shared.Character] = userAndCharacterMap[selectedUser] {
                             Picker("Choose a Character", selection: $selectedCharacterIndex) {
-                                ForEach(0..<characterList.count) {
-                                    Text(characterList[$0].name)
+                                ForEach(characterList, id:\.self) { chr in
+                                    Text(chr.name)
                                 }
                             }
                             .frame(height: pickerHeight)
