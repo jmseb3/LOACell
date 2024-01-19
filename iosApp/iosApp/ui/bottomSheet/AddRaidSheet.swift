@@ -187,32 +187,30 @@ private struct RaidSheetBase: View {
                 if showDayUse {
                     let h :CGFloat = 100
                     HStack {
-                        ZStack(alignment: .center) {
-                            HStack {
-                                Picker("Choose a Hour", selection: $dayHour) {
-                                    ForEach(Array(0...23), id: \.self) { hour in
-                                        Text(String(format: "%02d", hour))
-                                    }
+                        HStack {
+                            Picker("Choose a Hour", selection: $dayHour) {
+                                ForEach(Array(0...23), id: \.self) { hour in
+                                    Text(String(format: "%02d", hour))
                                 }
-                                .frame(height: h)
-                                .pickerStyle(.wheel)
-                                .clipped()
-                                Text(":")
-                                Picker("Choose a Minute", selection: $dayMin) {
-                                    ForEach(Array(0...59), id: \.self) { min in
-                                        Text(String(format: "%02d", min))
-                                    }
-                                }
-                                .frame(height: h)
-                                .pickerStyle(.wheel)
-                                .clipped()
                             }
-                            .cornerRadius(20)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.black, lineWidth: 1)
-                            )
+                            .frame(width:100, height: h)
+                            .pickerStyle(.wheel)
+                            .clipped()
+                            Text(":")
+                            Picker("Choose a Minute", selection: $dayMin) {
+                                ForEach(Array(0...59), id: \.self) { min in
+                                    Text(String(format: "%02d", min))
+                                }
+                            }
+                            .frame(width:100, height: h)
+                            .pickerStyle(.wheel)
+                            .clipped()
                         }
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(.black, lineWidth: 1)
+                        )
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .frame(height: h)
                         VStack {
