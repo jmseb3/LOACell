@@ -13,7 +13,7 @@ struct AddRaidUserSheet: View {
     let userAndCharacterMap : [String : [shared.Character]]
     let successAction :(shared.Character) -> Void
     
-    private let pickerHeight : CGFloat = 150
+    private let pickerHeight : CGFloat = 40
     
     private var userList : [String] {
         Array(userAndCharacterMap.keys)
@@ -56,43 +56,38 @@ struct AddRaidUserSheet: View {
             errorMsg: .constant("")
         ) {
             VStack {
-                HStack {
-                    
-                    Picker("Choose a User", selection: $selectedUser) {
-                        ForEach(userList, id: \.self) { name in
-                            Text(name)
-                        }
-                    }
-                    .frame(height: pickerHeight)
-                    .pickerStyle(.wheel)
-                    .clipped()
-                    if selectedUser.isNotEmpty {
-                        if let characterList : [shared.Character] = userAndCharacterMap[selectedUser] {
-                            Picker("Choose a Character", selection: $selectedCharacterIndex) {
-                                ForEach(characterList, id:\.self) { chr in
-                                    Text(chr.name)
-                                }
+                List {
+                    Section(header:Text("유저 및 캐릭터 선택")) {
+                        Picker("유저 이름", selection: $selectedUser) {
+                            ForEach(userList, id: \.self) { name in
+                                Text(name)
                             }
-                            .frame(height: pickerHeight)
-                            .pickerStyle(.wheel)
-                            .clipped()
-                            .id(id)
+                        }
+                        if selectedUser.isNotEmpty {
+                            if let characterList : [shared.Character] = userAndCharacterMap[selectedUser] {
+                                Picker("캐릭터 명", selection: $selectedCharacterIndex) {
+                                    ForEach(0 ..< characterList.count) { chr in
+                                        Text(characterList[chr].name)
+                                    }
+                                }
+                            
+                                .id(id)
+                            }
                         }
                     }
-                }
-                Divider()
-                Spacer()
-                    .frame(height:10)
-                if let ch = selectedCharacter {
-                    HStack{
-                        Spacer()
-                        Text(ch.className)
-                        Spacer()
-                        Text(String(ch.getLevel()))
-                        Spacer()
+                    .listRowBackground(Color.clear)
+                    Section(header:Text("선택 정보")) {
+                        if let ch = selectedCharacter {
+                            HStack{
+                                Text(ch.className)
+                                Spacer()
+                                Text(String(ch.getLevel()))
+                            }
+                        }
                     }
+                    .listRowBackground(Color.clear)
                 }
-                Text(selectedUser)
+                .frame(height: 250)
             }
         }.onAppear {
             selectedUser = userList[0]
