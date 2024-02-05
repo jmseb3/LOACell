@@ -42,7 +42,6 @@
 		0785E4EB2ADE14950084E711 /* AddUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EA2ADE14950084E711 /* AddUserSheet.swift */; };
 		0785E4ED2ADE61ED0084E711 /* RaidItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */; };
 		0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E4EE2ADE69F00084E711 /* RaidView.swift */; };
-		078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B02B06F51100661943 /* LoginInfoView.swift */; };
 		078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A12B22B06F6A800661943 /* SectionCardView.swift */; };
 		07C4F5942B1D6A9D00C63AAA /* RoundCornerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */; };
 		07D2221B2B146D8D00E06766 /* SettingDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D2221A2B146D8D00E06766 /* SettingDialog.swift */; };
@@ -93,7 +92,6 @@
 		0785E4EA2ADE14950084E711 /* AddUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserSheet.swift; sourceTree = "<group>"; };
 		0785E4EC2ADE61ED0084E711 /* RaidItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidItemRow.swift; sourceTree = "<group>"; };
 		0785E4EE2ADE69F00084E711 /* RaidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidView.swift; sourceTree = "<group>"; };
-		078A12B02B06F51100661943 /* LoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
 		078A12B22B06F6A800661943 /* SectionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCardView.swift; sourceTree = "<group>"; };
 		07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundCornerButton.swift; sourceTree = "<group>"; };
 		07D2221A2B146D8D00E06766 /* SettingDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingDialog.swift; sourceTree = "<group>"; };
@@ -274,7 +272,6 @@
 		078A12AF2B06F4FF00661943 /* setting */ = {
 			isa = PBXGroup;
 			children = (
-				078A12B02B06F51100661943 /* LoginInfoView.swift */,
 				07EA9A8B2B0728E800F9FC25 /* SettingView.swift */,
 			);
 			path = setting;
@@ -530,7 +527,6 @@
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				070F506C2B32B5090041C646 /* AppleLoginHelper.swift in Sources */,
 				07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */,
-				078A12B12B06F51100661943 /* LoginInfoView.swift in Sources */,
 				07FD94562B035B9100446087 /* AddRaidUserSheet.swift in Sources */,
 				07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */,
 				07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */,

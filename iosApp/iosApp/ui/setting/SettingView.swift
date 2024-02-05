@@ -9,6 +9,7 @@
 import SwiftUI
 import shared
 import Combine
+import FirebaseAuth
 
 struct SettingView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
@@ -23,20 +24,112 @@ struct SettingView: View {
             viewModel.setSheetSpace(space: value)
         }
     }
-
+    
+    private var user : FBUser?  {
+        viewModel.user
+    }
+    private var loginHelper : LoginHelper {
+        self.viewModel.loginHelper
+    }
+    private var myRoomList : [RoomInfo] {
+        viewModel.roomList.filter { info in
+            info.owner == user?.uid
+        }
+    }
+    
+    @Environment(\.window) var window: UIWindow?
+    
+    @State private var showDeleteError = false
+    @State private var appleLinkCoordinator: AppleLinkCoordinator?
+    @State private var appleRevokeCoordinator :AppleTokenRevokeCoordinator?
+    @State private var isAppleProvider :Bool = false
+    
+    private let iconSize : CGFloat = 36
+    
     var body: some View {
-        VStack {
-            SectionCardView(title:"로그인 정보") {
-                VStack {
-                    LoginInfoView()
+        List {
+            if let userInfo = user {
+                Section {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text((userInfo.displayName ?? "").ifEmpty{ "이름 없음"})
+                                .fontWeight(.bold)
+                            Text(userInfo.uid)
+                        }
+                        Spacer()
+                        IconButton(resource: \.change_person) {
+                            viewModel.showDialog(dialogStatus: DialogStatus.settingEditName)
+                        }
+                    }
+                    Button(action: {
+                        viewModel.outOrSignOut()
+                    }, label: {
+                        Label(
+                            title: { Text(userInfo.isAnonymous ? "나가기" : "로그아웃") },
+                            icon: { Image(systemName: "rectangle.portrait.and.arrow.right") }
+                        )
+                        .foregroundColor(.blue)
+                    })
+                    if !userInfo.isAnonymous {
+                        Button(action: {
+                            deleteAccount()
+                        }, label: {
+                            Label(
+                                title: { Text("탈퇴") },
+                                icon: { Image(systemName: "power.circle") }
+                            )
+                            .foregroundColor(.red)
+                        })
+                        if showDeleteError {
+                            Text("소유자인 방의 정보를 모두 삭제해 주세요")
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
+                                        showDeleteError = false
+                                    }
+                                }
+                        }
+                    }
+                } header: {
+                    Text("로그인 정보")
+                }
+                
+                if userInfo.isAnonymous {
+                    Section {
+                        Button {
+                            linkToApple()
+                        } label: {
+                            Label(
+                                title: { Text("Link to Apple") },
+                                icon: {
+                                    Image(resource: \.logo_apple)
+                                        .resizable()
+                                    .frame(width: iconSize, height: iconSize) }
+                            )
+                        }
+                        Button {
+                            linkToGoogle()
+                        } label: {
+                            Label(
+                                title: { Text("Link to Google") },
+                                icon: {
+                                    Image(resource: \.btn_google)
+                                        .resizable()
+                                        .frame(width: iconSize, height: iconSize)
+                                }
+                            )
+                        }
+                    }header: {
+                        Text("연동하기")
+                    }
                 }
             }
-            SectionTextWithContent(
-                title: "시트 하단 여백 크기 조정",
-                useDivider: true,
-                clikced: $showSlider
-            ) {
-                VStack{
+            
+            Section {
+                Button("시트 하단 여백 크기 조정") {
+                    showSlider = !showSlider
+                }
+                .foregroundColor(.black)
+                if showSlider {
                     Slider(value: defaultValue, in: 0...40, step: 1)
                     HStack() {
                         Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
@@ -46,73 +139,73 @@ struct SettingView: View {
                         }
                     }
                 }
+            } header: {
+                Text("조정")
             }
-            SectionText(title: "버그 제보 및 건의하기") {
-                if let link = URL(string: "https://discord.gg/acD6rQ9Tja") {
-                    openURL(link)
+            Section {
+                Button("버그 제보 및 건의하기") {
+                    if let link = URL(string: "https://discord.gg/acD6rQ9Tja") {
+                        openURL(link)
+                    }
                 }
-            }
-            SectionText(title: "앱 버전 : \(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
-        }
-        .padding(10)
-    }
-}
-
-struct SectionTextWithContent<Content: View> : View {
-    let title :String
-    var useDivider :Bool = true
-    @Binding var clikced : Bool
-    let content : () -> Content
-    var body: some View {
-        VStack{
-            HStack {
-                Text(title)
-                Spacer()
-                Image(resource: \.arrow)
-                    .resizable()
-                    .frame(width: 12,height: 12)
-                    .rotationEffect(clikced ? .degrees(90) : .zero)
-            }
-            .frame(maxWidth: .infinity)
-            .onTapGesture {
-                clikced = !clikced
-            }
-            if clikced{
-                content()
-            }
-            if useDivider {
-                Divider()
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(10)
-    }
-}
-
-struct SectionText : View {
-    let title :String
-    var useDivider :Bool = true
-    var action : (() -> Void)? = nil
-    var body: some View {
-        VStack{
-            HStack {
-                Text(title)
-                Spacer()
-                if action != nil {
-                    Image(resource: \.arrow)
-                        .resizable()
-                        .frame(width: 12,height: 12)
+                .foregroundColor(.black)
+                HStack {
+                    Text("앱 버전")
+                    Spacer()
+                    Text("\(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .onTapGesture {
-                action?()
-            }
-            if useDivider {
-                Divider()
+            } header: {
+                Text("About")
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(10)
+                .modifier(FormHiddenBackground())
+        .onAppear {
+            Auth.auth().currentUser?.providerData.forEach({ info in
+                if (info.providerID == "apple.com") {
+                    isAppleProvider = true
+                }
+            })
+        }
+    }
+    
+    
+    private func linkToGoogle() {
+        loginHelper.requestAnonymousToGoogleLogin(
+            failAction: { msg in
+                viewModel.showSnackBar(msg: msg)
+            },successAction: {
+                
+            }
+        )
+    }
+    
+    private func linkToApple() {
+        appleLinkCoordinator = AppleLinkCoordinator(
+            window: window,
+            linkFailAction: { msg in
+                viewModel.showSnackBar(msg: msg)
+            },
+            linkSuccessAction: {
+                viewModel.closeSetting()
+            })
+        appleLinkCoordinator?.startLogin()
+    }
+    
+    private func deleteAccount() {
+        if !myRoomList.isEmpty {
+            showDeleteError = true
+            return
+        }
+        if !isAppleProvider {
+            loginHelper.delete()
+            return
+        }
+        appleRevokeCoordinator = AppleTokenRevokeCoordinator(window: window, failAction: { msg in
+            viewModel.showSnackBar(msg: msg)
+        }, revokeSuccessAction: {
+            print("revoke Success")
+            loginHelper.delete()
+        })
+        appleRevokeCoordinator?.startLogin()
     }
 }
