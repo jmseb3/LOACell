@@ -55,40 +55,36 @@ struct AddRaidUserSheet: View {
             enabled: selectedCharacter != nil,
             errorMsg: .constant("")
         ) {
-            VStack {
-                List {
-                    Section(header:Text("유저 및 캐릭터 선택")) {
-                        Picker("유저 이름", selection: $selectedUser) {
-                            ForEach(userList, id: \.self) { name in
-                                Text(name)
-                            }
+            Form {
+                Section(header:Text("유저 및 캐릭터 선택")) {
+                    Picker("유저 이름", selection: $selectedUser) {
+                        ForEach(userList, id: \.self) { name in
+                            Text(name)
                         }
-                        if selectedUser.isNotEmpty {
-                            if let characterList : [shared.Character] = userAndCharacterMap[selectedUser] {
-                                Picker("캐릭터 명", selection: $selectedCharacterIndex) {
-                                    ForEach(0 ..< characterList.count) { chr in
-                                        Text(characterList[chr].name)
-                                    }
+                    }
+                    if selectedUser.isNotEmpty {
+                        if let characterList : [shared.Character] = userAndCharacterMap[selectedUser] {
+                            Picker("캐릭터 명", selection: $selectedCharacterIndex) {
+                                ForEach(0 ..< characterList.count) { chr in
+                                    Text(characterList[chr].name)
                                 }
-                            
-                                .id(id)
                             }
+                            .id(id)
                         }
                     }
-                    .listRowBackground(Color.clear)
-                    Section(header:Text("선택 정보")) {
-                        if let ch = selectedCharacter {
-                            HStack{
-                                Text(ch.className)
-                                Spacer()
-                                Text(String(ch.getLevel()))
-                            }
-                        }
-                    }
-                    .listRowBackground(Color.clear)
                 }
-                .frame(height: 250)
+                Section(header:Text("선택 정보")) {
+                    if let ch = selectedCharacter {
+                        HStack{
+                            Text(ch.className)
+                            Spacer()
+                            Text(String(ch.getLevel()))
+                        }
+                    }
+                }
             }
+            .frame(height: 250)
+            .modifier(FormHiddenBackground())
         }.onAppear {
             selectedUser = userList[0]
         }
