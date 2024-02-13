@@ -1,65 +1,47 @@
 import SwiftUI
+import SwiftUI_Snackbar
 import shared
 
 struct ContentView: View {
-    @ObservedObject private(set) var viewModel: ViewModel
+    @StateObject var viewModel: LoaCellViewModel = LoaCellViewModel()
     
+    let bottomHeight : CGFloat = 80
     var body: some View {
-        if viewModel.characterList.isEmpty {
-            Text(viewModel.text)
-        } else {
-            ForEach(viewModel.characterList, id:\.self) { item in
-                itemView(item: item)
-            }
-        }
-    }
-}
-
-struct itemView :View {
-    let item : CharacterInfo
-    var body: some View {
-        HStack() {
-            Text(item.characterName)
-            Text(item.characterClassName)
-            Text("\(item.characterLevel)")
-        }
-    }
-}
-
-extension ContentView {
-    class ViewModel: ObservableObject {
-        @Published var characterList = [CharacterInfo]()
-        @Published var text : String = "Loading..."
-        let lostarkApi = LostArkApi()
-        init() {
-            updateInfo()
-            RoomHelper().syncInfo(userId: "GRCmCPcnHTdwrrpygQCcseAi9CA2") { id, fbRoom in
-                
-            } failAction: { error in
-                
-            } successAction: {
-                
-            }
-        }
-        
-        func updateInfo() {
-            lostarkApi.getCharacterInfo(characterName: "아이오에스티떡상가즈아") { itemList,error in
-                DispatchQueue.main.async {
-                    if let itemList = itemList {
-                        print(type(of: itemList))
-                        switch itemList {
-                        case(is ApiResultSuccess<NSArray>):
-                            let result = itemList as! ApiResultSuccess<NSArray>
-                            self.characterList = result.data as! [CharacterInfo]
-                            break
-                            
-                        default: print("hello defauklt")
+        ZStack {
+            VStack {
+                if(viewModel.user == nil) {
+                    LoginView()
+                } else {
+                    VStack {
+                        DialogHost(
+                            dialogStatus: viewModel.dialogStatus,
+                            dialogAction: viewModel.getDialogAction()
+                        ) {
+                            SnackBarHost(bottomSpace: bottomHeight + 20) {
+                                TopAppBar()
+                                Divider()
+                                MainContent()
+                                BottomAppBar(height: bottomHeight)
+                            }
                         }
-                    } else {
-                        self.text = error?.localizedDescription ?? "error"
                     }
                 }
             }
+            if viewModel.showSplash {
+                VStack(alignment : .center) {
+                    Image(resource: \.logo)
+                }
+                .frame(maxWidth: .infinity,maxHeight: .infinity)
+                .background(.white)
+            }
+        }
+        .environmentObject(viewModel)
+        .environmentObject(viewModel.sc)
+        .onOpenURL { url in
+            print("Received URL: \(url)")
+            guard let uniqueId = url.queryParameters["uniqueId"] else {return}
+            print(uniqueId)
+            viewModel.checkByScheme(roomId: uniqueId)
         }
     }
 }

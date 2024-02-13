@@ -1,0 +1,70 @@
+//
+//  RaidPartyView.swift
+//  iosApp
+//
+//  Created by WonHee Jung on 2023/10/19.
+//  Copyright © 2023 orgName. All rights reserved.
+//
+
+import shared
+import SwiftUI
+
+struct RaidPartyView: View {
+    let characterList : [shared.Character?]
+    var openAction : (_ index:Int) -> Void
+    var deleteAction : (_ index:Int) -> Void
+    
+    private let height : CGFloat = 50
+    
+    var body: some View {
+        VStack {
+            LazyVStack {
+                ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
+                    VStack {
+                        if idx == 4 {
+                            Divider()
+                        }
+                        HStack{
+                            VStack{
+                                Text(item?.name ?? "캐릭터를 추가해 주세요")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                if item != nil {
+                                    HStack{
+                                        Text(item!.className)
+                                        Spacer()
+                                        Text(item!.level)
+                                    }
+                                }
+                            }
+                            .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
+                            Spacer()
+                            IconButton(resource: item == nil ? \.add : \.delete_) {
+                                buttonAction(item: item, index: idx)
+                            }
+                        }
+                        .padding(10)
+                        .frame(maxWidth: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                
+            }
+            .cornerRadius(20) /// make the background rounded
+            .overlay( /// apply a rounded border
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(.black, lineWidth: 1)
+            )
+        }
+        .padding(10)
+        Spacer()
+    }
+    
+    
+    private func buttonAction(item: Character?,index:Int) {
+        if (item == nil) {
+            openAction(index)
+        } else {
+            deleteAction(index)
+        }
+    }
+}

@@ -33,20 +33,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
 
 @Composable
 fun RoomActionDialog(
-    confirm: (status: Int) -> Unit,
     dismiss: () -> Unit,
+    confirm: (status: Int) -> Unit,
 ) {
     BaseDialog(
         titleText = "작업을 선택해 주세요",
         dismiss = dismiss,
         modifier = Modifier.wrapContentHeight()
-    ){
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -100,8 +101,8 @@ fun EnterButton(
 
 @Composable
 fun RoomEnterErrorDialog(
-    confirm: () -> Unit,
     dismiss: () -> Unit,
+    confirm: () -> Unit,
 ) {
     BaseDialog(
         modifier = Modifier.wrapContentHeight(),
@@ -121,22 +122,23 @@ fun RoomEnterErrorDialog(
 @Composable
 fun RoomEnterDialog(
     nowEnterRoomList: List<String>,
-    success: (roomId:String,roomInfo: FBRoomInfo) -> Unit,
+    prevData : SchemeData? = null,
     dismiss: () -> Unit,
+    success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
 ) {
     var roomId by remember {
-        mutableStateOf("")
+        mutableStateOf(prevData?.roomId ?:"")
     }
     var errorMsg by remember {
         mutableStateOf("")
     }
-    var nowRoomInfo : FBRoomInfo? by remember {
-        mutableStateOf(null)
+    var nowRoomInfo: FBRoomInfo? by remember {
+        mutableStateOf(prevData?.fbRoomInfo)
     }
-    var password by remember {
-        mutableStateOf("")
+    var password :String by remember {
+        mutableStateOf(prevData?.fbRoomInfo?.enterPassword ?:"")
     }
-    var enterPassword by remember {
+    var enterPassword :String by remember {
         mutableStateOf("")
     }
     LaunchedEffect(errorMsg) {
@@ -154,9 +156,10 @@ fun RoomEnterDialog(
         dismiss = dismiss,
         titleText = if (password.isEmpty()) "입장하기" else "비밀번호 입력",
         confirmButtonText = if (password.isEmpty()) "입장" else "확인",
-        confirmButtonEnabled = if (password.isEmpty()) roomId.length == 20  else  true,
-        confirmButtonAction =  {
+        confirmButtonEnabled = if (password.isEmpty()) roomId.length == 20 else true,
+        confirmButtonAction = {
             if (password.isEmpty()) {
+                //입장하기
                 if (roomId.isEmpty()) {
                     errorMsg = "ID를 입력해주세요."
                 } else {
@@ -167,7 +170,8 @@ fun RoomEnterDialog(
                             roomId,
                             successAction = { roomInfo ->
                                 if (roomInfo.enterPassword.isEmpty()) {
-                                    success(roomId,roomInfo)
+                                    dismiss()
+                                    success(roomId, roomInfo)
                                 } else {
                                     nowRoomInfo = roomInfo
                                     password = roomInfo.enterPassword
@@ -180,8 +184,14 @@ fun RoomEnterDialog(
                     }
                 }
             } else {
+                // 비밀번호 입력
                 if (password == enterPassword) {
-                    success(roomId,nowRoomInfo!!)
+                    if (nowEnterRoomList.contains(roomId)) {
+                        errorMsg = "이미 입장한 방입니다."
+                    } else {
+                        dismiss()
+                        success(roomId, nowRoomInfo!!)
+                    }
                 } else {
                     errorMsg = "비밀번호가 맞지 않습니다."
                 }
@@ -249,8 +259,8 @@ fun RoomEnterDialog(
 
 @Composable
 fun RoomExitDialog(
-    success: () -> Unit,
     dismiss: () -> Unit,
+    success: () -> Unit,
 ) {
     BaseDialog(
         dismiss = dismiss,

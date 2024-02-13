@@ -1,0 +1,196 @@
+package com.wonddak.loacell.android.ui.dialog
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import com.wonddak.loacell.DialogAction
+import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
+import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
+import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
+import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
+import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
+import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
+import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
+import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
+import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
+import com.wonddak.loacell.model.DialogStatus
+
+
+@Composable
+fun DialogHost(
+    dialogStatus: DialogStatus,
+    dialogAction: DialogAction,
+    content: @Composable () -> Unit
+) {
+    val dismiss = { dialogAction.hideDialog() }
+    Box() {
+        content()
+        when (dialogStatus) {
+            DialogStatus.NONE -> {}
+            DialogStatus.ROOM_ACTION -> {
+                RoomActionDialog(
+                    dismiss = dismiss
+                ) { status ->
+                    dialogAction.dialogRoomAction(status)
+                }
+            }
+
+            DialogStatus.ROOM_ADD -> {
+                AddRoomSheet(
+                    onDismissRequest = dismiss
+                ) { title, description, password ->
+                    dialogAction.dialogRoomAdd(title, description, password)
+                }
+            }
+
+            DialogStatus.ROOM_ENTER -> {
+                RoomEnterDialog(
+                    nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                    dismiss = dismiss
+                ) { roomId, roomInfo ->
+                    dialogAction.dialogRoomEnter(roomId, roomInfo)
+                }
+            }
+            DialogStatus.ROOM_ENTER_BY_SCHEME -> {
+                RoomEnterDialog(
+                    nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                    prevData = dialogAction.getSchemeData(),
+                    dismiss = dismiss
+                ) { roomId, roomInfo ->
+                    dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
+                }
+            }
+
+            DialogStatus.ROOM_ENTER_ERROR -> {
+                RoomEnterErrorDialog(
+                    dismiss = dismiss
+                ) {
+                    dialogAction.dialogRoomEnterError()
+                }
+            }
+
+            DialogStatus.ROOM_EXIT -> {
+                RoomExitDialog(
+                    dismiss = dismiss,
+                ) {
+                    dialogAction.dialogRoomExit()
+                }
+            }
+
+            DialogStatus.ROOM_EDIT -> {
+                val roomInfo = dialogAction.getRoomInfo()
+                EditRoomSheet(
+                    getTitle = roomInfo.title,
+                    getDescription = roomInfo.description,
+                    getPassword = roomInfo.enterPassword,
+                    onDismissRequest = dismiss,
+                ) { title, description, password ->
+                    dialogAction.dialogRoomEdit(title, description, password)
+                }
+            }
+
+            DialogStatus.USER_ADD -> {
+                AddUserSheet(
+                    roomId = dialogAction.getRoomInfoUniqueId(),
+                    onDismissRequest = dismiss
+                )
+            }
+
+            DialogStatus.RAID_ADD -> {
+                AddRaidSheet(
+                    onDismissRequest = dismiss
+                ) { fbRaidInfo ->
+                    dialogAction.dialogRaidAdd(fbRaidInfo)
+                }
+            }
+
+            DialogStatus.RAID_EDIT -> {
+                EditRaidSheet(
+                    raidInfo = dialogAction.getRaidInfo(),
+                    onDismissRequest = dismiss
+                ) { fbRaidInfo ->
+                    dialogAction.dialogRaidEdit(fbRaidInfo)
+                }
+            }
+
+            DialogStatus.RAID_FILTER -> {
+                FilterSheet(
+                    dialogAction.getTotalRoomInfo(),
+                    dismiss = dismiss
+                ) { filter ->
+                    dialogAction.dialogFilterUpdate(filter)
+                }
+            }
+
+            DialogStatus.RAID_DELETE -> {
+                DeleteRaidDialog(
+                    dismiss = dismiss
+                ) {
+                    dialogAction.dialogRaidDelete()
+                }
+            }
+
+            DialogStatus.RAID_USER_ADD -> {
+                val userAndCharacterMap = dialogAction.getUserAndCharacterMap()
+                if (userAndCharacterMap.isNotEmpty()) {
+                    AddRaidUserSheet(
+                        userAndCharacterMap = userAndCharacterMap,
+                        onDismissRequest = dismiss
+                    ) { character -> dialogAction.dialogUserAdd(character) }
+                }
+            }
+
+            DialogStatus.RAID_USER_DELETE -> {
+                DeleteRaidUserDialog(dismiss = dismiss) {
+                    dialogAction.dialogUserDelete()
+                }
+            }
+
+            DialogStatus.CHARACTER_EDIT -> {
+                EditCharacterDialog(
+                    userInfo = dialogAction.getUserInfo(),
+                    characterList = dialogAction.getCharacterList(),
+                    dismiss = dismiss
+                ) { name ->
+                    dialogAction.dialogCharacterEdit(name)
+                }
+            }
+
+            DialogStatus.CHARACTER_DELETE -> {
+                DeleteCharacterDialog(
+                    name = dialogAction.getUserInfo().name,
+                    dismiss = dismiss
+                ) {
+                    dialogAction.dialogCharacterDelete()
+                }
+
+            }
+
+            DialogStatus.SETTING_EDIT_NAME -> {
+                ProfileNameDialog(
+                    dialogAction.getDisplayName(),
+                    dismiss = dismiss
+                ) {
+                    dialogAction.dialogEditName(it)
+                }
+            }
+
+            DialogStatus.SHARE_SHEET -> {
+                ShareSheet(
+                    roomInfo = dialogAction.getRoomInfo(),
+                    onDismissRequest = dismiss
+                )
+            }
+            DialogStatus.TEST_SHEET -> {
+                BaseSheet(
+                    title = "여백 테스트",
+                    buttonText = "확인",
+                    onDismissRequest = dismiss,
+                    buttonClickAction = dismiss
+                ) {
+                    Text(text = "테스트 문구")
+                }
+            }
+        }
+    }
+}

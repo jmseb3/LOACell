@@ -1,8 +1,10 @@
 package com.wonddak.loacell.android.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -16,48 +18,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
-import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
 import com.wonddak.loacell.android.ui.common.LoadingView
-import com.wonddak.loacell.android.ui.dialog.RoomActionDialog
-import com.wonddak.loacell.android.ui.dialog.RoomEnterDialog
-import com.wonddak.loacell.android.ui.dialog.RoomEnterErrorDialog
+import com.wonddak.loacell.android.ui.dialog.DialogHost
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.store.CommonRoomHelper
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainContent(
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
     val userInfo by loaCellViewModel.user.collectAsState()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val dialogStatus = totalRoomInfo.dialogState
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         loaCellViewModel.apply {
             LaunchedEffect(snackBarMessage) {
-                snackBarMessage.let {
-                    // show가 true일때만 실행됩니다.
-                    if (it.show) {
-                        val snackBarResult = snackBarHostState.showSnackbar(
-                            it.message,
-                            it.actionLabel,
-                            false,
-                            it.duration
-                        )
-                        when (snackBarResult) {
-                            SnackbarResult.Dismissed -> {
-                                resetSnackBar()
-                            }
+                snackBarMessage?.let { item ->
+                    val snackBarResult = snackBarHostState.showSnackbar(
+                        item.message,
+                        item.actionLabel,
+                        false,
+                        item.duration
+                    )
+                    when (snackBarResult) {
+                        SnackbarResult.Dismissed -> {
+                            resetSnackBar()
+                        }
 
-                            SnackbarResult.ActionPerformed -> {
-                                it.performAction()
-                            }
+                        SnackbarResult.ActionPerformed -> {
+                            item.performAction()
                         }
                     }
                 }
@@ -75,141 +72,58 @@ fun MainContent(
                     TopAppBar(loaCellViewModel = loaCellViewModel)
                 }
             ) {
+                DialogHost(dialogStatus, loaCellViewModel.getDialogAction()) {
+                    MainContentView(it, db, loaCellViewModel)
+                }
+            }
+        }
+    }
+}
 
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(it)
-                    ) {
-                        val roomList by db.roomInfoQueriesHelper.getAll()
-                            .collectAsState(initial = emptyList())
+@Composable
+private fun MainContentView(
+    padding: PaddingValues,
+    db: AppDataBase,
+    loaCellViewModel: LoaCellViewModel
+) {
+    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+    val syncData by loaCellViewModel.syncData.collectAsState()
 
-                        if (loaCellViewModel.showSetting) {
-                            SettingView(db, loaCellViewModel)
-                        } else {
-                            Column(Modifier.fillMaxSize()) {
-                                AnimatedVisibility(selectedRoomId.isEmpty()) {
-                                    Column() {
-                                        RooListView(
-                                            roomList = roomList,
-                                            showRoomInfo = { roomId ->
-                                                loaCellViewModel.showRoomInfo(roomId)
-                                            }
-                                        )
-                                    }
-                                }
-                                AnimatedVisibility(selectedRoomId.isNotEmpty()) {
-                                    if (selectedRoomId.isNotEmpty()) {
-                                        Column() {
-                                            RoomView(
-                                                db,
-                                                loaCellViewModel
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        loaCellViewModel.apply {
-                            if (showRoomAction) {
-                                RoomActionDialog(
-                                    confirm = { status ->
-                                        when (status) {
-                                            1 -> showRoomEnter = true
-                                            2 -> showRoomAdd = true
-                                        }
-                                        showRoomAction = false
-                                    },
-                                    dismiss = { showRoomAction = false }
-                                )
-                            }
-                            if (showRoomAdd) {
-                                AddRoomSheet(
-                                    onDismissRequest = { showRoomAdd = false }
-                                ) { title, description, password ->
-                                    val owner = userInfo!!.uid
-                                    CommonRoomHelper.makeInfo(
-                                        title, description, password, owner
-                                    ) { id ->
-                                        db.roomInfoQueriesHelper.addRoomInfo(
-                                            title,
-                                            description,
-                                            id,
-                                            owner,
-                                            password,
-                                            emptyList(),
-                                            emptyList(),
-                                        )
-                                    }
-                                    showRoomAdd = false
-                                }
-                            }
-                            if (showRoomEnter) {
-                                RoomEnterDialog(
-                                    nowEnterRoomList = roomList.map { it.uniqueId },
-                                    success = { roomId, roomInfo ->
-                                        CommonRoomHelper.enterRoom(
-                                            roomId,
-                                            userInfo!!.uid,
-                                            successAction = {
-                                                showRoomEnter = false
-                                            },
-                                            failAction = { error ->
-                                                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
-                                                showRoomEnter = false
-                                            }
-                                        )
-                                        db.roomInfoQueriesHelper.addRoomInfo(
-                                            roomInfo.title,
-                                            roomInfo.description,
-                                            roomId,
-                                            roomInfo.owner,
-                                            roomInfo.enterPassword,
-                                            roomInfo.enterUser,
-                                            roomInfo.editableUser,
-                                        )
-                                    },
-                                    dismiss = {
-                                        showRoomEnter = false
-                                    }
-                                )
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            val roomList by loaCellViewModel.roomList.collectAsState()
 
-                            }
-                        }
-
-                    }
-
-                    loaCellViewModel.apply {
-                        if (showRoomEnterError) {
-                            RoomEnterErrorDialog(
-                                confirm = {
-                                    db.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
-                                    hideRoomInfo()
-                                    showRoomEnterError = false
-                                },
-                                dismiss = {
-                                    showRoomEnterError = false
+            if (loaCellViewModel.showSetting) {
+                SettingView(loaCellViewModel)
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    AnimatedVisibility(selectedRoomId.isEmpty()) {
+                        Column() {
+                            RooListView(
+                                roomList = roomList,
+                                showRoomInfo = { roomId ->
+                                    loaCellViewModel.showRoomInfo(roomId)
                                 }
                             )
                         }
                     }
-
-                    loaCellViewModel.apply {
-                        if (syncData) {
-                            LaunchedEffect(syncData) {
-                                CommonRoomHelper.syncRoom(
-                                    userInfo!!.uid,
-                                    db,
-                                    failAction = { _ -> },
-                                    successAction = { syncEnd() }
-                                )
-                            }
-                            LoadingView("데이터를 동기화 중입니다.")
+                    AnimatedVisibility(selectedRoomId.isNotEmpty()) {
+                        if (selectedRoomId.isNotEmpty()) {
+                            RoomView(loaCellViewModel)
                         }
                     }
                 }
             }
         }
+
+        if (syncData) {
+            LoadingView("데이터를 동기화 중입니다.")
+        }
     }
+
 }

@@ -1,7 +1,5 @@
 package com.wonddak.loacell.android.ui.bottomSheet
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -27,9 +26,8 @@ import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.lostark.model.CharacterInfo
-import com.wonddak.sharedapi.onError
-import com.wonddak.sharedapi.onException
 import com.wonddak.sharedapi.onFail
+import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
 import kotlinx.coroutines.launch
 
@@ -38,7 +36,6 @@ fun AddUserSheet(
     modifier: Modifier = Modifier,
     roomId: String,
     onDismissRequest: () -> Unit,
-    addAction: () -> Unit
 ) {
 
     var searchCharacterName by remember {
@@ -60,9 +57,7 @@ fun AddUserSheet(
     var searchResult by remember {
         mutableStateOf(emptyList<CharacterInfo>())
     }
-    BackHandler(searchResult.isNotEmpty()) {
-        searchResult = emptyList()
-    }
+
     val searchAction = {
         scope.launch {
             errorMsg = ""
@@ -73,16 +68,15 @@ fun AddUserSheet(
                 searchResult = list
             }
             characterResult.onFail { code, message ->
-                if (code == 429) {
-
-                } else {
-                    errorMsg = "$message($code)"
-                }
+                errorMsg = "$message($code)"
+            }
+            characterResult.onFailOnlyMsg { message ->
+                errorMsg = message
             }
             showProgress = false
         }
     }
-    
+
     val initAction = {
         if (searchResult.isNotEmpty()) {
             CommonUserHelper.addOrUpdate(
@@ -90,13 +84,14 @@ fun AddUserSheet(
                 user,
                 searchCharacterName,
                 searchResult,
-                {error -> errorMsg = error},
-                addAction
+                { error -> errorMsg = error },
+                onDismissRequest
             )
         }
     }
 
-    val buttonEnabledSearch = searchResult.isEmpty() && user.isNotEmpty() && searchCharacterName.isNotEmpty()
+    val buttonEnabledSearch =
+        searchResult.isEmpty() && user.isNotEmpty() && searchCharacterName.isNotEmpty()
     val buttonEnabledInit = searchResult.isNotEmpty()
     BaseSheet(
         title = "유저 정보 추가",
@@ -108,10 +103,10 @@ fun AddUserSheet(
                 initAction()
             }
         },
-        enabledButton = buttonEnabledSearch || buttonEnabledInit,
+        enabledButton = buttonEnabledSearch || buttonEnabledInit || !showProgress,
         buttonText = if (searchResult.isEmpty()) "검색" else "추가",
         errorMsg = errorMsg,
-        updateErrorMsg = {errorMsg = it}
+        updateErrorMsg = { errorMsg = it }
     ) {
         Column(
             modifier = modifier.padding(10.dp)
@@ -120,7 +115,7 @@ fun AddUserSheet(
                 modifier = textFieldModifier,
                 text = user,
                 label = "유저 이름",
-                placeHolder ="유저 이름 입력" ,
+                placeHolder = "유저 이름 입력",
                 maxLine = 1,
                 maxLength = 5,
                 textChange = { user = it.replace(" ", "") },
@@ -132,10 +127,14 @@ fun AddUserSheet(
                 modifier = textFieldModifier,
                 text = searchCharacterName,
                 label = "대표 캐릭터",
-                placeHolder ="대표 캐릭터 입력" ,
+                placeHolder = "대표 캐릭터 입력",
                 maxLine = 1,
                 maxLength = 12,
-                textChange = { searchCharacterName = it.replace(" ", "") },
+                textChange = {
+                    searchCharacterName = it.replace(" ", "")
+                    searchResult = emptyList()
+                    errorMsg = ""
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
@@ -150,18 +149,21 @@ fun AddUserSheet(
             if (showProgress) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "${user}님의 캐릭터 정보를 불러 옵니다.")
                     CircularProgressIndicator()
                 }
             }
-            AnimatedVisibility(searchResult.isNotEmpty()) {
-                val infoCharacter = searchResult.find { it.characterName == searchCharacterName }!!
-                Column() {
-                    Text("${infoCharacter.characterName}(${infoCharacter.characterClassName}) - ${infoCharacter.itemMaxLevel}")
-                    Text(text = "외 ${searchResult.size-1}개의 캐릭터를 찾았습니다.")
-                }
+            if (searchResult.isNotEmpty()) {
+                searchResult.find { it.characterName.lowercase() == searchCharacterName.lowercase() }
+                    ?.let { find ->
+                        Column() {
+                            Text("${find.characterName}(${find.characterClassName}) - ${find.itemMaxLevel}")
+                            Text(text = "외 ${searchResult.size - 1}개의 캐릭터를 찾았습니다.")
+                        }
+                    }
             }
         }
     }

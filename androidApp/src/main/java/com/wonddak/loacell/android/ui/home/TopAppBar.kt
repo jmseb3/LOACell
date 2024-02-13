@@ -24,26 +24,19 @@ fun TopAppBar(
     loaCellViewModel: LoaCellViewModel,
 ) {
     val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val focusRaidId by loaCellViewModel.focusRaidId.collectAsState("")
-    val focusUserName by loaCellViewModel.focusUserName.collectAsState("")
+
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val roomInfo = totalRoomInfo.roomInfo
+    val raidInfo = totalRoomInfo.raidInfo
+    val focusUserName = totalRoomInfo.focusUserName
     TopAppBar(
         title = {
             if (loaCellViewModel.showSetting) {
                 Text(text = "설정")
             } else if (focusUserName.isNotEmpty()) {
                 Text(text = "${focusUserName}님 캐릭터 정보")
-            } else if (focusRaidId.isNotEmpty()) {
-                val raidInfo by loaCellViewModel.raidInfo.collectAsState()
-                raidInfo?.let { raidInfo ->
-                    Text(text = raidInfo.title)
-                }
-            } else if (selectedRoomId.isNotEmpty()) {
-                val roomInfo by loaCellViewModel.roomInfo.collectAsState()
-                roomInfo?.let { roomInfo ->
-                    Text(text = roomInfo.title)
-                }
             } else {
-                Text(text = "LoaCell")
+                Text(text = raidInfo?.title ?: roomInfo?.title ?: "LoaCell")
             }
         },
         actions = {

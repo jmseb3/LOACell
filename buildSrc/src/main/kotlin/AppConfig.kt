@@ -1,8 +1,8 @@
 
 object AppConfig {
     const val AppName = "LoaCell"
-    const val versionCode = 2
-    const val version = "1.0.0"
+    const val versionCode = 9
+    const val version = "1.1.2"
     const val group = "com.wonddak"
     const val loaCellgroup = "$group.loacell"
     const val databaseName = "Database"
@@ -14,11 +14,11 @@ object AppConfig {
     }
     object Android {
         const val packageName = "$loaCellgroup.android"
-        const val compileSdk = 33
+        const val compileSdk = 34
         const val minSdk = 26
         const val targetSdk = 33
 
-        const val kotlinCompilerExtensionVersion = "1.4.7"
+        const val kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     object Ios {

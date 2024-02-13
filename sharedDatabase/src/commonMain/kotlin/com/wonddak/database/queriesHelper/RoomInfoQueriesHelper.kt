@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOne
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.RoomInfoQueries
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class RoomInfoQueriesHelper(
@@ -21,7 +22,7 @@ class RoomInfoQueriesHelper(
     }
 
     fun getRoomInfoById(id: String): Flow<RoomInfo> {
-        return queries.selectById(id).asFlow().mapToOne(Dispatchers.Default)
+        return queries.selectById(id).asFlow().mapToOne(Dispatchers.IO)
     }
 
     fun addRoomInfo(

@@ -10,10 +10,13 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.android.noRippleClickable
+
 
 @Composable
 fun UserInfoCharacter(
@@ -21,10 +24,20 @@ fun UserInfoCharacter(
     representativeCharacter :String
 ) {
     val doBold = representativeCharacter == character.name
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.dp)
+            .noRippleClickable {
+//                val url = "https://iloa.gg/character/${character.name}"
+////                val url = "https://loawa.com/char/${character.name}"
+////                val url = "https://m.kloa.gg/characters/${character.name}"
+//                val intent = CustomTabsIntent
+//                    .Builder()
+//                    .build()
+//                intent.launchUrl(context, Uri.parse(url))
+            }
     ) {
         Text(
             text = character.name,

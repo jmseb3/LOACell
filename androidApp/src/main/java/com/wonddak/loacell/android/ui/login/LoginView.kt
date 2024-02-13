@@ -1,7 +1,6 @@
 package com.wonddak.loacell.android.ui.login
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,11 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,45 +34,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.loacell.android.R
-import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.android.LoaCellApp
+import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
-import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.auth.requestAnonymousLogin
+import com.wonddak.sharedresources.store.CommonString
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginView(loaCellViewModel: LoaCellViewModel) {
+    val loginHelper =  LoaCellApp.loginHelper
+    val loggingIn by loginHelper.loginIn.collectAsState()
     val context = LocalContext.current
-    val loginHelper = LoginHelper(context)
 
-    val googleLoginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        loaCellViewModel.apply {
-            loginHelper.registerGoogleToken(
-                result,
-                commonAction = {
-                    println("<>>>>>>>>>>> common")
-                    loggingIn = true
-                },
-                failRegisterAction = {e ->
-                    loggingIn = false
-                },
-                successAction = {
-                    syncStart()
-                    loggingIn = false
-                },
-                failAction = {
-                    loggingIn = false
-                }
-            )
-        }
-
-    }
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,12 +73,12 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "레이드 관리를 도와 주는 ",
+                        text = CommonString.Login.getInfo1().toText(),
                         textAlign = TextAlign.Center
                     )
-                    Image(painter = painterResource(id = R.mipmap.ic_launcher_foreground), contentDescription = null)
+                    Image(painter = painterResource(id = com.wonddak.sharedresources.R.drawable.logo), contentDescription = null)
                     Text(
-                        text = "입니다.",
+                        text = CommonString.Login.getInfo2().toText(),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -106,27 +91,62 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GoogleLoginButton(
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                val widthSize = Modifier.fillMaxWidth(0.8f)
+                Button(
+                    onClick = {
+                        loginHelper.requestAnonymousLogin()
+                    },
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = widthSize,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.White,
+                        containerColor = Color.Black
+                    )
                 ) {
-                    loginHelper.requestGoogleLogin { intent ->
-                        googleLoginLauncher.launch(intent)
+                    Text(
+                        text = CommonString.Login.getAnonymous().toText(),
+                        fontFamily = roboto,
+//                        color = Color.White,
+//                        textDecoration = TextDecoration.Underline,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = widthSize,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "OR",
+                        maxLines = 1,
+                        textAlign = TextAlign.Center
+                    )
+                    Divider(
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                GoogleLoginButton(
+                    modifier = widthSize
+                ) {
+                    scope.launch {
+                        loginHelper.requestGoogleLogin(context as Activity) { result ->
+                            loaCellViewModel.syncStartForce(result.user!!.uid)
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = "로그인 하지 않고 계속",
-                    color = Color.Black,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier
-                        .noRippleClickable { loginHelper.requestAnonymousLogin() }
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
             }
         }
-        if (loaCellViewModel.loggingIn) {
-            LoadingView(info = "로그인 처리 중입니다.", color = Color.Gray.copy(0.5f))
+        if (loggingIn) {
+            LoadingView(info = CommonString.Login.getProgress().toText(), color = Color.Gray.copy(0.5f))
         }
     }
 }
@@ -158,7 +178,7 @@ fun GoogleLoginButton(
         ) {
             Spacer(modifier = Modifier.weight(1f))
             Icon(
-                painter = painterResource(id = R.drawable.btn_google),
+                painter = painterResource(id = SharedRes.images.btn_google.drawableResId),
                 contentDescription = "SignInButton",
                 tint = Color.Unspecified
             )

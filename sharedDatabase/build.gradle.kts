@@ -24,9 +24,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation(Dependencies.KMM.Kotlinx.Coroutines)
                 implementation(Dependencies.KMM.SQLDelight.Adapter)
                 implementation(Dependencies.KMM.SQLDelight.Coroutine)
+                implementation(Dependencies.KMM.Kotlinx.DateTime)
             }
         }
         val androidMain by getting {

@@ -1,6 +1,8 @@
 package com.wonddak.loacell.android
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -11,17 +13,14 @@ import com.wonddak.database.AppDataBase
 import com.wonddak.database.DriverFactory
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.android.ui.home.MainContent
-import com.wonddak.loacell.android.util.LoginHelper
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private lateinit var loginHelper: LoginHelper
     private lateinit var loaCellViewModel: LoaCellViewModel
     private var waitTime = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loginHelper = LoginHelper(this)
         val db = AppDataBase(DriverFactory(this))
         val config = Config(this)
 
@@ -29,7 +28,7 @@ class MainActivity : ComponentActivity() {
             this,
             LoaCellViewModelFactory(db, config)
         )[LoaCellViewModel::class.java]
-
+        kakaoIntent(intent)
         setContent {
             val selectedRoomId by loaCellViewModel.roomId.collectAsState()
             BackHandler(selectedRoomId.isEmpty()) {
@@ -41,6 +40,22 @@ class MainActivity : ComponentActivity() {
                 }
             }
             MainContent(db, loaCellViewModel)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        kakaoIntent(intent)
+    }
+
+    private fun kakaoIntent(intent: Intent?) {
+        Log.i("JWH",intent.toString())
+        intent?.data?.let { uri ->
+            if (uri.scheme == "kakaoeaad613c8a32160c49991040e94170f9") {
+                uri.getQueryParameter("uniqueId")?.let { id ->
+                    loaCellViewModel.checkByScheme(id)
+                }
+            }
         }
     }
 }

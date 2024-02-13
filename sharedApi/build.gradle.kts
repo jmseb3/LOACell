@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.8.21"
+    kotlin("plugin.serialization") version Versions.Project.Kotlin
 }
 
 kotlin {
@@ -31,8 +31,7 @@ kotlin {
                 implementation(Dependencies.KMM.Ktor.ContentNegotiation)
                 implementation(Dependencies.KMM.Ktor.Serialization)
                 implementation(Dependencies.KMM.Kotlinx.DateTime)
-
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+                implementation(Dependencies.KMM.Kotlinx.Serialization)
             }
         }
         val androidMain by getting {

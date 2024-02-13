@@ -1,63 +1,122 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.convertDifficulty
-import com.wonddak.database.ext.convertType
+import com.wonddak.database.model.Day
+import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
-import com.wonddak.loacell.model.Difficulty
+import com.wonddak.database.model.convertDifficulty
+import com.wonddak.database.model.convertToDay
+import com.wonddak.database.model.convertType
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(
     val title: String = "",
-    val type: String = RaidType.ETC.name,
-    val difficulty: String = Difficulty.Normal.name,
+    val type: RaidType = RaidType.ETC,
+    val difficulty: Difficulty = Difficulty.Normal,
     val startGateNumber: Int = 0,
     val endGateNumber: Int = 0,
     @field:JvmField
     val isFinish: Boolean = false,
     val party1: List<String> = List(4) { "" },
-    val party2: List<String> = List(4) { "" }
-
+    val party2: List<String> = List(4) { "" },
+    val day: Day = Day.NONE,
+    val hour: Long = 0L,
+    val minute: Long = 0L
 ) {
     fun toMap() = mapOf(
         "title" to title,
-        "type" to type,
-        "difficulty" to difficulty,
+        "type" to type.name,
+        "difficulty" to difficulty.name,
         "startGateNumber" to startGateNumber,
         "endGateNumber" to endGateNumber,
         "endGateNumber" to endGateNumber,
         "finish" to isFinish,
         "party1" to party1,
-        "party2" to party2
+        "party2" to party2,
+        "day" to day.index,
+        "hour" to hour,
+        "minute" to minute
     )
+
+    fun getMinLevelText() :String {
+        val minLevel =  this.type.getMinLevel(difficulty,endGateNumber)
+        return if (minLevel == 0) "제한 없음" else minLevel.toString()
+    }
+
+    fun updateTitle(title: String) = this.copy(title = title)
+    fun updateType(type: RaidType): FBRaidInfo {
+        if (!type.accessibleDifficulty().contains(this.difficulty)) {
+            return if (type != RaidType.ABRELSHUD) {
+                this.copy(
+                    type = type,
+                    difficulty = Difficulty.Normal,
+                    startGateNumber = 1,
+                    endGateNumber = type.getMaxGate()
+                )
+            } else {
+                this.copy(type = type, difficulty = Difficulty.Normal)
+            }
+        } else {
+            return if (type != RaidType.ABRELSHUD) {
+                this.copy(
+                    type = type,
+                    startGateNumber = 1,
+                    endGateNumber = type.getMaxGate()
+                )
+            } else {
+                this.copy(type = type)
+            }
+        }
+    }
+    fun updateDifficulty(difficulty: Difficulty) = this.copy(difficulty = difficulty)
+
+    fun updateGate(start:Int,end:Int)  = this.copy(startGateNumber = start, endGateNumber = end)
+    fun updateDay(day: Day)  = this.copy(day = day)
+
+    fun updateTime(hour:Long,minute: Long) = this.copy(hour= hour, minute = minute)
+    fun updateTimeHour(hour:Long) = this.copy(hour= hour)
+    fun updateTimeMinute(minute: Long) = this.copy(minute = minute)
+    fun difficultySelected(difficulty: Difficulty) :Boolean = this.difficulty == difficulty
+    fun difficultyEnabled(difficulty: Difficulty) :Boolean = this.type.accessibleDifficulty().contains(difficulty)
 }
 
 object CommonRaidHelper {
     //레이드 정보를 추가한다.
     fun add(
         roomId: String,
-        title: String,
-        type: RaidType,
-        difficulty: Difficulty,
-        startGateNumber: Int,
-        endGateNumber: Int,
+        fbRaidInfo: FBRaidInfo,
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        val fbRaidInfo = FBRaidInfo(
-            title = title,
-            type = type.name,
-            difficulty = difficulty.name,
-            startGateNumber = startGateNumber,
-            endGateNumber = endGateNumber
-        )
         RefHelper.getRaidsRef(roomId).document()
             .set(
                 fbRaidInfo.toMap(),
                 successAction = successAction,
                 failAction = failAction
             )
+    }
 
+    fun update(
+        roomId: String,
+        raidId: String,
+        fbRaidInfo: FBRaidInfo,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit
+    ) {
+        RefHelper.getRaidRef(roomId, raidId)
+            .update(
+                fbRaidInfo.toMap(),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
+    private fun addEmptyDay(roomId: String, raidId: String) {
+        val emptyDayMap = mapOf(
+            "day" to -1,
+            "hour" to 0,
+            "minute" to 0
+        )
+        RefHelper.getRaidRef(roomId, raidId).update(emptyDayMap)
     }
 
     //레이드 정보를 삭제한다.
@@ -72,29 +131,24 @@ object CommonRaidHelper {
             failAction = failAction
         )
     }
+
     private fun updateField(
         roomId: String,
         raidId: String,
-        field :String,
-        value :Any
+        field: String,
+        value: Any
     ) {
         RefHelper.getRaidRef(roomId, raidId).update(
-            field,value
+            field, value
         )
     }
+
     fun updateFinish(
         roomId: String,
         raidId: String,
         isFinish: Boolean
     ) {
-        updateField(roomId,raidId,"finish",isFinish)
-    }
-    fun updateTitle(
-        roomId: String,
-        raidId: String,
-        title: String
-    ) {
-        updateField(roomId,raidId,"title",title)
+        updateField(roomId, raidId, "finish", isFinish)
     }
 
     // 파티 리스트를 업데이트 한다.
@@ -117,16 +171,15 @@ object CommonRaidHelper {
     fun observe(
         roomId: String,
         db: AppDataBase
-    ) : CommonListenerRegistration {
+    ): CommonListenerRegistration {
         return RefHelper.getRaidsRef(roomId).getListenerRegistration(
-            successAction =  {value ->
+            successAction = { value ->
                 val dbRaidList =
                     db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }
                         .toMutableSet()
 
                 value.documents.forEach {
                     val raidId = it.id
-                    println("JWH Listen raidId : $raidId")
                     val title = it.data!!["title"] as String
                     val typeString = it.data!!["type"] as String
                     val difficultyString = it.data!!["difficulty"] as String
@@ -135,6 +188,10 @@ object CommonRaidHelper {
                     val isFinish = it.data!!["finish"] as Boolean
                     val party1 = it.data!!["party1"] as List<String>
                     val party2 = it.data!!["party2"] as List<String>
+
+                    val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
+                    val hour = runCatching { it.data?.get("hour") as Long?}.getOrNull()
+                    val minute = runCatching { it.data?.get("minute") as Long?}.getOrNull()
 
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
@@ -149,7 +206,10 @@ object CommonRaidHelper {
                             endGateNumber,
                             isFinish,
                             party1,
-                            party2
+                            party2,
+                            day,
+                            hour,
+                            minute
                         )
                         dbRaidList.remove(raidId)
                     } else {
@@ -163,7 +223,10 @@ object CommonRaidHelper {
                             startGateNumber,
                             endGateNumber,
                             party1,
-                            party2
+                            party2,
+                            (day ?: -1L).convertToDay(),
+                            hour ?: 0,
+                            minute ?: 0
                         )
                     }
                 }
@@ -173,7 +236,7 @@ object CommonRaidHelper {
                 }
             },
             failAction = {
-                println("JWH Fail with error : ${it?.errorMsg}")
+
             }
         )
     }

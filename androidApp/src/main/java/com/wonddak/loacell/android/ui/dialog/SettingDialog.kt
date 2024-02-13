@@ -32,8 +32,8 @@ import com.wonddak.sharedapi.firebase.model.FBDataItem
 @Composable
 fun ProfileNameDialog(
     nowName: String = "",
-    success: (name: String) -> Unit,
     dismiss: () -> Unit,
+    success: (name: String) -> Unit,
 ) {
     var name by remember {
         mutableStateOf(TextFieldValue(nowName, TextRange(0, nowName.length)))

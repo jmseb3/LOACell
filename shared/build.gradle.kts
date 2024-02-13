@@ -21,11 +21,14 @@ kotlin {
             linkerOpts.add("-lsqlite3")
             export(project(Modules.api))
             export(project(Modules.resources))
+            export("dev.icerock.moko:resources:0.23.0")
             export(project(Modules.database))
             transitiveExport = true
         }
-        pod("FirebaseFirestore","~> 10.10")
-
+        pod("FirebaseCore", Versions.Dependencies.iOS.Firebase.core)
+        pod("FirebaseFirestore", Versions.Dependencies.iOS.Firebase.firestore)
+        pod("FirebaseAuth", Versions.Dependencies.iOS.Firebase.auth)
+        pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
     }
     sourceSets {
         val commonMain by getting {
@@ -49,8 +52,19 @@ kotlin {
             dependencies {
                 implementation(platform(Dependencies.Android.Firebase.Bom))
                 implementation(Dependencies.Android.Firebase.Firestore)
+                implementation(Dependencies.Android.Firebase.Auth)
+                implementation(Dependencies.Android.Firebase.AuthGoogle)
                 implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+                implementation("androidx.credentials:credentials:1.3.0-alpha01")
+
+                // optional - needed for credentials support from play services, for devices running
+                // Android 13 and below.
+                implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
+
+                implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
             }
         }
         val iosX64Main by getting

@@ -38,6 +38,7 @@ android {
                 mappingFileUploadEnabled = true
             }
             signingConfig = signingConfigs.getByName("LoaCellSigning")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
             isDebuggable = true
@@ -53,7 +54,7 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.shared))
+    api(project(Modules.shared))
 
     val composeBom = platform(Dependencies.Android.Compose.Bom)
     implementation(composeBom)
@@ -70,4 +71,10 @@ dependencies {
     implementation(Dependencies.Android.Firebase.Crashlytics)
     implementation(Dependencies.Android.Firebase.Auth)
     implementation(Dependencies.Android.Firebase.AuthGoogle)
+
+    implementation("com.github.commandiron:WheelPickerCompose:1.1.11")
+
+    implementation("com.kakao.sdk:v2-share:2.14.0") // 메시지(카카오톡 공유)
+
+    implementation("androidx.browser:browser:1.7.0")
 }

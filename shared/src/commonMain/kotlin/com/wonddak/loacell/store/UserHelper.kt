@@ -13,18 +13,18 @@ data class FBUSerInfo(
     val characterList: List<FBCharacterInfo> = emptyList(),
     val timeStamp: Long = Clock.System.now().toEpochMilliseconds()
 ) {
-    fun toMap() = mapOf<String, Any>(
+    fun toMap() = mapOf(
         "representativeCharacter" to representativeCharacter,
-        "characterList" to characterList,
+        "characterList" to characterList.map { it.toMap() },
         "timeStamp" to timeStamp
     )
 }
 
 data class FBCharacterInfo(
-    public val name: String = "",
-    public val server: String = "",
-    public val className: String = "",
-    public val level: String = ""
+    val name: String = "",
+    val server: String = "",
+    val className: String = "",
+    val level: String = ""
 ) {
     fun toMap() = mapOf<String, Any>(
         "name" to name,
@@ -69,13 +69,17 @@ object CommonUserHelper {
                         }
                     )
                 } else {
-                    userRoom.set(
-                        data = fbUserInfo.toMap(),
-                        successAction = successAction,
-                        failAction = { err ->
-                            failAction(err.errorMsg)
-                        }
-                    )
+                    runCatching {
+                        userRoom.set(
+                            data = fbUserInfo.toMap(),
+                            successAction = successAction,
+                            failAction = { err ->
+                                failAction(err.errorMsg)
+                            }
+                        )
+                    }.onFailure {e ->
+                        failAction(e.message ?:"dead")
+                    }
                 }
             },
             failAction = {
@@ -102,6 +106,7 @@ object CommonUserHelper {
         failAction: (e: String) -> Unit,
         successAction: () -> Unit
     ) {
+        println("--USERHELPER DELETE!!")
         RefHelper.getUserDocRef(roomId, name)
             .delete(
                 successAction = successAction,
@@ -138,8 +143,6 @@ object CommonUserHelper {
                         }
 
                         val timeStamp = it.data!!["timeStamp"] as Long
-                        println("JWH Listen Users == $userName")
-                        println("JWH ${characterList.joinToString("|") { it.name }}")
                         //이미 값이 있는 경우
                         if (userName in dbUserList) {
                             //업데이트
@@ -178,7 +181,7 @@ object CommonUserHelper {
                 }
             },
             failAction = {
-                println("JWH Fail with error : ${it?.errorMsg}")
+
             }
         )
     }
