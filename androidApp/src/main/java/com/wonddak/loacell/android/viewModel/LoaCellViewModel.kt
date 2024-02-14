@@ -115,4 +115,6 @@ class LoaCellViewModel(
 
     fun setSheetSpace(space:Float) = common.setSheetSpace(space)
 
+    var startScreenshot by mutableStateOf(false)
+
 }

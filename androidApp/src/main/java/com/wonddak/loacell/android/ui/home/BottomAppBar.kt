@@ -141,6 +141,11 @@ fun BottomAppBar(
                                         !info.isFinish
                                     )
                                 }
+                                MyIconButton(
+                                    imageResource = SharedRes.images.screenshot
+                                ) {
+                                    startScreenshot = true
+                                }
                             }
                         }
                     }

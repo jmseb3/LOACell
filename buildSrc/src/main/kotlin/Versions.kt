@@ -18,7 +18,7 @@ object Versions {
         object Android {
 
             object Compose {
-                const val bomVersion = "2023.10.00"
+                const val bomVersion = "2024.02.00"
                 const val activity = "1.8.0"
             }
 
