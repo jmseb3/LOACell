@@ -6,7 +6,13 @@ plugins {
 }
 
 kotlin {
-    android()
+    androidTarget() {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -22,30 +28,19 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(Dependencies.KMM.Kotlinx.Coroutines)
-                implementation(Dependencies.KMM.SQLDelight.Adapter)
-                implementation(Dependencies.KMM.SQLDelight.Coroutine)
-                implementation(Dependencies.KMM.Kotlinx.DateTime)
-            }
+        commonMain.dependencies {
+            implementation(Dependencies.KMM.Kotlinx.Coroutines)
+            implementation(Dependencies.KMM.SQLDelight.Adapter)
+            implementation(Dependencies.KMM.SQLDelight.Coroutine)
+            implementation(Dependencies.KMM.Kotlinx.DateTime)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(Dependencies.KMM.SQLDelight.Android)
-            }
+
+        androidMain.dependencies {
+            implementation(Dependencies.KMM.SQLDelight.Android)
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(Dependencies.KMM.SQLDelight.Ios)
-            }
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+
+        iosMain.dependencies {
+            implementation(Dependencies.KMM.SQLDelight.Ios)
         }
     }
 }

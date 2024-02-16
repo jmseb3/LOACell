@@ -18,7 +18,7 @@ object AppConfig {
         const val minSdk = 26
         const val targetSdk = 33
 
-        const val kotlinCompilerExtensionVersion = "1.5.3"
+        const val kotlinCompilerExtensionVersion = "1.5.7"
     }
 
     object Ios {

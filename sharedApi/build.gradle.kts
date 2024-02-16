@@ -6,7 +6,13 @@ plugins {
 }
 
 kotlin {
-    android()
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -23,34 +29,24 @@ kotlin {
 
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(Dependencies.KMM.Ktor.Core)
-                implementation(Dependencies.KMM.Ktor.Resources)
-                implementation(Dependencies.KMM.Ktor.Logging)
-                implementation(Dependencies.KMM.Ktor.ContentNegotiation)
-                implementation(Dependencies.KMM.Ktor.Serialization)
-                implementation(Dependencies.KMM.Kotlinx.DateTime)
-                implementation(Dependencies.KMM.Kotlinx.Serialization)
-            }
+        commonMain.dependencies {
+            implementation(Dependencies.KMM.Ktor.Core)
+            implementation(Dependencies.KMM.Ktor.Resources)
+            implementation(Dependencies.KMM.Ktor.Logging)
+            implementation(Dependencies.KMM.Ktor.ContentNegotiation)
+            implementation(Dependencies.KMM.Ktor.Serialization)
+            implementation(Dependencies.KMM.Kotlinx.DateTime)
+            implementation(Dependencies.KMM.Kotlinx.Serialization)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(Dependencies.KMM.Ktor.Android)
-            }
+
+        androidMain.dependencies {
+            implementation(Dependencies.KMM.Ktor.Android)
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-            dependencies {
-                implementation(Dependencies.KMM.Ktor.Ios)
-            }
+
+        iosMain.dependencies {
+            implementation(Dependencies.KMM.Ktor.Ios)
         }
+
     }
 }
 
