@@ -8,18 +8,22 @@
 
 import SwiftUI
 import shared
+import Combine
 
 struct RaidFocusView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
+    @State var anyCancellable = Set<AnyCancellable>()
+
     var totalRoomInfo : TotalRoomInfo {
         viewModel.totalRoomInfo
     }
+
     var raidInfo : RaidInfo? {
         totalRoomInfo.raidInfo
     }
     
-    var body: some View {
+    var raidView: some View {
         VStack {
             if raidInfo != nil {
                 VStack(alignment: .leading) {
@@ -54,8 +58,27 @@ struct RaidFocusView: View {
                 }
             }
         }
+
+    }
+
+    @State private var image : UIImage? = nil
+
+    var body: some View {
+        VStack {
+            raidView
+        }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(Color.white)
-        
+        .onAppear {
+            viewModel.screenshotStart.sink { completion in
+                print("Completion: \(completion)")
+            } receiveValue: { value in
+                if (value) {
+                    image = raidView.snapshot()
+                }
+            }.store(in: &anyCancellable)
+        }
+        .imageShareSheet(isPresented: Binding, image: UIImage(named: "example_image"))
     }
+
 }

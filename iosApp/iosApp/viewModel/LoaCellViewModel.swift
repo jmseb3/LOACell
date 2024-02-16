@@ -11,6 +11,7 @@ import FirebaseAuth
 import shared
 import SwiftUI
 import SwiftUI_Snackbar
+import Combine
 
 class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
@@ -218,4 +219,6 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func checkByScheme(roomId :String) {
         common.checkByScheme(roomId: roomId)
     }
+        
+    var screenshotStart = CurrentValueSubject<Bool, Never>(false)
 }

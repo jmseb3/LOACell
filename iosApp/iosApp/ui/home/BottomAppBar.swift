@@ -75,6 +75,9 @@ struct BottomAppBar: View {
                                     isFinish: !info.isFinish
                                 )
                             }
+                            IconButton(resource: \.screenshot) {
+                                viewModel.screenshotStart.value = true
+                            }
                         }
                     }
                 }
