@@ -22,7 +22,7 @@ object AppConfig {
     }
 
     object Ios {
-        const val deploymentTarget = "14.1"
+        const val deploymentTarget = "16.0"
     }
 
 }

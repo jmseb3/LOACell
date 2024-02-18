@@ -37,6 +37,9 @@ kotlin {
         pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
     }
     sourceSets {
+        all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
         commonMain.dependencies {
             api(project(Modules.api))
             api(project(Modules.resources))

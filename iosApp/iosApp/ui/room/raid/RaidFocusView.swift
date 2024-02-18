@@ -66,6 +66,9 @@ struct RaidFocusView: View {
     var body: some View {
         VStack {
             raidView
+            if let image = image {
+                ImageShareSheet(images: [image])
+            }
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(Color.white)
@@ -78,7 +81,6 @@ struct RaidFocusView: View {
                 }
             }.store(in: &anyCancellable)
         }
-        .imageShareSheet(isPresented: Binding, image: UIImage(named: "example_image"))
     }
 
 }

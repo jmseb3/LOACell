@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package com.wonddak.loacell.store
 
 import cocoapods.FirebaseFirestore.FIRCollectionReference
@@ -71,7 +73,7 @@ actual class CommonFireStore(
             if (error != null) {
                 successAction()
             } else {
-                failAction(com.wonddak.loacell.store.Error(error))
+                failAction(Error(error))
             }
         }
     }
