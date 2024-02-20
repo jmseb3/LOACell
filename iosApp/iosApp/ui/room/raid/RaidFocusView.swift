@@ -11,14 +11,14 @@ import shared
 import Combine
 
 struct RaidFocusView: View {
+    @Environment(\.displayScale) var displayScale
+    
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-    @State var anyCancellable = Set<AnyCancellable>()
-
     var totalRoomInfo : TotalRoomInfo {
         viewModel.totalRoomInfo
     }
-
+    
     var raidInfo : RaidInfo? {
         totalRoomInfo.raidInfo
     }
@@ -58,29 +58,34 @@ struct RaidFocusView: View {
                 }
             }
         }
-
+        
     }
-
+    
     @State private var image : UIImage? = nil
-
+    
     var body: some View {
         VStack {
             raidView
-            if let image = image {
-                ImageShareSheet(images: [image])
+            ShareLink(
+                item: Image(uiImage: render()),
+                preview: SharePreview("공격대 정보", image: Image(uiImage: render()))
+            ) {
+                Label(
+                    title: { Text("공격대 공유") },
+                    icon: {Image(resource: \.screenshot)}
+                )
             }
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(Color.white)
-        .onAppear {
-            viewModel.screenshotStart.sink { completion in
-                print("Completion: \(completion)")
-            } receiveValue: { value in
-                if (value) {
-                    image = raidView.snapshot()
-                }
-            }.store(in: &anyCancellable)
-        }
     }
-
+    
+    @MainActor func render()  -> UIImage {
+        let renderer = ImageRenderer(content: raidView)
+        
+        // make sure and use the correct display scale for this device
+        renderer.scale = displayScale
+        
+        return renderer.uiImage ?? UIImage()
+    }
 }

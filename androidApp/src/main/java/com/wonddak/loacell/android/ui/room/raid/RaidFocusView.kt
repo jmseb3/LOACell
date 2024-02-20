@@ -2,23 +2,37 @@ package com.wonddak.loacell.android.ui.room.raid
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
+import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FileUtil
@@ -28,6 +42,7 @@ import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomState
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
@@ -37,10 +52,13 @@ fun RaidFocusView(
 ) {
     val captureController = rememberCaptureController()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(md_theme_light_background)
-        .noRippleClickable() { }) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(md_theme_light_background)
+            .noRippleClickable() { },
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
@@ -49,26 +67,8 @@ fun RaidFocusView(
         val characterList = totalRoomInfo.partyCharacterList
         val context = LocalContext.current
 
+        val scope = rememberCoroutineScope()
         raidInfo?.let { raidInfo ->
-            LaunchedEffect(loaCellViewModel.startScreenshot) {
-                if (!loaCellViewModel.startScreenshot) {
-                    return@LaunchedEffect
-                }
-                val bitmapAsync = captureController.captureAsync()
-                try {
-                    val bitmap = bitmapAsync.await()
-                    FileUtil.requestShare(
-                        context,
-                        raidInfo.roomId,
-                        raidInfo.raidId,
-                        bitmap.asAndroidBitmap()
-                    )
-                } catch (error: Throwable) {
-                    error.printStackTrace()
-                } finally {
-                    loaCellViewModel.startScreenshot = false
-                }
-            }
             Column(
                 modifier = Modifier
                     .capturable(captureController)
@@ -107,7 +107,44 @@ fun RaidFocusView(
                         }
                     )
                 }
+                Spacer(modifier = Modifier)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = {
+                    scope.launch {
+                        val bitmapAsync = captureController.captureAsync()
+                        try {
+                            val bitmap = bitmapAsync.await()
+                            FileUtil.requestShare(
+                                context,
+                                raidInfo.roomId,
+                                raidInfo.raidId,
+                                bitmap.asAndroidBitmap()
+                            )
+                        } catch (error: Throwable) {
+                            error.printStackTrace()
+                            loaCellViewModel.showSnackBar("이미지 생성에 실패했습니다.")
+                        }
+                    }
+                }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = SharedRes.images.screenshot.drawableResId),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(text = "공격대 공유")
+                    }
+                }
             }
         }
+
+
     }
 }

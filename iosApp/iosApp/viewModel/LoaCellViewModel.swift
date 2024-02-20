@@ -219,6 +219,4 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     func checkByScheme(roomId :String) {
         common.checkByScheme(roomId: roomId)
     }
-        
-    var screenshotStart = CurrentValueSubject<Bool, Never>(false)
 }

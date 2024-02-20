@@ -18,7 +18,7 @@ struct RaidPartyView: View {
     
     var body: some View {
         VStack {
-            LazyVStack {
+            VStack {
                 ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
                     VStack {
                         if idx == 4 {
