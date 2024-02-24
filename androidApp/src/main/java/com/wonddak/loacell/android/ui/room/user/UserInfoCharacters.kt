@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.android.ui.room.common.DropDownCharacterNameView
 
 
 @Composable
@@ -29,19 +30,10 @@ fun UserInfoCharacter(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.dp)
-            .noRippleClickable {
-//                val url = "https://iloa.gg/character/${character.name}"
-////                val url = "https://loawa.com/char/${character.name}"
-////                val url = "https://m.kloa.gg/characters/${character.name}"
-//                val intent = CustomTabsIntent
-//                    .Builder()
-//                    .build()
-//                intent.launchUrl(context, Uri.parse(url))
-            }
     ) {
-        Text(
-            text = character.name,
-            fontWeight = if (doBold) FontWeight.Bold else FontWeight.Normal
+        DropDownCharacterNameView(
+            name = character.name,
+            fontWeight =  if (doBold) FontWeight.Bold else FontWeight.Normal
         )
         Row(
             modifier = Modifier

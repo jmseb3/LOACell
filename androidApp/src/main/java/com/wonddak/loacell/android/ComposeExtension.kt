@@ -8,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.desc.StringDesc
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,6 +38,11 @@ inline fun Modifier.noRippleClickable(
 }
 
 @Composable
-inline fun StringDesc.toText() :String {
+inline fun StringDesc.toText(): String {
     return this.toString(context = LocalContext.current)
+}
+
+@Composable
+inline fun ImageResource.toPainter(): Painter {
+    return painterResource(id = this.drawableResId)
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
+import com.wonddak.loacell.android.ui.room.common.DropDownCharacterNameView
 
 @Composable
 fun RaidPartyView(
@@ -38,7 +40,7 @@ fun RaidPartyView(
                     .height(55.dp)
 
                 if (index == 4) {
-                    Divider()
+                    HorizontalDivider()
                 }
                 Row(
                     modifier = modifier,
@@ -46,7 +48,11 @@ fun RaidPartyView(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text(text = item?.name ?: "캐릭터를 추가해주세요")
+                        if (item != null) {
+                            DropDownCharacterNameView(name = item.name)
+                        } else {
+                            Text(text = "캐릭터를 추가해주세요")
+                        }
                         if (item != null) {
                             Row(
                                 modifier.fillMaxWidth(),
