@@ -52,13 +52,13 @@ struct RaidPartyView: View {
                 }
                 
             }
-            .cornerRadius(20) /// make the background rounded
+            .cornerRadius(10) /// make the background rounded
             .overlay( /// apply a rounded border
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(.black, lineWidth: 1)
             )
         }
-        .padding(10)
+        .padding(2)
         Spacer()
     }
     

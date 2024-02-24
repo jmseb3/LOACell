@@ -42,6 +42,7 @@ struct LoginInfoView: View {
                             .fontWeight(.bold)
                         Text(userInfo.uid)
                     }
+                    Spacer()
                     IconButton(resource: \.change_person) {
                         viewModel.showDialog(dialogStatus: DialogStatus.settingEditName)
                     }

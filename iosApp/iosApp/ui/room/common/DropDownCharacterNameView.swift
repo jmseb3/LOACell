@@ -19,20 +19,20 @@ struct DropDownCharacterNameView: View {
                 openSafari = true
             }, label: {
                 Label(
-                    title: { Text("검색") },
-                    icon: {  Image(resource: \.search)
+                    title: {
+                        Text("검색")
+                    },
+                    icon: {
+                        Image(resource: \.search)
                             .resizable()
-                            .frame(width: 15,height: 15) }
+                            .frame(width: 15,height: 15)
+                    }
                 )
             })
         }.foregroundColor(.black)
             .fullScreenCover(isPresented: $openSafari) {
                 SafariWebView(url: SearchHelper_iosKt.makeUrl(name: name))
-                            .ignoresSafeArea()
-                    }
+                    .ignoresSafeArea()
+            }
     }
-}
-
-#Preview {
-    DropDownCharacterNameView(name: "아이오에스티떡상가즈아")
 }
