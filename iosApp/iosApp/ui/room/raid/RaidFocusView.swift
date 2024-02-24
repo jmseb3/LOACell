@@ -71,7 +71,8 @@ struct RaidFocusView: View {
                 preview: SharePreview("공격대 정보", image: Image(uiImage: render()))
             ) {
                 Label(
-                    title: { Text("공격대 공유") },
+                    title: { Text("공격대 공유")
+                        .foregroundColor(.black)},
                     icon: {Image(resource: \.screenshot)}
                 )
             }

@@ -26,14 +26,17 @@ struct RaidPartyView: View {
                         }
                         HStack{
                             VStack{
-                                Text(item?.name ?? "캐릭터를 추가해 주세요")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 if item != nil {
+                                    DropDownCharacterNameView(name: item!.name)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                     HStack{
                                         Text(item!.className)
                                         Spacer()
                                         Text(item!.level)
                                     }
+                                } else {
+                                    Text("캐릭터를 추가해 주세요")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                             .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))

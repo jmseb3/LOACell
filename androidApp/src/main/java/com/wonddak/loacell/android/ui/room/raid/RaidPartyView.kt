@@ -50,10 +50,6 @@ fun RaidPartyView(
                     Column {
                         if (item != null) {
                             DropDownCharacterNameView(name = item.name)
-                        } else {
-                            Text(text = "캐릭터를 추가해주세요")
-                        }
-                        if (item != null) {
                             Row(
                                 modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -61,6 +57,9 @@ fun RaidPartyView(
                                 Text(text = item.className)
                                 Text(text = item.level)
                             }
+                        }
+                        else {
+                            Text(text = "캐릭터를 추가해주세요")
                         }
                     }
                     MyIconButton(

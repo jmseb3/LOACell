@@ -5,8 +5,6 @@ import platform.Foundation.NSURL
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIViewController
 
-fun UIViewController.openName(name :NSString) {
-    val url =NSURL(string = KLOA  +name)
-    val sf = SFSafariViewController(uRL = url)
-    this.presentViewController(viewControllerToPresent = sf,animated = true, completion = null)
+fun makeUrl(name: NSString): NSURL {
+    return NSURL(string = KLOA + name)
 }
