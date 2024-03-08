@@ -308,6 +308,14 @@ open class CommonViewModel(
         }
     }
 
+    val defaultUrl = config.getStringFlow(ConfigKeys.DefaultUrl, ILOA)
+
+    fun setDefaultUrl(url:String) {
+        viewModelScope.launch {
+            config.putSting(ConfigKeys.DefaultUrl,url)
+        }
+    }
+
     val dialogAction = object : DialogAction {
         override fun showDialog(dialogStatus: DialogStatus) {
             _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)

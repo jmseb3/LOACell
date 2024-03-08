@@ -9,9 +9,11 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,12 +23,15 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.toPainter
+import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.dataStore
 import com.wonddak.loacell.util.openName
+import kotlinx.coroutines.launch
 
 @Composable
 fun DropDownCharacterNameView(
     modifier: Modifier = Modifier,
-    name: String,
+    base: String, name: String,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
     val context = LocalContext.current
@@ -54,7 +59,7 @@ fun DropDownCharacterNameView(
                 }
             },
             onClick = {
-                context.openName(name)
+                context.openName(base, name)
                 openMenu = false
             }
         )

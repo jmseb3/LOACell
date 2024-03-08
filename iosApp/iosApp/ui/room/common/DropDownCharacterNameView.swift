@@ -10,6 +10,8 @@ import SwiftUI
 import shared
 
 struct DropDownCharacterNameView: View {
+    @EnvironmentObject var viewModel: LoaCellViewModel
+    
     let name : String
     
     @State private var openSafari :Bool = false
@@ -31,7 +33,7 @@ struct DropDownCharacterNameView: View {
             })
         }.foregroundColor(.black)
             .fullScreenCover(isPresented: $openSafari) {
-                SafariWebView(url: SearchHelper_iosKt.makeUrl(name: name))
+                SafariWebView(url: SearchHelper_iosKt.makeUrl(base: viewModel.baseUrl ,name: name))
                     .ignoresSafeArea()
             }
     }

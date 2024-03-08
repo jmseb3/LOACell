@@ -113,6 +113,10 @@ class LoaCellViewModel(
 
     val sheetSpace get() =  common.sheetSpace
 
+    val defaultUrl get() = common.defaultUrl
+
+    fun setDefaultUrl(url:String) = common.setDefaultUrl(url)
+
     fun setSheetSpace(space:Float) = common.setSheetSpace(space)
 
 }

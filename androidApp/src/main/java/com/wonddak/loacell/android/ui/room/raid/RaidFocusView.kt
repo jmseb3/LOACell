@@ -67,6 +67,7 @@ fun RaidFocusView(
         val characterList = totalRoomInfo.partyCharacterList
         val context = LocalContext.current
 
+        val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
         val scope = rememberCoroutineScope()
         raidInfo?.let { raidInfo ->
             Column(
@@ -85,6 +86,7 @@ fun RaidFocusView(
                 loaCellViewModel.apply {
                     RaidPartyView(
                         characterList,
+                        baseUrl = baseUrl,
                         openAction = { index ->
                             val userAndCharacterMap = totalRoomInfo.userAndCharacterMap
                             if (userAndCharacterMap.isEmpty()) {

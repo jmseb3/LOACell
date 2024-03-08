@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,10 +23,10 @@ import com.wonddak.loacell.android.ui.room.common.DropDownCharacterNameView
 @Composable
 fun UserInfoCharacter(
     character : Character,
-    representativeCharacter :String
+    representativeCharacter :String,
+    baseUrl :String
 ) {
     val doBold = representativeCharacter == character.name
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,6 +34,7 @@ fun UserInfoCharacter(
     ) {
         DropDownCharacterNameView(
             name = character.name,
+            base = baseUrl,
             fontWeight =  if (doBold) FontWeight.Bold else FontWeight.Normal
         )
         Row(
@@ -54,14 +56,15 @@ fun UserInfoCharacter(
 @Composable
 fun UserInfoCharacters(
     userInfo: UserInfo,
-    characterList : List<Character>
+    characterList : List<Character>,
+    baseUrl: String,
 ) {
     val representativeCharacter = userInfo.representativeCharacter
     LazyColumn {
         itemsIndexed(characterList) { index,character ->
-            UserInfoCharacter(character,representativeCharacter)
+            UserInfoCharacter(character,representativeCharacter,baseUrl)
             if (index != characterList.size -1) {
-                Divider()
+                HorizontalDivider()
             }
         }
     }

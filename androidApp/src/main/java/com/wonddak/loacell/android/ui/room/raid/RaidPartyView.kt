@@ -26,6 +26,7 @@ import com.wonddak.loacell.android.ui.room.common.DropDownCharacterNameView
 @Composable
 fun RaidPartyView(
     list: List<Character?>,
+    baseUrl:String,
     openAction: (index: Int) -> Unit,
     deleteAction: (index: Int) -> Unit,
 ) {
@@ -49,7 +50,10 @@ fun RaidPartyView(
                 ) {
                     Column {
                         if (item != null) {
-                            DropDownCharacterNameView(name = item.name)
+                            DropDownCharacterNameView(
+                                base = baseUrl ,
+                                name = item.name
+                            )
                             Row(
                                 modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
