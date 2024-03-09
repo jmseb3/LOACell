@@ -420,8 +420,8 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */,
-				073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast.git" */,
+				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */,
+				073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				0707834E2B18329700F18AC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -787,7 +787,7 @@
 				minimumVersion = 2.19.0;
 			};
 		};
-		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */ = {
+		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jmseb3/SwiftUI-Snackbar.git";
 			requirement = {
@@ -795,7 +795,7 @@
 				kind = branch;
 			};
 		};
-		073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast.git" */ = {
+		073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/elai950/AlertToast.git";
 			requirement = {
@@ -818,12 +818,12 @@
 		};
 		0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar.git" */;
+			package = 0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */;
 			productName = "SwiftUI-Snackbar";
 		};
 		073614C82B16E155002D0BA8 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast.git" */;
+			package = 073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
 		};
 /* End XCSwiftPackageProductDependency section */
