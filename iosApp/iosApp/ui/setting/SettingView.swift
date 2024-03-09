@@ -33,45 +33,49 @@ struct SettingView: View {
     }
     
     var body: some View {
-        Form {
-            Section{
-                LoginInfoView()
-            }
-            Section {
-                Button {
-                    showSlider = !showSlider
-                } label: {
-                    Text("시트 하단 여백 크기 조정")
-                }
-                if (showSlider) {
-                    VStack{
-                        Slider(value: defaultValue, in: 0...40, step: 1)
-                        HStack() {
-                            Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
-                            Spacer()
-                            RoundCornerButton(text: "테스트") {
-                                viewModel.showDialog(dialogStatus: DialogStatus.testSheet)
+        VStack {
+            LoginInfoView()
+                .padding(10)
+            List {
+                Section("앱 설정") {
+                    Button {
+                        showSlider = !showSlider
+                    } label: {
+                        Text("시트 하단 여백 크기 조정")
+                    }
+                    .foregroundColor(.black)
+                    if (showSlider) {
+                        VStack{
+                            Slider(value: defaultValue, in: 0...40, step: 1)
+                            HStack() {
+                                Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
+                                Spacer()
+                                RoundCornerButton(text: "테스트") {
+                                    viewModel.showDialog(dialogStatus: DialogStatus.testSheet)
+                                }
                             }
                         }
                     }
-                }
-                Picker("검색 사이트 변경", selection: baseUrl) {
-                    ForEach(0 ..< SettingKt.UrlAddressList.count) {
-                        Text(SettingKt.UrlNameList[$0]).tag(SettingKt.UrlAddressList[$0])
+                    Picker("검색 사이트 변경", selection: baseUrl) {
+                        ForEach(0 ..< SettingKt.UrlAddressList.count) {
+                            Text(SettingKt.UrlNameList[$0]).tag(SettingKt.UrlAddressList[$0])
+                        }
                     }
-                }
-                Button {
-                    if let link = URL(string: "https://discord.gg/acD6rQ9Tja") {
-                        openURL(link)
+                    Button {
+                        if let link = URL(string: "https://discord.gg/acD6rQ9Tja") {
+                            openURL(link)
+                        }
+                    } label: {
+                        Text("버그 제보 및 건의하기")
                     }
-                } label: {
-                    Text("버그 제보 및 건의하기")
+                    .foregroundColor(.black)
                 }
-                LabeledContent("앱 버전", value: "\(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
+                Section("앱 정보") {
+                    LabeledContent("앱 버전", value: "\(Bundle.main.releaseVersionNumber!)(\(Bundle.main.buildVersionNumber!))")
+                }
             }
-        }
-        .onAppear{
-     
+            .scrollDisabled(true)
+            .scrollContentBackground(.hidden)
         }
     }
 }
