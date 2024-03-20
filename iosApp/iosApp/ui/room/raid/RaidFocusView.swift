@@ -8,18 +8,22 @@
 
 import SwiftUI
 import shared
+import Combine
 
 struct RaidFocusView: View {
+    @Environment(\.displayScale) var displayScale
+    
     @EnvironmentObject var viewModel: LoaCellViewModel
     
     var totalRoomInfo : TotalRoomInfo {
         viewModel.totalRoomInfo
     }
+    
     var raidInfo : RaidInfo? {
         totalRoomInfo.raidInfo
     }
     
-    var body: some View {
+    var raidView: some View {
         VStack {
             if raidInfo != nil {
                 VStack(alignment: .leading) {
@@ -29,7 +33,7 @@ struct RaidFocusView: View {
                         Text(raidInfo!.getDayText())
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                }.frame(maxWidth: .infinity)
+                }
                 RaidPartyView(
                     characterList: totalRoomInfo.partyCharacterList as! [Character?]
                 ) { index in
@@ -54,8 +58,42 @@ struct RaidFocusView: View {
                 }
             }
         }
+        .padding()
+        .frame(minWidth: 400)
+        
+    }
+    
+    @State private var image : UIImage? = nil
+    
+    var body: some View {
+        VStack {
+            raidView
+            ShareLink(
+                item: Image(uiImage: render()),
+                preview: SharePreview("공격대 정보", image: Image(uiImage: render()))
+            ) {
+                Label(
+                    title: {
+                        Text("공격대 공유")
+                            .foregroundColor(.white)
+                            .font(.footnote)
+                    },
+                    icon: {
+                        Image(resource: \.screenshot)
+                            .renderingMode(.template)
+                            .foregroundColor(.white)
+                    }
+                )
+            }
+            .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+            .background(.blue)
+            .cornerRadius(15)
+        }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(Color.white)
-        
+    }
+    
+    @MainActor func render()  -> UIImage {
+        return raidView.snapshot()
     }
 }

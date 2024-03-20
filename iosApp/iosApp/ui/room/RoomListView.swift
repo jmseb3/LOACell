@@ -47,6 +47,7 @@ struct RoomInfoRow: View {
         }
         .frame(maxWidth: .infinity)
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+        .cornerRadius(20)
         .clipShape(RoundedRectangle(cornerRadius : 20))
         .background(Color.gray)
     }

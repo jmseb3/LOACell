@@ -5,3 +5,4 @@
 -dontwarn org.bouncycastle.jsse.**
 -dontwarn org.conscrypt.*
 -dontwarn org.openjsse.**
+-dontwarn org.slf4j.impl.StaticLoggerBinder

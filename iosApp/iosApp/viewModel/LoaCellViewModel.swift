@@ -11,6 +11,7 @@ import FirebaseAuth
 import shared
 import SwiftUI
 import SwiftUI_Snackbar
+import Combine
 
 class LoaCellViewModel: ObservableObject, ViewModelImpl {
     
@@ -72,6 +73,10 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     @Published var showLoading : Bool = false
     @Published var msg :String = ""
     
+    
+    @Published var baseUrl :String = ""
+    
+    
     init() {
         loginHelper.auth.user.collect { user in
             self.user = user
@@ -103,6 +108,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         }
         common.sheetSpace.collect { value in
             self.defaultSpace = value as! CGFloat
+        }
+        common.defaultUrl.collect { value in
+            self.baseUrl = value! as String
         }
     }
     
@@ -217,5 +225,9 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
 
     func checkByScheme(roomId :String) {
         common.checkByScheme(roomId: roomId)
+    }
+    
+    func setBaseUrl(url:String) {
+        common.setDefaultUrl(url: url)
     }
 }

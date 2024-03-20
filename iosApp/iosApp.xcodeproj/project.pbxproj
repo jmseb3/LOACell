@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		05C347C15F38B4E919C31E63 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 103A85D14FDFDD56CE569DF6 /* Pods_iosApp.framework */; };
 		070625312B05AAED00B9E95F /* RoomDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625302B05AAED00B9E95F /* RoomDialog.swift */; };
 		070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625322B05B2F000B9E95F /* RoomSheet.swift */; };
 		070625352B05B50400B9E95F /* CheckButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625342B05B50400B9E95F /* CheckButton.swift */; };
@@ -54,8 +55,9 @@
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
 		07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61472AD7BE20004701DF /* ColorManager.swift */; };
 		07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */; };
-		0C80EBE2A46F56FA7F92C51A /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D398F8A8C8ED5E9D20B773BC /* Pods_iosApp.framework */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */; };
+		3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E512B89AD0E00A35684 /* SafariWebView.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -104,15 +106,17 @@
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
 		07FE61472AD7BE20004701DF /* ColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorManager.swift; sourceTree = "<group>"; };
 		07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUi+Extension.swift"; sourceTree = "<group>"; };
+		103A85D14FDFDD56CE569DF6 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownCharacterNameView.swift; sourceTree = "<group>"; };
+		3E462E512B89AD0E00A35684 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		3E66B5982B4421E4000F7377 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		49D85A15BA0EC0178B386DAD /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
+		4E2AFB732A7CA1979961AE50 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D398F8A8C8ED5E9D20B773BC /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D433CF56FB8131925783EE38 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
+		DDF8BDB4201B546FA946CFBE /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +128,7 @@
 				073614C92B16E155002D0BA8 /* AlertToast in Frameworks */,
 				070783522B18329700F18AC9 /* KakaoSDKShare in Frameworks */,
 				0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */,
-				0C80EBE2A46F56FA7F92C51A /* Pods_iosApp.framework in Frameworks */,
+				05C347C15F38B4E919C31E63 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +176,7 @@
 				07125FB02A56581D003F8FCC /* login */,
 				07179F412ACD52FD003A415E /* room */,
 				078A12AF2B06F4FF00661943 /* setting */,
+				3E462E512B89AD0E00A35684 /* SafariWebView.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -195,6 +200,7 @@
 		07179F412ACD52FD003A415E /* room */ = {
 			isa = PBXGroup;
 			children = (
+				3E462E4E2B899DE700A35684 /* common */,
 				07179F422ACD530D003A415E /* RoomListView.swift */,
 				07420B772AD8E16E0081E5FE /* RoomView.swift */,
 				07420B792AD8E1FB0081E5FE /* raid */,
@@ -295,11 +301,27 @@
 			path = calendar;
 			sourceTree = "<group>";
 		};
+		3E462E4E2B899DE700A35684 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		4CDD68CEC9E869CB52FE28F7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				103A85D14FDFDD56CE569DF6 /* Pods_iosApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		60823FB2992DCA43E2906BC0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				49D85A15BA0EC0178B386DAD /* Pods-iosApp.debug.xcconfig */,
-				D433CF56FB8131925783EE38 /* Pods-iosApp.release.xcconfig */,
+				4E2AFB732A7CA1979961AE50 /* Pods-iosApp.debug.xcconfig */,
+				DDF8BDB4201B546FA946CFBE /* Pods-iosApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -310,7 +332,7 @@
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				60823FB2992DCA43E2906BC0 /* Pods */,
-				8448F41AD33EA5512CF6EA07 /* Frameworks */,
+				4CDD68CEC9E869CB52FE28F7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -341,14 +363,6 @@
 			path = iosApp;
 			sourceTree = "<group>";
 		};
-		8448F41AD33EA5512CF6EA07 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D398F8A8C8ED5E9D20B773BC /* Pods_iosApp.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -356,12 +370,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				9A93773A8AC9D6BD19D633B2 /* [CP] Check Pods Manifest.lock */,
+				B4832589469A95651A630FDE /* [CP] Check Pods Manifest.lock */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
 				AE42901D5221B6A72B012EF4 /* Frameworks */,
 				07410A162A08DE81005135AD /* Make Moko-Resources */,
-				451D80EE3CB6D32775BAABC7 /* [CP] Embed Pods Frameworks */,
+				8FCE2501D73A803A353A5BE2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -448,7 +462,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :sharedResources:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \\\n    -Pkotlin.native.cocoapods.platform=\"$PLATFORM_NAME\" \\\n    -Pkotlin.native.cocoapods.archs=\"$ARCHS\" \\\n    -Pkotlin.native.cocoapods.configuration=\"$CONFIGURATION\" \n";
 		};
-		451D80EE3CB6D32775BAABC7 /* [CP] Embed Pods Frameworks */ = {
+		8FCE2501D73A803A353A5BE2 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -465,7 +479,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9A93773A8AC9D6BD19D633B2 /* [CP] Check Pods Manifest.lock */ = {
+		B4832589469A95651A630FDE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -519,7 +533,9 @@
 				07C4F5942B1D6A9D00C63AAA /* RoundCornerButton.swift in Sources */,
 				0785E4EF2ADE69F00084E711 /* RaidView.swift in Sources */,
 				0783E9ED2AE0D4750074D231 /* RaidPartyView.swift in Sources */,
+				3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */,
 				07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */,
+				3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */,
 				0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */,
 				07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */,
 				07FE61442AD781DC004701DF /* TopAppBar.swift in Sources */,
@@ -661,7 +677,7 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 49D85A15BA0EC0178B386DAD /* Pods-iosApp.debug.xcconfig */;
+			baseConfigurationReference = 4E2AFB732A7CA1979961AE50 /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
@@ -677,7 +693,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -698,7 +714,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D433CF56FB8131925783EE38 /* Pods-iosApp.release.xcconfig */;
+			baseConfigurationReference = DDF8BDB4201B546FA946CFBE /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
@@ -715,7 +731,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LoaCell;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

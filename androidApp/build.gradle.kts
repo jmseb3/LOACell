@@ -22,11 +22,12 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = AppConfig.Android.kotlinCompilerExtensionVersion
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -50,6 +51,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -77,4 +81,5 @@ dependencies {
     implementation("com.kakao.sdk:v2-share:2.14.0") // 메시지(카카오톡 공유)
 
     implementation("androidx.browser:browser:1.7.0")
+    implementation("dev.shreyaspatil:capturable:2.0.0")
 }

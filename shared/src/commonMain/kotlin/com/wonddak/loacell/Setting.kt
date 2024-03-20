@@ -25,7 +25,26 @@ suspend fun Config.getFloat(key: String, defaultValue: Float = 0f) =
 
 suspend fun Config.putFloat(key: String, value: Float) = this.settings.putFloat(key, value)
 
+
+suspend fun Config.getString(key: String, defaultValue: String = "") =
+    this.settings.getString(key, defaultValue)
+
+fun Config.getStringFlow(key: String, defaultValue: String = "") =
+    this.settings.getStringFlow(key, defaultValue).toCommonFlow()
+
+
+suspend fun Config.putSting(key: String,value:String) = this.settings.putString(key, value)
+
 object ConfigKeys {
     const val HomeRefreshKey = "home_refresh"
     const val SheetSpace = "sheet_space"
+    const val DefaultUrl = "default_url"
 }
+
+val ILOA = "https://iloa.gg/character/"
+val LOAWA = "https://loawa.com/char/"
+val KLOA = "https://m.kloa.gg/characters/"
+
+val UrlList = arrayListOf("일로아" to ILOA, "로아와" to LOAWA, "클로아" to KLOA)
+val UrlNameList = UrlList.map { it.first }
+val UrlAddressList = UrlList.map { it.second }

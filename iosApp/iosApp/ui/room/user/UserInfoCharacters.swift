@@ -18,7 +18,7 @@ struct UserInfoCharacters: View {
                 LazyVStack {
                     ForEach(characterList,id: \.name) {character in
                         VStack(alignment: .leading) {
-                            Text(character.name)
+                            DropDownCharacterNameView(name: character.name)
                                 .fontWeight(userInfo.representativeCharacter == character.name ? .bold : .regular)
                             HStack() {
                                 Text(character.className)

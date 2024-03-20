@@ -5,7 +5,13 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
 }
 kotlin {
-    android()
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -20,24 +26,16 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(Dependencies.KMM.MOKO.Core)
-            }
+        commonMain.dependencies {
+            api(Dependencies.KMM.MOKO.Core)
         }
-        val androidMain by getting {
-            dependsOn(commonMain)
+        androidMain {
+            dependsOn(commonMain.get())
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+        iosMain {
+            dependsOn(commonMain.get())
         }
     }
 }
