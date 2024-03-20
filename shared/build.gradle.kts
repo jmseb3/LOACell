@@ -5,7 +5,13 @@ plugins {
 }
 
 kotlin {
-    android()
+    androidTarget() {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -23,7 +29,7 @@ kotlin {
             export(project(Modules.resources))
             export("dev.icerock.moko:resources:0.23.0")
             export(project(Modules.database))
-            transitiveExport = true
+//            transitiveExport = true
         }
         pod("FirebaseCore", Versions.Dependencies.iOS.Firebase.core)
         pod("FirebaseFirestore", Versions.Dependencies.iOS.Firebase.firestore)
@@ -31,26 +37,24 @@ kotlin {
         pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(project(Modules.api))
-                api(project(Modules.resources))
-                api(project(Modules.database))
-                implementation(Dependencies.KMM.Kotlinx.Coroutines)
-                implementation(Dependencies.KMM.Kotlinx.DateTime)
-                implementation("com.russhwolf:multiplatform-settings:1.0.0")
-                implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
+        all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+        commonMain.dependencies {
+            api(project(Modules.api))
+            api(project(Modules.resources))
+            api(project(Modules.database))
+            implementation(Dependencies.KMM.Kotlinx.Coroutines)
+            implementation(Dependencies.KMM.Kotlinx.DateTime)
+            implementation("com.russhwolf:multiplatform-settings:1.0.0")
+            implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
 
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
-        val androidMain by getting {
-            dependencies {
-                implementation(platform(Dependencies.Android.Firebase.Bom))
+        androidMain.dependencies {
+                implementation(project.dependencies.platform(Dependencies.Android.Firebase.Bom))
                 implementation(Dependencies.Android.Firebase.Firestore)
                 implementation(Dependencies.Android.Firebase.Auth)
                 implementation(Dependencies.Android.Firebase.AuthGoogle)
@@ -64,17 +68,6 @@ kotlin {
                 implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
 
                 implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
-
-            }
-        }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
         }
     }
 }

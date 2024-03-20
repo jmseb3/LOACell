@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
@@ -29,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
+import com.wonddak.loacell.UrlList
 import com.wonddak.loacell.android.BuildConfig
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.SectionCardView
@@ -46,6 +49,9 @@ fun SettingView(
     val defaultSpace by loaCellViewModel.sheetSpace.collectAsState(initial = 20f)
 
     var showSlider by remember {
+        mutableStateOf(false)
+    }
+    var showMenu by remember {
         mutableStateOf(false)
     }
     Column(
@@ -78,6 +84,16 @@ fun SettingView(
                 OutlinedButton(onClick = { loaCellViewModel.showDialog(DialogStatus.TEST_SHEET) }) {
                     Text(text = "테스트")
                 }
+            }
+        }
+        SectionText(
+            title = "검색 사이트 변경"
+        ) {
+            showMenu = true
+        }
+        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+            UrlList.forEach { (name,url) ->
+                DropdownMenuItem(text = { Text(text = name) }, onClick = { loaCellViewModel.setDefaultUrl(url) })
             }
         }
         SectionText(title = "버그 제보 및 건의하기") {

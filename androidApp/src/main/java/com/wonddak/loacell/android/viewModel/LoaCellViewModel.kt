@@ -83,7 +83,7 @@ class LoaCellViewModel(
     fun checkByScheme(roomId: String) = common.checkByScheme(roomId)
 
     val syncData get() = common.syncData
-    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid!!, force)
+    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
     fun syncStartForce(uuid:String) = common.syncStart(uuid,true)
     fun signOut() = common.signOut()
     fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
@@ -112,6 +112,10 @@ class LoaCellViewModel(
     fun outOrSignOut() = common.outOrSignOut()
 
     val sheetSpace get() =  common.sheetSpace
+
+    val defaultUrl get() = common.defaultUrl
+
+    fun setDefaultUrl(url:String) = common.setDefaultUrl(url)
 
     fun setSheetSpace(space:Float) = common.setSheetSpace(space)
 

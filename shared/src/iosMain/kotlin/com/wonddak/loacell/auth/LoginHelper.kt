@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package com.wonddak.loacell.auth
 
 import cocoapods.FirebaseAuth.FIRAuth

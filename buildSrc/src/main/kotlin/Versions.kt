@@ -1,14 +1,14 @@
 object Versions {
     object Project {
-        const val Kotlin = "1.9.10"
-        const val Gradle = "7.4.2"
+        const val Kotlin = "1.9.21"
+        const val Gradle = "8.1.4"
     }
 
 
     object Dependencies {
         //All multiplatform libraries
         object KMM {
-            const val SQLDelightVersion = "2.0.0"
+            const val SQLDelightVersion = "2.0.1"
             const val KotlinSerializationVersion = Versions.Project.Kotlin
             const val ktorVersion = "2.3.5"
             const val mokoVersion = "0.23.0"
@@ -18,7 +18,7 @@ object Versions {
         object Android {
 
             object Compose {
-                const val bomVersion = "2023.10.00"
+                const val bomVersion = "2024.02.00"
                 const val activity = "1.8.0"
             }
 

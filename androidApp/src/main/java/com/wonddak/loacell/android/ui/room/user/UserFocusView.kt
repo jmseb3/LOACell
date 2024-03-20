@@ -25,6 +25,7 @@ fun UserFocusView(
     val characterList  = totalRoomInfo.characterList
     val showLoading by loaCellViewModel.showLoading.collectAsState()
     val msg by loaCellViewModel.msg.collectAsState()
+    val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
 
     userInfo?.let { userInfo ->
         Box {
@@ -37,7 +38,7 @@ fun UserFocusView(
                 BackHandler() {
                     loaCellViewModel.clearFocusItem()
                 }
-                UserInfoCharacters(userInfo, characterList)
+                UserInfoCharacters(userInfo, characterList,baseUrl)
             }
             if (showLoading) {
                 BackHandler() {

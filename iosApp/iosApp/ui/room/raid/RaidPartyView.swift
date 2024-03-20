@@ -18,7 +18,7 @@ struct RaidPartyView: View {
     
     var body: some View {
         VStack {
-            LazyVStack {
+            VStack {
                 ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
                     VStack {
                         if idx == 4 {
@@ -26,14 +26,17 @@ struct RaidPartyView: View {
                         }
                         HStack{
                             VStack{
-                                Text(item?.name ?? "캐릭터를 추가해 주세요")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 if item != nil {
+                                    DropDownCharacterNameView(name: item!.name)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                     HStack{
                                         Text(item!.className)
                                         Spacer()
                                         Text(item!.level)
                                     }
+                                } else {
+                                    Text("캐릭터를 추가해 주세요")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                             .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
@@ -49,13 +52,13 @@ struct RaidPartyView: View {
                 }
                 
             }
-            .cornerRadius(20) /// make the background rounded
+            .cornerRadius(10) /// make the background rounded
             .overlay( /// apply a rounded border
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(.black, lineWidth: 1)
             )
         }
-        .padding(10)
+        .padding(2)
         Spacer()
     }
     
