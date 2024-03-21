@@ -31,10 +31,22 @@ kotlin {
             export(project(Modules.database))
 //            transitiveExport = true
         }
-        pod("FirebaseCore", Versions.Dependencies.iOS.Firebase.core)
-        pod("FirebaseFirestore", Versions.Dependencies.iOS.Firebase.firestore)
-        pod("FirebaseAuth", Versions.Dependencies.iOS.Firebase.auth)
-        pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
+//        pod("FirebaseCore") {
+//            version = "10.18"
+//        }
+        pod("FirebaseFirestore") {
+            version = "10.18"
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
+        pod("FirebaseAuth") {
+            version = "10.18"
+        }
+        pod("FirebaseMessaging") {
+            version = "10.18"
+        }
+        pod("GoogleSignIn") {
+            version = "7.0"
+        }
     }
     sourceSets {
         all {
@@ -58,6 +70,8 @@ kotlin {
                 implementation(Dependencies.Android.Firebase.Firestore)
                 implementation(Dependencies.Android.Firebase.Auth)
                 implementation(Dependencies.Android.Firebase.AuthGoogle)
+                implementation("com.google.firebase:firebase-messaging-ktx")
+
                 implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
 

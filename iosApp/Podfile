@@ -4,6 +4,5 @@ target 'iosApp' do
   pod 'shared', :path => '../shared'
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
-  pod 'GoogleSignIn'
   pod 'GoogleSignInSwiftSupport'
 end

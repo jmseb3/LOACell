@@ -1,6 +1,6 @@
 object Versions {
     object Project {
-        const val Kotlin = "1.9.21"
+        const val Kotlin = "1.9.23"
         const val Gradle = "8.1.4"
     }
 
@@ -27,17 +27,6 @@ object Versions {
                 const val googleAuth = "20.5.0"
                 const val googleService = "4.3.15"
                 const val crashlyticsGradle = "2.9.5"
-            }
-
-        }
-
-        //All iOS libraries
-        object iOS {
-            object Firebase {
-                const val core = "10.16"
-                const val firestore = "10.16"
-                const val auth = "10.16"
-                const val googleAuth = "7.0"
             }
         }
     }
