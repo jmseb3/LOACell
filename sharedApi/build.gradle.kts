@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    kotlin("plugin.serialization") version Versions.Project.Kotlin
+    kotlin("plugin.serialization") version libs.versions.kotlin.get()
 }
 
 kotlin {
@@ -21,7 +21,7 @@ kotlin {
         summary = "shared api"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
+        ios.deploymentTarget = "16.0"
         framework {
             baseName = "sharedApi"
         }
@@ -30,30 +30,25 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(Dependencies.KMM.Ktor.Core)
-            implementation(Dependencies.KMM.Ktor.Resources)
-            implementation(Dependencies.KMM.Ktor.Logging)
-            implementation(Dependencies.KMM.Ktor.ContentNegotiation)
-            implementation(Dependencies.KMM.Ktor.Serialization)
-            implementation(Dependencies.KMM.Kotlinx.DateTime)
-            implementation(Dependencies.KMM.Kotlinx.Serialization)
+            implementation(libs.bundles.ktor)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
         }
 
         androidMain.dependencies {
-            implementation(Dependencies.KMM.Ktor.Android)
+            implementation(libs.ktor.android)
         }
-
         iosMain.dependencies {
-            implementation(Dependencies.KMM.Ktor.Ios)
+            implementation(libs.ktor.ios)
         }
 
     }
 }
 
 android {
-    namespace = AppConfig.Shared.api
-    compileSdk = AppConfig.Android.compileSdk
+    namespace = "com.wonddak.loacell.sharedapi"
+    compileSdk = 34
     defaultConfig {
-        minSdk = AppConfig.Android.minSdk
+        minSdk = 26
     }
 }

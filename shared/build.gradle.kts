@@ -20,7 +20,7 @@ kotlin {
         summary = "shared Module"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
+        ios.deploymentTarget = "16.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
@@ -31,10 +31,22 @@ kotlin {
             export(project(Modules.database))
 //            transitiveExport = true
         }
-        pod("FirebaseCore", Versions.Dependencies.iOS.Firebase.core)
-        pod("FirebaseFirestore", Versions.Dependencies.iOS.Firebase.firestore)
-        pod("FirebaseAuth", Versions.Dependencies.iOS.Firebase.auth)
-        pod("GoogleSignIn", Versions.Dependencies.iOS.Firebase.googleAuth)
+//        pod("FirebaseCore") {
+//            version = "10.18"
+//        }
+        pod("FirebaseFirestore") {
+            version = "10.18"
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
+        pod("FirebaseAuth") {
+            version = "10.18"
+        }
+        pod("FirebaseMessaging") {
+            version = "10.18"
+        }
+        pod("GoogleSignIn") {
+            version = "7.0"
+        }
     }
     sourceSets {
         all {
@@ -44,8 +56,8 @@ kotlin {
             api(project(Modules.api))
             api(project(Modules.resources))
             api(project(Modules.database))
-            implementation(Dependencies.KMM.Kotlinx.Coroutines)
-            implementation(Dependencies.KMM.Kotlinx.DateTime)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutine)
             implementation("com.russhwolf:multiplatform-settings:1.0.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
         }
@@ -54,28 +66,30 @@ kotlin {
         }
 
         androidMain.dependencies {
-                implementation(project.dependencies.platform(Dependencies.Android.Firebase.Bom))
-                implementation(Dependencies.Android.Firebase.Firestore)
-                implementation(Dependencies.Android.Firebase.Auth)
-                implementation(Dependencies.Android.Firebase.AuthGoogle)
-                implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
-                implementation("androidx.datastore:datastore-preferences:1.0.0")
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.firestore)
+            implementation(libs.firebase.auth)
+            implementation(libs.gms.auth)
+            implementation("com.google.firebase:firebase-messaging-ktx")
 
-                implementation("androidx.credentials:credentials:1.3.0-alpha01")
+            implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
+            implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-                // optional - needed for credentials support from play services, for devices running
-                // Android 13 and below.
-                implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
+            implementation("androidx.credentials:credentials:1.3.0-alpha01")
 
-                implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+            // optional - needed for credentials support from play services, for devices running
+            // Android 13 and below.
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
+
+            implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
         }
     }
 }
 
 android {
-    namespace = AppConfig.loaCellgroup
-    compileSdk = AppConfig.Android.compileSdk
+    namespace = "com.wonddak.loacell"
+    compileSdk = 34
     defaultConfig {
-        minSdk = AppConfig.Android.minSdk
+        minSdk = 26
     }
 }
