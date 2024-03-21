@@ -1,17 +1,17 @@
 buildscript {
     dependencies {
-        classpath(Plugins.Google)
-        classpath(Plugins.Crashlytics)
-        classpath(Plugins.MokoResourceGenerator)
+        classpath(libs.moko.generator)
     }
 }
 
 plugins {
     //trick: for the same plugin versions in all sub-modules
-    id("com.android.application").version(Versions.Project.Gradle).apply(false)
-    id("com.android.library").version(Versions.Project.Gradle).apply(false)
-    kotlin("android").version(Versions.Project.Kotlin).apply(false)
-    kotlin("multiplatform").version(Versions.Project.Kotlin).apply(false)
+    alias(libs.plugins.androidApplication).apply(false)
+    alias(libs.plugins.androidLibrary).apply(false)
+    alias(libs.plugins.kotlinAndroid).apply(false)
+    alias(libs.plugins.kotlinMultiplatform).apply(false)
+    id("com.google.gms.google-services") version "4.4.0" apply false
+    id("com.google.firebase.crashlytics") version "2.9.9" apply false
 }
 
 tasks.register("clean", Delete::class) {

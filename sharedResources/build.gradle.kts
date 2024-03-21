@@ -20,7 +20,7 @@ kotlin {
         summary = "share Resources"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
+        ios.deploymentTarget = "16.0"
         framework {
             baseName = "sharedResources"
             isStatic = true
@@ -29,7 +29,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(Dependencies.KMM.MOKO.Core)
+            api(libs.moko.resources)
         }
         androidMain {
             dependsOn(commonMain.get())
@@ -41,10 +41,10 @@ kotlin {
 }
 
 android {
-    namespace = AppConfig.Shared.resoureces
-    compileSdk = AppConfig.Android.compileSdk
+    namespace = "com.wonddak.loacell.sharedresources"
+    compileSdk = 34
     defaultConfig {
-        minSdk = AppConfig.Android.minSdk
+        minSdk = 26
     }
 }
 

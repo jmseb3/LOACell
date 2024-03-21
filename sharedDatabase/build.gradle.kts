@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
-    id("app.cash.sqldelight") version Versions.Dependencies.KMM.SQLDelightVersion
+    id("app.cash.sqldelight") version libs.versions.sqldelight.get()
 }
 
 kotlin {
@@ -21,7 +21,7 @@ kotlin {
         summary = "share db"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = AppConfig.Ios.deploymentTarget
+        ios.deploymentTarget = "16.0"
         framework {
             baseName = "sharedDatabase"
         }
@@ -29,34 +29,34 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(Dependencies.KMM.Kotlinx.Coroutines)
-            implementation(Dependencies.KMM.SQLDelight.Adapter)
-            implementation(Dependencies.KMM.SQLDelight.Coroutine)
-            implementation(Dependencies.KMM.Kotlinx.DateTime)
+            implementation(libs.sqldelight.adapters)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutine)
         }
 
         androidMain.dependencies {
-            implementation(Dependencies.KMM.SQLDelight.Android)
+            implementation(libs.sqldelight.android)
         }
 
         iosMain.dependencies {
-            implementation(Dependencies.KMM.SQLDelight.Ios)
+            implementation(libs.sqldelight.ios)
         }
     }
 }
 
 android {
-    namespace = AppConfig.Shared.database
-    compileSdk = AppConfig.Android.compileSdk
+    namespace = "com.wonddak.loacell.database"
+    compileSdk = 34
     defaultConfig {
-        minSdk = AppConfig.Android.minSdk
+        minSdk = 26
     }
 }
 
 sqldelight {
     databases {
-        create(AppConfig.databaseName) {
-            packageName.set(AppConfig.loaCellgroup)
+        create("Database") {
+            packageName.set("com.wonddak.loacell")
         }
     }
 }

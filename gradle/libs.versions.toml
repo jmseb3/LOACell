@@ -1,0 +1,62 @@
+[versions]
+agp = "8.1.4"
+kotlin = "1.9.23"
+compose-compiler = "1.5.11"
+androidx-activityCompose = "1.8.0"
+ktor = "2.3.5"
+sqldelight = "2.0.1"
+moko = "0.23.0"
+
+[libraries]
+browser = { module = "androidx.browser:browser", version = "1.8.0" }
+capturable = { module = "dev.shreyaspatil:capturable", version = "2.0.0" }
+kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
+wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
+
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+compose-bom = { module = "androidx.compose:compose-bom", version = "2024.02.00" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "32.3.1" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
+gms-auth = { module = "com.google.android.gms:play-services-auth", version = "20.5.0" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.7.3" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.5.1" }
+
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-resources = { module = "io.ktor:ktor-client-resources", version.ref = "ktor" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-ios = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+sqldelight-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko" }
+moko-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+
+[bundles]
+compose = ["compose-ui", "compose-ui-tooling-preview", "compose-material3", "androidx-activity-compose"]
+firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth"]
+ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
+
