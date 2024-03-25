@@ -21,6 +21,8 @@ struct AddRaidSheet: View {
         isFinish: false,
         party1: [String](repeating: "", count: 4),
         party2: [String](repeating: "", count: 4),
+        party3: [String](repeating: "", count: 4),
+        party4: [String](repeating: "", count: 4),
         day: Day.none,
         hour: 0,
         minute: 0
@@ -49,6 +51,8 @@ struct EditRaidSheet: View {
         isFinish: false,
         party1: [String](repeating: "", count: 4),
         party2: [String](repeating: "", count: 4),
+        party3: [String](repeating: "", count: 4),
+        party4: [String](repeating: "", count: 4),
         day: Day.none,
         hour: 0,
         minute: 0
@@ -71,6 +75,8 @@ struct EditRaidSheet: View {
                 isFinish: raidInfo.isFinish,
                 party1: raidInfo.party1characterList,
                 party2: raidInfo.party2characterList,
+                party3: raidInfo.party3characterList,
+                party4: raidInfo.party4characterList,
                 day: raidInfo.day,
                 hour: raidInfo.hour,
                 minute: raidInfo.minute
