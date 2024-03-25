@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,6 +72,7 @@ fun RaidFocusView(
         val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
         val scope = rememberCoroutineScope()
         raidInfo?.let { raidInfo ->
+
             Column(
                 modifier = Modifier
                     .capturable(captureController)
@@ -111,6 +114,7 @@ fun RaidFocusView(
                 }
                 Spacer(modifier = Modifier)
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,

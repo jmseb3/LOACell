@@ -21,7 +21,7 @@ struct RaidPartyView: View {
             VStack {
                 ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
                     VStack {
-                        if idx == 4 {
+                        if idx > 0 && idx % 4 == 0 {
                             Divider()
                         }
                         HStack{

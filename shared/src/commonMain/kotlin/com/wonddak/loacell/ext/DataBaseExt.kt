@@ -198,14 +198,21 @@ data class TotalRoomInfo(
             }
             return filterByUser
         }
+
+    /**
+     * FocusRaidView에서 보여지는 유저값
+     */
     val partyCharacterList: List<Character?>
         get() = raidInfo?.let { info ->
             val maxParty = info.getMaxParty()
             val findList = info.party1characterList.toMutableList()
             if (maxParty == 2) {
                 findList.addAll(info.party2characterList)
+            } else if (maxParty == 4) {
+                findList.addAll(info.party3characterList)
+                findList.addAll(info.party4characterList)
             }
-            val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
+            val result: MutableList<Character?> = List(maxParty *4) { null }.toMutableList()
             val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
             for (userInfo in userInfoList) {
                 val iterator = findNames.iterator()

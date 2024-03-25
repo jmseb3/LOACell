@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.room.raid
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,11 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,13 +30,14 @@ import com.wonddak.loacell.android.ui.room.common.DropDownCharacterNameView
 @Composable
 fun RaidPartyView(
     list: List<Character?>,
-    baseUrl:String,
+    baseUrl: String,
     openAction: (index: Int) -> Unit,
     deleteAction: (index: Int) -> Unit,
 ) {
     Card(
         border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
+        modifier = Modifier
+            .padding(horizontal = 5.dp, vertical = 3.dp)
     ) {
         LazyColumn(modifier = Modifier.padding(5.dp)) {
             itemsIndexed(list) { index, item ->
@@ -40,7 +45,7 @@ fun RaidPartyView(
                     .fillMaxWidth()
                     .height(55.dp)
 
-                if (index == 4) {
+                if (index > 0 && index % 4 == 0) {
                     HorizontalDivider()
                 }
                 Row(
@@ -51,7 +56,7 @@ fun RaidPartyView(
                     Column {
                         if (item != null) {
                             DropDownCharacterNameView(
-                                base = baseUrl ,
+                                base = baseUrl,
                                 name = item.name
                             )
                             Row(
@@ -61,8 +66,7 @@ fun RaidPartyView(
                                 Text(text = item.className)
                                 Text(text = item.level)
                             }
-                        }
-                        else {
+                        } else {
                             Text(text = "캐릭터를 추가해주세요")
                         }
                     }

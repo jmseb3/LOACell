@@ -16,6 +16,8 @@ CREATE TABLE RaidInfo (
   isFinish INTEGER AS Boolean NOT NULL,
   party1characterList TEXT AS List<String> NOT NULL,
   party2characterList TEXT AS List<String> NOT NULL,
+  party3characterList TEXT AS List<String> NOT NULL,
+  party4characterList TEXT AS List<String> NOT NULL,
   day INTEGER AS Day NOT NULL,
   hour INTEGER NOT NULL,
   minute INTEGER NOT NULL,
@@ -29,10 +31,10 @@ selectByRaidId:
 SELECT * FROM RaidInfo WHERE roomId = ? AND raidId=?;
 
 insertRaidInfo:
-INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
+INSERT INTO RaidInfo VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateRaidInfo:
-UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? ,party1characterList =?,party2characterList =? ,day =?, hour =?, minute =?WHERE raidId =? AND  roomId =?;
+UPDATE RaidInfo SET title = ?, type =?, Difficulty =?,startGateNumber =?, endGateNumber =?,isFinish =? ,party1characterList =?,party2characterList =? ,party3characterList =?,party4characterList =?,day =?, hour =?, minute =?WHERE raidId =? AND  roomId =?;
 
 updateDay:
 UPDATE RaidInfo SET day =?,hour =?,minute =? WHERE raidId =? AND  roomId =?;

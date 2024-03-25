@@ -31,19 +31,18 @@ kotlin {
             export(project(Modules.database))
 //            transitiveExport = true
         }
-//        pod("FirebaseCore") {
-//            version = "10.18"
-//        }
+        pod("FirebaseCore") {
+            version = "10.16"
+        }
         pod("FirebaseFirestore") {
-            version = "10.18"
-            extraOpts += listOf("-compiler-option", "-fmodules")
+            version = "10.16"
         }
         pod("FirebaseAuth") {
-            version = "10.18"
+            version = "10.16"
         }
-        pod("FirebaseMessaging") {
-            version = "10.18"
-        }
+//        pod("FirebaseMessaging") {
+//            version = "10.16"
+//        }
         pod("GoogleSignIn") {
             version = "7.0"
         }

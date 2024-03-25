@@ -17,7 +17,7 @@ class AppDataBase(driverFactory: DriverFactory) {
 
     private val raidTypeAdapter = object : ColumnAdapter<RaidType, String> {
         override fun decode(databaseValue: String): RaidType {
-            RaidType.values().forEach {
+            RaidType.entries.forEach {
                 if (it.name == databaseValue) {
                     return it
                 }
@@ -73,9 +73,11 @@ class AppDataBase(driverFactory: DriverFactory) {
             DifficultyAdapter = difficultyTypeAdapter,
             party1characterListAdapter = stringListAdapter,
             party2characterListAdapter = stringListAdapter,
+            party3characterListAdapter = stringListAdapter,
+            party4characterListAdapter = stringListAdapter,
             dayAdapter = object : ColumnAdapter<Day, Long> {
                 override fun decode(databaseValue: Long): Day {
-                    Day.values().forEach {
+                    Day.entries.forEach {
                         if (it.index.toLong() == databaseValue) {
                             return it
                         }

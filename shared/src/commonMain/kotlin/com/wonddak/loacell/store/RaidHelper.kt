@@ -19,6 +19,8 @@ data class FBRaidInfo(
     val isFinish: Boolean = false,
     val party1: List<String> = List(4) { "" },
     val party2: List<String> = List(4) { "" },
+    val party3: List<String> = List(4) { "" },
+    val party4: List<String> = List(4) { "" },
     val day: Day = Day.NONE,
     val hour: Long = 0L,
     val minute: Long = 0L
@@ -33,6 +35,8 @@ data class FBRaidInfo(
         "finish" to isFinish,
         "party1" to party1,
         "party2" to party2,
+        "party3" to party3,
+        "party4" to party4,
         "day" to day.index,
         "hour" to hour,
         "minute" to minute
@@ -189,6 +193,15 @@ object CommonRaidHelper {
                     val party1 = it.data!!["party1"] as List<String>
                     val party2 = it.data!!["party2"] as List<String>
 
+                    //베히모스 관련 로직 추가
+                    val party3 = runCatching { it.data?.get("party3") as List<String>}.getOrDefault(
+                        List(4) {""}
+                    )
+                    val party4 = runCatching { it.data?.get("party4") as List<String>}.getOrDefault(
+                        List(4) {""}
+                    )
+
+                    //일정 관련 로직
                     val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
                     val hour = runCatching { it.data?.get("hour") as Long?}.getOrNull()
                     val minute = runCatching { it.data?.get("minute") as Long?}.getOrNull()
@@ -207,6 +220,8 @@ object CommonRaidHelper {
                             isFinish,
                             party1,
                             party2,
+                            party3,
+                            party4,
                             day,
                             hour,
                             minute
@@ -224,6 +239,8 @@ object CommonRaidHelper {
                             endGateNumber,
                             party1,
                             party2,
+                            party3,
+                            party4,
                             (day ?: -1L).convertToDay(),
                             hour ?: 0,
                             minute ?: 0

@@ -1,7 +1,7 @@
 package com.wonddak.database.model
 
 fun String.convertType(): RaidType {
-    RaidType.values().forEach {
+    RaidType.entries.forEach {
         if (it.name == this) {
             return  it
         }
@@ -10,7 +10,7 @@ fun String.convertType(): RaidType {
 }
 
 fun String.convertDifficulty(): Difficulty {
-    Difficulty.values().forEach {
+    Difficulty.entries.forEach {
         if (it.name == this) {
             return  it
         }
@@ -19,7 +19,7 @@ fun String.convertDifficulty(): Difficulty {
 }
 
 fun Long.convertToDay() :Day {
-    Day.values().forEach {
+    Day.entries.forEach {
         if (it.index == this.toInt()) {
             return  it
         }
