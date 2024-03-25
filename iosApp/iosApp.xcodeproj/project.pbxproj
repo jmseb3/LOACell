@@ -58,6 +58,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */; };
 		3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E512B89AD0E00A35684 /* SafariWebView.swift */; };
+		3ED15F772BAB023200B7B849 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED15F762BAB023200B7B849 /* LoginInfoView.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -111,6 +112,7 @@
 		3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownCharacterNameView.swift; sourceTree = "<group>"; };
 		3E462E512B89AD0E00A35684 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		3E66B5982B4421E4000F7377 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
+		3ED15F762BAB023200B7B849 /* LoginInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4E2AFB732A7CA1979961AE50 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,6 +280,7 @@
 		078A12AF2B06F4FF00661943 /* setting */ = {
 			isa = PBXGroup;
 			children = (
+				3ED15F762BAB023200B7B849 /* LoginInfoView.swift */,
 				07EA9A8B2B0728E800F9FC25 /* SettingView.swift */,
 			);
 			path = setting;
@@ -552,6 +555,7 @@
 				07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */,
 				073614C62B16D1FC002D0BA8 /* ShareSheet.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
+				3ED15F772BAB023200B7B849 /* LoginInfoView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

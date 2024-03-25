@@ -34,32 +34,34 @@ struct RaidFocusView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                RaidPartyView(
-                    characterList: totalRoomInfo.partyCharacterList as! [Character?]
-                ) { index in
-                    let userAndCharacterMap = totalRoomInfo.userAndCharacterMap
-                    if userAndCharacterMap.isEmpty {
-                        viewModel.showSnackBar(
-                            msg: "추가 가능한 인원이 없습니다.",
-                            label: "이동"
-                        ) {
-                            viewModel.clearFocusItem()
-                            viewModel.setTabStatus(state: RoomState.user)
-                            viewModel.showDialog(dialogStatus: DialogStatus.userAdd)
+                ScrollView {
+                    RaidPartyView(
+                        characterList: totalRoomInfo.partyCharacterList as! [Character?]
+                    ) { index in
+                        let userAndCharacterMap = totalRoomInfo.userAndCharacterMap
+                        if userAndCharacterMap.isEmpty {
+                            viewModel.showSnackBar(
+                                msg: "추가 가능한 인원이 없습니다.",
+                                label: "이동"
+                            ) {
+                                viewModel.clearFocusItem()
+                                viewModel.setTabStatus(state: RoomState.user)
+                                viewModel.showDialog(dialogStatus: DialogStatus.userAdd)
+                            }
+                        } else {
+                            viewModel.updatePartyFocusIndex(index: index)
+                            viewModel.showDialog(dialogStatus: DialogStatus.raidUserAdd)
                         }
-                    } else {
+                        
+                    } deleteAction: { index in
                         viewModel.updatePartyFocusIndex(index: index)
-                        viewModel.showDialog(dialogStatus: DialogStatus.raidUserAdd)
+                        viewModel.showDialog(dialogStatus: DialogStatus.raidUserDelete)
                     }
-                    
-                } deleteAction: { index in
-                    viewModel.updatePartyFocusIndex(index: index)
-                    viewModel.showDialog(dialogStatus: DialogStatus.raidUserDelete)
                 }
             }
         }
         .padding()
-        .frame(minWidth: 400)
+        .frame(minWidth: 300)
         
     }
     
