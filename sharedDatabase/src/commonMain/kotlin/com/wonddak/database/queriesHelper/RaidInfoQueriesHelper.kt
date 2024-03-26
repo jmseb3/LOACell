@@ -49,11 +49,11 @@ class RaidInfoQueriesHelper(
             false,
             party1,
             party2,
-            party3,
-            party4,
             day,
             hour,
-            minute
+            minute,
+            party3,
+            party4,
         )
     }
 
@@ -84,11 +84,11 @@ class RaidInfoQueriesHelper(
             isFinish,
             party1,
             party2,
-            party3,
-            party4,
             day,
             hour ?:0L,
             minute ?: 0L,
+            party3,
+            party4,
             raidId,
             roomId,
         )

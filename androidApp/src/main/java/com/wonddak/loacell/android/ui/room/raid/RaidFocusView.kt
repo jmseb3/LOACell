@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
@@ -53,6 +54,10 @@ fun RaidFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val captureController = rememberCaptureController()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
 
     Column(
         modifier = Modifier
@@ -64,15 +69,7 @@ fun RaidFocusView(
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
-        val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-        val raidInfo = totalRoomInfo.raidInfo
-        val characterList = totalRoomInfo.partyCharacterList
-        val context = LocalContext.current
-
-        val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
-        val scope = rememberCoroutineScope()
-        raidInfo?.let { raidInfo ->
-
+        totalRoomInfo.raidInfo?.let { raidInfo ->
             Column(
                 modifier = Modifier
                     .capturable(captureController)
@@ -88,7 +85,7 @@ fun RaidFocusView(
                 }
                 loaCellViewModel.apply {
                     RaidPartyView(
-                        characterList,
+                        totalRoomInfo.partyCharacterList,
                         baseUrl = baseUrl,
                         openAction = { index ->
                             val userAndCharacterMap = totalRoomInfo.userAndCharacterMap

@@ -14,8 +14,9 @@ struct AddRaidSheet: View {
     let addAction : (FBRaidInfo) -> Void
     var body: some View {
         RaidSheetBase(
+            raidInfo : nil,
             title: "레이드 정보 추가",
-            buttonText: "추가"
+            buttonText: "추가",
             buttonAction : addAction
         )
     }
@@ -36,6 +37,7 @@ struct EditRaidSheet: View {
 
 private struct RaidSheetBase: View {
     
+    let raidInfo :RaidInfo?
     let title :String
     let buttonText :String
     let buttonAction :(FBRaidInfo) -> Void
@@ -60,35 +62,7 @@ private struct RaidSheetBase: View {
     private var showGateEdit : Bool {
         (fbRaidInfo.type == RaidType.abrelshud) && (fbRaidInfo.difficulty != Difficulty.hell)
     }
-    
-    init(title: String, buttonText: String, buttonAction: @escaping (FBRaidInfo) -> Void) {
-        self.title = title
-        self.buttonText = buttonText
-        self.buttonAction = buttonAction
-    }
-    
-    init(raidInfo :RaidInfo,title: String, buttonText: String, buttonAction: @escaping (FBRaidInfo) -> Void) {
-        self.title = title
-        self.buttonText = buttonText
-        self.buttonAction = buttonAction
-        self.fbRaidInfo = FBRaidInfo(
-            title: raidInfo.title,
-            type: raidInfo.type,
-            difficulty: raidInfo.Difficulty,
-            startGateNumber: Int32(raidInfo.startGateNumber),
-            endGateNumber: Int32(raidInfo.endGateNumber),
-            isFinish: raidInfo.isFinish,
-            party1: raidInfo.party1characterList,
-            party2: raidInfo.party2characterList,
-            party3: raidInfo.party3characterList,
-            party4: raidInfo.party4characterList,
-            day: raidInfo.day,
-            hour: raidInfo.hour,
-            minute: raidInfo.minute
-        )
-        self.showDayUse = fbRaidInfo.day != Day.none
-    }
-    
+        
     private let days = Day.entries
     
     private var difList: [Difficulty]  {
@@ -112,7 +86,11 @@ private struct RaidSheetBase: View {
                 LengthLimitTextField(
                     maxLength: 10,
                     placeHolder: "제목을 입력해주세요.",
-                    text: $fbRaidInfo.title
+                    text: Binding {
+                        fbRaidInfo.title
+                    } set: { title in
+                        fbRaidInfo = fbRaidInfo.updateTitle(title: title)
+                    }
                 )
                 if showGateEdit {
                     VStack{
@@ -120,7 +98,8 @@ private struct RaidSheetBase: View {
                         HStack {
                             var abStart = fbRaidInfo.startGateNumber
                             var abEnd = fbRaidInfo.endGateNumber
-                            ForEach(Array(1...4),id:\.self) { idx in
+                            let arr :[Int32] = [1,2,3,4]
+                            ForEach(arr,id:\.self) { idx in
                                 let isOn = Array(abStart...abEnd).contains(idx)
                                 CheckButton(isOn: isOn, text: String(idx)) {
                                     if(isOn) {
@@ -162,6 +141,7 @@ private struct RaidSheetBase: View {
                             }
                         }
                         .accentColor(.black)
+                        
                         Picker(
                             "난이도",
                             selection: Binding {
@@ -179,53 +159,31 @@ private struct RaidSheetBase: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .accentColor(.black)
+                        LabeledContent("입장 레벨", value: fbRaidInfo.getMinLevelText())
+                        LabeledContent("입장 인원", value: String(fbRaidInfo.type.maxPerson))
                     } header: {
                         Text("레이드 선택")
                     }
                     
                     Section {
-                        HStack {
-                            Text("입장 레벨")
-                            Spacer()
-                            Text(fbRaidInfo.getMinLevelText())
-                        }
-                        HStack {
-                            Text("입장 인원")
-                            Spacer()
-                            Text(String(fbRaidInfo.type.maxPerson))
-                        }
-                        
-                    } header: {
-                        Text("레이드 정보")
-                    }
-                    Button {
-                        withAnimation {
-                            showDayUse = !showDayUse
-                            if !showDayUse {
-                                fbRaidInfo = fbRaidInfo.updateDay(day:Day.none)
-                            }
-                        }
-                    } label: {
-                        Text("일정 지정")
-                    }
-                    if showDayUse {
-                        Section {
+                        Toggle("일정 지정", isOn: $showDayUse)
+                        if showDayUse {
                             Picker("시", selection: Binding {
                                 fbRaidInfo.hour
                             } set: { value in
-                                fbRaidInfo = fbRaidInfo.updateTimeHour(hour : Int64(value))
+                                fbRaidInfo = fbRaidInfo.updateTimeHour(hour : value)
                             }) {
-                                ForEach(Array(0...23), id: \.self) { hour in
-                                    Text(String(format: "%02d", hour))
+                                ForEach(0..<23) {
+                                    Text(String(format: "%02d", $0)).tag(Int64($0))
                                 }
                             }
                             Picker("분", selection: Binding {
                                 fbRaidInfo.minute
                             } set: { value in
-                                fbRaidInfo = fbRaidInfo.updateTimeMinute(minute : Int64(value))
+                                fbRaidInfo = fbRaidInfo.updateTimeMinute(minute : value)
                             }) {
-                                ForEach(Array(0...59), id: \.self) { min in
-                                    Text(String(format: "%02d", min))
+                                ForEach(0 ..< 59) {
+                                    Text(String(format: "%02d", $0)).tag(Int64($0))
                                 }
                             }
                             Picker(
@@ -233,11 +191,7 @@ private struct RaidSheetBase: View {
                                 selection: Binding {
                                     fbRaidInfo.day
                                 } set: { value in
-                                    if fbRaidInfo.day == value {
-                                        fbRaidInfo = fbRaidInfo.updateDay(day:Day.none)
-                                    } else {
-                                        fbRaidInfo = fbRaidInfo.updateDay(day:value)
-                                    }
+                                    fbRaidInfo = fbRaidInfo.updateDay(day:value)
                                 }
                             ) {
                                 ForEach(1 ..< days.count) {
@@ -245,11 +199,38 @@ private struct RaidSheetBase: View {
                                 }
                             }
                             .pickerStyle(SegmentedPickerStyle())
+                            .onDisappear {
+                                fbRaidInfo = fbRaidInfo.resetDay()
+                            }
                         }
                     }
                 }
                 .frame(height: 350)
             }
+        }
+        .onChange(of: fbRaidInfo) { newValue in
+            print("update \(newValue)")
+        }
+        .onAppear {
+            guard let raidInfo = raidInfo else {
+                return
+            }
+            self.fbRaidInfo = FBRaidInfo(
+                title: raidInfo.title,
+                type: raidInfo.type,
+                difficulty: raidInfo.Difficulty,
+                startGateNumber: Int32(raidInfo.startGateNumber),
+                endGateNumber: Int32(raidInfo.endGateNumber),
+                isFinish: raidInfo.isFinish,
+                party1: raidInfo.party1characterList,
+                party2: raidInfo.party2characterList,
+                party3: raidInfo.party3characterList,
+                party4: raidInfo.party4characterList,
+                day: raidInfo.day,
+                hour: raidInfo.hour,
+                minute: raidInfo.minute
+            )
+            self.showDayUse = fbRaidInfo.day != Day.none
         }
     }
 }

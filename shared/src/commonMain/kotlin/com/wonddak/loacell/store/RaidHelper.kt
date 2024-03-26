@@ -77,6 +77,8 @@ data class FBRaidInfo(
     fun updateGate(start:Int,end:Int)  = this.copy(startGateNumber = start, endGateNumber = end)
     fun updateDay(day: Day)  = this.copy(day = day)
 
+    fun resetDay() = this.copy(day = Day.NONE, hour = 0, minute = 0)
+
     fun updateTime(hour:Long,minute: Long) = this.copy(hour= hour, minute = minute)
     fun updateTimeHour(hour:Long) = this.copy(hour= hour)
     fun updateTimeMinute(minute: Long) = this.copy(minute = minute)
@@ -107,20 +109,13 @@ object CommonRaidHelper {
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
+        println("JWH3 - roomId:$roomId\nraidId:$raidId\nfb:$fbRaidInfo")
         RefHelper.getRaidRef(roomId, raidId)
             .update(
                 fbRaidInfo.toMap(),
                 successAction = successAction,
                 failAction = failAction
             )
-    }
-    private fun addEmptyDay(roomId: String, raidId: String) {
-        val emptyDayMap = mapOf(
-            "day" to -1,
-            "hour" to 0,
-            "minute" to 0
-        )
-        RefHelper.getRaidRef(roomId, raidId).update(emptyDayMap)
     }
 
     //레이드 정보를 삭제한다.
@@ -183,6 +178,7 @@ object CommonRaidHelper {
                         .toMutableSet()
 
                 value.documents.forEach {
+                    println("JWH data - ${it.data}")
                     val raidId = it.id
                     val title = it.data!!["title"] as String
                     val typeString = it.data!!["type"] as String
@@ -194,12 +190,12 @@ object CommonRaidHelper {
                     val party2 = it.data!!["party2"] as List<String>
 
                     //베히모스 관련 로직 추가
-                    val party3 = runCatching { it.data?.get("party3") as List<String>}.getOrDefault(
+                    val party3 = runCatching { it.data?.get("party3") as List<*>}.getOrDefault(
                         List(4) {""}
-                    )
-                    val party4 = runCatching { it.data?.get("party4") as List<String>}.getOrDefault(
+                    ) as List<String>
+                    val party4 = runCatching { it.data?.get("party4") as List<*>}.getOrDefault(
                         List(4) {""}
-                    )
+                    ) as List<String>
 
                     //일정 관련 로직
                     val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
@@ -209,6 +205,8 @@ object CommonRaidHelper {
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
                         //업데이트
+                        println("JWHa - update")
+
                         db.raidInfoQueriesHelper.updateRaidInfo(
                             raidId,
                             roomId,
@@ -229,6 +227,8 @@ object CommonRaidHelper {
                         dbRaidList.remove(raidId)
                     } else {
                         //없는 경우 추가
+                        println("JWHa - add")
+
                         db.raidInfoQueriesHelper.addRaidInfo(
                             raidId,
                             roomId,
