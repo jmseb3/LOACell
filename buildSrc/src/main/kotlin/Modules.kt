@@ -3,5 +3,4 @@ object Modules {
     const val api = ":sharedApi"
     const val database = ":sharedDatabase"
     const val resources = ":sharedResources"
-    const val firebase = ":sharedFB"
 }

@@ -100,9 +100,7 @@ struct DialogHost<Content: View>: View {
                                 dismiss()
                             }
                         case DialogStatus.raidAdd:
-                            AddRaidSheet(
-                                roomId : dialogAction.getRoomInfoUniqueId()
-                            ) { fbRaidInfo in
+                            AddRaidSheet { fbRaidInfo in
                                 dialogAction.dialogRaidAdd(fbRaidInfo : fbRaidInfo)
                             }
                         case DialogStatus.raidEdit:

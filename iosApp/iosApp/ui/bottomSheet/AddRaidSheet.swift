@@ -11,37 +11,35 @@ import shared
 import Combine
 
 struct AddRaidSheet: View {
-    let roomId :String
-    @State private var fbRaidInfo = FBRaidInfo(
-        title: "",
-        type: RaidType.valtan,
-        difficulty: Difficulty.normal,
-        startGateNumber: 1,
-        endGateNumber: 1,
-        isFinish: false,
-        party1: [String](repeating: "", count: 4),
-        party2: [String](repeating: "", count: 4),
-        party3: [String](repeating: "", count: 4),
-        party4: [String](repeating: "", count: 4),
-        day: Day.none,
-        hour: 0,
-        minute: 0
-    )
     let addAction : (FBRaidInfo) -> Void
     var body: some View {
         RaidSheetBase(
-            fbRaidInfo: $fbRaidInfo,
             title: "레이드 정보 추가",
             buttonText: "추가"
-        ) {
-            addAction(fbRaidInfo)
-        }
+            buttonAction : addAction
+        )
     }
 }
 
 struct EditRaidSheet: View {
     let raidInfo :RaidInfo
     let editAction : (FBRaidInfo) -> Void
+    var body: some View {
+        RaidSheetBase(
+            raidInfo : raidInfo,
+            title: "레이드 정보 수정",
+            buttonText: "수정",
+            buttonAction : editAction
+        )
+    }
+}
+
+private struct RaidSheetBase: View {
+    
+    let title :String
+    let buttonText :String
+    let buttonAction :(FBRaidInfo) -> Void
+    
     @State private var fbRaidInfo = FBRaidInfo(
         title: "",
         type: RaidType.valtan,
@@ -57,52 +55,39 @@ struct EditRaidSheet: View {
         hour: 0,
         minute: 0
     )
-    var body: some View {
-        RaidSheetBase(
-            fbRaidInfo: $fbRaidInfo,
-            title: "레이드 정보 수정",
-            buttonText: "수정"
-        ) {
-            editAction(fbRaidInfo)
-        }.onAppear {
-            print(raidInfo)
-            fbRaidInfo =  FBRaidInfo(
-                title: raidInfo.title,
-                type: raidInfo.type,
-                difficulty: raidInfo.Difficulty,
-                startGateNumber: Int32(raidInfo.startGateNumber),
-                endGateNumber: Int32(raidInfo.endGateNumber),
-                isFinish: raidInfo.isFinish,
-                party1: raidInfo.party1characterList,
-                party2: raidInfo.party2characterList,
-                party3: raidInfo.party3characterList,
-                party4: raidInfo.party4characterList,
-                day: raidInfo.day,
-                hour: raidInfo.hour,
-                minute: raidInfo.minute
-            )
-        }
-    }
-}
-
-private struct RaidSheetBase: View {
-    @Binding var fbRaidInfo :FBRaidInfo
-    let title :String
-    let buttonText :String
-    let buttonAction :() -> Void
-    
-    @State private var titleText : String = ""
-    @State private var abStart :Int = 1
-    @State private var abEnd :Int = 1
-    
-    @State private var dayHour :Int = 0
-    @State private var dayMin :Int = 0
+    @State private var showDayUse :Bool = false
     
     private var showGateEdit : Bool {
         (fbRaidInfo.type == RaidType.abrelshud) && (fbRaidInfo.difficulty != Difficulty.hell)
     }
-    @State private var showDayUse :Bool = false
-    @State private var dayPick : Day = Day.none
+    
+    init(title: String, buttonText: String, buttonAction: @escaping (FBRaidInfo) -> Void) {
+        self.title = title
+        self.buttonText = buttonText
+        self.buttonAction = buttonAction
+    }
+    
+    init(raidInfo :RaidInfo,title: String, buttonText: String, buttonAction: @escaping (FBRaidInfo) -> Void) {
+        self.title = title
+        self.buttonText = buttonText
+        self.buttonAction = buttonAction
+        self.fbRaidInfo = FBRaidInfo(
+            title: raidInfo.title,
+            type: raidInfo.type,
+            difficulty: raidInfo.Difficulty,
+            startGateNumber: Int32(raidInfo.startGateNumber),
+            endGateNumber: Int32(raidInfo.endGateNumber),
+            isFinish: raidInfo.isFinish,
+            party1: raidInfo.party1characterList,
+            party2: raidInfo.party2characterList,
+            party3: raidInfo.party3characterList,
+            party4: raidInfo.party4characterList,
+            day: raidInfo.day,
+            hour: raidInfo.hour,
+            minute: raidInfo.minute
+        )
+        self.showDayUse = fbRaidInfo.day != Day.none
+    }
     
     private let days = Day.entries
     
@@ -118,7 +103,7 @@ private struct RaidSheetBase: View {
             title: title,
             text: buttonText,
             action: {
-                buttonAction()
+                buttonAction(fbRaidInfo)
             },
             enabled: !fbRaidInfo.title.isEmpty && (showDayUse ? fbRaidInfo.day != Day.none : true),
             errorMsg: .constant("")
@@ -127,12 +112,14 @@ private struct RaidSheetBase: View {
                 LengthLimitTextField(
                     maxLength: 10,
                     placeHolder: "제목을 입력해주세요.",
-                    text: $titleText
+                    text: $fbRaidInfo.title
                 )
                 if showGateEdit {
                     VStack{
                         RaidSheetHeadeerText(text: "관문 선택")
                         HStack {
+                            var abStart = fbRaidInfo.startGateNumber
+                            var abEnd = fbRaidInfo.endGateNumber
                             ForEach(Array(1...4),id:\.self) { idx in
                                 let isOn = Array(abStart...abEnd).contains(idx)
                                 CheckButton(isOn: isOn, text: String(idx)) {
@@ -156,8 +143,7 @@ private struct RaidSheetBase: View {
                         }
                     }
                     .onAppear{
-                        abStart = 1
-                        abEnd = 1
+                        fbRaidInfo = fbRaidInfo.updateGate(start:Int32(1),end:Int32(1))
                     }
                     .animation(.spring, value : showGateEdit)
                 }
@@ -216,7 +202,7 @@ private struct RaidSheetBase: View {
                         withAnimation {
                             showDayUse = !showDayUse
                             if !showDayUse {
-                                dayPick = Day.none
+                                fbRaidInfo = fbRaidInfo.updateDay(day:Day.none)
                             }
                         }
                     } label: {
@@ -224,55 +210,46 @@ private struct RaidSheetBase: View {
                     }
                     if showDayUse {
                         Section {
-                            Picker("시", selection: $dayHour) {
+                            Picker("시", selection: Binding {
+                                fbRaidInfo.hour
+                            } set: { value in
+                                fbRaidInfo = fbRaidInfo.updateTimeHour(hour : Int64(value))
+                            }) {
                                 ForEach(Array(0...23), id: \.self) { hour in
                                     Text(String(format: "%02d", hour))
                                 }
                             }
-                            Picker("분", selection: $dayMin) {
+                            Picker("분", selection: Binding {
+                                fbRaidInfo.minute
+                            } set: { value in
+                                fbRaidInfo = fbRaidInfo.updateTimeMinute(minute : Int64(value))
+                            }) {
                                 ForEach(Array(0...59), id: \.self) { min in
                                     Text(String(format: "%02d", min))
                                 }
                             }
                             Picker(
                                 "요일",
-                                selection: $dayPick
+                                selection: Binding {
+                                    fbRaidInfo.day
+                                } set: { value in
+                                    if fbRaidInfo.day == value {
+                                        fbRaidInfo = fbRaidInfo.updateDay(day:Day.none)
+                                    } else {
+                                        fbRaidInfo = fbRaidInfo.updateDay(day:value)
+                                    }
+                                }
                             ) {
                                 ForEach(1 ..< days.count) {
                                     Text(days[$0].text).tag(days[$0])
                                 }
                             }
                             .pickerStyle(SegmentedPickerStyle())
-                        } header: {
-                            Text("레이드 일정 선택")
                         }
                     }
                 }
                 .frame(height: 350)
             }
-            .onChange(of: titleText) { value in
-                fbRaidInfo = fbRaidInfo.updateTitle(title: value)
-            }
-            .onChange(of: dayMin) {value in
-                fbRaidInfo = fbRaidInfo.updateTimeMinute(minute : Int64(value))
-            }
-            .onChange(of: dayHour) {value in
-                fbRaidInfo = fbRaidInfo.updateTimeHour(hour : Int64(value))
-            }
-            .onChange(of: dayPick) { value in
-                updateDay(day: value)
-            }
-            .onAppear {
-                titleText = fbRaidInfo.title
-            }
-        }
-    }
-    
-    private func updateDay(day:Day) {
-        if fbRaidInfo.day == day {
-            fbRaidInfo = fbRaidInfo.updateDay(day:Day.none)
-        } else {
-            fbRaidInfo = fbRaidInfo.updateDay(day:day)
         }
     }
 }
