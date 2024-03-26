@@ -1,10 +1,10 @@
 package com.wonddak.loacell.android.ui.room.raid
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -60,10 +60,10 @@ fun RaidPartyView(
                                 name = item.name
                             )
                             Row(
-                                modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(text = item.className)
+                                Spacer(modifier = Modifier)
                                 Text(text = item.level)
                             }
                         } else {

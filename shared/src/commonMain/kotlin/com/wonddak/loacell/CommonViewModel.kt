@@ -146,7 +146,6 @@ open class CommonViewModel(
                         totalJob = viewModelScope.launch{
                             dataBase.getAllInfoByRoomId(id).collect {
                                 _totalRoomInfo.value = _totalRoomInfo.value.update(it)
-                                println("JWH2 - ${_totalRoomInfo.value}")
                             }
                         }
                     }

@@ -1,8 +1,10 @@
 package com.wonddak.loacell.android.ui.room.raid
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -22,7 +25,10 @@ import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -34,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.database.ext.getRaidText
 import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
+import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
@@ -59,6 +66,18 @@ fun RaidFocusView(
     val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
     val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
 
+    var raidInfo: RaidInfo? by remember {
+        mutableStateOf(null)
+    }
+    var partyCharacterList : List<Character?> by remember {
+         mutableStateOf(emptyList())
+    }
+
+    LaunchedEffect(totalRoomInfo.raidInfo) {
+        raidInfo = totalRoomInfo.raidInfo?.copy()
+        partyCharacterList = totalRoomInfo.partyCharacterList.toList()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +88,7 @@ fun RaidFocusView(
         BackHandler() {
             loaCellViewModel.clearFocusItem()
         }
-        totalRoomInfo.raidInfo?.let { raidInfo ->
+        raidInfo?.let { raidInfo ->
             Column(
                 modifier = Modifier
                     .capturable(captureController)
@@ -85,7 +104,7 @@ fun RaidFocusView(
                 }
                 loaCellViewModel.apply {
                     RaidPartyView(
-                        totalRoomInfo.partyCharacterList,
+                        partyCharacterList,
                         baseUrl = baseUrl,
                         openAction = { index ->
                             val userAndCharacterMap = totalRoomInfo.userAndCharacterMap
@@ -147,7 +166,7 @@ fun RaidFocusView(
                 }
             }
         }
-
-
     }
+
+
 }
