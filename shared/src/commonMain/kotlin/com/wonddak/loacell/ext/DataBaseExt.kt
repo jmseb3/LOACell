@@ -60,11 +60,16 @@ data class TotalRoomInfo(
                 val totalNameList = mutableSetOf<String>()
                 raidInfoList
                     .filter { it.type == raidInfo!!.type }
-                    .forEach {
+                    .forEach { it ->
                         //각 레이드 정보에있는 캐릭터 이름을 모두 넣는다.
-                        totalNameList.addAll(it.party1characterList.filter { it.isNotEmpty() })
-                        totalNameList.addAll(it.party2characterList.filter { it.isNotEmpty() })
+                        totalNameList.addAll(it.party1characterList)
+                        totalNameList.addAll(it.party2characterList)
+                        totalNameList.addAll(it.party3characterList)
+                        totalNameList.addAll(it.party4characterList)
                     }
+
+                //빈값 삭제해줌
+                totalNameList.remove("")
 
                 val result: MutableMap<String, List<Character>> = mutableMapOf()
                 characterMap.forEach { (user, lc) ->

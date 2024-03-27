@@ -59,6 +59,15 @@ private struct RaidSheetBase: View {
     )
     @State private var showDayUse :Bool = false
     
+    private var titleBinding:  Binding<String>   {
+        (Binding {
+            fbRaidInfo.title
+        } set: { title in
+            fbRaidInfo = fbRaidInfo.updateTitle(title: title)
+        }).max(10)
+    }
+    
+    
     private var showGateEdit : Bool {
         (fbRaidInfo.type == RaidType.abrelshud) && (fbRaidInfo.difficulty != Difficulty.hell)
     }
@@ -72,6 +81,9 @@ private struct RaidSheetBase: View {
             [Difficulty.normal,Difficulty.hard,Difficulty.hell]
         }
     }
+    let abGate :[Int32] = [1,2,3,4]
+    @State private var multiSelection = Set<UUID>()
+
     var body: some View {
         BaseSheet(
             title: title,
@@ -83,50 +95,10 @@ private struct RaidSheetBase: View {
             errorMsg: .constant("")
         ) {
             VStack {
-                LengthLimitTextField(
-                    maxLength: 10,
-                    placeHolder: "제목을 입력해주세요.",
-                    text: Binding {
-                        fbRaidInfo.title
-                    } set: { title in
-                        fbRaidInfo = fbRaidInfo.updateTitle(title: title)
-                    }
-                )
-                if showGateEdit {
-                    VStack{
-                        RaidSheetHeadeerText(text: "관문 선택")
-                        HStack {
-                            var abStart = fbRaidInfo.startGateNumber
-                            var abEnd = fbRaidInfo.endGateNumber
-                            let arr :[Int32] = [1,2,3,4]
-                            ForEach(arr,id:\.self) { idx in
-                                let isOn = Array(abStart...abEnd).contains(idx)
-                                CheckButton(isOn: isOn, text: String(idx)) {
-                                    if(isOn) {
-                                        if (abStart == idx) {
-                                            abStart = idx + 1
-                                        } else if(abEnd == idx) {
-                                            abEnd = idx - 1
-                                        }
-                                        if (abEnd < abStart) {
-                                            abStart = 1
-                                            abEnd = 1
-                                        }
-                                    } else {
-                                        abStart = min(abStart,idx)
-                                        abEnd = max(idx,abEnd)
-                                    }
-                                    fbRaidInfo = fbRaidInfo.updateGate(start:Int32(abStart),end:Int32(abEnd))
-                                }
-                            }
-                        }
-                    }
-                    .onAppear{
-                        fbRaidInfo = fbRaidInfo.updateGate(start:Int32(1),end:Int32(1))
-                    }
-                    .animation(.spring, value : showGateEdit)
-                }
                 Form {
+                    Section {
+                        TextField("제목을 입력해주세요.",text: titleBinding)
+                    }
                     Section {
                         Picker(
                             "레이드",
@@ -141,6 +113,38 @@ private struct RaidSheetBase: View {
                             }
                         }
                         .accentColor(.black)
+                        if showGateEdit {
+                            VStack{
+                                HStack {
+                                    var abStart = fbRaidInfo.startGateNumber
+                                    var abEnd = fbRaidInfo.endGateNumber
+                                    ForEach(abGate,id:\.self) { idx in
+                                        let isOn = Array(abStart...abEnd).contains(idx)
+                                        CheckButton(isOn: isOn, text: String(idx)) {
+                                            if(isOn) {
+                                                if (abStart == idx) {
+                                                    abStart = idx + 1
+                                                } else if(abEnd == idx) {
+                                                    abEnd = idx - 1
+                                                }
+                                                if (abEnd < abStart) {
+                                                    abStart = 1
+                                                    abEnd = 1
+                                                }
+                                            } else {
+                                                abStart = min(abStart,idx)
+                                                abEnd = max(idx,abEnd)
+                                            }
+                                            fbRaidInfo = fbRaidInfo.updateGate(start:Int32(abStart),end:Int32(abEnd))
+                                        }
+                                    }
+                                }
+                            }
+                            .onAppear{
+                                fbRaidInfo = fbRaidInfo.updateGate(start:Int32(1),end:Int32(1))
+                            }
+                            .animation(.spring, value : showGateEdit)
+                        }
                         
                         Picker(
                             "난이도",

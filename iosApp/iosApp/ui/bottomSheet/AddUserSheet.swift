@@ -36,6 +36,7 @@ struct AddUserSheet: View {
         Task {
             do {
                 let characterResult = try await LostArkApi().getCharacterInfo(characterName:searchCharacterName)
+                print("----- \(characterResult) -----")
                 if characterResult is LostArkResultSuccess {
                     searchResult = (characterResult as! LostArkResultSuccess).data as! [CharacterInfo]
                 } else if characterResult is LostArkResultFail {
