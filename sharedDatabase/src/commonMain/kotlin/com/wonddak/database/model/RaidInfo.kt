@@ -148,10 +148,9 @@ enum class RaidType(val maxPerson: Int) {
     //관문 수
     fun getMaxGate(): Int {
         return when (this) {
-            VALTAN, VYKAS, ECHIDNA -> 2
+            VALTAN, VYKAS, ECHIDNA, BETHEMOTH -> 2
             KOUKU, ILLIAKAN, KAYANGEL -> 3
             ABRELSHUD, KAMEN, IVORYTOWER -> 4
-            BETHEMOTH -> 1
             ETC -> 0
         }
     }

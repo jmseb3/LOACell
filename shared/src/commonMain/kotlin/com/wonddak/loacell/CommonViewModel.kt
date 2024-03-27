@@ -341,7 +341,6 @@ open class CommonViewModel(
 
         override fun dialogRoomAdd(title: String, description: String, password: String) {
             user.value?.uid?.let { owner ->
-                println("JWH _ make Room Owner : $owner")
                 CommonRoomHelper.makeInfo(
                     title, description, password, owner
                 ) { id ->
@@ -429,11 +428,10 @@ open class CommonViewModel(
 
         override fun dialogRaidEdit(fbRaidInfo: FBRaidInfo) {
             val raidInfo = getRaidInfo()
-            println("JWH - $fbRaidInfo")
             CommonRaidHelper.update(
                 raidInfo.roomId,
                 raidInfo.raidId,
-                fbRaidInfo,
+                fbRaidInfo.checkLevelParty(totalRoomInfo = getTotalRoomInfo()),
                 { e -> }
             ) {
                 hideDialog()

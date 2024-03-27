@@ -9,7 +9,7 @@ moko = "0.23.0"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version = "1.8.0" }
-capturable = { module = "dev.shreyaspatil:capturable", version = "2.0.0" }
+capturable = { module = "dev.shreyaspatil:capturable", version = "2.1.0" }
 kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
 wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
 

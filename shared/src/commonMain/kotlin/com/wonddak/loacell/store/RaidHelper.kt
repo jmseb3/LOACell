@@ -7,6 +7,7 @@ import com.wonddak.database.model.RaidType
 import com.wonddak.database.model.convertDifficulty
 import com.wonddak.database.model.convertToDay
 import com.wonddak.database.model.convertType
+import com.wonddak.loacell.ext.TotalRoomInfo
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(
@@ -84,6 +85,32 @@ data class FBRaidInfo(
     fun updateTimeMinute(minute: Long) = this.copy(minute = minute)
     fun difficultySelected(difficulty: Difficulty) :Boolean = this.difficulty == difficulty
     fun difficultyEnabled(difficulty: Difficulty) :Boolean = this.type.accessibleDifficulty().contains(difficulty)
+
+    //레이드 정보가 수정될때 레벨에 맞지 않는 친구들을 다 지운다.
+    fun checkLevelParty(totalRoomInfo: TotalRoomInfo):FBRaidInfo {
+        val characterList = totalRoomInfo.characterLevelMap
+        val minLevel = this.type.getMinLevel(this.difficulty)
+
+        val checkLevel = { party:List<String> ->
+            val temp = Array(4) { "" }
+            party.forEachIndexed { tmpIndex, name ->
+                if (name.isNotEmpty()) {
+                    runCatching {
+                        characterList[name]!!
+                    }.onSuccess { level ->
+                        if (level < minLevel) {
+                            temp[tmpIndex] = ""
+                        } else {
+                            temp[tmpIndex] = name
+                        }
+                    }
+                }
+            }
+            temp.toList()
+        }
+
+        return this.copy(party1 = checkLevel(party1), party2 = checkLevel(party2), party3 = checkLevel(party3), party4 = checkLevel(party4))
+    }
 }
 
 object CommonRaidHelper {
@@ -109,7 +136,6 @@ object CommonRaidHelper {
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
-        println("JWH3 - roomId:$roomId\nraidId:$raidId\nfb:$fbRaidInfo")
         RefHelper.getRaidRef(roomId, raidId)
             .update(
                 fbRaidInfo.toMap(),
@@ -178,7 +204,6 @@ object CommonRaidHelper {
                         .toMutableSet()
 
                 value.documents.forEach {
-                    println("JWH data - ${it.data}")
                     val raidId = it.id
                     val title = it.data!!["title"] as String
                     val typeString = it.data!!["type"] as String
@@ -205,8 +230,6 @@ object CommonRaidHelper {
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
                         //업데이트
-                        println("JWHa - update")
-
                         db.raidInfoQueriesHelper.updateRaidInfo(
                             raidId,
                             roomId,
@@ -227,8 +250,6 @@ object CommonRaidHelper {
                         dbRaidList.remove(raidId)
                     } else {
                         //없는 경우 추가
-                        println("JWHa - add")
-
                         db.raidInfoQueriesHelper.addRaidInfo(
                             raidId,
                             roomId,

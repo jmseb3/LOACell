@@ -31,7 +31,7 @@ data class TotalRoomInfo(
     val tabState: RoomState = RoomState.Raid,
     val dialogState: DialogStatus = DialogStatus.NONE,
     val filter: Filter = Filter(),
-    val focusIndex : Int = -1,
+    val focusIndex: Int = -1,
     val schemeData: SchemeData? = null
 ) {
     companion object {
@@ -46,6 +46,9 @@ data class TotalRoomInfo(
         get() = totalRoomInfoSimple.userInfoList
     private val characterMap: Map<UserInfo, List<Character>>
         get() = totalRoomInfoSimple.characterMap
+
+    val characterLevelMap : Map<String,Float>
+        get() = characterMap.values.flatten().associate { it.name to it.getLevel() }
 
     val userAndCharacterMap: Map<String, List<Character>>
         get() {
@@ -102,9 +105,14 @@ data class TotalRoomInfo(
     )
 
     fun showRaidId(raidId: String) =
-        this.copy(focusRaidId = raidId, focusUserName = "", dialogState = DialogStatus.NONE, focusIndex = -1)
+        this.copy(
+            focusRaidId = raidId,
+            focusUserName = "",
+            dialogState = DialogStatus.NONE,
+            focusIndex = -1
+        )
 
-    fun updatePartyFocusIndex(index:Int) = this.copy(focusIndex = index)
+    fun updatePartyFocusIndex(index: Int) = this.copy(focusIndex = index)
     fun showUserName(userName: String) =
         this.copy(focusRaidId = "", focusUserName = userName, dialogState = DialogStatus.NONE)
 
@@ -165,7 +173,7 @@ data class TotalRoomInfo(
         return null
     }
 
-    val filterList : List<RaidInfo>
+    val filterList: List<RaidInfo>
         get() {
             val filterByFinish = when (filter.finish) {
                 Filter.FINISH.CLEAR -> raidInfoList.filter { it.isFinish }
@@ -212,7 +220,7 @@ data class TotalRoomInfo(
                 findList.addAll(info.party3characterList)
                 findList.addAll(info.party4characterList)
             }
-            val result: MutableList<Character?> = List(maxParty *4) { null }.toMutableList()
+            val result: MutableList<Character?> = List(maxParty * 4) { null }.toMutableList()
             val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
             for (userInfo in userInfoList) {
                 val iterator = findNames.iterator()
@@ -230,12 +238,13 @@ data class TotalRoomInfo(
     fun updateFilter(filter: Filter) = this.copy(filter = filter)
     fun clearFilter() = updateFilter(Filter())
 
-    fun updateSchemeData(schemeData: SchemeData) = this.copy(schemeData = schemeData, dialogState = DialogStatus.ROOM_ENTER_BY_SCHEME)
+    fun updateSchemeData(schemeData: SchemeData) =
+        this.copy(schemeData = schemeData, dialogState = DialogStatus.ROOM_ENTER_BY_SCHEME)
 
 }
 
 data class SchemeData(
-    val roomId:String,
+    val roomId: String,
     val fbRoomInfo: FBRoomInfo
 )
 

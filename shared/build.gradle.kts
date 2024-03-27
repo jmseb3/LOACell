@@ -25,10 +25,10 @@ kotlin {
         framework {
             baseName = "shared"
             linkerOpts.add("-lsqlite3")
-            export(project(Modules.api))
-            export(project(Modules.resources))
+            export(project(":sharedApi"))
+            export(project(":sharedResources"))
+            export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:0.23.0")
-            export(project(Modules.database))
 //            transitiveExport = true
         }
         pod("FirebaseCore") {
@@ -52,9 +52,9 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
         commonMain.dependencies {
-            api(project(Modules.api))
-            api(project(Modules.resources))
-            api(project(Modules.database))
+            api(project(":sharedApi"))
+            api(project(":sharedResources"))
+            api(project(":sharedDatabase"))
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
             implementation("com.russhwolf:multiplatform-settings:1.0.0")
@@ -69,7 +69,7 @@ kotlin {
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
-            implementation("com.google.firebase:firebase-messaging-ktx")
+//            implementation("com.google.firebase:firebase-messaging-ktx")
 
             implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
             implementation("androidx.datastore:datastore-preferences:1.0.0")
