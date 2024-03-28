@@ -59,6 +59,8 @@ kotlin {
             implementation(libs.kotlinx.coroutine)
             implementation("com.russhwolf:multiplatform-settings:1.0.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
+
+
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

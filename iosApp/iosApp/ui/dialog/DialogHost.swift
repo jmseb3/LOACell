@@ -24,10 +24,6 @@ struct DialogHost<Content: View>: View {
         self.content = content
     }
     
-    var heightFactor: CGFloat {
-        UIScreen.main.bounds.height > 800 ? 3.6 : 3
-    }
-    
     func dismiss() {
         dialogAction.hideDialog()
     }
@@ -41,6 +37,16 @@ struct DialogHost<Content: View>: View {
                     VStack {
                         content()
                     }
+                }
+                .sheet(
+                    isPresented: Binding(
+                        get: {dialogStatus == DialogStatus.userAdd},
+                        set: { _ in
+                            dismiss()
+                        }
+                    )
+                ){
+                    AddUserSheet(dialogAction : dialogAction)
                 }
                 if dialogStatus != DialogStatus.none {
                     ZStack {
@@ -94,11 +100,7 @@ struct DialogHost<Content: View>: View {
                                 dialogAction.dialogRoomEdit(title: title, description: description, password: password)
                             }
                         case DialogStatus.userAdd:
-                            AddUserSheet(
-                                roomId : dialogAction.getRoomInfoUniqueId()
-                            ) {
-                                dismiss()
-                            }
+                            EmptyView()
                         case DialogStatus.raidAdd:
                             AddRaidSheet { fbRaidInfo in
                                 dialogAction.dialogRaidAdd(fbRaidInfo : fbRaidInfo)

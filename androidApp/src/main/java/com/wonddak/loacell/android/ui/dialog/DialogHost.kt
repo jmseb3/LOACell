@@ -90,12 +90,8 @@ fun DialogHost(
             }
 
             DialogStatus.USER_ADD -> {
-                AddUserSheet(
-                    roomId = dialogAction.getRoomInfoUniqueId(),
-                    onDismissRequest = dismiss
-                )
+                AddUserSheet(dialogAction =  dialogAction)
             }
-
             DialogStatus.RAID_ADD -> {
                 AddRaidSheet(
                     onDismissRequest = dismiss

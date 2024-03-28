@@ -20,6 +20,7 @@ import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import com.wonddak.sharedapi.lostark.LostArkApi
+import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
@@ -326,7 +327,7 @@ open class CommonViewModel(
         }
 
         override fun getDisplayName(): String {
-            return user?.value?.displayName ?: ""
+            return user.value?.displayName ?: ""
         }
 
         override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
@@ -495,6 +496,28 @@ open class CommonViewModel(
                 })
             {
                 hideDialog()
+            }
+        }
+
+        override fun dialogSearchCharacter(
+            name: String,
+            updateProgress: (Boolean) -> Unit,
+            updateList: (List<CharacterInfo>) -> Unit,
+            updateError: (String) -> Unit
+        ) {
+            viewModelScope.launch {
+                updateProgress(true)
+                val characterResult = LostArkApi().getCharacterInfo(name)
+                characterResult.onSuccess { list ->
+                    updateList(list)
+                }
+                characterResult.onFail { code, message ->
+                    updateError("$message($code)")
+                }
+                characterResult.onFailOnlyMsg { message ->
+                    updateError(message)
+                }
+                updateProgress(false)
             }
         }
 

@@ -22,20 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.lostark.LostArkApi
 import com.wonddak.sharedapi.lostark.model.CharacterInfo
-import com.wonddak.sharedapi.onFail
-import com.wonddak.sharedapi.onFailOnlyMsg
-import com.wonddak.sharedapi.onSuccess
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddUserSheet(
     modifier: Modifier = Modifier,
-    roomId: String,
-    onDismissRequest: () -> Unit,
+    dialogAction: DialogAction,
 ) {
 
     var searchCharacterName by remember {
@@ -59,33 +54,29 @@ fun AddUserSheet(
     }
 
     val searchAction = {
-        scope.launch {
-            errorMsg = ""
-            showProgress = true
-
-            val characterResult = LostArkApi().getCharacterInfo(searchCharacterName)
-            characterResult.onSuccess { list ->
-                searchResult = list
+        dialogAction.dialogSearchCharacter(
+            searchCharacterName,
+            updateProgress = {
+                showProgress = it
+            },
+            updateList = {
+                searchResult = it
+            },
+            updateError =  {
+                errorMsg = it
             }
-            characterResult.onFail { code, message ->
-                errorMsg = "$message($code)"
-            }
-            characterResult.onFailOnlyMsg { message ->
-                errorMsg = message
-            }
-            showProgress = false
-        }
+        )
     }
 
     val initAction = {
         if (searchResult.isNotEmpty()) {
             CommonUserHelper.addOrUpdate(
-                roomId,
+                dialogAction.getRoomInfoUniqueId(),
                 user,
                 searchCharacterName,
                 searchResult,
                 { error -> errorMsg = error },
-                onDismissRequest
+                {dialogAction.hideDialog()}
             )
         }
     }
@@ -95,7 +86,7 @@ fun AddUserSheet(
     val buttonEnabledInit = searchResult.isNotEmpty()
     BaseSheet(
         title = "유저 정보 추가",
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {dialogAction.hideDialog()},
         buttonClickAction = {
             if (searchResult.isEmpty()) {
                 searchAction()

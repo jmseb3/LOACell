@@ -10,7 +10,11 @@ import SwiftUI
 import shared
 
 struct AddUserSheet: View {
-    let roomId :String
+    let dialogAction : DialogAction
+    
+    private var roomId :String {
+        dialogAction.getRoomInfoUniqueId()
+    }
     @State private var searchCharacterName : String = "" {
         didSet {
             if searchCharacterName.count > 12 && oldValue.count <= 12 {
@@ -28,48 +32,14 @@ struct AddUserSheet: View {
     @State private var searchResult : [CharacterInfo] = []
     @State private var showLoading :Bool = false
     @State private var errorMsg :String = ""
-    var dismiss : () -> Void
     
-    @MainActor
-    private func searchAction() {
-        showLoading = true
-        Task {
-            do {
-                let characterResult = try await LostArkApi().getCharacterInfo(characterName:searchCharacterName)
-                print("----- \(characterResult) -----")
-                if characterResult is LostArkResultSuccess {
-                    searchResult = (characterResult as! LostArkResultSuccess).data as! [CharacterInfo]
-                } else if characterResult is LostArkResultFail {
-                    let fail = (characterResult as! LostArkResultFail)
-                    errorMsg = "\(fail.message)(\(fail.code))"
-                } else if characterResult is LostArkResultFailOnlyMsg {
-                    errorMsg = (characterResult as! LostArkResultFailOnlyMsg).message
-                }
-            } catch {
-                errorMsg = error.localizedDescription
-            }
-            showLoading = false
-        }
+    enum Field: Hashable {
+        case name, character
     }
-    
-    private func initAction() {
-        if !searchResult.isEmpty {
-            CommonUserHelper().addOrUpdate(
-                roomId: roomId,
-                name: user,
-                representativeCharacter: searchCharacterName,
-                characterList: searchResult
-            ) { error in
-                errorMsg = error
-            } successAction: {
-                dismiss()
-            }
-            
-        }
-    }
-    
+    @FocusState private var focusField: Field?
+        
     var body: some View {
-        BaseSheet(
+        BaseSheet2(
             title : "유저 정보 추가",
             text: searchResult.isEmpty ? "검색" : "추가",
             action: {
@@ -80,12 +50,28 @@ struct AddUserSheet: View {
                 }
             },
             enabled:(searchResult.isEmpty && !user.isEmpty && !searchCharacterName.isEmpty) || !searchResult.isEmpty,
-            errorMsg: $errorMsg
-        )
-        {
+            errorMsg: $errorMsg,
+            dismiss: {
+                dialogAction.hideDialog()
+            }
+        ) {
             VStack {
-                LengthLimitTextField(maxLength: 5, placeHolder: "유저 이름 입력", text: $user)
-                LengthLimitTextField(maxLength: 12, placeHolder: "대표 캐릭터 입력", text: $searchCharacterName)
+                Form {
+                    Section(header : Text("유저 이름")) {
+                        TextField("유저 이름 입력",text: $user)
+                            .focused($focusField, equals: .name)
+                            .submitLabel(.next)
+                            .disabled(!searchResult.isEmpty)
+                    }
+                    Section(header : Text("대표 캐릭터")) {
+                        TextField("대표 캐릭터 입력",text: $searchCharacterName)
+                            .focused($focusField, equals: .character)
+                            .submitLabel(.done)
+                            .disabled(!searchResult.isEmpty)
+                    }
+                }            
+                .scrollDisabled(true)
+                .scrollContentBackground(.hidden)
                 if(showLoading) {
                     HStack{
                         Text("\(user)님의 캐릭터 정보를 불러옵니다.")
@@ -104,6 +90,48 @@ struct AddUserSheet: View {
                     }
                 }
             }
+            .frame(minHeight: 300)
+            .onSubmit {
+                switch focusField {
+                case .name:
+                    focusField = .character
+                case .character:
+                    focusField = nil
+                case nil:
+                    break
+                }
+            }
+        }
+    }
+    
+    private func searchAction() {
+        dialogAction.dialogSearchCharacter(
+            name: searchCharacterName,
+            updateProgress: {
+                showLoading = $0 as! Bool
+            },
+            updateList: {
+                searchResult = $0
+            },
+            updateError: {
+                errorMsg = $0
+            }
+        )
+    }
+    
+    private func initAction() {
+        if !searchResult.isEmpty {
+            CommonUserHelper().addOrUpdate(
+                roomId: roomId,
+                name: user,
+                representativeCharacter: searchCharacterName,
+                characterList: searchResult
+            ) { error in
+                errorMsg = error
+            } successAction: {
+                dialogAction.hideDialog()
+            }
+            
         }
     }
 }

@@ -10,11 +10,24 @@ import SwiftUI
 
 struct RoundCornerButton: View {
     let text :String
+    let enabled :Bool
     let action : () -> Void
+    
+    init(text: String, action: @escaping () -> Void) {
+        self.text = text
+        self.enabled = true
+        self.action = action
+    }
+    
+    init(text: String, enabled: Bool, action: @escaping () -> Void) {
+        self.text = text
+        self.enabled = enabled
+        self.action = action
+    }
     var body: some View {
         Button(action: action, label: {
             Text(text)
-                .foregroundColor(.black)
+                .foregroundColor(enabled ? .black : .gray)
                 .frame(maxWidth: .infinity)
                 .padding()
                 .overlay(
@@ -22,5 +35,6 @@ struct RoundCornerButton: View {
                         .stroke(.black, lineWidth: 1)
                 )
         })
+        .disabled(!enabled)
     }
 }

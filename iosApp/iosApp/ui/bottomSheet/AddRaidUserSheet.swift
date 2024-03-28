@@ -84,7 +84,7 @@ struct AddRaidUserSheet: View {
                 }
             }
             .frame(height: 250)
-            .modifier(FormHiddenBackground())
+            .scrollContentBackground(.hidden)
         }.onAppear {
             selectedUser = userList[0]
         }

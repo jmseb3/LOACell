@@ -66,22 +66,6 @@ class QueryParameters {
     }
 }
 
-
-struct FormHiddenBackground: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.scrollContentBackground(.hidden)
-        } else {
-            content.onAppear {
-                UITableView.appearance().backgroundColor = .clear
-            }
-            .onDisappear {
-                UITableView.appearance().backgroundColor = .systemGroupedBackground
-            }
-        }
-    }
-}
-
 extension View {
     func snapshot() -> UIImage {
         let controller = UIHostingController(rootView: self)
