@@ -7,10 +7,13 @@ import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Modal
+import com.wonddak.loacell.model.ModalConst
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -76,7 +79,7 @@ open class CommonViewModel(
             },
             failAction = {
                 _totalRoomInfo.value =
-                    _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
+                    _totalRoomInfo.value.showDialog(Dialog.ROOM_ENTER_ERROR)
             }
         )
 
@@ -318,8 +321,8 @@ open class CommonViewModel(
     }
 
     val dialogAction = object : DialogAction {
-        override fun showDialog(dialogStatus: DialogStatus) {
-            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)
+        override fun showDialog(modal: Modal) {
+            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(modal)
         }
 
         override fun hideDialog() {
@@ -335,8 +338,8 @@ open class CommonViewModel(
 
         override fun dialogRoomAction(status: Int) {
             when (status) {
-                1 -> showDialog(DialogStatus.ROOM_ENTER)
-                2 -> showDialog(DialogStatus.ROOM_ADD)
+                ModalConst.ROOM_ACTION_ENTER -> showDialog(Dialog.ROOM_ENTER)
+                ModalConst.ROOM_ACTION_ADD -> showDialog(Sheet.ROOM_ADD)
             }
         }
 

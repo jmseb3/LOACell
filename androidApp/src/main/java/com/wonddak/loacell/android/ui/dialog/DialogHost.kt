@@ -13,178 +13,166 @@ import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
 import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
 import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
 import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
+import com.wonddak.loacell.model.Modal
+import com.wonddak.loacell.model.Sheet
 
 
 @Composable
 fun DialogHost(
-    dialogStatus: DialogStatus,
+    dialogStatus: Modal?,
     dialogAction: DialogAction,
     content: @Composable () -> Unit
 ) {
     val dismiss = { dialogAction.hideDialog() }
     Box() {
         content()
-        when (dialogStatus) {
-            DialogStatus.NONE -> {}
-            DialogStatus.ROOM_ACTION -> {
-                RoomActionDialog(
-                    dismiss = dismiss
-                ) { status ->
-                    dialogAction.dialogRoomAction(status)
+        dialogStatus.let { modal ->
+            when (modal) {
+                Dialog.ROOM_ACTION -> {
+                    RoomActionDialog(
+                        dismiss = dismiss
+                    ) { status ->
+                        dialogAction.dialogRoomAction(status)
+                    }
                 }
-            }
-
-            DialogStatus.ROOM_ADD -> {
-                AddRoomSheet(
-                    onDismissRequest = dismiss
-                ) { title, description, password ->
-                    dialogAction.dialogRoomAdd(title, description, password)
-                }
-            }
-
-            DialogStatus.ROOM_ENTER -> {
-                RoomEnterDialog(
-                    nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
-                    dismiss = dismiss
-                ) { roomId, roomInfo ->
-                    dialogAction.dialogRoomEnter(roomId, roomInfo)
-                }
-            }
-            DialogStatus.ROOM_ENTER_BY_SCHEME -> {
-                RoomEnterDialog(
-                    nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
-                    prevData = dialogAction.getSchemeData(),
-                    dismiss = dismiss
-                ) { roomId, roomInfo ->
-                    dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
-                }
-            }
-
-            DialogStatus.ROOM_ENTER_ERROR -> {
-                RoomEnterErrorDialog(
-                    dismiss = dismiss
-                ) {
-                    dialogAction.dialogRoomEnterError()
-                }
-            }
-
-            DialogStatus.ROOM_EXIT -> {
-                RoomExitDialog(
-                    dismiss = dismiss,
-                ) {
-                    dialogAction.dialogRoomExit()
-                }
-            }
-
-            DialogStatus.ROOM_EDIT -> {
-                val roomInfo = dialogAction.getRoomInfo()
-                EditRoomSheet(
-                    getTitle = roomInfo.title,
-                    getDescription = roomInfo.description,
-                    getPassword = roomInfo.enterPassword,
-                    onDismissRequest = dismiss,
-                ) { title, description, password ->
-                    dialogAction.dialogRoomEdit(title, description, password)
-                }
-            }
-
-            DialogStatus.USER_ADD -> {
-                AddUserSheet(dialogAction =  dialogAction)
-            }
-            DialogStatus.RAID_ADD -> {
-                AddRaidSheet(
-                    onDismissRequest = dismiss
-                ) { fbRaidInfo ->
-                    dialogAction.dialogRaidAdd(fbRaidInfo)
-                }
-            }
-
-            DialogStatus.RAID_EDIT -> {
-                EditRaidSheet(
-                    raidInfo = dialogAction.getRaidInfo(),
-                    onDismissRequest = dismiss
-                ) { fbRaidInfo ->
-                    dialogAction.dialogRaidEdit(fbRaidInfo)
-                }
-            }
-
-            DialogStatus.RAID_FILTER -> {
-                FilterSheet(
-                    dialogAction.getTotalRoomInfo(),
-                    dismiss = dismiss
-                ) { filter ->
-                    dialogAction.dialogFilterUpdate(filter)
-                }
-            }
-
-            DialogStatus.RAID_DELETE -> {
-                DeleteRaidDialog(
-                    dismiss = dismiss
-                ) {
-                    dialogAction.dialogRaidDelete()
-                }
-            }
-
-            DialogStatus.RAID_USER_ADD -> {
-                val userAndCharacterMap = dialogAction.getUserAndCharacterMap()
-                if (userAndCharacterMap.isNotEmpty()) {
-                    AddRaidUserSheet(
-                        userAndCharacterMap = userAndCharacterMap,
+                Sheet.ROOM_ADD -> {
+                    AddRoomSheet(
                         onDismissRequest = dismiss
-                    ) { character -> dialogAction.dialogUserAdd(character) }
+                    ) { title, description, password ->
+                        dialogAction.dialogRoomAdd(title, description, password)
+                    }
                 }
-            }
-
-            DialogStatus.RAID_USER_DELETE -> {
-                DeleteRaidUserDialog(dismiss = dismiss) {
-                    dialogAction.dialogUserDelete()
+                Dialog.ROOM_ENTER -> {
+                    RoomEnterDialog(
+                        nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                        dismiss = dismiss
+                    ) { roomId, roomInfo ->
+                        dialogAction.dialogRoomEnter(roomId, roomInfo)
+                    }
                 }
-            }
-
-            DialogStatus.CHARACTER_EDIT -> {
-                EditCharacterDialog(
-                    userInfo = dialogAction.getUserInfo(),
-                    characterList = dialogAction.getCharacterList(),
-                    dismiss = dismiss
-                ) { name ->
-                    dialogAction.dialogCharacterEdit(name)
+                Dialog.ROOM_ENTER_BY_SCHEME -> {
+                    RoomEnterDialog(
+                        nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                        prevData = dialogAction.getSchemeData(),
+                        dismiss = dismiss
+                    ) { roomId, roomInfo ->
+                        dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
+                    }
                 }
-            }
-
-            DialogStatus.CHARACTER_DELETE -> {
-                DeleteCharacterDialog(
-                    name = dialogAction.getUserInfo().name,
-                    dismiss = dismiss
-                ) {
-                    dialogAction.dialogCharacterDelete()
+                Dialog.ROOM_ENTER_ERROR -> {
+                    RoomEnterErrorDialog(
+                        dismiss = dismiss
+                    ) {
+                        dialogAction.dialogRoomEnterError()
+                    }
                 }
-
-            }
-
-            DialogStatus.SETTING_EDIT_NAME -> {
-                ProfileNameDialog(
-                    dialogAction.getDisplayName(),
-                    dismiss = dismiss
-                ) {
-                    dialogAction.dialogEditName(it)
+                Dialog.ROOM_EXIT -> {
+                    RoomExitDialog(
+                        dismiss = dismiss,
+                    ) {
+                        dialogAction.dialogRoomExit()
+                    }
                 }
-            }
+                Sheet.ROOM_EDIT -> {
+                    val roomInfo = dialogAction.getRoomInfo()
+                    EditRoomSheet(
+                        getTitle = roomInfo.title,
+                        getDescription = roomInfo.description,
+                        getPassword = roomInfo.enterPassword,
+                        onDismissRequest = dismiss,
+                    ) { title, description, password ->
+                        dialogAction.dialogRoomEdit(title, description, password)
+                    }
+                }
+                Sheet.USER_ADD -> {
+                    AddUserSheet(dialogAction =  dialogAction)
+                }
+                Sheet.RAID_ADD -> {
+                    AddRaidSheet(
+                        onDismissRequest = dismiss
+                    ) { fbRaidInfo ->
+                        dialogAction.dialogRaidAdd(fbRaidInfo)
+                    }
+                }
+                Sheet.RAID_EDIT -> {
+                    EditRaidSheet(
+                        raidInfo = dialogAction.getRaidInfo(),
+                        onDismissRequest = dismiss
+                    ) { fbRaidInfo ->
+                        dialogAction.dialogRaidEdit(fbRaidInfo)
+                    }
+                }
+                Sheet.RAID_FILTER -> {
+                    FilterSheet(
+                        dialogAction.getTotalRoomInfo(),
+                        dismiss = dismiss
+                    ) { filter ->
+                        dialogAction.dialogFilterUpdate(filter)
+                    }
+                }
+                Dialog.RAID_DELETE -> {
+                    DeleteRaidDialog(
+                        dismiss = dismiss
+                    ) {
+                        dialogAction.dialogRaidDelete()
+                    }
+                }
+                Sheet.RAID_USER_ADD -> {
+                    val userAndCharacterMap = dialogAction.getUserAndCharacterMap()
+                    if (userAndCharacterMap.isNotEmpty()) {
+                        AddRaidUserSheet(
+                            userAndCharacterMap = userAndCharacterMap,
+                            onDismissRequest = dismiss
+                        ) { character -> dialogAction.dialogUserAdd(character) }
+                    }
+                }
+                Dialog.RAID_USER_DELETE -> {
+                    DeleteRaidUserDialog(dismiss = dismiss) {
+                        dialogAction.dialogUserDelete()
+                    }
+                }
+                Dialog.CHARACTER_EDIT -> {
+                    EditCharacterDialog(
+                        userInfo = dialogAction.getUserInfo(),
+                        characterList = dialogAction.getCharacterList(),
+                        dismiss = dismiss
+                    ) { name ->
+                        dialogAction.dialogCharacterEdit(name)
+                    }
+                }
+                Dialog.CHARACTER_DELETE -> {
+                    DeleteCharacterDialog(
+                        name = dialogAction.getUserInfo().name,
+                        dismiss = dismiss
+                    ) {
+                        dialogAction.dialogCharacterDelete()
+                    }
 
-            DialogStatus.SHARE_SHEET -> {
-                ShareSheet(
-                    roomInfo = dialogAction.getRoomInfo(),
-                    onDismissRequest = dismiss
-                )
-            }
-            DialogStatus.TEST_SHEET -> {
-                BaseSheet(
-                    title = "여백 테스트",
-                    buttonText = "확인",
-                    onDismissRequest = dismiss,
-                    buttonClickAction = dismiss
-                ) {
-                    Text(text = "테스트 문구")
+                }
+                Dialog.SETTING_EDIT_NAME -> {
+                    ProfileNameDialog(
+                        dialogAction.getDisplayName(),
+                        dismiss = dismiss
+                    ) {
+                        dialogAction.dialogEditName(it)
+                    }
+                }
+                Sheet.SHARE_SHEET -> {
+                    ShareSheet(
+                        roomInfo = dialogAction.getRoomInfo(),
+                        onDismissRequest = dismiss
+                    )
+                }
+                Sheet.TEST_SHEET -> {
+                    BaseSheet(
+                        title = "여백 테스트",
+                        buttonText = "확인",
+                        onDismissRequest = dismiss,
+                        buttonClickAction = dismiss
+                    ) {
+                        Text(text = "테스트 문구")
+                    }
                 }
             }
         }

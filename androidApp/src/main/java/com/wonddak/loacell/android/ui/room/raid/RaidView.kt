@@ -32,8 +32,8 @@ import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.dialog.SelectIdDialog
 import com.wonddak.loacell.android.ui.room.raid.calendar.RaidCalendarView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomType
+import com.wonddak.loacell.model.Sheet
 
 @Composable
 fun RaidView(
@@ -57,7 +57,7 @@ fun RaidView(
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                OutlinedButton(onClick = { loaCellViewModel.showDialog(DialogStatus.RAID_FILTER) }) {
+                OutlinedButton(onClick = { loaCellViewModel.showDialog(Sheet.RAID_FILTER) }) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {

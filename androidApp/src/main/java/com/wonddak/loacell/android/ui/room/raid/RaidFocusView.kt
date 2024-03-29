@@ -41,8 +41,9 @@ import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FileUtil
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getDayText
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.launch
@@ -108,16 +109,16 @@ fun RaidFocusView(
                                 ) {
                                     clearFocusItem()
                                     setTabStatus(RoomState.User)
-                                    showDialog(DialogStatus.USER_ADD)
+                                    showDialog(Sheet.USER_ADD)
                                 }
                             } else {
                                 updatePartyFocusIndex(index)
-                                showDialog(DialogStatus.RAID_USER_ADD)
+                                showDialog(Sheet.RAID_USER_ADD)
                             }
                         },
                         deleteAction = { index ->
                             updatePartyFocusIndex(index)
-                            showDialog(DialogStatus.RAID_USER_DELETE)
+                            showDialog(Dialog.RAID_USER_DELETE)
                         }
                     )
                 }

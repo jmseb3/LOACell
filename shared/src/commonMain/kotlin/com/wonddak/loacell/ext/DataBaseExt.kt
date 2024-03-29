@@ -8,10 +8,12 @@ import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -29,7 +31,7 @@ data class TotalRoomInfo(
     val focusRaidId: String = "",
     val focusUserName: String = "",
     val tabState: RoomState = RoomState.Raid,
-    val dialogState: DialogStatus = DialogStatus.NONE,
+    val dialogState: Modal? = null,
     val filter: Filter = Filter(),
     val focusIndex: Int = -1,
     val schemeData: SchemeData? = null
@@ -113,13 +115,13 @@ data class TotalRoomInfo(
         this.copy(
             focusRaidId = raidId,
             focusUserName = "",
-            dialogState = DialogStatus.NONE,
+            dialogState = null,
             focusIndex = -1
         )
 
     fun updatePartyFocusIndex(index: Int) = this.copy(focusIndex = index)
     fun showUserName(userName: String) =
-        this.copy(focusRaidId = "", focusUserName = userName, dialogState = DialogStatus.NONE)
+        this.copy(focusRaidId = "", focusUserName = userName, dialogState = null)
 
     val roomId = roomInfo?.uniqueId ?: ""
 
@@ -142,32 +144,32 @@ data class TotalRoomInfo(
     fun isFocus() = focusUserName.isNotEmpty() || focusRaidId.isNotEmpty()
 
     fun setTabStatus(state: RoomState) =
-        this.copy(tabState = state, dialogState = DialogStatus.NONE)
+        this.copy(tabState = state, dialogState = null)
 
-    fun showDialog(dialogState: DialogStatus) = this.copy(dialogState = dialogState)
-    fun hideDialog() = this.copy(dialogState = DialogStatus.NONE)
+    fun showDialog(modal: Modal) = this.copy(dialogState = modal)
+    fun hideDialog() = this.copy(dialogState = null)
 
     fun bottomAction(roomId: String, fbUserIsAnonymous: Boolean?): TotalRoomInfo? {
         if (roomId.isEmpty()) {
             fbUserIsAnonymous?.let { result ->
                 if (result) {
-                    return showDialog(DialogStatus.ROOM_ENTER)
+                    return showDialog(Dialog.ROOM_ENTER)
                 } else {
-                    return showDialog(DialogStatus.ROOM_ACTION)
+                    return showDialog(Dialog.ROOM_ACTION)
                 }
             }
         } else {
             if (focusUserName.isNotEmpty()) {
-                return showDialog(DialogStatus.CHARACTER_DELETE)
+                return showDialog(Dialog.CHARACTER_DELETE)
             } else if (focusRaidId.isNotEmpty()) {
-                return showDialog(DialogStatus.RAID_DELETE)
+                return showDialog(Dialog.RAID_DELETE)
             } else {
                 when (tabState) {
                     RoomState.Raid ->
-                        return showDialog(DialogStatus.RAID_ADD)
+                        return showDialog(Sheet.RAID_ADD)
 
                     RoomState.User ->
-                        return showDialog(DialogStatus.USER_ADD)
+                        return showDialog(Sheet.USER_ADD)
 
                     RoomState.Setting -> {
 
@@ -244,7 +246,7 @@ data class TotalRoomInfo(
     fun clearFilter() = updateFilter(Filter())
 
     fun updateSchemeData(schemeData: SchemeData) =
-        this.copy(schemeData = schemeData, dialogState = DialogStatus.ROOM_ENTER_BY_SCHEME)
+        this.copy(schemeData = schemeData, dialogState = Dialog.ROOM_ENTER_BY_SCHEME)
 
 }
 
