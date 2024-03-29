@@ -27,22 +27,26 @@ import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.model.Sheet
 
 @Composable
 fun ShareSheet(
-    onDismissRequest: () -> Unit,
-    roomInfo: RoomInfo,
+    dialogAction: DialogAction,
 ) {
+    val roomInfo = dialogAction.getRoomInfo()
     val context = LocalContext.current.applicationContext
     val uniqueId: String = roomInfo.uniqueId
 
     BaseSheet(
-        title = "공유하기",
+        title = Sheet.SHARE_SHEET.title,
         useCloseIcon = true,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        }
     ) {
         Column(
             modifier = Modifier

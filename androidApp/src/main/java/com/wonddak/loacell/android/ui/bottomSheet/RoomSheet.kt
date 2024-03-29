@@ -14,42 +14,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.model.Sheet
 
 
 @Composable
 fun AddRoomSheet(
-    onDismissRequest: () -> Unit,
-    addAction: (title: String, description: String, password: String) -> Unit
+    dialogAction: DialogAction
 ) {
     RoomSheetBase(
-        sheetTitle = "방 만들기",
-        onDismissRequest = onDismissRequest,
-        addAction = addAction
+        sheetTitle = Sheet.ROOM_ADD.title,
+        onDismissRequest = { dialogAction.hideDialog() },
+        addAction = {  title, description, password ->
+            dialogAction.dialogRoomAdd(title,description,password)
+        }
     )
 }
 
 @Composable
 fun EditRoomSheet(
-    getTitle : String,
-    getDescription : String,
-    getPassword : String,
-    onDismissRequest: () -> Unit,
-    editAction: (title: String, description: String, password: String) -> Unit
+    dialogAction: DialogAction
 ) {
+    val roomInfo = dialogAction.getRoomInfo()
     RoomSheetBase(
         useCloseButton = true,
         buttonText = "수정",
-        sheetTitle = "수정하기",
-        getTitle = getTitle,
-        getDescription = getDescription,
-        getPassword = getPassword,
-        onDismissRequest = onDismissRequest,
-        addAction = editAction
+        sheetTitle = Sheet.ROOM_EDIT.title,
+        getTitle = roomInfo.title,
+        getDescription = roomInfo.description,
+        getPassword = roomInfo.enterPassword,
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        },
+        addAction = { title, description, password ->
+            dialogAction.dialogRoomEdit(title, description, password)
+        }
     )
 }
-
 
 @Composable
 private fun RoomSheetBase(

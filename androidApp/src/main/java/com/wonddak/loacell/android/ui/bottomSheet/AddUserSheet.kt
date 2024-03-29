@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.sharedapi.lostark.model.CharacterInfo
 
@@ -85,7 +86,7 @@ fun AddUserSheet(
         searchResult.isEmpty() && user.isNotEmpty() && searchCharacterName.isNotEmpty()
     val buttonEnabledInit = searchResult.isNotEmpty()
     BaseSheet(
-        title = "유저 정보 추가",
+        title = Sheet.USER_ADD.title,
         onDismissRequest = {dialogAction.hideDialog()},
         buttonClickAction = {
             if (searchResult.isEmpty()) {

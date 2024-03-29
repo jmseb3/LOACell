@@ -41,101 +41,81 @@ import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.wonddak.database.model.Day
 import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.ui.common.CheckBoxRow
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.FBRaidInfo
 import java.lang.Integer.min
-import java.lang.Math.max
 import java.time.LocalTime
 
 @Composable
 fun AddRaidSheet(
-    onDismissRequest: () -> Unit,
-    addAction: (fbRaidInfo: FBRaidInfo) -> Unit
+    dialogAction: DialogAction
 ) {
-    var fbRaidInfo: FBRaidInfo by remember {
-        mutableStateOf(
-            FBRaidInfo(
-                title = "",
-                type = RaidType.VALTAN,
-                difficulty = Difficulty.Normal,
-                startGateNumber = 1,
-                endGateNumber = 1,
-                day = Day.NONE,
-                hour = 0,
-                minute = 0,
-            )
-        )
-    }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo,
-        title = "레이드 정보 추가",
+        raidInfo = null,
+        title = Sheet.RAID_ADD.title,
         buttonText = "추가",
-        update = {
-            fbRaidInfo = it
-        },
-        onDismissRequest = onDismissRequest
-    ) {
-        addAction(fbRaidInfo)
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        }
+    ) { fbRaidInfo ->
+        dialogAction.dialogRaidAdd(fbRaidInfo)
     }
 }
 
 @Composable
 fun EditRaidSheet(
-    raidInfo: RaidInfo, onDismissRequest: () -> Unit, editAction: (fbRaidInfo: FBRaidInfo) -> Unit
+    dialogAction: DialogAction
 ) {
-    var fbRaidInfo: FBRaidInfo by remember {
-        mutableStateOf(
-            FBRaidInfo(
-                title = raidInfo.title,
-                type = raidInfo.type,
-                difficulty = raidInfo.Difficulty,
-                startGateNumber = raidInfo.startGateNumber.toInt(),
-                endGateNumber = raidInfo.endGateNumber.toInt(),
-                isFinish = raidInfo.isFinish,
-                party1 = raidInfo.party1characterList,
-                party2 = raidInfo.party2characterList,
-                day = raidInfo.day,
-                hour = raidInfo.hour,
-                minute = raidInfo.minute,
-            )
-        )
-    }
     RaidSheetBase(
-        fbRaidInfo = fbRaidInfo,
-        title = "레이드 정보 수정",
+        raidInfo = dialogAction.getRaidInfo(),
+        title = Sheet.RAID_EDIT.title,
         buttonText = "수정",
-        update = {
-            fbRaidInfo = it
-        },
-        onDismissRequest = onDismissRequest
-    ) {
-        editAction(fbRaidInfo)
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        }
+    ) { fbRaidInfo ->
+        dialogAction.dialogRaidEdit(fbRaidInfo)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RaidSheetBase(
-    fbRaidInfo: FBRaidInfo,
+    raidInfo: RaidInfo?,
     title: String,
     buttonText: String,
-    update: (fbRaidInfo: FBRaidInfo) -> Unit,
     onDismissRequest: () -> Unit,
-    buttonAction: () -> Unit
+    buttonAction: (FBRaidInfo) -> Unit
 ) {
+    var fbRaidInfo: FBRaidInfo by remember {
+        mutableStateOf(
+            if (raidInfo == null) {
+                FBRaidInfo()
+            } else {
+                FBRaidInfo(raidInfo)
+            }
+        )
+    }
     var expanded by remember { mutableStateOf(false) }
-
     val textFieldModifier = Modifier.fillMaxWidth()
     var showDayUse by remember { mutableStateOf(fbRaidInfo.day != Day.NONE) }
 
+
+    val update = { info: FBRaidInfo ->
+        fbRaidInfo = info
+    }
     BaseSheet(
         title = title,
         buttonText = buttonText,
         onDismissRequest = onDismissRequest,
         enabledButton = fbRaidInfo.title.isNotEmpty() && (if (showDayUse) fbRaidInfo.day != Day.NONE else true),
-        buttonClickAction = buttonAction,
+        buttonClickAction = {
+            buttonAction(fbRaidInfo)
+        },
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -171,7 +151,7 @@ fun RaidSheetBase(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) })
 
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    RaidType.values().forEach { item ->
+                    RaidType.entries.forEach { item ->
                         DropdownMenuItem(text = {
                             Text(
                                 text = item.toKorString(),
@@ -233,7 +213,7 @@ fun RaidSheetBase(
                                 onClick = { value ->
                                     if (value) {
                                         abStart = min(abStart, idx)
-                                        abEnd = max(abEnd, idx)
+                                        abEnd = abEnd.coerceAtLeast(idx)
                                     } else {
                                         if (abStart == idx) {
                                             abStart = idx + 1
@@ -301,10 +281,10 @@ fun RaidSheetBase(
                         startTime = LocalTime.of(fbRaidInfo.hour.toInt(), fbRaidInfo.minute.toInt())
                     ) { time ->
                         update(
-                            fbRaidInfo.updateTime(time.hour.toLong(),time.minute.toLong())
+                            fbRaidInfo.updateTime(time.hour.toLong(), time.minute.toLong())
                         )
                     }
-                    val days = Day.values().toList()
+                    val days = Day.entries
                     val weight = Modifier.weight(1f)
 
                     Column(

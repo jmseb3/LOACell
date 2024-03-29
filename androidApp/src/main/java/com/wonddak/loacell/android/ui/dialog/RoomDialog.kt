@@ -31,21 +31,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.ext.SchemeData
+import com.wonddak.loacell.model.Dialog
+import com.wonddak.loacell.model.ModalConst
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
 
 @Composable
 fun RoomActionDialog(
-    dismiss: () -> Unit,
-    confirm: (status: Int) -> Unit,
+    dialogAction: DialogAction
 ) {
     BaseDialog(
-        titleText = "작업을 선택해 주세요",
-        dismiss = dismiss,
+        titleText = Dialog.ROOM_ACTION.title,
+        dismiss = { dialogAction.hideDialog() },
         modifier = Modifier.wrapContentHeight()
     ) {
         Row(
@@ -59,14 +61,14 @@ fun RoomActionDialog(
                 SharedRes.images.room_enter.drawableResId,
                 "입장하기"
             ) {
-                confirm(1)
+                dialogAction.dialogRoomAction(ModalConst.ROOM_ACTION_ENTER)
             }
             EnterButton(
                 sameModifier,
                 SharedRes.images.room_make.drawableResId,
                 "방 만들기",
             ) {
-                confirm(2)
+                dialogAction.dialogRoomAction(ModalConst.ROOM_ACTION_ADD)
             }
         }
     }
@@ -121,13 +123,13 @@ fun RoomEnterErrorDialog(
 
 @Composable
 fun RoomEnterDialog(
-    nowEnterRoomList: List<String>,
-    prevData : SchemeData? = null,
-    dismiss: () -> Unit,
-    success: (roomId: String, roomInfo: FBRoomInfo) -> Unit,
+    dialogAction: DialogAction,
+    prevData: SchemeData? = null
 ) {
+    val nowEnterRoomList = dialogAction.getRoomListToUniqueId()
+
     var roomId by remember {
-        mutableStateOf(prevData?.roomId ?:"")
+        mutableStateOf(prevData?.roomId ?: "")
     }
     var errorMsg by remember {
         mutableStateOf("")
@@ -135,10 +137,10 @@ fun RoomEnterDialog(
     var nowRoomInfo: FBRoomInfo? by remember {
         mutableStateOf(prevData?.fbRoomInfo)
     }
-    var password :String by remember {
-        mutableStateOf(prevData?.fbRoomInfo?.enterPassword ?:"")
+    var password: String by remember {
+        mutableStateOf(prevData?.fbRoomInfo?.enterPassword ?: "")
     }
-    var enterPassword :String by remember {
+    var enterPassword: String by remember {
         mutableStateOf("")
     }
     LaunchedEffect(errorMsg) {
@@ -149,6 +151,17 @@ fun RoomEnterDialog(
     }
     val regex = Regex("[a-zA-Z0-9]+")
 
+    val dismiss = {
+        dialogAction.hideDialog()
+    }
+
+    val success = { roomInfo: FBRoomInfo ->
+        if (prevData == null) {
+            dialogAction.dialogRoomEnter(roomId, roomInfo)
+        } else {
+            dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
+        }
+    }
     BaseDialog(
         modifier = Modifier
             .wrapContentHeight()
@@ -171,7 +184,7 @@ fun RoomEnterDialog(
                             successAction = { roomInfo ->
                                 if (roomInfo.enterPassword.isEmpty()) {
                                     dismiss()
-                                    success(roomId, roomInfo)
+                                    success(roomInfo)
                                 } else {
                                     nowRoomInfo = roomInfo
                                     password = roomInfo.enterPassword
@@ -190,7 +203,7 @@ fun RoomEnterDialog(
                         errorMsg = "이미 입장한 방입니다."
                     } else {
                         dismiss()
-                        success(roomId, nowRoomInfo!!)
+                        success(nowRoomInfo!!)
                     }
                 } else {
                     errorMsg = "비밀번호가 맞지 않습니다."
@@ -259,14 +272,17 @@ fun RoomEnterDialog(
 
 @Composable
 fun RoomExitDialog(
-    dismiss: () -> Unit,
-    success: () -> Unit,
+    dialogAction: DialogAction,
 ) {
     BaseDialog(
-        dismiss = dismiss,
-        titleText = "방 나가기",
+        dismiss = {
+            dialogAction.hideDialog()
+        },
+        titleText = Dialog.ROOM_EXIT.title,
         confirmButtonText = "나가기",
-        confirmButtonAction = success,
+        confirmButtonAction = {
+            dialogAction.dialogRoomExit()
+        },
         dismissButtonText = "취소"
     ) {
         Text(text = "방에서 나가시겠습니까?")

@@ -4,7 +4,7 @@ interface Modal {
 }
 
 enum class Dialog(override val title: String) : Modal {
-    ROOM_ACTION(""),
+    ROOM_ACTION("작업을 선택해 주세요"),
     ROOM_ENTER(""),
     ROOM_ENTER_BY_SCHEME(""),
     ROOM_ENTER_ERROR("에러"),

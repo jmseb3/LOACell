@@ -60,3 +60,4 @@ interface DialogAction {
     //filter
     fun dialogFilterUpdate(filter: Filter)
 }
+

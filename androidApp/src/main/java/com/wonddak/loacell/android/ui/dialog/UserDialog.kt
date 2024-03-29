@@ -1,31 +1,41 @@
 package com.wonddak.loacell.android.ui.dialog
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.Character
-import com.wonddak.loacell.UserInfo
+import com.wonddak.loacell.DialogAction
+import com.wonddak.loacell.model.Dialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCharacterDialog(
-    userInfo: UserInfo,
-    characterList: List<Character>,
-    dismiss: () -> Unit,
-    confirm: (name: String) -> Unit
+    dialogAction: DialogAction
 ) {
+    val userInfo = dialogAction.getUserInfo()
     val representativeCharacter = userInfo.representativeCharacter
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(representativeCharacter) }
 
     BaseDialog(
-        dismiss = dismiss,
-        titleText = "대표 캐릭터 변경",
+        dismiss = {
+            dialogAction.hideDialog()
+        },
+        titleText = Dialog.CHARACTER_EDIT.title,
         confirmButtonAction = {
-            confirm(selectedText)
+            dialogAction.dialogCharacterEdit(selectedText)
         },
         confirmButtonText = "변경",
         confirmButtonEnabled = (representativeCharacter != selectedText),
@@ -54,7 +64,7 @@ fun EditCharacterDialog(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                characterList.forEach { item ->
+                dialogAction.getCharacterList().forEach { item ->
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -75,17 +85,15 @@ fun EditCharacterDialog(
 
 @Composable
 fun DeleteCharacterDialog(
-    name: String,
-    dismiss: () -> Unit,
-    confirm: () -> Unit
+    dialogAction: DialogAction,
 ) {
     DeleteDialog(
-        title = "유저 정보 삭제",
-        confirm = confirm,
-        dismiss = dismiss
+        title = Dialog.CHARACTER_DELETE.title,
+        confirm = { dialogAction.dialogCharacterDelete() },
+        dismiss = { dialogAction.hideDialog() }
     ) {
         Column() {
-            Text(text = "${name}님 의 정보를 삭제 하시겠습니까?")
+            Text(text = "${dialogAction.getUserInfo().name}님 의 정보를 삭제 하시겠습니까?")
         }
     }
 }

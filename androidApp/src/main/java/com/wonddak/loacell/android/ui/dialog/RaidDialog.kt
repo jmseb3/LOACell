@@ -17,17 +17,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.model.Dialog
 
 @Composable
 fun DeleteRaidDialog(
-    dismiss: () -> Unit,
-    confirm: () -> Unit
+    dialogAction: DialogAction
 ) {
     DeleteDialog(
-        title = "레이드 정보 삭제",
-        confirm = confirm,
-        dismiss = dismiss
+        title = Dialog.RAID_DELETE.title,
+        confirm = {
+            dialogAction.dialogRaidDelete()
+        },
+        dismiss = {
+            dialogAction.hideDialog()
+        }
     ) {
         Column() {
             Text(text = "레이드 정보를 삭제 하시겠습니까?")
@@ -37,13 +42,16 @@ fun DeleteRaidDialog(
 
 @Composable
 fun DeleteRaidUserDialog(
-    dismiss: () -> Unit,
-    confirm: () -> Unit
+    dialogAction: DialogAction
 ) {
     DeleteDialog(
-        title = "레이드 유저 정보 삭제",
-        confirm = confirm,
-        dismiss = dismiss
+        title = Dialog.RAID_USER_DELETE.title,
+        confirm = {
+            dialogAction.dialogUserDelete()
+        },
+        dismiss = {
+            dialogAction.hideDialog()
+        }
     ) {
         Column() {
             Text(text = "선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")

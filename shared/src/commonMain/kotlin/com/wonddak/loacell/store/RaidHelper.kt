@@ -7,6 +7,7 @@ import com.wonddak.database.model.RaidType
 import com.wonddak.database.model.convertDifficulty
 import com.wonddak.database.model.convertToDay
 import com.wonddak.database.model.convertType
+import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.ext.TotalRoomInfo
 import kotlin.jvm.JvmField
 
@@ -26,6 +27,21 @@ data class FBRaidInfo(
     val hour: Long = 0L,
     val minute: Long = 0L
 ) {
+    constructor(raidInfo: RaidInfo) :this(
+        raidInfo.title,
+        raidInfo.type,
+        raidInfo.Difficulty,
+        raidInfo.startGateNumber.toInt(),
+        raidInfo.endGateNumber.toInt(),
+        raidInfo.isFinish,
+        raidInfo.party1characterList,
+        raidInfo.party2characterList,
+        raidInfo.party3characterList,
+        raidInfo.party4characterList,
+        raidInfo.day,
+        raidInfo.hour,
+        raidInfo.minute,
+    )
     fun toMap() = mapOf(
         "title" to title,
         "type" to type.name,

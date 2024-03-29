@@ -26,15 +26,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 
 @Composable
 fun ProfileNameDialog(
-    nowName: String = "",
-    dismiss: () -> Unit,
-    success: (name: String) -> Unit,
+    dialogAction: DialogAction,
 ) {
+    val nowName = dialogAction.getDisplayName()
     var name by remember {
         mutableStateOf(TextFieldValue(nowName, TextRange(0, nowName.length)))
     }
@@ -46,13 +47,15 @@ fun ProfileNameDialog(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth(0.8f),
-        dismiss = dismiss,
-        titleText = "이름 변경",
+        dismiss = {
+                  dialogAction.hideDialog()
+        },
+        titleText = Dialog.SETTING_EDIT_NAME.title,
         confirmButtonText = "변경",
         confirmButtonEnabled = name.text.isNotEmpty(),
         confirmButtonAction = {
             if (name.text.isNotEmpty()) {
-                success(name.text)
+                dialogAction.dialogEditName(name.text)
             }
         },
         dismissButtonText = "취소",

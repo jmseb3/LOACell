@@ -30,35 +30,22 @@ fun DialogHost(
         dialogStatus.let { modal ->
             when (modal) {
                 Dialog.ROOM_ACTION -> {
-                    RoomActionDialog(
-                        dismiss = dismiss
-                    ) { status ->
-                        dialogAction.dialogRoomAction(status)
-                    }
+                    RoomActionDialog(dialogAction = dialogAction)
                 }
                 Sheet.ROOM_ADD -> {
-                    AddRoomSheet(
-                        onDismissRequest = dismiss
-                    ) { title, description, password ->
-                        dialogAction.dialogRoomAdd(title, description, password)
-                    }
+                    AddRoomSheet(dialogAction = dialogAction)
                 }
                 Dialog.ROOM_ENTER -> {
                     RoomEnterDialog(
-                        nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
-                        dismiss = dismiss
-                    ) { roomId, roomInfo ->
-                        dialogAction.dialogRoomEnter(roomId, roomInfo)
-                    }
+                        dialogAction = dialogAction
+                    )
                 }
                 Dialog.ROOM_ENTER_BY_SCHEME -> {
                     RoomEnterDialog(
-                        nowEnterRoomList = dialogAction.getRoomListToUniqueId(),
+                        dialogAction = dialogAction,
                         prevData = dialogAction.getSchemeData(),
-                        dismiss = dismiss
-                    ) { roomId, roomInfo ->
-                        dialogAction.dialogRoomEnterByScheme(roomId, roomInfo)
-                    }
+                    )
+
                 }
                 Dialog.ROOM_ENTER_ERROR -> {
                     RoomEnterErrorDialog(
@@ -68,105 +55,53 @@ fun DialogHost(
                     }
                 }
                 Dialog.ROOM_EXIT -> {
-                    RoomExitDialog(
-                        dismiss = dismiss,
-                    ) {
-                        dialogAction.dialogRoomExit()
-                    }
+                    RoomExitDialog(dialogAction)
                 }
                 Sheet.ROOM_EDIT -> {
-                    val roomInfo = dialogAction.getRoomInfo()
-                    EditRoomSheet(
-                        getTitle = roomInfo.title,
-                        getDescription = roomInfo.description,
-                        getPassword = roomInfo.enterPassword,
-                        onDismissRequest = dismiss,
-                    ) { title, description, password ->
-                        dialogAction.dialogRoomEdit(title, description, password)
-                    }
+                    EditRoomSheet(dialogAction = dialogAction)
                 }
                 Sheet.USER_ADD -> {
                     AddUserSheet(dialogAction =  dialogAction)
                 }
                 Sheet.RAID_ADD -> {
-                    AddRaidSheet(
-                        onDismissRequest = dismiss
-                    ) { fbRaidInfo ->
-                        dialogAction.dialogRaidAdd(fbRaidInfo)
-                    }
+                    AddRaidSheet(dialogAction = dialogAction)
                 }
                 Sheet.RAID_EDIT -> {
-                    EditRaidSheet(
-                        raidInfo = dialogAction.getRaidInfo(),
-                        onDismissRequest = dismiss
-                    ) { fbRaidInfo ->
-                        dialogAction.dialogRaidEdit(fbRaidInfo)
-                    }
+                    EditRaidSheet(dialogAction = dialogAction)
                 }
                 Sheet.RAID_FILTER -> {
-                    FilterSheet(
-                        dialogAction.getTotalRoomInfo(),
-                        dismiss = dismiss
-                    ) { filter ->
-                        dialogAction.dialogFilterUpdate(filter)
-                    }
+                    FilterSheet(dialogAction)
                 }
                 Dialog.RAID_DELETE -> {
-                    DeleteRaidDialog(
-                        dismiss = dismiss
-                    ) {
-                        dialogAction.dialogRaidDelete()
-                    }
+                    DeleteRaidDialog(dialogAction = dialogAction)
                 }
                 Sheet.RAID_USER_ADD -> {
                     val userAndCharacterMap = dialogAction.getUserAndCharacterMap()
                     if (userAndCharacterMap.isNotEmpty()) {
                         AddRaidUserSheet(
                             userAndCharacterMap = userAndCharacterMap,
-                            onDismissRequest = dismiss
-                        ) { character -> dialogAction.dialogUserAdd(character) }
+                            dialogAction = dialogAction
+                        )
                     }
                 }
                 Dialog.RAID_USER_DELETE -> {
-                    DeleteRaidUserDialog(dismiss = dismiss) {
-                        dialogAction.dialogUserDelete()
-                    }
+                    DeleteRaidUserDialog(dialogAction = dialogAction)
                 }
                 Dialog.CHARACTER_EDIT -> {
-                    EditCharacterDialog(
-                        userInfo = dialogAction.getUserInfo(),
-                        characterList = dialogAction.getCharacterList(),
-                        dismiss = dismiss
-                    ) { name ->
-                        dialogAction.dialogCharacterEdit(name)
-                    }
+                    EditCharacterDialog(dialogAction = dialogAction)
                 }
                 Dialog.CHARACTER_DELETE -> {
-                    DeleteCharacterDialog(
-                        name = dialogAction.getUserInfo().name,
-                        dismiss = dismiss
-                    ) {
-                        dialogAction.dialogCharacterDelete()
-                    }
-
+                    DeleteCharacterDialog(dialogAction = dialogAction)
                 }
                 Dialog.SETTING_EDIT_NAME -> {
-                    ProfileNameDialog(
-                        dialogAction.getDisplayName(),
-                        dismiss = dismiss
-                    ) {
-                        dialogAction.dialogEditName(it)
-                    }
+                    ProfileNameDialog(dialogAction = dialogAction)
                 }
                 Sheet.SHARE_SHEET -> {
-                    ShareSheet(
-                        roomInfo = dialogAction.getRoomInfo(),
-                        onDismissRequest = dismiss
-                    )
+                    ShareSheet(dialogAction = dialogAction)
                 }
                 Sheet.TEST_SHEET -> {
                     BaseSheet(
-                        title = "여백 테스트",
+                        title = modal.title,
                         buttonText = "확인",
                         onDismissRequest = dismiss,
                         buttonClickAction = dismiss

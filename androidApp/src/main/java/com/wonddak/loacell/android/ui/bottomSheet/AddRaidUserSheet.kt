@@ -10,11 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,24 +28,25 @@ import androidx.compose.ui.unit.dp
 import com.andyliu.compose_wheel_picker.VerticalWheelPicker
 import com.wonddak.database.ext.getLevel
 import com.wonddak.loacell.Character
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.model.Sheet
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddRaidUserSheet(
-    userAndCharacterMap: Map<String,List<Character>>,
-    onDismissRequest: () -> Unit,
-    successAction: (character: Character) -> Unit
+    userAndCharacterMap: Map<String, List<Character>>,
+    dialogAction: DialogAction
 ) {
 
     var selectedUser: String? by remember { mutableStateOf(null) }
     var selectedCharacter: Character? by remember { mutableStateOf(null) }
 
-    var userList :List<String> by remember { mutableStateOf(emptyList()) }
-    var characterList :List<Character> by remember { mutableStateOf(emptyList()) }
+    var userList: List<String> by remember { mutableStateOf(emptyList()) }
+    var characterList: List<Character> by remember { mutableStateOf(emptyList()) }
 
     val stateCharacter = rememberLazyListState(0)
-    var currentIndexCharacter by remember { mutableStateOf(0) }
+    var currentIndexCharacter by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(true) {
         userList = userAndCharacterMap.keys.toList()
@@ -61,11 +63,13 @@ fun AddRaidUserSheet(
     }
 
     BaseSheet(
-        title = "캐릭터 정보 추가",
-        onDismissRequest = onDismissRequest,
+        title = Sheet.RAID_USER_ADD.title,
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        },
         buttonClickAction = {
             if (selectedCharacter != null) {
-                successAction(selectedCharacter!!)
+                dialogAction.dialogUserAdd(selectedCharacter!!)
             }
         }
     ) {
@@ -149,8 +153,8 @@ fun AddRaidUserSheet(
                 }
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Divider()
-            selectedCharacter?.let {character ->
+            HorizontalDivider()
+            selectedCharacter?.let { character ->
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),

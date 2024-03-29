@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -40,26 +39,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Sheet
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterSheet(
-    totalRoomInfo: TotalRoomInfo,
-    dismiss : () -> Unit,
-    updateFilter : (Filter) -> Unit
+    dialogAction: DialogAction
 ) {
+    val totalRoomInfo = dialogAction.getTotalRoomInfo()
     val filter = totalRoomInfo.filter
     val userInfoList = totalRoomInfo.userInfoList
     val raidTypes = RaidType.entries.toTypedArray()
 
+    val updateFilter = { getFilter :Filter ->
+        dialogAction.dialogFilterUpdate(getFilter)
+    }
     BaseSheet(
-        title = "필터 설정",
+        title = Sheet.RAID_FILTER.title,
         useCloseIcon = true,
-        onDismissRequest = dismiss
+        onDismissRequest = {
+            dialogAction.hideDialog()
+        }
     ) {
         Column {
             FilterSection(section = "레이드 종류") {
@@ -91,7 +94,7 @@ fun FilterSheet(
                     Filter.FINISH.entries.forEach { finish ->
                         val selected = filter.isSelected(finish)
 
-                        val updateFilter = {
+                        val updateFinish = {
                             updateFilter(filter.updateFinish(finish))
                         }
                         Row(
@@ -99,13 +102,13 @@ fun FilterSheet(
                                 .weight(1f)
                                 .selectable(
                                     selected = selected,
-                                    onClick = updateFilter
+                                    onClick = updateFinish
                                 ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
                                 selected = selected,
-                                onClick = updateFilter,
+                                onClick = updateFinish,
                                 colors = RadioButtonDefaults.colors()
                             )
                             Text(
