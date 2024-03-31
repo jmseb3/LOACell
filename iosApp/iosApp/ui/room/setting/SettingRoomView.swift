@@ -105,7 +105,7 @@ struct SettingRoomInfo: View {
                 title: "방 정보",
                 iconSrc: \.edit,
                 iconAction: {
-                    viewModel.showDialog(dialogStatus: DialogStatus.roomEdit)
+                    viewModel.showDialog(modal: Sheet.roomEdit)
                 }
             ) {
                 VStack(alignment:.leading) {

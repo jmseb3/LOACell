@@ -46,6 +46,9 @@ fun RaidInfo.getImg(): ImageResource? {
             SharedRes.images.raid_echidna
         }
 
+        RaidType.BETHEMOTH -> {
+            SharedRes.images.raid_behemoth
+        }
         else -> {
             null
         }

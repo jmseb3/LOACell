@@ -46,7 +46,7 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
     var tabState : RoomState {
         totalRoomInfo.tabState
     }
-    var dialogStatus : DialogStatus {
+    var dialogStatus : Modal? {
         totalRoomInfo.dialogState
     }
     var characterList : [Character] {
@@ -161,8 +161,8 @@ class LoaCellViewModel: ObservableObject, ViewModelImpl {
         self.sc.resetSnackBar()
     }
     
-    func showDialog(dialogStatus: DialogStatus) {
-        common.dialogAction.showDialog(dialogStatus: dialogStatus)
+    func showDialog(modal: Modal) {
+        common.dialogAction.showDialog(modal: modal)
     }
     func hideDialog() {
         common.dialogAction.hideDialog()
