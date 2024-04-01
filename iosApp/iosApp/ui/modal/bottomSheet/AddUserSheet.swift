@@ -40,7 +40,7 @@ struct AddUserSheet: View {
         
     var body: some View {
         BaseSheet2(
-            title : "유저 정보 추가",
+            title : Sheet.userAdd.title,
             text: searchResult.isEmpty ? "검색" : "추가",
             action: {
                 if (searchResult.isEmpty) {

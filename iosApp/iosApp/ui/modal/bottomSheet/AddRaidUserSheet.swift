@@ -10,8 +10,19 @@ import SwiftUI
 import shared
 
 struct AddRaidUserSheet: View {
-    let userAndCharacterMap : [String : [shared.Character]]
-    let successAction :(shared.Character) -> Void
+    private let userAndCharacterMap : [String : [shared.Character]]
+    private let successAction :(shared.Character) -> Void
+    private let dismiss : () -> Void
+    
+    init(dialogAction : DialogAction) {
+        self.userAndCharacterMap = dialogAction.getUserAndCharacterMap()
+        self.successAction = {character in
+            dialogAction.dialogUserAdd(character : character)
+        }
+        self.dismiss = {
+            dialogAction.hideDialog()
+        }
+    }
     
     private let pickerHeight : CGFloat = 40
     
@@ -43,7 +54,7 @@ struct AddRaidUserSheet: View {
         }
     }
     var body: some View {
-        BaseSheet(
+        BaseSheet2(
             title: "캐릭터 정보 추가",
             text: "추가",
             action: {
@@ -53,7 +64,8 @@ struct AddRaidUserSheet: View {
                 successAction(character)
             },
             enabled: selectedCharacter != nil,
-            errorMsg: .constant("")
+            errorMsg: .constant(""),
+            dismiss: dismiss
         ) {
             Form {
                 Section(header:Text("유저 및 캐릭터 선택")) {

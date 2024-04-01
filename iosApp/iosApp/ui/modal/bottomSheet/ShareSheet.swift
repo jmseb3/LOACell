@@ -18,7 +18,15 @@ import KakaoSDKCommon
 import SafariServices
 
 struct ShareSheet: View {
-    let roomInfo : RoomInfo
+    private let roomInfo : RoomInfo
+    private let dismiss : () -> Void
+    
+    init(dialogAction : DialogAction) {
+        self.roomInfo = dialogAction.getRoomInfo()
+        self.dismiss = {
+            dialogAction.hideDialog()
+        }
+    }
     @State private var alertCopy = false
     
     @State private var errMsg :String = ""
@@ -32,10 +40,11 @@ struct ShareSheet: View {
     
     private let imageSize : CGFloat = 40
     var body: some View {
-        BaseSheet(
-            title: "공유하기",
+        BaseSheet2(
+            title: Sheet.shareSheet.title,
             text: nil,
-            errorMsg: $errMsg
+            errorMsg: $errMsg,
+            dismiss: dismiss
         ) {
             VStack {
                 HStack{

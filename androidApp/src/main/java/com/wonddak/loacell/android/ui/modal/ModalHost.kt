@@ -1,25 +1,34 @@
-package com.wonddak.loacell.android.ui.dialog
+package com.wonddak.loacell.android.ui.modal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.wonddak.loacell.DialogAction
-import com.wonddak.loacell.android.ui.bottomSheet.AddRaidSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddRaidUserSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddRoomSheet
-import com.wonddak.loacell.android.ui.bottomSheet.AddUserSheet
-import com.wonddak.loacell.android.ui.bottomSheet.BaseSheet
-import com.wonddak.loacell.android.ui.bottomSheet.EditRaidSheet
-import com.wonddak.loacell.android.ui.bottomSheet.EditRoomSheet
-import com.wonddak.loacell.android.ui.bottomSheet.FilterSheet
-import com.wonddak.loacell.android.ui.bottomSheet.ShareSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.AddRaidSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.AddRaidUserSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.AddRoomSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.AddUserSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.BaseSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.EditRaidSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.EditRoomSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.FilterSheet
+import com.wonddak.loacell.android.ui.modal.bottomSheet.ShareSheet
+import com.wonddak.loacell.android.ui.modal.dialog.DeleteCharacterDialog
+import com.wonddak.loacell.android.ui.modal.dialog.DeleteRaidDialog
+import com.wonddak.loacell.android.ui.modal.dialog.DeleteRaidUserDialog
+import com.wonddak.loacell.android.ui.modal.dialog.EditCharacterDialog
+import com.wonddak.loacell.android.ui.modal.dialog.ProfileNameDialog
+import com.wonddak.loacell.android.ui.modal.dialog.RoomActionDialog
+import com.wonddak.loacell.android.ui.modal.dialog.RoomEnterDialog
+import com.wonddak.loacell.android.ui.modal.dialog.RoomEnterErrorDialog
+import com.wonddak.loacell.android.ui.modal.dialog.RoomExitDialog
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.Sheet
 
 
 @Composable
-fun DialogHost(
+fun ModalHost(
     dialogStatus: Modal?,
     dialogAction: DialogAction,
     content: @Composable () -> Unit

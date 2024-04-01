@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.bottomSheet
+package com.wonddak.loacell.android.ui.modal.bottomSheet
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

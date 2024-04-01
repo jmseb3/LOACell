@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.bottomSheet
+package com.wonddak.loacell.android.ui.modal.bottomSheet
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility

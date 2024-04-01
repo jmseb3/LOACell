@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.dialog
+package com.wonddak.loacell.android.ui.modal.dialog
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog

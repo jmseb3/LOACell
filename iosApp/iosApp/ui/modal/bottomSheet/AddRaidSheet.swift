@@ -11,26 +11,36 @@ import shared
 import Combine
 
 struct AddRaidSheet: View {
-    let addAction : (FBRaidInfo) -> Void
+    let dialogAction : DialogAction
+
     var body: some View {
         RaidSheetBase(
             raidInfo : nil,
-            title: "레이드 정보 추가",
+            title: Sheet.raidAdd.title,
             buttonText: "추가",
-            buttonAction : addAction
+            buttonAction : { fbRaidInfo in
+                dialogAction.dialogRaidAdd(fbRaidInfo: fbRaidInfo)
+            },
+            dismiss: {
+                dialogAction.hideDialog()
+            }
         )
     }
 }
 
 struct EditRaidSheet: View {
-    let raidInfo :RaidInfo
-    let editAction : (FBRaidInfo) -> Void
+    let dialogAction : DialogAction
     var body: some View {
         RaidSheetBase(
-            raidInfo : raidInfo,
-            title: "레이드 정보 수정",
+            raidInfo : dialogAction.getRaidInfo(),
+            title: Sheet.raidEdit.title,
             buttonText: "수정",
-            buttonAction : editAction
+            buttonAction : { fbRaidInfo in
+                dialogAction.dialogRaidEdit(fbRaidInfo : fbRaidInfo)
+            },
+            dismiss: {
+                dialogAction.hideDialog()
+            }
         )
     }
 }
@@ -83,16 +93,19 @@ private struct RaidSheetBase: View {
     }
     let abGate :[Int32] = [1,2,3,4]
     @State private var multiSelection = Set<UUID>()
+    
+    var dismiss : () -> Void
 
     var body: some View {
-        BaseSheet(
+        BaseSheet2(
             title: title,
             text: buttonText,
             action: {
                 buttonAction(fbRaidInfo)
             },
             enabled: !fbRaidInfo.title.isEmpty && (showDayUse ? fbRaidInfo.day != Day.none : true),
-            errorMsg: .constant("")
+            errorMsg: .constant(""),
+            dismiss: dismiss
         ) {
             VStack {
                 Form {
@@ -209,6 +222,7 @@ private struct RaidSheetBase: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
                 .frame(height: 350)
             }
         }

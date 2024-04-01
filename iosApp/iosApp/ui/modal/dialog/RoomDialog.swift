@@ -10,24 +10,23 @@ import SwiftUI
 import shared
 
 struct RoomActionDialog: View {
-    let dismiss : () -> Void
-    let confirm : (_ status:Int32) -> Void
-    
+    let dialogAction :DialogAction
+
     var body: some View {
-        BaseDialogNoButton(title: "작업을 선택해 주세요.") {
+        BaseDialogNoButton(title: Dialog.roomEnter.title) {
             HStack{
                 RoomEnterButton(
                     resource: \.room_enter,
                     text: "입장하기"
                 ){
-                    confirm(1)
+                    dialogAction.dialogRoomAction(status: ModalConst().ROOM_ACTION_ENTER)
                 }
                 
                 RoomEnterButton(
                     resource: \.room_make,
                     text: "방만들기"
                 ){
-                    confirm(2)
+                    dialogAction.dialogRoomAction(status: ModalConst().ROOM_ACTION_ADD)
                 }
             }
         }
@@ -61,15 +60,15 @@ struct RoomEnterButton :View {
 }
 
 struct RoomEnterErrorDialog : View {
-    let confirm : () -> Void
+    let dialogAction :DialogAction
     
     var body: some View {
         BaseDialog(
-            title: "에러",
+            title: Dialog.roomEnterError.title,
             leftText: nil,
             rightText: "확인",
             rightAction: {
-                self.confirm()
+                dialogAction.dialogRoomEnterError()
             },
             rightEnabled: .constant(true)
         ) {
@@ -79,10 +78,10 @@ struct RoomEnterErrorDialog : View {
 }
 
 struct RoomEnterDialog :View {
-    let nowEnterRoomList : [String]
-    let schemeData :SchemeData?
-    let dismiss : () -> Void
-    let confirm :(_ roomId :String,_ roomInfo :FBRoomInfo) -> Void
+    private let nowEnterRoomList : [String]
+    private let schemeData :SchemeData?
+    private let dismiss : () -> Void
+    private let confirm :(_ roomId :String,_ roomInfo :FBRoomInfo) -> Void
     
     @State private var roomId :String = ""
     @State private var errorMsg :String = ""
@@ -91,26 +90,30 @@ struct RoomEnterDialog :View {
     @State private var enterPassword :String = ""
     
     init(
-        nowEnterRoomList: [String],
-        dismiss: @escaping () -> Void,
-        confirm: @escaping (_: String, _: FBRoomInfo) -> Void
+        dialogAction : DialogAction
     ) {
-        self.nowEnterRoomList = nowEnterRoomList
+        self.nowEnterRoomList = dialogAction.getRoomListToUniqueId()
         self.schemeData = nil
-        self.dismiss = dismiss
-        self.confirm = confirm
+        self.dismiss = {
+            dialogAction.hideDialog()
+        }
+        self.confirm = { roomId, roomInfo in
+            dialogAction.dialogRoomEnter(roomId: roomId, roomInfo: roomInfo)
+        }
     }
     
     init(
-        nowEnterRoomList: [String],
-        schemeData :SchemeData?,
-        dismiss: @escaping () -> Void,
-        confirm: @escaping (_: String, _: FBRoomInfo) -> Void
+        dialogAction : DialogAction,
+        schemeData :SchemeData?
     ) {
-        self.nowEnterRoomList = nowEnterRoomList
+        self.nowEnterRoomList = dialogAction.getRoomListToUniqueId()
         self.schemeData = schemeData
-        self.dismiss = dismiss
-        self.confirm = confirm
+        self.dismiss = {
+            dialogAction.hideDialog()
+        }
+        self.confirm = { roomId, roomInfo in
+            dialogAction.dialogRoomEnterByScheme(roomId: roomId, roomInfo: roomInfo)
+        }
     }
     
     var enabled : Bool {
@@ -187,19 +190,18 @@ struct RoomEnterDialog :View {
 }
 
 struct RoomExitDialog : View {
-    let dismiss :() -> Void
-    let confirm : () -> Void
-    
+    let dialogAction :DialogAction
+
     var body: some View {
         BaseDialog(
-            title: "방나가기",
+            title: Dialog.roomExit.title,
             leftText: "취소",
             rightText: "나가기",
             leftAction: {
-                dismiss()
+                dialogAction.hideDialog()
             },
             rightAction: {
-                confirm()
+                dialogAction.dialogRoomExit()
             },
             rightEnabled: .constant(true)
         ) {

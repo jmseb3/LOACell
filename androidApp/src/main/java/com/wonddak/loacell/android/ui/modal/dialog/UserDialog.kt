@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.dialog
+package com.wonddak.loacell.android.ui.modal.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height

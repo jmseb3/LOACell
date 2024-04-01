@@ -8,9 +8,11 @@
 
 import SwiftUI
 import shared
+
 struct FilterSheet: View {
-    let totalRoomInfo : TotalRoomInfo
-    let updateFilter : (_ filter : Filter) -> Void
+    private let totalRoomInfo : TotalRoomInfo
+    private let updateFilter : (_ filter : Filter) -> Void
+    private let dismiss : () -> Void
     
     
     private var filter : Filter {
@@ -27,13 +29,25 @@ struct FilterSheet: View {
         } set: { v, t in
             updateFilter(filter.updateEmptyCalendarRow(show: !filter.showEmptyCalendarRow))
         }
-
     }
+    
+    init(dialogAction : DialogAction) {
+        self.totalRoomInfo = dialogAction.getTotalRoomInfo()
+        self.updateFilter = {filter in
+            dialogAction.dialogFilterUpdate(filter: filter)
+        }
+        self.dismiss = {
+            dialogAction.hideDialog()
+        }
+    }
+    
     var body: some View {
-        BaseSheet(
-            title: "필터 설정",
+        BaseSheet2(
+            title: Sheet.raidFilter.title,
             text: nil,
-            errorMsg: .constant("")
+            errorMsg: .constant(""),
+            dismiss: dismiss
+    
         ) {
             VStack{
                 FilterSection(section: "레이드 종류") {

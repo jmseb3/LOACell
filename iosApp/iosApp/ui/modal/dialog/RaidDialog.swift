@@ -7,17 +7,20 @@
 //
 
 import SwiftUI
+import shared
 
 struct DeleteRaidDialog :  View {
-    
-    let dismiss: () -> Void
-    let confirm: () -> Void
+    let dialogAction :DialogAction
     
     var body: some View {
         DeleteDialog(
-            title: "레이드 정보 삭제",
-            leftAction: dismiss,
-            rightAction: confirm,
+            title: Dialog.raidDelete.title,
+            leftAction: {
+                dialogAction.hideDialog()
+            },
+            rightAction: {
+                dialogAction.dialogRaidDelete()
+            },
             rightEnabled: .constant(true)
         ) {
             Text("레이드 정보를 삭제 하시겠습니까?")
@@ -28,15 +31,17 @@ struct DeleteRaidDialog :  View {
 }
 
 struct DeleteRaidUserDialog :  View {
-    
-    let dismiss: () -> Void
-    let confirm: () -> Void
+    let dialogAction :DialogAction
     
     var body: some View {
         DeleteDialog(
-            title: "레이드 유저 정보 삭제",
-            leftAction: dismiss,
-            rightAction: confirm,
+            title: Dialog.raidUserDelete.title,
+            leftAction: {
+                dialogAction.hideDialog()
+            },
+            rightAction: {
+                dialogAction.dialogUserDelete()
+            },
             rightEnabled: .constant(true)
         ) {
             Text("선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")

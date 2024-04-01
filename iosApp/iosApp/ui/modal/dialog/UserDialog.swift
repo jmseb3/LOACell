@@ -12,10 +12,17 @@ import shared
 struct EditCharacterDialog: View {
     @State private var now :String = ""
 
-    let userInfo : shared.UserInfo
-    let characterList : [Character]
-    var dismiss : () -> Void
-    var success :(_ name:String) -> Void
+    let dialogAction :DialogAction
+
+    private let userInfo : shared.UserInfo
+    private let characterList : [Character]
+    
+    init(dialogAction: DialogAction) {
+        self.dialogAction = dialogAction
+        self.userInfo = dialogAction.getUserInfo()
+        self.characterList = dialogAction.getCharacterList()
+        self.now = userInfo.representativeCharacter
+    }
     
     private var representativeCharacter : String {
         userInfo.representativeCharacter
@@ -23,13 +30,13 @@ struct EditCharacterDialog: View {
     
     var body: some View {
         BaseDialog(
-            title: "대표 캐릭터 변경",
+            title: Dialog.characterEdit.title,
             rightText: "변경",
             leftAction: {
-                self.dismiss()
+                dialogAction.hideDialog()
             },
             rightAction: {
-                self.success(now)
+                dialogAction.dialogEditName(name: now)
             },
             rightEnabled: Binding {
                 now != representativeCharacter
@@ -47,9 +54,6 @@ struct EditCharacterDialog: View {
                     }
                 }
                 .accentColor(.black)
-                .onAppear{
-                    now = representativeCharacter
-                }
             }
         }
     }
@@ -58,15 +62,22 @@ struct EditCharacterDialog: View {
 
 struct DeleteCharacterDialog :  View {
     
-    let name: String
-    let dismiss: () -> Void
-    let confirm: () -> Void
-    
+    private let name: String
+    let dialogAction :DialogAction
+
+    init(dialogAction: DialogAction) {
+        self.dialogAction = dialogAction
+        self.name = dialogAction.getUserInfo().name
+    }
     var body: some View {
         DeleteDialog(
-            title: "유저 정보 삭제",
-            leftAction: dismiss,
-            rightAction: confirm,
+            title: Dialog.characterDelete.title,
+            leftAction: {
+                dialogAction.hideDialog()
+            },
+            rightAction: {
+                dialogAction.dialogCharacterDelete()
+            },
             rightEnabled: .constant(true)
         ) {
             Text("\(name)님 의 정보를 삭제 하시겠습니까?")

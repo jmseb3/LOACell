@@ -33,7 +33,7 @@ import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.SectionCardView
-import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
+import com.wonddak.loacell.android.ui.modal.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList

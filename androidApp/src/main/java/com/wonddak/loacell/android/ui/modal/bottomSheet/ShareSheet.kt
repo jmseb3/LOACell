@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.bottomSheet
+package com.wonddak.loacell.android.ui.modal.bottomSheet
 
 import android.content.ActivityNotFoundException
 import android.content.Context

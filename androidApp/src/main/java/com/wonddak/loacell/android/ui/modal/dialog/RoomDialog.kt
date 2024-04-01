@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.dialog
+package com.wonddak.loacell.android.ui.modal.dialog
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
