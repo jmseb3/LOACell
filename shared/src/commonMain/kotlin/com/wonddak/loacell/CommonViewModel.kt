@@ -459,10 +459,18 @@ open class CommonViewModel(
             val focusIndex = _totalRoomInfo.value.focusIndex
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
+            println("$$$ focusIndex : $focusIndex")
+            println("$$$ party Index : $partyIndex")
 
             val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+                .also {
+                    println("$$$ prev Party $it")
+                }
                 .toMutableList().also {
                     it[focusIndex % 4] = character.name
+                }
+                .also {
+                    println("$$$ change Party $it")
                 }
             CommonRaidHelper.updatePartList(
                 roomId.value,
@@ -482,10 +490,20 @@ open class CommonViewModel(
             val focusIndex = _totalRoomInfo.value.focusIndex
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
+            println("$$$ focusIndex : $focusIndex")
+            println("$$$ party Index : $partyIndex")
+
             val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+                .also {
+                    println("$$$ prev Party $it")
+                }
                 .toMutableList().also {
                     it[focusIndex % 4] = ""
                 }
+                .also {
+                    println("$$$ change Party $it")
+                }
+
             CommonRaidHelper.updatePartList(
                 roomId.value,
                 raidInfo.raidId,

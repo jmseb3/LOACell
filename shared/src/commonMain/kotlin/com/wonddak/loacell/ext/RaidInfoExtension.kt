@@ -63,14 +63,32 @@ fun RaidInfo.getDayText(): String =
  */
 fun RaidInfo.getAllPartyList(): List<String> {
     val maxParty = this.getMaxParty()
-    val findList = this.party1characterList.toMutableList()
-    if (maxParty == 2) {
-        findList.addAll(this.party2characterList)
-    } else if (maxParty == 4) {
-        findList.addAll(this.party3characterList)
-        findList.addAll(this.party4characterList)
+
+    return when (maxParty) {
+        1 -> {
+            this.party1characterList
+        }
+
+        2 -> {
+            arrayListOf(
+                this.party1characterList,
+                this.party2characterList,
+            ).flatten()
+        }
+
+        4 -> {
+            arrayListOf(
+                this.party1characterList,
+                this.party2characterList,
+                this.party3characterList,
+                this.party4characterList
+            ).flatten()
+        }
+
+        else -> {
+            emptyList()
+        }
     }
-    return findList
 }
 
 /**
@@ -104,6 +122,9 @@ fun RaidInfo.getPartyByIndex(index: Int): List<String> {
     }
 }
 
+/**
+ * Party에 들어간 이름목록 집합을 가져온다.
+ */
 fun RaidInfo.getPartNameList(): Set<String> {
     return getAllPartyList()
         .toMutableSet()
