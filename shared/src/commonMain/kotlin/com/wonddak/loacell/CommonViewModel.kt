@@ -7,6 +7,7 @@ import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
+import com.wonddak.loacell.ext.getPartyByIndex
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.Modal
@@ -459,9 +460,7 @@ open class CommonViewModel(
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
 
-            val partyTemp = (
-                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    )
+            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
                 .toMutableList().also {
                     it[focusIndex % 4] = character.name
                 }
@@ -483,9 +482,7 @@ open class CommonViewModel(
             val focusIndex = _totalRoomInfo.value.focusIndex
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
-            val partyTemp = (
-                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    )
+            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
                 .toMutableList().also {
                     it[focusIndex % 4] = ""
                 }

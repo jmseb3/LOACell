@@ -2,7 +2,6 @@ package com.wonddak.loacell.ext
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.getLevel
-import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getMinLevel
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
@@ -75,23 +74,16 @@ data class TotalRoomInfo(
 
                 val result: MutableMap<String, List<Character>> = mutableMapOf()
                 characterMap.forEach { (user, lc) ->
-                    var find = true
-                    val lcFilter = lc.filter { it.getLevel() >= raidInfo!!.getMinLevel() }
+                    val lcFilter : Set<Character> = lc.filter { it.getLevel() >= raidInfo!!.getMinLevel() }.toSet()
+                    val nameList : Set<String> = lcFilter.map { it.name }.toSet()
 
-                    //현재 파티에 추가된 캐릭터가 포함되는 경우 pass한다.
-                    for (characterName in characterNameInParty) {
-                        val nameList = lcFilter.map { it.name }
-                        if (nameList.contains(characterName)) {
-                            find = false
-                            break
-                        }
-                    }
-                    if (find) {
+                    if (characterNameInParty.intersect(nameList).isEmpty()) {
                         // 현재 파티에 추가되지 않은 경우
                         // 다른곳에 추가된 캐릭터를 제외하고 새로운 리스트를 만든다.(
-                        val newList = lcFilter
-                            .filter { !totalNameList.contains(it.name) }
+
+                        val newList = lcFilter.filterNot { totalNameList.contains(it.name) }
                             .sortedByDescending { it.getLevel() }
+
                         if (newList.isNotEmpty()) {
                             //비어있지 않다면 추가해준다.
                             result[user.name] = newList
@@ -219,15 +211,8 @@ data class TotalRoomInfo(
      */
     val partyCharacterList: List<Character?>
         get() = raidInfo?.let { info ->
-            val maxParty = info.getMaxParty()
-            val findList = info.party1characterList.toMutableList()
-            if (maxParty == 2) {
-                findList.addAll(info.party2characterList)
-            } else if (maxParty == 4) {
-                findList.addAll(info.party3characterList)
-                findList.addAll(info.party4characterList)
-            }
-            val result: MutableList<Character?> = List(maxParty * 4) { null }.toMutableList()
+            val findList = info.getAllPartyList()
+            val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
             val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
             for (userInfo in userInfoList) {
                 val iterator = findNames.iterator()
