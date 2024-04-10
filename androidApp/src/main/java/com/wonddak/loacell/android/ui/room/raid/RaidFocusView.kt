@@ -68,8 +68,8 @@ fun RaidFocusView(
             Column(
                 modifier = Modifier
                     .capturable(captureController)
-                    .fillMaxSize()
                     .padding(bottom = 50.dp)
+                    .fillMaxSize()
                     .background(md_theme_light_background)
                     .wrapContentSize()
             ) {
