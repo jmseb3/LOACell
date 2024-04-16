@@ -44,7 +44,7 @@ struct LoginInfoView: View {
                     }
                     Spacer()
                     IconButton(resource: \.change_person) {
-                        viewModel.showDialog(dialogStatus: DialogStatus.settingEditName)
+                        viewModel.showDialog(modal: Dialog.settingEditName)
                     }
                 }
                 Divider()

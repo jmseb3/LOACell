@@ -32,7 +32,7 @@ struct RaidView: View {
                     Spacer()
                     Button(
                         action: {
-                            viewModel.showDialog(dialogStatus: DialogStatus.raidFilter)
+                            viewModel.showDialog(modal: Sheet.raidFilter)
                         },
                         label: {
                             HStack {

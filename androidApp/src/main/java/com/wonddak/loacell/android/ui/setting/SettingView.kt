@@ -36,7 +36,7 @@ import com.wonddak.loacell.android.BuildConfig
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.common.SectionCardView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Sheet
 
 @Composable
 fun SettingView(
@@ -81,7 +81,7 @@ fun SettingView(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(text = "하단 여백 크기 : $defaultSpace")
-                OutlinedButton(onClick = { loaCellViewModel.showDialog(DialogStatus.TEST_SHEET) }) {
+                OutlinedButton(onClick = { loaCellViewModel.showDialog(Sheet.TEST_SHEET) }) {
                     Text(text = "테스트")
                 }
             }

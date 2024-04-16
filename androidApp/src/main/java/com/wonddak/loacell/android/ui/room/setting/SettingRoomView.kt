@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,12 +33,12 @@ import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.SectionCardView
-import com.wonddak.loacell.android.ui.dialog.ConfirmDialog
+import com.wonddak.loacell.android.ui.modal.dialog.ConfirmDialog
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.checkNotExistUid
 import com.wonddak.loacell.ext.getAllUidList
-import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.RoomRole
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.Error
 import com.wonddak.sharedapi.firebase.model.FBDataItem
@@ -113,7 +114,7 @@ fun SettingRoomInfo(
         title = "방 정보",
         icon = SharedRes.images.edit.drawableResId,
         iconAction = {
-            loaCellViewModel.showDialog(DialogStatus.ROOM_EDIT)
+            loaCellViewModel.showDialog(Sheet.ROOM_EDIT)
         }
     ) {
         val otherMemberList = roomInfo.enterUser + roomInfo.editableUser
@@ -129,8 +130,7 @@ fun SettingRoomInfo(
         ) {
             Text(text = "나가기")
         }
-        Divider()
-
+        HorizontalDivider()
         Text(text = "제목")
         Text(text = roomInfo.title)
         Text(text = "설명")

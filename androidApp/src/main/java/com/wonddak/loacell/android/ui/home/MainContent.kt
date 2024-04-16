@@ -19,8 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LoadingView
-import com.wonddak.loacell.android.ui.dialog.DialogHost
 import com.wonddak.loacell.android.ui.login.LoginView
+import com.wonddak.loacell.android.ui.modal.ModalHost
 import com.wonddak.loacell.android.ui.room.RooListView
 import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
@@ -72,7 +72,7 @@ fun MainContent(
                     TopAppBar(loaCellViewModel = loaCellViewModel)
                 }
             ) {
-                DialogHost(dialogStatus, loaCellViewModel.getDialogAction()) {
+                ModalHost(dialogStatus, loaCellViewModel.getDialogAction()) {
                     MainContentView(it, db, loaCellViewModel)
                 }
             }

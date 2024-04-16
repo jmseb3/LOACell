@@ -56,7 +56,7 @@ struct BottomAppBar: View {
                     } else if(viewModel.userInfo != nil) {
                         HStack {
                             IconButton(resource: \.change_person) {
-                                viewModel.showDialog(dialogStatus: DialogStatus.characterEdit)
+                                viewModel.showDialog(modal: shared.Dialog.characterEdit)
                             }
                             IconButton(resource: \.refresh, enabled: viewModel.userInfo!.checkTimeOver()) {
                                 viewModel.updateCharacter(roomId: viewModel.roomId, userInfo: viewModel.userInfo!)
@@ -65,7 +65,7 @@ struct BottomAppBar: View {
                     } else if(viewModel.raidInfo != nil) {
                         HStack {
                             IconButton(resource: \.room_setting) {
-                                viewModel.showDialog(dialogStatus: DialogStatus.raidEdit)
+                                viewModel.showDialog(modal: Sheet.raidEdit)
                             }
                             let info = viewModel.raidInfo!
                             IconButton(resource: info.isFinish ? \.task_finish_done : \.task_finish_not) {

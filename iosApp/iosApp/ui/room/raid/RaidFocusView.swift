@@ -46,16 +46,16 @@ struct RaidFocusView: View {
                             ) {
                                 viewModel.clearFocusItem()
                                 viewModel.setTabStatus(state: RoomState.user)
-                                viewModel.showDialog(dialogStatus: DialogStatus.userAdd)
+                                viewModel.showDialog(modal: Sheet.userAdd)
                             }
                         } else {
                             viewModel.updatePartyFocusIndex(index: index)
-                            viewModel.showDialog(dialogStatus: DialogStatus.raidUserAdd)
+                            viewModel.showDialog(modal: Sheet.raidUserAdd)
                         }
                         
                     } deleteAction: { index in
                         viewModel.updatePartyFocusIndex(index: index)
-                        viewModel.showDialog(dialogStatus: DialogStatus.raidUserDelete)
+                        viewModel.showDialog(modal: Dialog.raidUserDelete)
                     }
                 }
             }
