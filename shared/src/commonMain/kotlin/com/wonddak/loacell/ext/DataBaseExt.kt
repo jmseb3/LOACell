@@ -2,16 +2,17 @@ package com.wonddak.loacell.ext
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.getLevel
-import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getMinLevel
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -29,9 +30,9 @@ data class TotalRoomInfo(
     val focusRaidId: String = "",
     val focusUserName: String = "",
     val tabState: RoomState = RoomState.Raid,
-    val dialogState: DialogStatus = DialogStatus.NONE,
+    val dialogState: Modal? = null,
     val filter: Filter = Filter(),
-    val focusIndex : Int = -1,
+    val focusIndex: Int = -1,
     val schemeData: SchemeData? = null
 ) {
     companion object {
@@ -47,6 +48,9 @@ data class TotalRoomInfo(
     private val characterMap: Map<UserInfo, List<Character>>
         get() = totalRoomInfoSimple.characterMap
 
+    val characterLevelMap : Map<String,Float>
+        get() = characterMap.values.flatten().associate { it.name to it.getLevel() }
+
     val userAndCharacterMap: Map<String, List<Character>>
         get() {
             if (raidInfo != null) {
@@ -57,31 +61,29 @@ data class TotalRoomInfo(
                 val totalNameList = mutableSetOf<String>()
                 raidInfoList
                     .filter { it.type == raidInfo!!.type }
-                    .forEach {
+                    .forEach { it ->
                         //각 레이드 정보에있는 캐릭터 이름을 모두 넣는다.
-                        totalNameList.addAll(it.party1characterList.filter { it.isNotEmpty() })
-                        totalNameList.addAll(it.party2characterList.filter { it.isNotEmpty() })
+                        totalNameList.addAll(it.party1characterList)
+                        totalNameList.addAll(it.party2characterList)
+                        totalNameList.addAll(it.party3characterList)
+                        totalNameList.addAll(it.party4characterList)
                     }
+
+                //빈값 삭제해줌
+                totalNameList.remove("")
 
                 val result: MutableMap<String, List<Character>> = mutableMapOf()
                 characterMap.forEach { (user, lc) ->
-                    var find = true
-                    val lcFilter = lc.filter { it.getLevel() >= raidInfo!!.getMinLevel() }
+                    val lcFilter : Set<Character> = lc.filter { it.getLevel() >= raidInfo!!.getMinLevel() }.toSet()
+                    val nameList : Set<String> = lcFilter.map { it.name }.toSet()
 
-                    //현재 파티에 추가된 캐릭터가 포함되는 경우 pass한다.
-                    for (characterName in characterNameInParty) {
-                        val nameList = lcFilter.map { it.name }
-                        if (nameList.contains(characterName)) {
-                            find = false
-                            break
-                        }
-                    }
-                    if (find) {
+                    if (characterNameInParty.intersect(nameList).isEmpty()) {
                         // 현재 파티에 추가되지 않은 경우
                         // 다른곳에 추가된 캐릭터를 제외하고 새로운 리스트를 만든다.(
-                        val newList = lcFilter
-                            .filter { !totalNameList.contains(it.name) }
+
+                        val newList = lcFilter.filterNot { totalNameList.contains(it.name) }
                             .sortedByDescending { it.getLevel() }
+
                         if (newList.isNotEmpty()) {
                             //비어있지 않다면 추가해준다.
                             result[user.name] = newList
@@ -102,11 +104,16 @@ data class TotalRoomInfo(
     )
 
     fun showRaidId(raidId: String) =
-        this.copy(focusRaidId = raidId, focusUserName = "", dialogState = DialogStatus.NONE, focusIndex = -1)
+        this.copy(
+            focusRaidId = raidId,
+            focusUserName = "",
+            dialogState = null,
+            focusIndex = -1
+        )
 
-    fun updatePartyFocusIndex(index:Int) = this.copy(focusIndex = index)
+    fun updatePartyFocusIndex(index: Int) = this.copy(focusIndex = index)
     fun showUserName(userName: String) =
-        this.copy(focusRaidId = "", focusUserName = userName, dialogState = DialogStatus.NONE)
+        this.copy(focusRaidId = "", focusUserName = userName, dialogState = null)
 
     val roomId = roomInfo?.uniqueId ?: ""
 
@@ -129,32 +136,32 @@ data class TotalRoomInfo(
     fun isFocus() = focusUserName.isNotEmpty() || focusRaidId.isNotEmpty()
 
     fun setTabStatus(state: RoomState) =
-        this.copy(tabState = state, dialogState = DialogStatus.NONE)
+        this.copy(tabState = state, dialogState = null)
 
-    fun showDialog(dialogState: DialogStatus) = this.copy(dialogState = dialogState)
-    fun hideDialog() = this.copy(dialogState = DialogStatus.NONE)
+    fun showDialog(modal: Modal) = this.copy(dialogState = modal)
+    fun hideDialog() = this.copy(dialogState = null)
 
     fun bottomAction(roomId: String, fbUserIsAnonymous: Boolean?): TotalRoomInfo? {
         if (roomId.isEmpty()) {
             fbUserIsAnonymous?.let { result ->
                 if (result) {
-                    return showDialog(DialogStatus.ROOM_ENTER)
+                    return showDialog(Dialog.ROOM_ENTER)
                 } else {
-                    return showDialog(DialogStatus.ROOM_ACTION)
+                    return showDialog(Dialog.ROOM_ACTION)
                 }
             }
         } else {
             if (focusUserName.isNotEmpty()) {
-                return showDialog(DialogStatus.CHARACTER_DELETE)
+                return showDialog(Dialog.CHARACTER_DELETE)
             } else if (focusRaidId.isNotEmpty()) {
-                return showDialog(DialogStatus.RAID_DELETE)
+                return showDialog(Dialog.RAID_DELETE)
             } else {
                 when (tabState) {
                     RoomState.Raid ->
-                        return showDialog(DialogStatus.RAID_ADD)
+                        return showDialog(Sheet.RAID_ADD)
 
                     RoomState.User ->
-                        return showDialog(DialogStatus.USER_ADD)
+                        return showDialog(Sheet.USER_ADD)
 
                     RoomState.Setting -> {
 
@@ -165,7 +172,7 @@ data class TotalRoomInfo(
         return null
     }
 
-    val filterList : List<RaidInfo>
+    val filterList: List<RaidInfo>
         get() {
             val filterByFinish = when (filter.finish) {
                 Filter.FINISH.CLEAR -> raidInfoList.filter { it.isFinish }
@@ -198,13 +205,13 @@ data class TotalRoomInfo(
             }
             return filterByUser
         }
+
+    /**
+     * FocusRaidView에서 보여지는 유저값
+     */
     val partyCharacterList: List<Character?>
         get() = raidInfo?.let { info ->
-            val maxParty = info.getMaxParty()
-            val findList = info.party1characterList.toMutableList()
-            if (maxParty == 2) {
-                findList.addAll(info.party2characterList)
-            }
+            val findList = info.getAllPartyList()
             val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
             val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
             for (userInfo in userInfoList) {
@@ -223,12 +230,13 @@ data class TotalRoomInfo(
     fun updateFilter(filter: Filter) = this.copy(filter = filter)
     fun clearFilter() = updateFilter(Filter())
 
-    fun updateSchemeData(schemeData: SchemeData) = this.copy(schemeData = schemeData, dialogState = DialogStatus.ROOM_ENTER_BY_SCHEME)
+    fun updateSchemeData(schemeData: SchemeData) =
+        this.copy(schemeData = schemeData, dialogState = Dialog.ROOM_ENTER_BY_SCHEME)
 
 }
 
 data class SchemeData(
-    val roomId:String,
+    val roomId: String,
     val fbRoomInfo: FBRoomInfo
 )
 

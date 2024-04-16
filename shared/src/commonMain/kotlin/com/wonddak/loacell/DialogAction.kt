@@ -2,13 +2,14 @@ package com.wonddak.loacell
 
 import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
-import com.wonddak.loacell.model.DialogStatus
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.store.FBRaidInfo
 import com.wonddak.loacell.store.FBRoomInfo
+import com.wonddak.sharedapi.lostark.model.CharacterInfo
 
 interface DialogAction {
-    fun showDialog(dialogStatus: DialogStatus)
+    fun showDialog(modal: Modal)
     fun hideDialog()
 
     fun getDisplayName() :String
@@ -41,6 +42,14 @@ interface DialogAction {
     fun dialogUserAdd(character : Character)
     fun dialogUserDelete()
 
+    //search 관련
+    fun dialogSearchCharacter(
+        name:String,
+        updateProgress:(Boolean) -> Unit,
+        updateList:(List<CharacterInfo>) -> Unit,
+        updateError :(String) -> Unit
+    )
+
     //character
     fun dialogCharacterEdit(name:String)
     fun dialogCharacterDelete()
@@ -51,3 +60,4 @@ interface DialogAction {
     //filter
     fun dialogFilterUpdate(filter: Filter)
 }
+

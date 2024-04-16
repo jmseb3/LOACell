@@ -76,7 +76,7 @@ fun LoginView(loaCellViewModel: LoaCellViewModel) {
                         text = CommonString.Login.getInfo1().toText(),
                         textAlign = TextAlign.Center
                     )
-                    Image(painter = painterResource(id = com.wonddak.sharedresources.R.drawable.logo), contentDescription = null)
+                    Image(painter = painterResource(id = SharedRes.images.logo.drawableResId), contentDescription = null)
                     Text(
                         text = CommonString.Login.getInfo2().toText(),
                         textAlign = TextAlign.Center

@@ -27,4 +27,4 @@ fun RaidInfo.makeGateText(): String {
     }
 }
 
-fun RaidInfo.getAllPartyList(): List<String> = this.party1characterList + this.party2characterList
+fun RaidInfo.getAllPartyList(): List<String> = this.party1characterList + this.party2characterList + this.party3characterList + this.party4characterList

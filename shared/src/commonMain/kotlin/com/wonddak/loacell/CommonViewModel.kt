@@ -7,10 +7,14 @@ import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.ext.SchemeData
 import com.wonddak.loacell.ext.TotalRoomInfo
 import com.wonddak.loacell.ext.getAllInfoByRoomId
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.ext.getPartyByIndex
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Modal
+import com.wonddak.loacell.model.ModalConst
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -20,6 +24,7 @@ import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
 import com.wonddak.sharedapi.firebase.model.FBDataItem
 import com.wonddak.sharedapi.lostark.LostArkApi
+import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
@@ -75,7 +80,7 @@ open class CommonViewModel(
             },
             failAction = {
                 _totalRoomInfo.value =
-                    _totalRoomInfo.value.showDialog(DialogStatus.ROOM_ENTER_ERROR)
+                    _totalRoomInfo.value.showDialog(Dialog.ROOM_ENTER_ERROR)
             }
         )
 
@@ -317,8 +322,8 @@ open class CommonViewModel(
     }
 
     val dialogAction = object : DialogAction {
-        override fun showDialog(dialogStatus: DialogStatus) {
-            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(dialogStatus)
+        override fun showDialog(modal: Modal) {
+            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(modal)
         }
 
         override fun hideDialog() {
@@ -326,7 +331,7 @@ open class CommonViewModel(
         }
 
         override fun getDisplayName(): String {
-            return user?.value?.displayName ?: ""
+            return user.value?.displayName ?: ""
         }
 
         override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
@@ -334,14 +339,13 @@ open class CommonViewModel(
 
         override fun dialogRoomAction(status: Int) {
             when (status) {
-                1 -> showDialog(DialogStatus.ROOM_ENTER)
-                2 -> showDialog(DialogStatus.ROOM_ADD)
+                ModalConst.ROOM_ACTION_ENTER -> showDialog(Dialog.ROOM_ENTER)
+                ModalConst.ROOM_ACTION_ADD -> showDialog(Sheet.ROOM_ADD)
             }
         }
 
         override fun dialogRoomAdd(title: String, description: String, password: String) {
             user.value?.uid?.let { owner ->
-                println("JWH _ make Room Owner : $owner")
                 CommonRoomHelper.makeInfo(
                     title, description, password, owner
                 ) { id ->
@@ -432,7 +436,7 @@ open class CommonViewModel(
             CommonRaidHelper.update(
                 raidInfo.roomId,
                 raidInfo.raidId,
-                fbRaidInfo,
+                fbRaidInfo.checkLevelParty(totalRoomInfo = getTotalRoomInfo()),
                 { e -> }
             ) {
                 hideDialog()
@@ -455,12 +459,18 @@ open class CommonViewModel(
             val focusIndex = _totalRoomInfo.value.focusIndex
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
+            println("$$$ focusIndex : $focusIndex")
+            println("$$$ party Index : $partyIndex")
 
-            val partyTemp = (
-                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    )
+            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+                .also {
+                    println("$$$ prev Party $it")
+                }
                 .toMutableList().also {
                     it[focusIndex % 4] = character.name
+                }
+                .also {
+                    println("$$$ change Party $it")
                 }
             CommonRaidHelper.updatePartList(
                 roomId.value,
@@ -480,12 +490,20 @@ open class CommonViewModel(
             val focusIndex = _totalRoomInfo.value.focusIndex
             val raidInfo = getRaidInfo()
             val partyIndex = focusIndex / 4
-            val partyTemp = (
-                    if (partyIndex == 0) raidInfo.party1characterList else raidInfo.party2characterList
-                    )
+            println("$$$ focusIndex : $focusIndex")
+            println("$$$ party Index : $partyIndex")
+
+            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+                .also {
+                    println("$$$ prev Party $it")
+                }
                 .toMutableList().also {
                     it[focusIndex % 4] = ""
                 }
+                .also {
+                    println("$$$ change Party $it")
+                }
+
             CommonRaidHelper.updatePartList(
                 roomId.value,
                 raidInfo.raidId,
@@ -496,6 +514,28 @@ open class CommonViewModel(
                 })
             {
                 hideDialog()
+            }
+        }
+
+        override fun dialogSearchCharacter(
+            name: String,
+            updateProgress: (Boolean) -> Unit,
+            updateList: (List<CharacterInfo>) -> Unit,
+            updateError: (String) -> Unit
+        ) {
+            viewModelScope.launch {
+                updateProgress(true)
+                val characterResult = LostArkApi().getCharacterInfo(name)
+                characterResult.onSuccess { list ->
+                    updateList(list)
+                }
+                characterResult.onFail { code, message ->
+                    updateError("$message($code)")
+                }
+                characterResult.onFailOnlyMsg { message ->
+                    updateError(message)
+                }
+                updateProgress(false)
             }
         }
 

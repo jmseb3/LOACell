@@ -66,22 +66,6 @@ class QueryParameters {
     }
 }
 
-
-struct FormHiddenBackground: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.scrollContentBackground(.hidden)
-        } else {
-            content.onAppear {
-                UITableView.appearance().backgroundColor = .clear
-            }
-            .onDisappear {
-                UITableView.appearance().backgroundColor = .systemGroupedBackground
-            }
-        }
-    }
-}
-
 extension View {
     func snapshot() -> UIImage {
         let controller = UIHostingController(rootView: self)
@@ -96,5 +80,16 @@ extension View {
         return renderer.image { _ in
             view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
         }
+    }
+}
+
+extension Binding where Value == String {
+    func max(_ limit: Int) -> Self {
+        if self.wrappedValue.count > limit {
+            DispatchQueue.main.async {
+                self.wrappedValue = String(self.wrappedValue.prefix(limit))
+            }
+        }
+        return self
     }
 }

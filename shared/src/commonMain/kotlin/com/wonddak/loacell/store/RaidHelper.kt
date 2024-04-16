@@ -7,6 +7,8 @@ import com.wonddak.database.model.RaidType
 import com.wonddak.database.model.convertDifficulty
 import com.wonddak.database.model.convertToDay
 import com.wonddak.database.model.convertType
+import com.wonddak.loacell.RaidInfo
+import com.wonddak.loacell.ext.TotalRoomInfo
 import kotlin.jvm.JvmField
 
 data class FBRaidInfo(
@@ -19,10 +21,28 @@ data class FBRaidInfo(
     val isFinish: Boolean = false,
     val party1: List<String> = List(4) { "" },
     val party2: List<String> = List(4) { "" },
+    val party3: List<String> = List(4) { "" },
+    val party4: List<String> = List(4) { "" },
     val day: Day = Day.NONE,
     val hour: Long = 0L,
     val minute: Long = 0L
 ) {
+    constructor(raidInfo: RaidInfo) : this(
+        raidInfo.title,
+        raidInfo.type,
+        raidInfo.Difficulty,
+        raidInfo.startGateNumber.toInt(),
+        raidInfo.endGateNumber.toInt(),
+        raidInfo.isFinish,
+        raidInfo.party1characterList,
+        raidInfo.party2characterList,
+        raidInfo.party3characterList,
+        raidInfo.party4characterList,
+        raidInfo.day,
+        raidInfo.hour,
+        raidInfo.minute,
+    )
+
     fun toMap() = mapOf(
         "title" to title,
         "type" to type.name,
@@ -33,13 +53,15 @@ data class FBRaidInfo(
         "finish" to isFinish,
         "party1" to party1,
         "party2" to party2,
+        "party3" to party3,
+        "party4" to party4,
         "day" to day.index,
         "hour" to hour,
         "minute" to minute
     )
 
-    fun getMinLevelText() :String {
-        val minLevel =  this.type.getMinLevel(difficulty,endGateNumber)
+    fun getMinLevelText(): String {
+        val minLevel = this.type.getMinLevel(difficulty, endGateNumber)
         return if (minLevel == 0) "제한 없음" else minLevel.toString()
     }
 
@@ -68,16 +90,80 @@ data class FBRaidInfo(
             }
         }
     }
+
     fun updateDifficulty(difficulty: Difficulty) = this.copy(difficulty = difficulty)
 
-    fun updateGate(start:Int,end:Int)  = this.copy(startGateNumber = start, endGateNumber = end)
-    fun updateDay(day: Day)  = this.copy(day = day)
+    fun updateGate(start: Int, end: Int) = this.copy(startGateNumber = start, endGateNumber = end)
+    fun updateDay(day: Day) = this.copy(day = day)
 
-    fun updateTime(hour:Long,minute: Long) = this.copy(hour= hour, minute = minute)
-    fun updateTimeHour(hour:Long) = this.copy(hour= hour)
+    fun resetDay() = this.copy(day = Day.NONE, hour = 0, minute = 0)
+
+    fun updateTime(hour: Long, minute: Long) = this.copy(hour = hour, minute = minute)
+    fun updateTimeHour(hour: Long) = this.copy(hour = hour)
     fun updateTimeMinute(minute: Long) = this.copy(minute = minute)
-    fun difficultySelected(difficulty: Difficulty) :Boolean = this.difficulty == difficulty
-    fun difficultyEnabled(difficulty: Difficulty) :Boolean = this.type.accessibleDifficulty().contains(difficulty)
+    fun difficultySelected(difficulty: Difficulty): Boolean = this.difficulty == difficulty
+    fun difficultyEnabled(difficulty: Difficulty): Boolean =
+        this.type.accessibleDifficulty().contains(difficulty)
+
+    //레이드 정보가 수정될때 레벨에 맞지 않는 친구들을 다 지운다.
+    fun checkLevelParty(totalRoomInfo: TotalRoomInfo): FBRaidInfo {
+        val characterList = totalRoomInfo.characterLevelMap
+        val minLevel = this.type.getMinLevel(this.difficulty)
+
+        val checkLevel = { party: List<String> ->
+            val temp = Array(4) { "" }
+            party.forEachIndexed { tmpIndex, name ->
+                if (name.isNotEmpty()) {
+                    runCatching {
+                        characterList[name]!!
+                    }.onSuccess { level ->
+                        if (level < minLevel) {
+                            temp[tmpIndex] = ""
+                        } else {
+                            temp[tmpIndex] = name
+                        }
+                    }
+                }
+            }
+            temp.toList()
+        }
+        val empty = List(4) { "" }
+        when (this.type.getMaxParty()) {
+            4 -> {
+                return this.copy(
+                    party1 = checkLevel(party1),
+                    party2 = checkLevel(party2),
+                    party3 = checkLevel(party3),
+                    party4 = checkLevel(party4)
+                )
+            }
+
+            2 -> {
+                return this.copy(
+                    party1 = checkLevel(party1),
+                    party2 = checkLevel(party2),
+                    party3 = empty,
+                    party4 = empty
+                )
+            }
+
+            1 -> {
+                return this.copy(
+                    party1 = checkLevel(party1),
+                    party2 = empty,
+                    party3 = empty,
+                    party4 = empty
+                )
+            }
+        }
+
+        return this.copy(
+            party1 = checkLevel(party1),
+            party2 = checkLevel(party2),
+            party3 = checkLevel(party3),
+            party4 = checkLevel(party4)
+        )
+    }
 }
 
 object CommonRaidHelper {
@@ -109,14 +195,6 @@ object CommonRaidHelper {
                 successAction = successAction,
                 failAction = failAction
             )
-    }
-    private fun addEmptyDay(roomId: String, raidId: String) {
-        val emptyDayMap = mapOf(
-            "day" to -1,
-            "hour" to 0,
-            "minute" to 0
-        )
-        RefHelper.getRaidRef(roomId, raidId).update(emptyDayMap)
     }
 
     //레이드 정보를 삭제한다.
@@ -160,6 +238,7 @@ object CommonRaidHelper {
         failAction: (e: Error) -> Unit,
         successAction: () -> Unit
     ) {
+        println("$$$ update Party$partyIndex to $partyList")
         RefHelper.getRaidRef(roomId, raidId).update(
             field = "party$partyIndex",
             value = partyList,
@@ -189,9 +268,18 @@ object CommonRaidHelper {
                     val party1 = it.data!!["party1"] as List<String>
                     val party2 = it.data!!["party2"] as List<String>
 
-                    val day = runCatching { it.data?.get("day") as Long?}.getOrNull()
-                    val hour = runCatching { it.data?.get("hour") as Long?}.getOrNull()
-                    val minute = runCatching { it.data?.get("minute") as Long?}.getOrNull()
+                    //베히모스 관련 로직 파티 추가(4파티까지 가능)
+                    val party3 = runCatching { it.data?.get("party3") as List<*> }.getOrDefault(
+                        List(4) { "" }
+                    ) as List<String>
+                    val party4 = runCatching { it.data?.get("party4") as List<*> }.getOrDefault(
+                        List(4) { "" }
+                    ) as List<String>
+
+                    //일정 관련 로직
+                    val day = runCatching { it.data?.get("day") as Long? }.getOrNull()
+                    val hour = runCatching { it.data?.get("hour") as Long? }.getOrNull()
+                    val minute = runCatching { it.data?.get("minute") as Long? }.getOrNull()
 
                     //이미 값이 있는 경우
                     if (raidId in dbRaidList) {
@@ -207,6 +295,8 @@ object CommonRaidHelper {
                             isFinish,
                             party1,
                             party2,
+                            party3,
+                            party4,
                             day,
                             hour,
                             minute
@@ -224,6 +314,8 @@ object CommonRaidHelper {
                             endGateNumber,
                             party1,
                             party2,
+                            party3,
+                            party4,
                             (day ?: -1L).convertToDay(),
                             hour ?: 0,
                             minute ?: 0

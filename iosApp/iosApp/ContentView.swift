@@ -13,7 +13,7 @@ struct ContentView: View {
                     LoginView()
                 } else {
                     VStack {
-                        DialogHost(
+                        ModalHost(
                             dialogStatus: viewModel.dialogStatus,
                             dialogAction: viewModel.getDialogAction()
                         ) {

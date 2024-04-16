@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,9 +24,11 @@ import com.wonddak.loacell.android.ui.room.raid.RaidView
 import com.wonddak.loacell.android.ui.room.setting.SettingRoomView
 import com.wonddak.loacell.android.ui.room.user.UserView
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
+import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.model.Sheet
 
 @Composable
 fun RoomView(
@@ -42,7 +44,7 @@ fun RoomView(
     val role = loaCellViewModel.myRole
 
 
-    BackHandler(dialogStatus != DialogStatus.RAID_ADD && dialogStatus != DialogStatus.USER_ADD) {
+    BackHandler(dialogStatus != Sheet.RAID_ADD && dialogStatus != Sheet.USER_ADD) {
         loaCellViewModel.hideRoomInfo()
     }
     Column(
@@ -77,7 +79,7 @@ fun RoomView(
 fun RoomTitleView(
     roomInfo: RoomInfo,
     role: RoomRole,
-    showDialog: (status: DialogStatus) -> Unit
+    showDialog: (status: Modal) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxWidth(),
@@ -92,10 +94,10 @@ fun RoomTitleView(
             Text(
                 text = roomInfo.uniqueId,
                 modifier = Modifier.noRippleClickable {
-                    showDialog(DialogStatus.SHARE_SHEET)
+                    showDialog(Sheet.SHARE_SHEET)
                 },
             )
-            Divider()
+            HorizontalDivider()
         }
 
         when (role) {
@@ -112,7 +114,7 @@ fun RoomTitleView(
                     modifier = Modifier.align(Alignment.CenterEnd),
                     imageResource = SharedRes.images.room_exit
                 ) {
-                    showDialog(DialogStatus.ROOM_EXIT)
+                    showDialog(Dialog.ROOM_EXIT)
                 }
             }
         }

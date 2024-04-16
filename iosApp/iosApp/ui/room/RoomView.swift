@@ -22,7 +22,7 @@ struct RoomView: View {
             if (showTitle) {
                 if let room = viewModel.roomInfo {
                     RoomTitleView(roomInfo: room, role: viewModel.myRole) { status in
-                        viewModel.showDialog(dialogStatus: status)
+                        viewModel.showDialog(modal: status)
                     }.onAppear{
                         print("role \(viewModel.myRole)")
                     }
@@ -42,14 +42,14 @@ struct RoomView: View {
 struct RoomTitleView : View {
     let roomInfo : RoomInfo
     let role : RoomRole
-    let showDialog : (_ status : DialogStatus) -> Void
+    let showDialog : (_ status : Modal) -> Void
     var body: some View {
         ZStack {
             VStack(alignment: .leading) {
                 Text(roomInfo.description_)
                 Text(roomInfo.uniqueId)
                     .onTapGesture {
-                        showDialog(DialogStatus.shareSheet)
+                        showDialog(Sheet.shareSheet)
                     }
                 Divider()
             }.padding(EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3))
@@ -59,7 +59,7 @@ struct RoomTitleView : View {
                     
                 } else {
                     IconButton(resource: \.room_exit) {
-                        showDialog(DialogStatus.roomExit)
+                        showDialog(Dialog.roomExit)
                     }
                 }
             }

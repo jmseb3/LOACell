@@ -10,14 +10,14 @@ plugins {
 apply("../keystore/signing.gradle")
 
 android {
-    namespace = AppConfig.Android.packageName
-    compileSdk = AppConfig.Android.compileSdk
+    namespace = "com.wonddak.loacell.android"
+    compileSdk = 34
     defaultConfig {
-        applicationId = AppConfig.Android.packageName
-        minSdk = AppConfig.Android.minSdk
-        targetSdk = AppConfig.Android.targetSdk
-        versionCode = AppConfig.versionCode
-        versionName = AppConfig.version
+        applicationId = "com.wonddak.loacell.android"
+        minSdk = 26
+        targetSdk = 33
+        versionCode = 11
+        versionName = "1.1.4"
         setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
     }
     buildFeatures {
@@ -25,7 +25,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = AppConfig.Android.kotlinCompilerExtensionVersion
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     packaging {
         resources {
@@ -58,28 +58,21 @@ android {
 }
 
 dependencies {
-    api(project(Modules.shared))
+    api(project(":shared"))
 
-    val composeBom = platform(Dependencies.Android.Compose.Bom)
+    val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation(Dependencies.Android.Compose.UIPreview)
-    debugImplementation(Dependencies.Android.Compose.UITooling)
-    implementation(Dependencies.Android.Compose.Material3)
-    implementation(Dependencies.Android.Compose.Activity)
-    implementation(Dependencies.Android.Compose.WheelPicker)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.bundles.compose)
 
-    implementation(platform(Dependencies.Android.Firebase.Bom))
-    implementation(Dependencies.Android.Firebase.Analytics)
-    implementation(Dependencies.Android.Firebase.Crashlytics)
-    implementation(Dependencies.Android.Firebase.Auth)
-    implementation(Dependencies.Android.Firebase.AuthGoogle)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
 
-    implementation("com.github.commandiron:WheelPickerCompose:1.1.11")
-
-    implementation("com.kakao.sdk:v2-share:2.14.0") // 메시지(카카오톡 공유)
-
-    implementation("androidx.browser:browser:1.7.0")
-    implementation("dev.shreyaspatil:capturable:2.0.0")
+    implementation("com.github.IamCheng5:ComposeWheelPicker:1.1")
+    implementation(libs.wheel.picker)
+    implementation(libs.kakao.share)
+    implementation(libs.browser)
+    implementation(libs.capturable)
 }

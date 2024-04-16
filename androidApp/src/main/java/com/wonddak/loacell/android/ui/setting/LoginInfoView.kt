@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -33,7 +33,7 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.auth.delete
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Dialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -67,10 +67,10 @@ fun LoginInfoView(
                     )
                 }
                 MyIconButton(imageResource = SharedRes.images.change_person) {
-                    loaCellViewModel.showDialog(DialogStatus.SETTING_EDIT_NAME)
+                    loaCellViewModel.showDialog(Dialog.SETTING_EDIT_NAME)
                 }
             }
-            Divider()
+            HorizontalDivider()
 
             Column(
                 modifier = Modifier

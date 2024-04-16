@@ -2,7 +2,6 @@ package com.wonddak.loacell.android
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -49,7 +48,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun kakaoIntent(intent: Intent?) {
-        Log.i("JWH",intent.toString())
         intent?.data?.let { uri ->
             if (uri.scheme == "kakaoeaad613c8a32160c49991040e94170f9") {
                 uri.getQueryParameter("uniqueId")?.let { id ->

@@ -120,6 +120,8 @@ fun RaidItemRowPreview() {
         isFinish = false,
         party1characterList = emptyList(),
         party2characterList = emptyList(),
+        party3characterList = emptyList(),
+        party4characterList = emptyList(),
         day = Day.MON,
         hour = 12,
         minute = 59

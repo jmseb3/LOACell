@@ -13,7 +13,7 @@ import com.wonddak.loacell.Config
 import com.wonddak.loacell.UserInfo
 import com.wonddak.loacell.ViewModelImpl
 import com.wonddak.loacell.auth.LoginHelper
-import com.wonddak.loacell.model.DialogStatus
+import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.RoomState
 
 class LoaCellViewModel(
@@ -69,7 +69,7 @@ class LoaCellViewModel(
     //방에서 나갈경우
     fun hideRoomInfo() = common.hideRoom()
 
-    fun showDialog(dialogStatus: DialogStatus) = getDialogAction().showDialog(dialogStatus)
+    fun showDialog(modal :Modal) = getDialogAction().showDialog(modal)
     fun hideDialog() = getDialogAction().hideDialog()
 
     val myRole

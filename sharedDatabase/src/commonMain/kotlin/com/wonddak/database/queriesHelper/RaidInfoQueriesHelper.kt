@@ -32,6 +32,8 @@ class RaidInfoQueriesHelper(
         endGateNumber: Long,
         party1: List<String>,
         party2: List<String>,
+        party3: List<String> = emptyList(),
+        party4: List<String> = emptyList(),
         day: Day = Day.NONE,
         hour: Long = 0,
         minute: Long = 0
@@ -49,7 +51,9 @@ class RaidInfoQueriesHelper(
             party2,
             day,
             hour,
-            minute
+            minute,
+            party3,
+            party4,
         )
     }
 
@@ -64,6 +68,8 @@ class RaidInfoQueriesHelper(
         isFinish: Boolean,
         party1: List<String>,
         party2: List<String>,
+        party3: List<String>,
+        party4: List<String>,
         dayIndex :Long?,
         hour :Long?,
         minute: Long?
@@ -81,6 +87,8 @@ class RaidInfoQueriesHelper(
             day,
             hour ?:0L,
             minute ?: 0L,
+            party3,
+            party4,
             raidId,
             roomId,
         )

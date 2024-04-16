@@ -36,7 +36,7 @@
 		0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */; };
 		07762A372B1EE190009F6922 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07762A362B1EE190009F6922 /* RadioButton.swift */; };
 		07773FD42ADCC894009358D8 /* UserDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD32ADCC894009358D8 /* UserDialog.swift */; };
-		07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD52ADCD142009358D8 /* DialogHost.swift */; };
+		07773FD62ADCD142009358D8 /* ModalHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD52ADCD142009358D8 /* ModalHost.swift */; };
 		07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FD72ADCD650009358D8 /* BaseDialog.swift */; };
 		07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07773FDB2ADD10FC009358D8 /* BaseSheet.swift */; };
 		0783E9ED2AE0D4750074D231 /* RaidPartyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */; };
@@ -58,6 +58,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */; };
 		3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E512B89AD0E00A35684 /* SafariWebView.swift */; };
+		3ED15F772BAB023200B7B849 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED15F762BAB023200B7B849 /* LoginInfoView.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -87,7 +88,7 @@
 		0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthLimitTextField.swift; sourceTree = "<group>"; };
 		07762A362B1EE190009F6922 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
 		07773FD32ADCC894009358D8 /* UserDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDialog.swift; sourceTree = "<group>"; };
-		07773FD52ADCD142009358D8 /* DialogHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogHost.swift; sourceTree = "<group>"; };
+		07773FD52ADCD142009358D8 /* ModalHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalHost.swift; sourceTree = "<group>"; };
 		07773FD72ADCD650009358D8 /* BaseDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDialog.swift; sourceTree = "<group>"; };
 		07773FDB2ADD10FC009358D8 /* BaseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSheet.swift; sourceTree = "<group>"; };
 		0783E9EC2AE0D4750074D231 /* RaidPartyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidPartyView.swift; sourceTree = "<group>"; };
@@ -111,6 +112,7 @@
 		3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownCharacterNameView.swift; sourceTree = "<group>"; };
 		3E462E512B89AD0E00A35684 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		3E66B5982B4421E4000F7377 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
+		3ED15F762BAB023200B7B849 /* LoginInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginInfoView.swift; sourceTree = "<group>"; };
 		3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4E2AFB732A7CA1979961AE50 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -169,9 +171,8 @@
 		07125FAF2A565810003F8FCC /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				07773FDA2ADD10EE009358D8 /* bottomSheet */,
+				07D006F82BBAA24700230C87 /* modal */,
 				070CF3232AC148340099F2D6 /* common */,
-				07773FD02ADCC734009358D8 /* dialog */,
 				07DE600A2A57B2E400A122B2 /* home */,
 				07125FB02A56581D003F8FCC /* login */,
 				07179F412ACD52FD003A415E /* room */,
@@ -252,7 +253,6 @@
 			isa = PBXGroup;
 			children = (
 				07773FD72ADCD650009358D8 /* BaseDialog.swift */,
-				07773FD52ADCD142009358D8 /* DialogHost.swift */,
 				07FD94532B0336FC00446087 /* RaidDialog.swift */,
 				07773FD32ADCC894009358D8 /* UserDialog.swift */,
 				070625302B05AAED00B9E95F /* RoomDialog.swift */,
@@ -278,9 +278,20 @@
 		078A12AF2B06F4FF00661943 /* setting */ = {
 			isa = PBXGroup;
 			children = (
+				3ED15F762BAB023200B7B849 /* LoginInfoView.swift */,
 				07EA9A8B2B0728E800F9FC25 /* SettingView.swift */,
 			);
 			path = setting;
+			sourceTree = "<group>";
+		};
+		07D006F82BBAA24700230C87 /* modal */ = {
+			isa = PBXGroup;
+			children = (
+				07773FD52ADCD142009358D8 /* ModalHost.swift */,
+				07773FD02ADCC734009358D8 /* dialog */,
+				07773FDA2ADD10EE009358D8 /* bottomSheet */,
+			);
+			path = modal;
 			sourceTree = "<group>";
 		};
 		07DE600A2A57B2E400A122B2 /* home */ = {
@@ -518,7 +529,7 @@
 				07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */,
 				078A12B32B06F6A800661943 /* SectionCardView.swift in Sources */,
 				070625352B05B50400B9E95F /* CheckButton.swift in Sources */,
-				07773FD62ADCD142009358D8 /* DialogHost.swift in Sources */,
+				07773FD62ADCD142009358D8 /* ModalHost.swift in Sources */,
 				07125FB32A5658B6003F8FCC /* LoginView.swift in Sources */,
 				07773FDC2ADD10FC009358D8 /* BaseSheet.swift in Sources */,
 				07773FD82ADCD650009358D8 /* BaseDialog.swift in Sources */,
@@ -552,6 +563,7 @@
 				07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */,
 				073614C62B16D1FC002D0BA8 /* ShareSheet.swift in Sources */,
 				070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */,
+				3ED15F772BAB023200B7B849 /* LoginInfoView.swift in Sources */,
 				07125FB82A565CC7003F8FCC /* LoaCellViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

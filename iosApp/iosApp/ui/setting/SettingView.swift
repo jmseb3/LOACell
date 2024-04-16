@@ -51,7 +51,7 @@ struct SettingView: View {
                                 Text("하단 여백 크기 : \(Int(defaultValue.wrappedValue))")
                                 Spacer()
                                 RoundCornerButton(text: "테스트") {
-                                    viewModel.showDialog(dialogStatus: DialogStatus.testSheet)
+                                    viewModel.showDialog(modal: Sheet.testSheet)
                                 }
                             }
                         }
