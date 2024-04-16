@@ -1,5 +1,7 @@
 package com.wonddak.loacell.android.ui.room.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -28,6 +30,7 @@ import com.wonddak.loacell.dataStore
 import com.wonddak.loacell.util.openName
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DropDownCharacterNameView(
     modifier: Modifier = Modifier,
@@ -39,9 +42,10 @@ fun DropDownCharacterNameView(
         mutableStateOf(false)
     }
     Text(
-        modifier = modifier.noRippleClickable { openMenu = true },
+        modifier = modifier.noRippleClickable { openMenu = true }.basicMarquee(),
         text = name,
-        fontWeight = fontWeight
+        fontWeight = fontWeight,
+        maxLines = 1
     )
     DropdownMenu(expanded = openMenu, onDismissRequest = { openMenu = false }) {
         DropdownMenuItem(
