@@ -14,7 +14,7 @@ kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
 wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-compose-bom = { module = "androidx.compose:compose-bom", version = "2024.03.00" }
+compose-bom = { module = "androidx.compose:compose-bom", version = "2024.05.00" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }

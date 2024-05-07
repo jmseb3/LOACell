@@ -3,6 +3,8 @@ package com.wonddak.loacell.android.ui.modal.dialog
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -74,6 +76,7 @@ fun RoomActionDialog(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EnterButton(
     modifier: Modifier,
@@ -95,7 +98,12 @@ fun EnterButton(
             verticalArrangement = Arrangement.Center
         ) {
             Icon(painter = painterResource(id = id), contentDescription = null)
-            Text(text = text)
+            Text(
+                text = text,
+                maxLines =  1,
+                modifier = Modifier
+                    .basicMarquee()
+            )
         }
     }
 

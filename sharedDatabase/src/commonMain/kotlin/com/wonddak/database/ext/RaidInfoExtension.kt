@@ -22,7 +22,7 @@ fun RaidInfo.makeGateText(): String {
         }
 
         else -> {
-            "1 ~ ${this.type.getMaxGate()} 관문"
+            "1 ~ ${this.type.getMaxGate(this.Difficulty)} 관문"
         }
     }
 }

@@ -73,7 +73,7 @@ data class FBRaidInfo(
                     type = type,
                     difficulty = Difficulty.Normal,
                     startGateNumber = 1,
-                    endGateNumber = type.getMaxGate()
+                    endGateNumber = type.getMaxGate(this.difficulty)
                 )
             } else {
                 this.copy(type = type, difficulty = Difficulty.Normal)
@@ -83,7 +83,7 @@ data class FBRaidInfo(
                 this.copy(
                     type = type,
                     startGateNumber = 1,
-                    endGateNumber = type.getMaxGate()
+                    endGateNumber = type.getMaxGate(this.difficulty)
                 )
             } else {
                 this.copy(type = type)

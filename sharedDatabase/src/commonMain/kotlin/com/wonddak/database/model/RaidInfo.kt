@@ -146,11 +146,19 @@ enum class RaidType(val maxPerson: Int) {
     }
 
     //관문 수
-    fun getMaxGate(): Int {
+    fun getMaxGate(
+        difficulty: Difficulty
+    ): Int {
         return when (this) {
             VALTAN, VYKAS, ECHIDNA, BETHEMOTH -> 2
             KOUKU, ILLIAKAN, KAYANGEL -> 3
-            ABRELSHUD, KAMEN, IVORYTOWER -> 4
+            ABRELSHUD, IVORYTOWER -> 4
+            KAMEN -> {
+                when(difficulty) {
+                    Difficulty.Normal ->3
+                    else -> 4
+                }
+            }
             ETC -> 0
         }
     }
