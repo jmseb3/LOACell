@@ -12,9 +12,6 @@ import shared
 struct SettingRoomView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-    var result : [FBDataItem] {
-        viewModel.tempOfFBData
-    }
     var user :FBUser? {
         viewModel.user
     }
@@ -35,7 +32,6 @@ struct SettingRoomView: View {
     
     var body: some View {
         ScrollView {
-            
             VStack {
                 if let room = roomInfo {
                     SettingRoomInfo(
@@ -44,7 +40,7 @@ struct SettingRoomView: View {
                         userList : userList
                     )
                     Divider()
-                    UserUidList(fetch: $fetch, roomInfo: room, result: result, ownerChangeSuccess: {
+                    UserUidList(fetch: $fetch, roomInfo: room, result: viewModel.tempOfFBData, ownerChangeSuccess: {
                         viewModel.hideRoomInfo()
                     }) { err in
                         viewModel.showSnackBar(msg: "변경에 실패했습니다.\(err.errorMsg)")
@@ -59,7 +55,7 @@ struct SettingRoomView: View {
                         }
                     }
                     
-                    if roomInfo!.getAllUidList() == result.map({ item in item.uid}) {
+                    if roomInfo!.getAllUidList() == viewModel.tempOfFBData.map({ item in item.uid}) {
                         fetch = true
                     }
                     
