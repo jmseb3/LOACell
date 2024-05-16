@@ -2,7 +2,7 @@
 agp = "8.1.4"
 kotlin = "1.9.23"
 compose-compiler = "1.5.11"
-androidx-activityCompose = "1.8.2"
+androidx-activityCompose = "1.9.0"
 ktor = "2.3.5"
 sqldelight = "2.0.1"
 moko = "0.23.0"
@@ -14,19 +14,19 @@ kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
 wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-compose-bom = { module = "androidx.compose:compose-bom", version = "2024.05.00" }
+compose-bom = { module = "androidx.compose:compose-bom", version = "2024.03.00" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "32.8.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.0.0" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
 firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
-gms-auth = { module = "com.google.android.gms:play-services-auth", version = "20.5.0" }
+gms-auth = { module = "com.google.android.gms:play-services-auth", version = "21.1.1" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
 kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.8.0" }
