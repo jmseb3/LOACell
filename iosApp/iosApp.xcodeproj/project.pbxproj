@@ -31,6 +31,7 @@
 		07420B822AD912BE0081E5FE /* UserInfoCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */; };
 		075377EA2B0210F7003872EF /* RaidFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075377E92B0210F7003872EF /* RaidFocusView.swift */; };
 		07540B692B15876300DABAFA /* SettingRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07540B682B15876300DABAFA /* SettingRoomView.swift */; };
+		075856792BF5E561007CCF5E /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075856782BF5E561007CCF5E /* Tabs.swift */; };
 		075E8AF62B566B5200599CBD /* AppleLinkCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075E8AF52B566B5200599CBD /* AppleLinkCoordinator.swift */; };
 		0768B75B2ADF69BC00122AA2 /* AddRaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */; };
 		0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */; };
@@ -83,6 +84,7 @@
 		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
 		075377E92B0210F7003872EF /* RaidFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidFocusView.swift; sourceTree = "<group>"; };
 		07540B682B15876300DABAFA /* SettingRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingRoomView.swift; sourceTree = "<group>"; };
+		075856782BF5E561007CCF5E /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		075E8AF52B566B5200599CBD /* AppleLinkCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLinkCoordinator.swift; sourceTree = "<group>"; };
 		0768B75A2ADF69BC00122AA2 /* AddRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRaidSheet.swift; sourceTree = "<group>"; };
 		0768B75C2ADF6D5500122AA2 /* LengthLimitTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthLimitTextField.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				078A12B22B06F6A800661943 /* SectionCardView.swift */,
 				07C4F5932B1D6A9D00C63AAA /* RoundCornerButton.swift */,
 				07762A362B1EE190009F6922 /* RadioButton.swift */,
+				075856782BF5E561007CCF5E /* Tabs.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -546,6 +549,7 @@
 				0783E9ED2AE0D4750074D231 /* RaidPartyView.swift in Sources */,
 				3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */,
 				07FD94542B0336FC00446087 /* RaidDialog.swift in Sources */,
+				075856792BF5E561007CCF5E /* Tabs.swift in Sources */,
 				3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */,
 				0768B75D2ADF6D5500122AA2 /* LengthLimitTextField.swift in Sources */,
 				07420B802AD90CC80081E5FE /* UserFocusView.swift in Sources */,

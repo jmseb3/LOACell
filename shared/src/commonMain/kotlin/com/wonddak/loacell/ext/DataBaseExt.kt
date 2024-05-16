@@ -2,6 +2,7 @@ package com.wonddak.loacell.ext
 
 import com.wonddak.database.AppDataBase
 import com.wonddak.database.ext.getLevel
+import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.ext.getMinLevel
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
@@ -233,6 +234,36 @@ data class TotalRoomInfo(
     fun updateSchemeData(schemeData: SchemeData) =
         this.copy(schemeData = schemeData, dialogState = Dialog.ROOM_ENTER_BY_SCHEME)
 
+    fun getTabList() : List<String> {
+        val tabs = arrayListOf("all").also {
+            this.raidInfo?.let { raidInfo ->
+                when (raidInfo.getMaxParty()) {
+                    4 -> {
+                        it.addAll(arrayListOf("1", "2", "3", "4"))
+                    }
+
+                    2 -> {
+                        it.addAll(arrayListOf("1", "2"))
+                    }
+
+                    else -> {
+                        it.add("1")
+                    }
+                }
+            }
+        }
+        return tabs
+    }
+    fun getSubPartyList(
+        stIdx :Int
+    ) : List<Character?>? {
+        return runCatching {
+            partyCharacterList.subList(
+                stIdx,
+                stIdx + 4
+            )
+        }.getOrNull()
+    }
 }
 
 data class SchemeData(

@@ -17,49 +17,51 @@ struct RaidPartyView: View {
     private let height : CGFloat = 50
     
     var body: some View {
-        VStack {
+        ScrollView {
             VStack {
-                ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
-                    VStack {
-                        if idx > 0 && idx % 4 == 0 {
-                            Divider()
-                        }
-                        HStack{
-                            VStack{
-                                if item != nil {
-                                    DropDownCharacterNameView(name: item!.name)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    HStack{
-                                        Text(item!.className)
-                                        Spacer()
-                                        Text(item!.level)
+                VStack {
+                    ForEach(Array(characterList.enumerated()), id: \.offset) { idx, item in
+                        VStack {
+                            if idx > 0 && idx % 4 == 0 {
+                                Divider()
+                            }
+                            HStack{
+                                VStack{
+                                    if item != nil {
+                                        DropDownCharacterNameView(name: item!.name)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        HStack{
+                                            Text(item!.className)
+                                            Spacer()
+                                            Text(item!.level)
+                                        }
+                                    } else {
+                                        Text("캐릭터를 추가해 주세요")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
                                     }
-                                } else {
-                                    Text("캐릭터를 추가해 주세요")
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
+                                Spacer()
+                                IconButton(resource: item == nil ? \.add : \.delete_) {
+                                    buttonAction(item: item, index: idx)
                                 }
                             }
-                            .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
-                            Spacer()
-                            IconButton(resource: item == nil ? \.add : \.delete_) {
-                                buttonAction(item: item, index: idx)
-                            }
+                            .padding(10)
+                            .frame(maxWidth: .infinity)
                         }
-                        .padding(10)
                         .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
+                    
                 }
-                
+                .cornerRadius(10) /// make the background rounded
+                .overlay( /// apply a rounded border
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(.black, lineWidth: 1)
+                )
             }
-            .cornerRadius(10) /// make the background rounded
-            .overlay( /// apply a rounded border
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.black, lineWidth: 1)
-            )
+            .padding(2)
+            Spacer()
         }
-        .padding(2)
-        Spacer()
     }
     
     
