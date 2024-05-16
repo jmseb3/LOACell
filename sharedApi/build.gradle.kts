@@ -17,6 +17,14 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    targets.configureEach {
+        compilations.configureEach {
+            compilerOptions.configure {
+                freeCompilerArgs.addAll( "-Xexpect-actual-classes")
+            }
+        }
+    }
+
     cocoapods {
         summary = "shared api"
         homepage = "Link to the Shared Module homepage"

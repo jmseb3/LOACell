@@ -15,6 +15,13 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    targets.configureEach {
+        compilations.configureEach {
+            compilerOptions.configure {
+                freeCompilerArgs.addAll( "-Xexpect-actual-classes")
+            }
+        }
+    }
 
     cocoapods {
         summary = "shared Module"
@@ -29,7 +36,6 @@ kotlin {
             export(project(":sharedResources"))
             export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:0.23.0")
-//            transitiveExport = true
         }
         pod("FirebaseCore") {
             version = "10.16"
@@ -40,9 +46,6 @@ kotlin {
         pod("FirebaseAuth") {
             version = "10.16"
         }
-//        pod("FirebaseMessaging") {
-//            version = "10.16"
-//        }
         pod("GoogleSignIn") {
             version = "7.0"
         }
@@ -71,17 +74,14 @@ kotlin {
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
-//            implementation("com.google.firebase:firebase-messaging-ktx")
 
             implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
             implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-            implementation("androidx.credentials:credentials:1.3.0-alpha01")
-
+            implementation("androidx.credentials:credentials:1.3.0-alpha04")
             // optional - needed for credentials support from play services, for devices running
             // Android 13 and below.
-            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
-
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
         }
     }
