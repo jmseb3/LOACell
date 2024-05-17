@@ -32,36 +32,10 @@ struct RaidFocusView: View {
                 VStack{
                     Tabs(tabs: totalRoomInfo.getTabList(), geoWidth: geo.size.width, selectedTab: $tabIndex)
                     if(tabIndex == 0) {
-                        VStack {
-                            VStack(alignment: .leading) {
-                                Text("\(raidInfo!.getRaidText()) \(raidInfo!.makeGateText())")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                if (raidInfo!.day != Day.none) {
-                                    Text(raidInfo!.getDayText())
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            }
-                            ShareLink(
-                                item: Image(uiImage: render()),
-                                preview: SharePreview("공격대 정보", image: Image(uiImage: render()))
-                            ) {
-                                Label(
-                                    title: {
-                                        Text("공격대 공유")
-                                            .foregroundColor(.white)
-                                            .font(.footnote)
-                                    },
-                                    icon: {
-                                        Image(resource: \.screenshot)
-                                            .renderingMode(.template)
-                                            .foregroundColor(.white)
-                                    }
-                                )
-                            }
-                            .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
-                            .background(.blue)
-                            .cornerRadius(15)
-                        }
+                        RaidPartySimpleView(
+                            raidInfo: raidInfo!,
+                            characterList: totalRoomInfo.partyCharacterList as! [Character?]
+                        )
                     } else {
                         let stIdx = partyIndex[tabIndex - 1]
                         let partyList = totalRoomInfo.getSubPartyList(stIdx: Int32(stIdx)) as? [Character?]
@@ -100,8 +74,5 @@ struct RaidFocusView: View {
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .background(Color.white)
     }
-    
-    @MainActor func render()  -> UIImage {
-        return UIImage()
-    }
+
 }

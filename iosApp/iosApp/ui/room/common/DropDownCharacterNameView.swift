@@ -23,6 +23,7 @@ struct DropDownCharacterNameView: View {
                 Label(
                     title: {
                         Text("검색")
+                            .lineLimit(1)
                     },
                     icon: {
                         Image(resource: \.search)
