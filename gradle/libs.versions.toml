@@ -20,6 +20,7 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.0" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.0.0" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
