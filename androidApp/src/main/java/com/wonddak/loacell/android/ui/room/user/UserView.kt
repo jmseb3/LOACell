@@ -24,7 +24,7 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 fun UserView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val userList  = totalRoomInfo.userInfoList
     val focusUserName = totalRoomInfo.focusUserName
     Box() {

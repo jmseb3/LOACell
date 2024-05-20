@@ -27,8 +27,8 @@ import com.wonddak.loacell.model.Sheet
 fun RaidFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val baseUrl = loaCellViewModel.defaultUrl
     val tabs = totalRoomInfo.getTabList()
     var tabIndex by remember { mutableIntStateOf(0) }
     val partyIndex = arrayOf(0,4,8,12)

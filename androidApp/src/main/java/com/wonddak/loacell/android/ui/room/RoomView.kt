@@ -34,7 +34,7 @@ import com.wonddak.loacell.model.Sheet
 fun RoomView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val tabState = totalRoomInfo.tabState
     val dialogStatus = totalRoomInfo.dialogState
     val roomInfo = totalRoomInfo.roomInfo

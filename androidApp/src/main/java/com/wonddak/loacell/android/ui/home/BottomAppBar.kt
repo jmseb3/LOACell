@@ -33,13 +33,13 @@ fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val role = loaCellViewModel.myRole
-
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val focusUserInfo = totalRoomInfo.userInfo
     val focusRaidInfo  = totalRoomInfo.raidInfo
     val tabState = totalRoomInfo.tabState
-    val syncData by loaCellViewModel.syncData.collectAsState()
+
+    val selectedRoomId = loaCellViewModel.roomId
+    val syncData = loaCellViewModel.syncData
 
     loaCellViewModel.apply {
         BottomAppBar(

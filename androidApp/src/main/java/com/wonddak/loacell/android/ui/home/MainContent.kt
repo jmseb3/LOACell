@@ -34,8 +34,8 @@ fun MainContent(
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val userInfo by loaCellViewModel.user.collectAsState()
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val user = loaCellViewModel.user
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val dialogStatus = totalRoomInfo.dialogState
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
@@ -60,7 +60,7 @@ fun MainContent(
                 }
             }
         }
-        if (userInfo == null) {
+        if (user == null) {
             LoginView(loaCellViewModel)
         } else {
             Scaffold(
@@ -72,7 +72,7 @@ fun MainContent(
                     TopAppBar(loaCellViewModel = loaCellViewModel)
                 }
             ) {
-                ModalHost(dialogStatus, loaCellViewModel.getDialogAction()) {
+                ModalHost(dialogStatus, loaCellViewModel.dialogAction) {
                     MainContentView(it, db, loaCellViewModel)
                 }
             }
@@ -86,8 +86,8 @@ private fun MainContentView(
     db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val syncData by loaCellViewModel.syncData.collectAsState()
+    val selectedRoomId = loaCellViewModel.roomId
+    val syncData = loaCellViewModel.syncData
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -96,8 +96,6 @@ private fun MainContentView(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val roomList by loaCellViewModel.roomList.collectAsState()
-
             if (loaCellViewModel.showSetting) {
                 SettingView(loaCellViewModel)
             } else {
@@ -105,7 +103,7 @@ private fun MainContentView(
                     AnimatedVisibility(selectedRoomId.isEmpty()) {
                         Column() {
                             RooListView(
-                                roomList = roomList,
+                                roomList = loaCellViewModel.roomList,
                                 showRoomInfo = { roomId ->
                                     loaCellViewModel.showRoomInfo(roomId)
                                 }

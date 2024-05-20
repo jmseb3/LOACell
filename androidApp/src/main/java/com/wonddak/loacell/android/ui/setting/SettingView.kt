@@ -19,7 +19,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +45,7 @@ fun SettingView(
         loaCellViewModel.showSetting = false
     }
     val context = LocalContext.current
-    val defaultSpace by loaCellViewModel.sheetSpace.collectAsState(initial = 20f)
+    val defaultSpace = loaCellViewModel.sheetSpace
 
     var showSlider by remember {
         mutableStateOf(false)
@@ -70,7 +69,7 @@ fun SettingView(
             Slider(
                 value = defaultSpace,
                 onValueChange = {
-                    loaCellViewModel.setSheetSpace(it)
+                    loaCellViewModel.updateSheetSpace(it)
                 },
                 valueRange = 0f..40f,
                 steps = 39
@@ -93,7 +92,7 @@ fun SettingView(
         }
         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
             UrlList.forEach { (name,url) ->
-                DropdownMenuItem(text = { Text(text = name) }, onClick = { loaCellViewModel.setDefaultUrl(url) })
+                DropdownMenuItem(text = { Text(text = name) }, onClick = { loaCellViewModel.updateDefaultUrl(url) })
             }
         }
         SectionText(title = "버그 제보 및 건의하기") {

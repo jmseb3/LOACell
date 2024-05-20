@@ -42,9 +42,8 @@ fun LoginInfoView(
     loaCellViewModel: LoaCellViewModel
 ) {
     val loginHelper = loaCellViewModel.loginHelper
-    val user by loaCellViewModel.user.collectAsState(null)
-    val roomLists by loaCellViewModel.roomList.collectAsState()
-    val roomList = roomLists.filter { it.owner == user?.uid }
+    val user = loaCellViewModel.user
+    val roomList = loaCellViewModel.roomList.filter { it.owner == user?.uid }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

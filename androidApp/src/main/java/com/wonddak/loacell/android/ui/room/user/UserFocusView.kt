@@ -20,14 +20,13 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 fun UserFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val userInfo: UserInfo? = totalRoomInfo.userInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val characterList  = totalRoomInfo.characterList
-    val showLoading by loaCellViewModel.showLoading.collectAsState()
-    val msg by loaCellViewModel.msg.collectAsState()
-    val baseUrl by loaCellViewModel.defaultUrl.collectAsState(initial = "")
+    val showLoading = loaCellViewModel.showLoading
+    val msg = loaCellViewModel.msg
+    val baseUrl = loaCellViewModel.defaultUrl
 
-    userInfo?.let { userInfo ->
+    totalRoomInfo.userInfo?.let { userInfo ->
         Box {
             Column(
                 modifier = Modifier
