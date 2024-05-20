@@ -32,10 +32,15 @@ struct RaidFocusView: View {
                 VStack{
                     Tabs(tabs: totalRoomInfo.getTabList(), geoWidth: geo.size.width, selectedTab: $tabIndex)
                     if(tabIndex == 0) {
-                        RaidPartySimpleView(
-                            raidInfo: raidInfo!,
-                            characterList: totalRoomInfo.partyCharacterList as! [Character?]
-                        )
+                        if let info = raidInfo {
+                            RaidPartySimpleView(
+                                raidInfo: info,
+                                characterList: totalRoomInfo.partyCharacterList as! [Character?]
+                            )
+                        } else {
+                            EmptyView()
+                        }
+                  
                     } else {
                         let stIdx = partyIndex[tabIndex - 1]
                         let partyList = totalRoomInfo.getSubPartyList(stIdx: Int32(stIdx)) as? [Character?]
@@ -57,13 +62,13 @@ struct RaidFocusView: View {
                                         viewModel.showDialog(modal: Sheet.userAdd)
                                     }
                                 } else {
-                                    viewModel.updatePartyFocusIndex(index: newIndex)
+                                    viewModel.updatePartyFocusIndex(index: Int32(newIndex))
                                     viewModel.showDialog(modal: Sheet.raidUserAdd)
                                 }
                                 
                             } deleteAction: { index in
                                 let newIndex = stIdx + index
-                                viewModel.updatePartyFocusIndex(index: newIndex)
+                                viewModel.updatePartyFocusIndex(index: Int32(newIndex))
                                 viewModel.showDialog(modal: Dialog.raidUserDelete)
                             }
                         }

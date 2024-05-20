@@ -33,7 +33,7 @@ struct BottomAppBar: View {
                     if (!showSetting) {
                         HStack {
                             IconButton(resource: \.refresh) {
-                                viewModel.syncStart()
+                                viewModel.syncStart(force: false)
                             }
                         }
                     }
