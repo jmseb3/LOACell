@@ -15,7 +15,6 @@ import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.ext.TotalRoomInfo
-import com.wonddak.loacell.model.Modal
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
@@ -52,15 +51,24 @@ class LoaCellViewModel(
     }
 
     var user: FBUser? by mutableStateOf(null)
+        private  set
     var roomList: List<RoomInfo> by mutableStateOf(emptyList())
+        private  set
     var roomId: String by mutableStateOf("")
-    var totalRoomInfo: TotalRoomInfo by mutableStateOf(TotalRoomInfo.getInit())
-    var syncData: Boolean by mutableStateOf(false)
-    var showLoading: Boolean by mutableStateOf(false)
-    var msg: String by mutableStateOf("")
-    var sheetSpace: Float by mutableFloatStateOf(20f)
-    var defaultUrl: String by mutableStateOf(ILOA)
+        private  set
+    var totalRoomInfoValue: TotalRoomInfo by mutableStateOf(TotalRoomInfo.getInit())
+        private set
 
+    var syncData: Boolean by mutableStateOf(false)
+        private  set
+    var showLoading: Boolean by mutableStateOf(false)
+        private  set
+    var msg: String by mutableStateOf("")
+        private  set
+    var sheetSpace: Float by mutableFloatStateOf(20f)
+        private  set
+    var defaultUrl: String by mutableStateOf(ILOA)
+        private  set
     init {
         viewModelScope.launch {
             userFlow.collect {
@@ -79,7 +87,7 @@ class LoaCellViewModel(
         }
         viewModelScope.launch {
             totalRoomInfoFlow.collect {
-                totalRoomInfo = it
+                totalRoomInfoValue = it
             }
         }
         viewModelScope.launch {

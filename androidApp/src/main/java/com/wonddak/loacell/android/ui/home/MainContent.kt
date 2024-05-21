@@ -13,8 +13,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.wonddak.database.AppDataBase
@@ -35,7 +33,7 @@ fun MainContent(
     loaCellViewModel: LoaCellViewModel
 ) {
     val user = loaCellViewModel.user
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val dialogStatus = totalRoomInfo.dialogState
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
@@ -72,7 +70,7 @@ fun MainContent(
                     TopAppBar(loaCellViewModel = loaCellViewModel)
                 }
             ) {
-                ModalHost(dialogStatus, loaCellViewModel.dialogAction) {
+                ModalHost(dialogStatus, loaCellViewModel.getDialogAction()) {
                     MainContentView(it, db, loaCellViewModel)
                 }
             }

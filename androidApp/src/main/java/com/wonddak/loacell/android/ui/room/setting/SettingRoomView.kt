@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +51,7 @@ fun SettingRoomView(
     }
     val result = loaCellViewModel.tempOfFBData
     val user = loaCellViewModel.user
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val roomInfo = totalRoomInfo.roomInfo
     val raidList = totalRoomInfo.raidInfoList
     val userList = totalRoomInfo.userInfoList

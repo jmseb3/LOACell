@@ -13,8 +13,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 
 
@@ -25,7 +23,7 @@ fun TopAppBar(
 ) {
     val selectedRoomId = loaCellViewModel.roomId
 
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val roomInfo = totalRoomInfo.roomInfo
     val raidInfo = totalRoomInfo.raidInfo
     val focusUserName = totalRoomInfo.focusUserName

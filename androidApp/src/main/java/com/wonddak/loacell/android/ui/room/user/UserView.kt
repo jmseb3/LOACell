@@ -12,8 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,7 +22,7 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 fun UserView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val userList  = totalRoomInfo.userInfoList
     val focusUserName = totalRoomInfo.focusUserName
     Box() {

@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +38,7 @@ import com.wonddak.loacell.model.Sheet
 fun RaidView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val focusRaidId = totalRoomInfo.focusRaidId
 
     var showType by remember {
@@ -92,7 +91,7 @@ fun RaidTypeView(
     type: RoomType
 ) {
 
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val filter = totalRoomInfo.filter
 
     val timeStep = filter.timeStep

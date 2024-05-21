@@ -11,8 +11,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -33,7 +31,7 @@ fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val role = loaCellViewModel.myRole
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val focusUserInfo = totalRoomInfo.userInfo
     val focusRaidInfo  = totalRoomInfo.raidInfo
     val tabState = totalRoomInfo.tabState

@@ -8,13 +8,11 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.wonddak.database.ext.getMaxParty
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
@@ -27,7 +25,7 @@ import com.wonddak.loacell.model.Sheet
 fun RaidFocusView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo = loaCellViewModel.totalRoomInfo
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val baseUrl = loaCellViewModel.defaultUrl
     val tabs = totalRoomInfo.getTabList()
     var tabIndex by remember { mutableIntStateOf(0) }
