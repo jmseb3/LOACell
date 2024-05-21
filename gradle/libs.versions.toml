@@ -1,8 +1,7 @@
 [versions]
-agp = "8.1.4"
+agp = "8.2.2"
 kotlin = "1.9.23"
-compose-compiler = "1.5.11"
-androidx-activityCompose = "1.9.0"
+compose-compiler = "1.5.12"
 ktor = "2.3.5"
 sqldelight = "2.0.1"
 moko = "0.23.0"
@@ -15,7 +14,7 @@ wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version =
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 compose-bom = { module = "androidx.compose:compose-bom", version = "2024.03.00" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.0" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
