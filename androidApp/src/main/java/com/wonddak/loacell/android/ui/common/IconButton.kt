@@ -62,11 +62,9 @@ fun MyRoomIconButton(
         RoomState.User -> SharedRes.images.person
         RoomState.Setting -> SharedRes.images.room_setting
     }
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val tabState = totalRoomInfo.tabState
     MyIconButton(
         id = imageResource.drawableResId,
-        enabled = (tabState != state),
+        enabled = (loaCellViewModel.totalRoomInfo.tabState != state),
         onClick = {
             loaCellViewModel.setTabStatus(state)
         }

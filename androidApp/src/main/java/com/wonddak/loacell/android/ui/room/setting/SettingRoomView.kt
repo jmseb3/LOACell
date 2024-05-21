@@ -52,9 +52,8 @@ fun SettingRoomView(
         mutableStateOf(false)
     }
     val result = loaCellViewModel.tempOfFBData
-    val user by loaCellViewModel.user.collectAsState()
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-
+    val user = loaCellViewModel.user
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val roomInfo = totalRoomInfo.roomInfo
     val raidList = totalRoomInfo.raidInfoList
     val userList = totalRoomInfo.userInfoList

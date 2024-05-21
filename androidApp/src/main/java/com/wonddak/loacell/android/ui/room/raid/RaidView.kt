@@ -39,7 +39,7 @@ import com.wonddak.loacell.model.Sheet
 fun RaidView(
     loaCellViewModel: LoaCellViewModel
 ) {
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val focusRaidId = totalRoomInfo.focusRaidId
 
     var showType by remember {
@@ -92,7 +92,7 @@ fun RaidTypeView(
     type: RoomType
 ) {
 
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfo
     val filter = totalRoomInfo.filter
 
     val timeStep = filter.timeStep

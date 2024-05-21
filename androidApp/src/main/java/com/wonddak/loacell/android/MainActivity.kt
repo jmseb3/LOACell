@@ -29,8 +29,7 @@ class MainActivity : ComponentActivity() {
         )[LoaCellViewModel::class.java]
         kakaoIntent(intent)
         setContent {
-            val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-            BackHandler(selectedRoomId.isEmpty()) {
+            BackHandler(loaCellViewModel.roomId.isEmpty()) {
                 if (System.currentTimeMillis() - waitTime >= 1500) {
                     waitTime = System.currentTimeMillis()
                     loaCellViewModel.showSnackBar("뒤로가기 버튼을 한번 더 누르면 종료됩니다.")

@@ -20,7 +20,7 @@ struct SettingView: View {
         Binding {
             return viewModel.defaultSpace
         } set: { value in
-            viewModel.setSheetSpace(space: value)
+            viewModel.updateSheetSpace(space: Float(value))
         }
     }
 
@@ -28,7 +28,7 @@ struct SettingView: View {
         Binding {
             return viewModel.baseUrl
         } set: { value in
-            viewModel.setBaseUrl(url: value)
+            viewModel.updateDefaultUrl(url: value)
         }
     }
 
