@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
@@ -15,13 +15,6 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    targets.configureEach {
-        compilations.configureEach {
-            compilerOptions.configure {
-                freeCompilerArgs.addAll( "-Xexpect-actual-classes")
-            }
-        }
-    }
 
     cocoapods {
         summary = "shared Module"

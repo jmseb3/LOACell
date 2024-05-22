@@ -1,10 +1,11 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.googleGmsService)
 }
 
 apply("../keystore/signing.gradle")
@@ -23,9 +24,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     packaging {
         resources {

@@ -850,10 +850,10 @@ PODS:
     - GoogleSignIn (= 7.0)
 
 DEPENDENCIES:
-  - FirebaseAnalytics
-  - FirebaseCrashlytics
-  - GoogleSignIn
-  - GoogleSignInSwiftSupport
+  - FirebaseAnalytics (~> 10.16)
+  - FirebaseCrashlytics (~> 10.16)
+  - GoogleSignIn (~> 7.0)
+  - GoogleSignInSwiftSupport (~> 7.0)
   - shared (from `../shared`)
 
 SPEC REPOS:
@@ -920,8 +920,8 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  shared: 7e4ccfc16ebc362f7a5cccfbad85efaaa646d398
+  shared: 86e9fd3c22803e4c5708a732f343e59be44b0866
 
-PODFILE CHECKSUM: fab5222b8eb57bb10cf7d6cb659a980c4b2394a3
+PODFILE CHECKSUM: a8e975e794206be821ee627855dd067b0f0dd5c9
 
 COCOAPODS: 1.15.2
