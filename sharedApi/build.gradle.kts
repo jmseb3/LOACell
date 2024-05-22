@@ -26,7 +26,15 @@ kotlin {
             baseName = "sharedApi"
         }
     }
-
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {

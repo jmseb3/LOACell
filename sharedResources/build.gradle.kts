@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     id("dev.icerock.mobile.multiplatform-resources")
 }
+
 kotlin {
     androidTarget {
         compilations.all {
