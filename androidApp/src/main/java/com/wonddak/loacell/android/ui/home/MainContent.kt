@@ -24,6 +24,7 @@ import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.storage.CommonFireStorageHelper
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -71,7 +72,7 @@ fun MainContent(
                 }
             ) {
                 ModalHost(dialogStatus, loaCellViewModel.getDialogAction()) {
-                    MainContentView(it, db, loaCellViewModel)
+                    MainContentView(it,loaCellViewModel)
                 }
             }
         }
@@ -81,12 +82,14 @@ fun MainContent(
 @Composable
 private fun MainContentView(
     padding: PaddingValues,
-    db: AppDataBase,
     loaCellViewModel: LoaCellViewModel
 ) {
     val selectedRoomId = loaCellViewModel.roomId
     val syncData = loaCellViewModel.syncData
 
+    LaunchedEffect(true) {
+        CommonFireStorageHelper.parseSynergyJson()
+    }
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(padding)) {

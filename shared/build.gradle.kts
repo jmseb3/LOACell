@@ -46,6 +46,10 @@ kotlin {
         pod("FirebaseAuth") {
             version = "10.23.0"
         }
+        pod("FirebaseStorage") {
+            version = "10.23.0"
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
         pod("GoogleSignIn") {
             version = "7.1"
         }
@@ -63,15 +67,16 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings:1.0.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
             implementation(libs.androidx.lifecycle.viewmodel)
-
+            api("io.github.aakira:napier:2.7.1")
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.kotlin.test)
         }
 
         androidMain.dependencies {
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
+            implementation(libs.firebase.storage)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
 
