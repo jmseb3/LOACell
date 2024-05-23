@@ -1,39 +1,77 @@
-@file:OptIn(ExperimentalSettingsApi::class)
-
 package com.wonddak.loacell
 
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.coroutines.FlowSettings
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.map
+import okio.Path.Companion.toPath
 
-expect class Config {
-    val settings: FlowSettings
+internal const val LOA_CELL_PREFERENCES = "loaCell_preferences.preferences_pb"
+
+internal fun createDataStoreWithDefaults(
+    migrations: List<DataMigration<Preferences>> = emptyList(),
+    producePath: () -> String,
+) = PreferenceDataStoreFactory
+    .createWithPath(
+        corruptionHandler = null,
+        migrations = migrations,
+        produceFile = {
+            producePath().toPath()
+        }
+    )
+
+expect class DataStoreProvider() {
+    fun getDataStore() : DataStore<Preferences>
 }
-suspend fun Config.clear() = this.settings.clear()
-fun Config.getLongFlow(key: String, defaultValue: Long = 0L) =
-    this.settings.getLongFlow(key, defaultValue)
+class Config(provider: DataStoreProvider) {
+    private val dataStore = provider.getDataStore()
+    suspend fun remove(key: String) {
+        dataStore.edit {
+            if (it.contains(stringPreferencesKey(key))) {
+                it.remove(stringPreferencesKey(key))
+            }
+        }
+    }
+    suspend fun clear() {
+        dataStore.edit { it.clear() }
+    }
+    val homeRefreshTime: CommonFlow<Long>
+        get() = dataStore.data.map {
+            it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] ?: 0L
+        }.toCommonFlow()
 
-suspend fun Config.getLong(key: String, defaultValue: Long = 0L) =
-    this.settings.getLong(key, defaultValue)
+    suspend fun updateHomeRefreshTime(time:Long) {
+        dataStore.edit {
+            it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] = time
+        }
+    }
+    val sheetSpace : CommonFlow<Float>
+        get() = dataStore.data.map {
+            it[floatPreferencesKey(ConfigKeys.SheetSpace)] ?: 20f
+        }.toCommonFlow()
 
-suspend fun Config.putLong(key: String, value: Long) = this.settings.putLong(key, value)
+    suspend fun updateSheetSpace(space:Float) {
+        dataStore.edit {
+            it[floatPreferencesKey(ConfigKeys.SheetSpace)] = space
+        }
+    }
 
-fun Config.getFloatFlow(key: String, defaultValue: Float = 0f) =
-    this.settings.getFloatFlow(key, defaultValue).toCommonFlow()
+    val defaultUrl : CommonFlow<String>
+        get() = dataStore.data.map {
+            it[stringPreferencesKey(ConfigKeys.DefaultUrl)] ?: ILOA
+        }.toCommonFlow()
 
-suspend fun Config.getFloat(key: String, defaultValue: Float = 0f) =
-    this.settings.getFloat(key, defaultValue)
-
-suspend fun Config.putFloat(key: String, value: Float) = this.settings.putFloat(key, value)
-
-
-suspend fun Config.getString(key: String, defaultValue: String = "") =
-    this.settings.getString(key, defaultValue)
-
-fun Config.getStringFlow(key: String, defaultValue: String = "") =
-    this.settings.getStringFlow(key, defaultValue).toCommonFlow()
-
-
-suspend fun Config.putSting(key: String,value:String) = this.settings.putString(key, value)
+    suspend fun updateDefaultUrl(url:String) {
+        dataStore.edit {
+            it[stringPreferencesKey(ConfigKeys.DefaultUrl)] = url
+        }
+    }
+}
 
 object ConfigKeys {
     const val HomeRefreshKey = "home_refresh"
@@ -41,9 +79,9 @@ object ConfigKeys {
     const val DefaultUrl = "default_url"
 }
 
-val ILOA = "https://iloa.gg/character/"
-val LOAWA = "https://loawa.com/char/"
-val KLOA = "https://m.kloa.gg/characters/"
+const val ILOA = "https://iloa.gg/character/"
+const val LOAWA = "https://loawa.com/char/"
+const val KLOA = "https://m.kloa.gg/characters/"
 
 val UrlList = arrayListOf("일로아" to ILOA, "로아와" to LOAWA, "클로아" to KLOA)
 val UrlNameList = UrlList.map { it.first }

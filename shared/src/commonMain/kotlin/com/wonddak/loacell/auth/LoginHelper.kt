@@ -3,7 +3,7 @@ package com.wonddak.loacell.auth
 import com.wonddak.loacell.CommonMutableStateFlow
 import com.wonddak.loacell.CommonStateFlow
 
-expect class LoginHelper {
+expect class LoginHelper(){
     val loginIn : CommonMutableStateFlow<Boolean>
     val auth : FBAuth
     fun registerTokenAction(

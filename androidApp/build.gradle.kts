@@ -73,4 +73,8 @@ dependencies {
     implementation(libs.kakao.share)
     implementation(libs.browser)
     implementation(libs.capturable)
+
+    // Koin DI
+    // https://github.com/InsertKoinIO/koin
+    implementation(libs.bundles.koin.android)
 }

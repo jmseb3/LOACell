@@ -73,27 +73,29 @@ kotlin {
             api(project(":sharedApi"))
             api(project(":sharedResources"))
             api(project(":sharedDatabase"))
+
+            api(libs.bundles.koin.shared)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
-            implementation("com.russhwolf:multiplatform-settings:1.0.0")
-            implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
             implementation(libs.androidx.lifecycle.viewmodel)
-            api("io.github.aakira:napier:2.7.1")
+            api(libs.napier)
             implementation(libs.kotlinx.serialization)
+            implementation(libs.androidx.datastore.preferences.core)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
 
         androidMain.dependencies {
+            api(libs.koin.android)
+
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.storage)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
-
-            implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
-            implementation("androidx.datastore:datastore-preferences:1.0.0")
+            implementation(libs.androidx.datastore.preferences)
 
             implementation("androidx.credentials:credentials:1.3.0-alpha04")
             // optional - needed for credentials support from play services, for devices running

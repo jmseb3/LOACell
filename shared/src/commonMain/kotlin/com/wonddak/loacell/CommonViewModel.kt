@@ -36,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -161,13 +162,13 @@ open class CommonViewModel(
             }
             val nowTime = Clock.System.now().toEpochMilliseconds()
             if (force) {
-                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
+                config.updateHomeRefreshTime(nowTime)
                 syncSuccess()
                 return@launch
             }
-            val syncTime = config.getLong(ConfigKeys.HomeRefreshKey)
+            val syncTime = config.homeRefreshTime.first()
             if (nowTime - syncTime > 60 * 5 * 1000) {
-                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
+                config.updateHomeRefreshTime(nowTime)
                 syncSuccess()
             } else {
                 showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
@@ -294,18 +295,20 @@ open class CommonViewModel(
 
     //DialogAction
 
-    val sheetSpaceFlow = config.getFloatFlow(ConfigKeys.SheetSpace, 20f)
+    val sheetSpaceFlow
+        get() = config.sheetSpace
     fun updateSheetSpace(space: Float) {
         viewModelScope.launch {
-            config.putFloat(ConfigKeys.SheetSpace, space)
+            config.updateSheetSpace(space)
         }
     }
 
-    val defaultUrlFlow = config.getStringFlow(ConfigKeys.DefaultUrl, ILOA)
+    val defaultUrlFlow
+        get() = config.defaultUrl
 
     fun updateDefaultUrl(url: String) {
         viewModelScope.launch {
-            config.putSting(ConfigKeys.DefaultUrl, url)
+            config.updateDefaultUrl(url)
         }
     }
 

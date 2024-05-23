@@ -4,6 +4,8 @@ kotlin = "2.0.0"
 ktor = "2.3.5"
 sqldelight = "2.0.1"
 moko = "0.23.0"
+datastore = "1.1.1"
+koin = "3.5.6"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version = "1.8.0" }
@@ -19,6 +21,8 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.0" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.0.0" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
@@ -48,6 +52,13 @@ sqldelight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko" }
 moko-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko" }
 
+napier = { module = "io.github.aakira:napier", version = "2.7.1" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -63,4 +74,5 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 compose = ["compose-ui", "compose-ui-tooling-preview", "compose-material3", "androidx-activity-compose"]
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth"]
 ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
-
+koin-android = ["koin-core", "koin-android", "koin-compose"]
+koin-shared = ["koin-core","koin-test"]

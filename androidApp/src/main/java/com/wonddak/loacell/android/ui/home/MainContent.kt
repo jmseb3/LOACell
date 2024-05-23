@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.modal.ModalHost
@@ -25,13 +24,13 @@ import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.storage.CommonFireStorageHelper
+import org.koin.compose.koinInject
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainContent(
-    db: AppDataBase,
-    loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel = koinInject()
 ) {
     val user = loaCellViewModel.user
     val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
@@ -82,7 +81,7 @@ fun MainContent(
 @Composable
 private fun MainContentView(
     padding: PaddingValues,
-    loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel = koinInject()
 ) {
     val selectedRoomId = loaCellViewModel.roomId
     val syncData = loaCellViewModel.syncData

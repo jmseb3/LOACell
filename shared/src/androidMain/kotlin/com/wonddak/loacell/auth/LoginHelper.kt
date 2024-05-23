@@ -26,10 +26,10 @@ import com.wonddak.loacell.toCommonMutableStateFlow
 import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.java.KoinJavaComponent
 
-actual class LoginHelper(
-    private val context: Context
-) {
+actual class LoginHelper {
+    private val context : Context = KoinJavaComponent.getKoin().get()
 
     private val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
