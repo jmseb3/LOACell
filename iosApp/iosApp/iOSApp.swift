@@ -40,6 +40,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    init() {
+        KoinProxyKt.initKoin()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
