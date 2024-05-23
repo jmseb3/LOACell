@@ -4,6 +4,8 @@ import cocoapods.FirebaseStorage.FIRStorage
 import cocoapods.FirebaseStorage.FIRStorageReference
 import platform.Foundation.NSData
 import platform.Foundation.NSError
+import platform.Foundation.NSJSONReadingMutableContainers
+import platform.Foundation.NSJSONSerialization
 
 actual typealias CommonFireStorage = FIRStorage
 actual typealias CommonStorageReference = FIRStorageReference
@@ -33,4 +35,14 @@ actual fun CommonStorageReference.downloadByByte(
             failCompletion(error)
         }
     }
+}
+
+actual fun ByteData.toJsonString(): String {
+    return kotlin.runCatching {
+        NSJSONSerialization.JSONObjectWithData(
+            data = this,
+            options = NSJSONReadingMutableContainers,
+            error = null
+        ) as String
+    }.getOrDefault("")
 }

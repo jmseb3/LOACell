@@ -36,7 +36,9 @@ object CommonFireStorageHelper {
         getSynergyReference()
             .downloadByByte(
                 successCompletion = {
-                    Napier.v(tag = "CommonFireStorageHelper") {it.toString()}
+                    Napier.v(tag = "CommonFireStorageHelper") { it.toString() }
+                    val jsonString = it?.toJsonString() ?: "null"
+                    Napier.v(tag = "CommonFireStorageHelper") { jsonString }
                 },
                 failCompletion = {
                     Napier.e(tag = "CommonFireStorageHelper") {it.toString()}
@@ -44,3 +46,5 @@ object CommonFireStorageHelper {
             )
     }
 }
+
+expect fun ByteData.toJsonString():String

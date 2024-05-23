@@ -32,3 +32,7 @@ actual fun CommonStorageReference.downloadByByte(
             failCompletion(it)
         }
 }
+
+actual fun ByteData.toJsonString(): String {
+    return this.toString(Charsets.UTF_8)
+}

@@ -17,6 +17,16 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
+
     cocoapods {
         summary = "share db"
         homepage = "Link to the Shared Module homepage"
