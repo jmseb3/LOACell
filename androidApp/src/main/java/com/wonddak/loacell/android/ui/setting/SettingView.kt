@@ -85,14 +85,24 @@ fun SettingView(
                 }
             }
         }
-        SectionText(
-            title = "검색 사이트 변경"
-        ) {
-            showMenu = true
-        }
-        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-            UrlList.forEach { (name,url) ->
-                DropdownMenuItem(text = { Text(text = name) }, onClick = { loaCellViewModel.updateDefaultUrl(url) })
+        Row {
+            SectionText(
+                title = "검색 사이트 변경"
+            ) {
+                showMenu = true
+            }
+            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                UrlList.forEach { (name,url) ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = name)
+                        },
+                        onClick = {
+                            loaCellViewModel.updateDefaultUrl(url)
+                            showMenu = false
+                        }
+                    )
+                }
             }
         }
         SectionText(title = "버그 제보 및 건의하기") {

@@ -1,9 +1,6 @@
 package com.wonddak.loacell.ext
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.database.ext.getLevel
-import com.wonddak.database.ext.getMaxParty
-import com.wonddak.database.ext.getMinLevel
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo

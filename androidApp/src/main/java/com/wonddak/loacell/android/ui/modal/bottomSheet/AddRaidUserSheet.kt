@@ -26,10 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.andyliu.compose_wheel_picker.VerticalWheelPicker
-import com.wonddak.database.ext.getLevel
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.ext.getLevel
 import com.wonddak.loacell.model.Sheet
 import kotlinx.coroutines.launch
 

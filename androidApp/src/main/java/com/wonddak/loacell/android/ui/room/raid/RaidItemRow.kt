@@ -22,8 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.database.ext.getRaidText
-import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
 import com.wonddak.database.model.Difficulty
 import com.wonddak.database.model.RaidType
@@ -31,6 +29,8 @@ import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.ext.getImg
+import com.wonddak.loacell.ext.getRaidText
+import com.wonddak.loacell.ext.makeGateText
 import com.wonddak.loacell.store.CommonRaidHelper
 
 @Composable

@@ -1,4 +1,4 @@
-package com.wonddak.database.ext
+package com.wonddak.loacell.ext
 
 import com.wonddak.loacell.UserInfo
 import kotlinx.datetime.Clock

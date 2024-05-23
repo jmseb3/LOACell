@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.ext.checkTimeOver
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.checkTimeOver
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState

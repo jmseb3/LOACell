@@ -36,8 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.ext.getRaidText
-import com.wonddak.database.ext.makeGateText
 import com.wonddak.database.model.Day
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
@@ -48,6 +46,8 @@ import com.wonddak.loacell.android.ui.theme.md_theme_light_background
 import com.wonddak.loacell.android.util.FileUtil
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getDayText
+import com.wonddak.loacell.ext.getRaidText
+import com.wonddak.loacell.ext.makeGateText
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.launch
