@@ -4,6 +4,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 
 actual typealias CommonFireStorage = FirebaseStorage
 actual typealias CommonStorageReference = StorageReference
@@ -33,6 +35,7 @@ actual fun CommonStorageReference.downloadByByte(
         }
 }
 
-actual fun ByteData.toJsonString(): String {
-    return this.toString(Charsets.UTF_8)
+actual fun ByteData.toJson(): JsonElement {
+    val jsonString =  this.toString(Charsets.UTF_8)
+    return Json.parseToJsonElement(jsonString)
 }

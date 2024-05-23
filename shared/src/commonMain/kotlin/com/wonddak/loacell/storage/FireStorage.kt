@@ -1,6 +1,7 @@
 package com.wonddak.loacell.storage
 
 import io.github.aakira.napier.Napier
+import kotlinx.serialization.json.JsonElement
 
 expect class CommonFireStorage
 expect class CommonStorageReference
@@ -36,9 +37,9 @@ object CommonFireStorageHelper {
         getSynergyReference()
             .downloadByByte(
                 successCompletion = {
-                    Napier.v(tag = "CommonFireStorageHelper") { it.toString() }
-                    val jsonString = it?.toJsonString() ?: "null"
-                    Napier.v(tag = "CommonFireStorageHelper") { jsonString }
+                    Napier.v(tag = "CommonFireStorageHelper1") { it.toString() }
+                    val jsonString = it?.toJson()
+                    Napier.v(tag = "CommonFireStorageHelper2") { jsonString.toString() }
                 },
                 failCompletion = {
                     Napier.e(tag = "CommonFireStorageHelper") {it.toString()}
@@ -47,4 +48,4 @@ object CommonFireStorageHelper {
     }
 }
 
-expect fun ByteData.toJsonString():String
+expect fun ByteData.toJson():JsonElement

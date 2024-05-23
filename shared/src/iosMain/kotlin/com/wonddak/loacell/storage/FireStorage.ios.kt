@@ -2,6 +2,10 @@ package com.wonddak.loacell.storage
 
 import cocoapods.FirebaseStorage.FIRStorage
 import cocoapods.FirebaseStorage.FIRStorageReference
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSJSONReadingMutableContainers
@@ -37,12 +41,17 @@ actual fun CommonStorageReference.downloadByByte(
     }
 }
 
-actual fun ByteData.toJsonString(): String {
-    return kotlin.runCatching {
-        NSJSONSerialization.JSONObjectWithData(
+actual fun ByteData.toJson(): JsonElement {
+    return runCatching {
+        val data = NSJSONSerialization.JSONObjectWithData(
             data = this,
             options = NSJSONReadingMutableContainers,
             error = null
-        ) as String
-    }.getOrDefault("")
+        ) as Map<String,String>
+        buildJsonObject {
+            data.forEach {(key,value) ->
+                this.put(key, JsonPrimitive(value))
+            }
+        }
+    }.getOrDefault(Json.parseToJsonElement("{}"))
 }
