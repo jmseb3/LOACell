@@ -1,5 +1,6 @@
 package com.wonddak.loacell.di
 
+import com.wonddak.database.di.dataBaseModule
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.DataStoreProvider
 import com.wonddak.loacell.auth.LoginHelper
@@ -13,5 +14,5 @@ val platformModule = module {
     singleOf(::Config)
 }
 
-fun commonModule() = listOf(platformModule)
+fun commonModule() = listOf(platformModule,dataBaseModule)
 

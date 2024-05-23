@@ -16,7 +16,7 @@ class LoaCellApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KakaoSdk.init(this,SharedRes.strings.kakaoKey.getString(this))
+        KakaoSdk.init(this, SharedRes.strings.kakaoKey.getString(this))
         Napier.base(DebugAntilog())
 
         startKoin {

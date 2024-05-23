@@ -43,6 +43,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
+            api(libs.bundles.koin.shared)
         }
 
         androidMain.dependencies {
