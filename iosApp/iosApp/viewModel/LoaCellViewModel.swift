@@ -63,7 +63,11 @@ class LoaCellViewModel: CommonViewModel, ObservableObject {
     }
     
     init() {
-        super.init(dataBase: AppDataBase(driverFactory: DriverFactory()), config: Config(), loginHelper: LoginHelper())
+        super.init(
+            dataBase: ModuleProvider().getAppDataBase(),
+            config: ModuleProvider().getConfig(),
+            loginHelper: ModuleProvider().getLoginHelper()
+        )
 
         loginHelper.auth.user.collect { user in
             self.user = user

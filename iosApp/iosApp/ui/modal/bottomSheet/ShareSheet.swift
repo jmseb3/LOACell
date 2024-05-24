@@ -40,7 +40,7 @@ struct ShareSheet: View {
     
     private let imageSize : CGFloat = 40
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title: Sheet.shareSheet.title,
             text: nil,
             errorMsg: $errMsg,

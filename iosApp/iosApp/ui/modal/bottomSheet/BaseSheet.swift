@@ -19,64 +19,6 @@ struct BaseSheet<Content: View>: View {
     func clearErrorMsg() {
         errorMsg = ""
     }
-    let content: () -> Content
-    
-    @State private var space :CGFloat = 20.0
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            VStack {
-                if title != nil {
-                    Text(title!)
-                        .font(.title3)
-                    Divider()
-                }
-                Spacer().frame(height: 20)
-                content()
-                Spacer().frame(height: 20)
-                if !errorMsg.isEmpty {
-                    Text(errorMsg)
-                        .foregroundColor(.red)
-                        .animation(.spring, value: errorMsg)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                clearErrorMsg()
-                            }
-                        }
-                }
-                if let buttonText = text {
-                    RoundCornerButton(text: buttonText) {
-                        action()
-                    }
-                    .disabled(!enabled)
-                }
-                Spacer()
-                    .frame(height: space)
-            }
-            .padding()
-            .background(.white)
-            .frame(alignment: .bottom)
-            .cornerRadius(20, corners: [.topLeft,.topRight])
-            .shadow(radius: 20)
-        }.onAppear {
-            Config().getFloatFlow(key: ConfigKeys().SheetSpace, defaultValue: 20.0).collect { value in
-                space = value as! CGFloat
-            }
-        }.ignoresSafeArea()
-    }
-}
-
-struct BaseSheet2<Content: View>: View {
-    var title :String? = nil
-    var text :String? = "추가"
-    var action :() -> Void = {}
-    var enabled : Bool = true
-    
-    @Binding var errorMsg :String
-    func clearErrorMsg() {
-        errorMsg = ""
-    }
     var dismiss : () -> Void = {}
     
     let content: () -> Content
@@ -124,11 +66,19 @@ struct BaseSheet2<Content: View>: View {
             .padding()
             .frame(minHeight: 350)
             .onAppear {
-                Config().getFloatFlow(key: ConfigKeys().SheetSpace, defaultValue: 20.0).collect { value in
-                    space = value as! CGFloat
-                }
+                getSheetSpace()
             }
         }
         .presentationDetents([.medium])
+    }
+    
+    @MainActor
+    func getSheetSpace() {
+        ModuleProvider().getSheetSpace { value, error in
+            print("get Space : \(value)")
+            if(error != nil) {
+                self.space = value as! CGFloat
+            }
+        }
     }
 }

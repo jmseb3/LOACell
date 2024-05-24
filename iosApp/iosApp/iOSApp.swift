@@ -11,7 +11,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication,didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        KakaoSDK.initSDK(appKey: "eaad613c8a32160c49991040e94170f9")
+        KakaoSDK.initSDK(appKey: SharedRes.strings().kakaoKey.desc().localized())
         NapierProxyKt.debugBuild()
         window = UIWindow()
         FirebaseApp.configure()
@@ -41,7 +41,7 @@ struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     init() {
-        KoinProxyKt.initKoin()
+        KoinProxyKt.doInitKoin()
     }
     
     var body: some Scene {

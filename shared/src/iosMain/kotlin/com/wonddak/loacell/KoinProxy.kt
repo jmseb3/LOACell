@@ -16,12 +16,16 @@ fun initKoin(){
 }
 
 class ModuleProvider :KoinComponent {
-    val database : AppDataBase by inject()
-    val loginHelper : LoginHelper by inject()
-    val config : Config by inject()
+    private val database : AppDataBase by inject()
+    private val loginHelper : LoginHelper by inject()
+    private val config : Config by inject()
+
+    fun getAppDataBase() :AppDataBase = database
+    fun getLoginHelper() : LoginHelper = loginHelper
+    fun getConfig() : Config = config
 
     @MainThread
-    suspend fun getSheetSpace() {
-        config.sheetSpace.first()
+    suspend fun getSheetSpace() : Float {
+        return config.sheetSpace.first()
     }
 }

@@ -42,7 +42,7 @@ struct FilterSheet: View {
     }
     
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title: Sheet.raidFilter.title,
             text: nil,
             errorMsg: .constant(""),

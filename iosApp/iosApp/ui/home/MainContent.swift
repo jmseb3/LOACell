@@ -38,9 +38,6 @@ struct MainContent: View {
                 }
             }
         }
-        .onAppear{
-            CommonFireStorageHelper().parseSynergyJson()
-        }
     }
     
 }

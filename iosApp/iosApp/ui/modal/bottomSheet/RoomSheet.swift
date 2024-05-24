@@ -78,7 +78,7 @@ struct RoomSheetBase: View {
     }
     
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title: sheetTitle,
             text: buttonText,
             action: {
