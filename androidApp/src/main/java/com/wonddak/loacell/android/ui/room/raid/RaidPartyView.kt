@@ -48,6 +48,7 @@ import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.ext.getDayText
 import com.wonddak.loacell.ext.getRaidText
 import com.wonddak.loacell.ext.makeGateText
+import com.wonddak.loacell.model.Synergy
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.launch
@@ -60,47 +61,56 @@ fun RaidPartyView(
     openAction: (index: Int) -> Unit,
     deleteAction: (index: Int) -> Unit,
 ) {
-    Card(
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier
-            .padding(horizontal = 5.dp, vertical = 3.dp)
-    ) {
-        LazyColumn(modifier = Modifier.padding(5.dp)) {
-            itemsIndexed(list) { index, item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(55.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        if (item != null) {
-                            DropDownCharacterNameView(
-                                base = baseUrl,
-                                name = item.name
-                            )
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = item.className)
-                                Spacer(modifier = Modifier)
-                                Text(text = item.level)
-                            }
-                        } else {
-                            Text(text = "캐릭터를 추가해주세요")
-                        }
-                    }
-                    MyIconButton(
-                        imageResource = if (item == null) SharedRes.images.add else SharedRes.images.delete
+    Column {
+        Card(
+            border = BorderStroke(1.dp, Color.Black),
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 3.dp)
+        ) {
+            LazyColumn(modifier = Modifier.padding(5.dp)) {
+                itemsIndexed(list) { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        if (item == null) {
-                            openAction(index)
-                        } else {
-                            deleteAction(index)
+                        Column {
+                            if (item != null) {
+                                DropDownCharacterNameView(
+                                    base = baseUrl,
+                                    name = item.name
+                                )
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = item.className)
+                                    Spacer(modifier = Modifier)
+                                    Text(text = item.level)
+                                }
+                            } else {
+                                Text(text = "캐릭터를 추가해주세요")
+                            }
+                        }
+                        MyIconButton(
+                            imageResource = if (item == null) SharedRes.images.add else SharedRes.images.delete
+                        ) {
+                            if (item == null) {
+                                openAction(index)
+                            } else {
+                                deleteAction(index)
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        Column {
+            Text(text = "시너지")
+            Synergy.getSynergyList(list.map { it?.className }).forEach {
+                Text(it)
             }
         }
     }

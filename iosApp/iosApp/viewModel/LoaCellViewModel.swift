@@ -66,7 +66,8 @@ class LoaCellViewModel: CommonViewModel, ObservableObject {
         super.init(
             dataBase: ModuleProvider().getAppDataBase(),
             config: ModuleProvider().getConfig(),
-            loginHelper: ModuleProvider().getLoginHelper()
+            loginHelper: ModuleProvider().getLoginHelper(),
+            synergyReferenceHelper: ModuleProvider().getSynergyReferenceHelper()
         )
 
         loginHelper.auth.user.collect { user in

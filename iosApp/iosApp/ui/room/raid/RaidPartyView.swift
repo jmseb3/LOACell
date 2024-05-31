@@ -57,6 +57,12 @@ struct RaidPartyView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(.black, lineWidth: 1)
             )
+            VStack {
+                Text("시너지")
+                ForEach(Synergy().getSynergyList(classList: characterList),id:\.self) { data in
+                    Text(data)
+                }
+            }
         }
         .padding(2)
         Spacer()

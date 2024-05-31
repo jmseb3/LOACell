@@ -15,13 +15,15 @@ import com.wonddak.loacell.RoomInfo
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.ext.TotalRoomInfo
+import com.wonddak.loacell.storage.SynergyReferenceHelper
 import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
     dataBase: AppDataBase,
     config: Config,
-    loginHelper: LoginHelper
-) : CommonViewModel(dataBase, config, loginHelper) {
+    loginHelper: LoginHelper,
+    synergyReferenceHelper: SynergyReferenceHelper
+) : CommonViewModel(dataBase, config, loginHelper,synergyReferenceHelper) {
 
     //region snackbar
     private val snackBarController = SnackBarController()

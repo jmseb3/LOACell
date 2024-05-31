@@ -17,6 +17,8 @@ import com.wonddak.loacell.model.ModalConst
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.Sheet
+import com.wonddak.loacell.model.Synergy
+import com.wonddak.loacell.storage.SynergyReferenceHelper
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -30,6 +32,7 @@ import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -46,6 +49,7 @@ open class CommonViewModel(
     protected val dataBase: AppDataBase,
     protected val config: Config,
     val loginHelper: LoginHelper,
+    val synergyReferenceHelper: SynergyReferenceHelper,
 ) : ViewModel(), DialogAction {
 
     //현재 로그인된 유저 정보
@@ -626,6 +630,12 @@ open class CommonViewModel(
                         }
                     }
                 }
+            }
+        }
+        viewModelScope.launch {
+            synergyReferenceHelper.downloadFile {synergyData ->
+                Napier.d { "synergyData : $synergyData" }
+                Synergy.addData(synergyData)
             }
         }
     }
