@@ -59,7 +59,7 @@ struct RaidPartyView: View {
             )
             VStack {
                 Text("시너지")
-                ForEach(Synergy().getSynergyList(classList: characterList),id:\.self) { data in
+                ForEach(Synergy().getSynergyList(characterList: characterList),id:\.self) { data in
                     Text(data)
                 }
             }

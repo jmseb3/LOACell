@@ -109,7 +109,7 @@ fun RaidPartyView(
 
         Column {
             Text(text = "시너지")
-            Synergy.getSynergyList(list.map { it?.className }).forEach {
+            Synergy.getSynergyList(list).forEach {
                 Text(it)
             }
         }

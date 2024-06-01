@@ -1,12 +1,14 @@
 package com.wonddak.loacell.model
 
+import com.wonddak.loacell.Character
 import io.github.aakira.napier.Napier
 
 
 object Synergy {
+    private const val TAG ="Synergy"
     private var data : Map<String,String> = emptyMap()
     fun addData(data:Map<String,String>) {
-        Napier.d { "synergyData Add : $data" }
+        Napier.d(tag = TAG) { "synergyData Add : $data" }
         this.data = data
     }
 
@@ -19,9 +21,15 @@ object Synergy {
         }
     }
 
-    fun getSynergyList(classList: List<String?>) : List<String> {
+    private fun getSynergyList(classList: List<String?>) : List<String> {
+        Napier.d(tag = TAG) { "getItem : ${classList.joinToString("/")}" }
+
         return classList.map { getSynergy(it) }.filter { it.isNotEmpty() }.also {
-            Napier.d { "getSynergyList : ${it.joinToString("/")}" }
+            Napier.d(tag = TAG) { "getSynergyList : ${it.joinToString("/")}" }
         }
+    }
+
+    fun getSynergyList(characterList: List<Character?>) : List<String> {
+        return getSynergyList(classList = characterList.map { it?.className })
     }
 }

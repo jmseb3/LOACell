@@ -3,7 +3,6 @@ package com.wonddak.loacell.storage
 import cocoapods.FirebaseStorage.FIRStorage
 import cocoapods.FirebaseStorage.FIRStorageReference
 import io.github.aakira.napier.Napier
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
@@ -11,6 +10,7 @@ import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
+import platform.Foundation.URLByAppendingPathComponent
 import platform.Foundation.stringWithContentsOfFile
 
 actual typealias CommonFireStorage = FIRStorage
@@ -35,8 +35,6 @@ fun CommonStorageReference.downloadToFile(
     failCompletion: (error: FSError) -> Unit = {}
 ) {
     this.writeToFile(filePath) { url, error ->
-        Napier.d { "downloadToFile url : $url" }
-        Napier.d { "downloadToFile error : $error" }
         if (error == null) {
             successCompletion()
         } else {
@@ -47,28 +45,27 @@ fun CommonStorageReference.downloadToFile(
 
 actual class SynergyReferenceHelper {
 
-    @OptIn(ExperimentalForeignApi::class)
     private fun providePath(): String {
-        val filePath: NSURL? = NSFileManager.defaultManager.URLForDirectory(
+        val dirPaths = NSFileManager.defaultManager.URLsForDirectory(
             directory = NSCachesDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
-        return requireNotNull(filePath).path + "/" + FileName
+            inDomains = NSUserDomainMask
+        ) as List<NSURL>
+        val filePath = dirPaths[0].URLByAppendingPathComponent(FileName)
+        Napier.d(tag = "SynergyReferenceHelper") { "${filePath?.filePathURL()}" }
+        return filePath!!.path!!
     }
 
     private val filePath = providePath()
     private val fileUrl: NSURL = NSURL(string = filePath)
     actual fun isExist(): Boolean {
         return NSFileManager.defaultManager.fileExistsAtPath(path = filePath).also {
-            Napier.d { "$filePath exists : $it" }
+            Napier.d(tag = "SynergyReferenceHelper") { "$filePath exists : $it" }
         }
     }
 
     actual fun downloadFile(callBack: (Map<String, String>) -> Unit) {
         if (!isExist()) {
+            Napier.d(tag = "SynergyReferenceHelper") { "file no exist start download.." }
             FireStorageReferenceHelper
                 .getSynergyReference()
                 .downloadToFile(
@@ -78,12 +75,19 @@ actual class SynergyReferenceHelper {
                     }
                 )
         } else {
+            Napier.d(tag = "SynergyReferenceHelper") { "file exist pass download.." }
             callBack(readFile())
         }
     }
 
     private fun readFile(): Map<String, String> {
-        val jsonString = runCatching { NSString.stringWithContentsOfFile(path = filePath, encoding = NSUTF8StringEncoding, null) as String }.getOrDefault("")
+        val jsonString = runCatching {
+            NSString.stringWithContentsOfFile(
+                path = filePath,
+                encoding = NSUTF8StringEncoding,
+                null
+            ) as String
+        }.getOrDefault("{}")
         return FireStorageReferenceHelper.jsonStringToData(jsonString)
     }
 }

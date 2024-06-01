@@ -5,6 +5,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
+import io.github.aakira.napier.Napier
 import org.koin.java.KoinJavaComponent
 import java.io.BufferedReader
 import java.io.File
@@ -50,6 +51,7 @@ actual class SynergyReferenceHelper {
 
     actual fun downloadFile(callBack: (Map<String, String>) -> Unit) {
         if (!isExist()) {
+            Napier.d(tag = "SynergyReferenceHelper") { "file no exist start download.." }
             FireStorageReferenceHelper
                 .getSynergyReference()
                 .downloadToFile(
@@ -59,6 +61,7 @@ actual class SynergyReferenceHelper {
                     }
                 )
         } else {
+            Napier.d(tag = "SynergyReferenceHelper") { "file exist pass download.." }
             callBack(readFile())
         }
     }
