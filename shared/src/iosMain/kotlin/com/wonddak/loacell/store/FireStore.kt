@@ -2,17 +2,17 @@
 
 package com.wonddak.loacell.store
 
-import cocoapods.FirebaseFirestore.FIRCollectionReference
-import cocoapods.FirebaseFirestore.FIRDocumentReference
-import cocoapods.FirebaseFirestore.FIRDocumentSnapshot
-import cocoapods.FirebaseFirestore.FIRFieldPath
-import cocoapods.FirebaseFirestore.FIRFieldValue
-import cocoapods.FirebaseFirestore.FIRFilter
-import cocoapods.FirebaseFirestore.FIRFirestore
-import cocoapods.FirebaseFirestore.FIRListenerRegistrationProtocol
-import cocoapods.FirebaseFirestore.FIRQuery
-import cocoapods.FirebaseFirestore.FIRQuerySnapshot
-import cocoapods.FirebaseFirestore.FIRWriteBatch
+import cocoapods.FirebaseFirestoreInternal.FIRCollectionReference
+import cocoapods.FirebaseFirestoreInternal.FIRDocumentReference
+import cocoapods.FirebaseFirestoreInternal.FIRDocumentSnapshot
+import cocoapods.FirebaseFirestoreInternal.FIRFieldPath
+import cocoapods.FirebaseFirestoreInternal.FIRFieldValue
+import cocoapods.FirebaseFirestoreInternal.FIRFilter
+import cocoapods.FirebaseFirestoreInternal.FIRListenerRegistrationProtocol
+import cocoapods.FirebaseFirestoreInternal.FIRQuery
+import cocoapods.FirebaseFirestoreInternal.FIRQuerySnapshot
+import cocoapods.FirebaseFirestoreInternal.FIRWriteBatch
+import cocoapods.FirebaseFirestoreInternal.FIRFirestore
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSError

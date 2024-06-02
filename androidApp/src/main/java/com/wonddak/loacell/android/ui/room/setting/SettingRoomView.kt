@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,39 +50,40 @@ fun SettingRoomView(
         mutableStateOf(false)
     }
     val result = loaCellViewModel.tempOfFBData
-    val user by loaCellViewModel.user.collectAsState()
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-
+    val user = loaCellViewModel.user
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val roomInfo = totalRoomInfo.roomInfo
     val raidList = totalRoomInfo.raidInfoList
     val userList = totalRoomInfo.userInfoList
 
     roomInfo?.let { info ->
-        //유저 정보랑 owner랑 같은 경우 바로 가져오기 가능
-        user?.let { userInfo ->
-            if (info.getAllUidList().size == 1 && info.owner == userInfo.uid) {
-                loaCellViewModel.tempOfFBData = listOf(
-                    FBDataItem(
-                        userInfo.uid,
-                        userInfo.displayName,
-                        userInfo.photoUrl
-                    )
-                )
-            }
-        }
-        //이전 값이랑 같으면 갱신 pass
-        if (info.getAllUidList() == result.map { it.uid }) {
-            fetch = true
-        }
         LaunchedEffect(true) {
-            info.checkNotExistUid { data ->
+            //유저 정보랑 owner랑 같은 경우 바로 가져오기 가능
+            user?.let { userInfo ->
+                if (info.getAllUidList().size == 1 && info.owner == userInfo.uid) {
+                    loaCellViewModel.tempOfFBData = listOf(
+                        FBDataItem(
+                            userInfo.uid,
+                            userInfo.displayName,
+                            userInfo.photoUrl
+                        )
+                    )
+                }
+            }
+            //이전 값이랑 같으면 갱신 pass
+            if (info.getAllUidList() == result.map { it.uid }) {
                 fetch = true
-                loaCellViewModel.tempOfFBData = data
+            }
+            if(!fetch) {
+                info.checkNotExistUid { data ->
+                    fetch = true
+                    loaCellViewModel.tempOfFBData = data
+                }
             }
         }
         Column {
             SettingRoomInfo(loaCellViewModel, info, raidList, userList)
-            Divider()
+            HorizontalDivider()
             UserUidList(
                 fetch,
                 info,

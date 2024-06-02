@@ -22,7 +22,7 @@ struct MainContent: View {
                     if viewModel.roomId.isEmpty {
                         //방리스트
                         RoomListView(roomList: viewModel.roomList) { roomId in
-                            viewModel.showRoom(roomId: roomId)
+                            viewModel.showRoomInfo(roomId: roomId)
                         }
                     } else {
                         // 방정보

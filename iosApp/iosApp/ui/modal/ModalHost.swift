@@ -148,7 +148,7 @@ struct ModalSheet: ViewModifier {
             case Sheet.shareSheet:
                 ShareSheet(dialogAction : dialogAction)
             case Sheet.testSheet:
-                BaseSheet2(
+                BaseSheet(
                     title: "여백 테스트",
                     text: "확인",
                     action: {

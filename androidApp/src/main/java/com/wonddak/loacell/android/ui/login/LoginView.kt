@@ -37,18 +37,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.LoaCellApp
 import com.wonddak.loacell.android.toText
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.sharedresources.store.CommonString
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 fun LoginView(loaCellViewModel: LoaCellViewModel) {
-    val loginHelper =  LoaCellApp.loginHelper
+    val loginHelper : LoginHelper = koinInject()
     val loggingIn by loginHelper.loginIn.collectAsState()
     val context = LocalContext.current
 

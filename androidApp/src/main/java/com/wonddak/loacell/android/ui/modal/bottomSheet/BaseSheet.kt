@@ -25,18 +25,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.ConfigKeys
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
-import com.wonddak.loacell.getFloat
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,13 +99,12 @@ fun BaseSheet(
     buttonClickAction : () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val context = LocalContext.current
-    val config = Config(context)
+    val config : Config = koinInject()
     var defaultSpace by remember {
         mutableFloatStateOf(20f)
     }
     LaunchedEffect(true) {
-        defaultSpace = config.getFloat(ConfigKeys.SheetSpace,20f)
+        defaultSpace = config.sheetSpace.first()
     }
     BaseSheet(
         title,useCloseIcon,onDismissRequest

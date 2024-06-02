@@ -1,11 +1,34 @@
 package com.wonddak.loacell.ext
 
-import com.wonddak.database.ext.getMaxParty
 import com.wonddak.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.util.TimeHelper
 import dev.icerock.moko.resources.ImageResource
+
+fun RaidInfo.getMinLevel(): Int {
+    return this.type.getMinLevel(this.Difficulty, this.endGateNumber.toInt())
+}
+
+fun RaidInfo.getRaidText(): String {
+    return "${this.type.toKorString()} - ${this.Difficulty.toKorString()}"
+}
+
+fun RaidInfo.getMaxParty(): Int {
+    return this.type.getMaxParty()
+}
+
+fun RaidInfo.makeGateText(): String {
+    return when (this.type) {
+        RaidType.ETC -> {
+            "관문 정보 없음"
+        }
+
+        else -> {
+            "1 ~ ${this.type.getMaxGate(this.Difficulty)} 관문"
+        }
+    }
+}
 
 fun RaidInfo.getImg(): ImageResource? {
     return when (this.type) {

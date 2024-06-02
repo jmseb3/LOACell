@@ -1,5 +1,7 @@
 package com.wonddak.loacell.android.ui.room.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -9,11 +11,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.android.toPainter
-import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.dataStore
 import com.wonddak.loacell.util.openName
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DropDownCharacterNameView(
     modifier: Modifier = Modifier,
@@ -39,9 +37,10 @@ fun DropDownCharacterNameView(
         mutableStateOf(false)
     }
     Text(
-        modifier = modifier.noRippleClickable { openMenu = true },
+        modifier = modifier.noRippleClickable { openMenu = true }.basicMarquee(),
         text = name,
-        fontWeight = fontWeight
+        fontWeight = fontWeight,
+        maxLines = 1
     )
     DropdownMenu(expanded = openMenu, onDismissRequest = { openMenu = false }) {
         DropdownMenuItem(

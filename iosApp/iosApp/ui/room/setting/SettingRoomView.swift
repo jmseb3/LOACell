@@ -12,9 +12,6 @@ import shared
 struct SettingRoomView: View {
     @EnvironmentObject var viewModel: LoaCellViewModel
     
-    var result : [FBDataItem] {
-        viewModel.tempOfFBData
-    }
     var user :FBUser? {
         viewModel.user
     }
@@ -32,10 +29,10 @@ struct SettingRoomView: View {
     }
     
     @State private var fetch :Bool = false
+    @State private var result :[FBDataItem] = []
     
     var body: some View {
         ScrollView {
-            
             VStack {
                 if let room = roomInfo {
                     SettingRoomInfo(
@@ -44,8 +41,12 @@ struct SettingRoomView: View {
                         userList : userList
                     )
                     Divider()
-                    UserUidList(fetch: $fetch, roomInfo: room, result: result, ownerChangeSuccess: {
-                        viewModel.hideRoomInfo()
+                    UserUidList(
+                        fetch: $fetch,
+                        roomInfo: room,
+                        result: $result,
+                        ownerChangeSuccess: {
+                            viewModel.hideRoomInfo()
                     }) { err in
                         viewModel.showSnackBar(msg: "변경에 실패했습니다.\(err.errorMsg)")
                     }
@@ -59,8 +60,9 @@ struct SettingRoomView: View {
                         }
                     }
                     
-                    if roomInfo!.getAllUidList() == result.map({ item in item.uid}) {
+                    if roomInfo!.getAllUidList() == viewModel.tempOfFBData.map({ item in item.uid}) {
                         fetch = true
+                        result = viewModel.tempOfFBData
                     }
                     
                     if !fetch {
@@ -68,6 +70,7 @@ struct SettingRoomView: View {
                             roomInfo!.checkNotExistUid { data in
                                 fetch = true
                                 viewModel.tempOfFBData = data
+                                result = viewModel.tempOfFBData
                             } completionHandler: { error in
                                 print(error)
                             }
@@ -164,7 +167,7 @@ struct SettingRoomInfo: View {
 struct UserUidList : View {
     @Binding var fetch : Bool
     let roomInfo : RoomInfo
-    let result : [FBDataItem]
+    @Binding var result : [FBDataItem]
     let ownerChangeSuccess :() ->Void
     let ownerChangeFail : (_ err :Error) -> Void
     

@@ -3,34 +3,29 @@ package com.wonddak.loacell.android.viewModel
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
-import com.wonddak.loacell.UserInfo
-import com.wonddak.loacell.ViewModelImpl
+import com.wonddak.loacell.ILOA
+import com.wonddak.loacell.RoomInfo
+import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
-import com.wonddak.loacell.model.Modal
-import com.wonddak.loacell.model.RoomState
+import com.wonddak.loacell.ext.TotalRoomInfo
+import com.wonddak.loacell.storage.SynergyReferenceHelper
+import kotlinx.coroutines.launch
 
 class LoaCellViewModel(
-    private val dataBase: AppDataBase,
-    private val config: Config,
-    val loginHelper: LoginHelper
-) : ViewModel(), ViewModelImpl {
+    dataBase: AppDataBase,
+    config: Config,
+    loginHelper: LoginHelper,
+    synergyReferenceHelper: SynergyReferenceHelper
+) : CommonViewModel(dataBase, config, loginHelper,synergyReferenceHelper) {
 
-    private val common by lazy {
-        CommonViewModel(
-            viewModelScope,
-            dataBase,
-            config,
-            loginHelper,
-            this@LoaCellViewModel
-        )
-    }
+    //region snackbar
     private val snackBarController = SnackBarController()
 
     val snackBarMessage
@@ -48,75 +43,79 @@ class LoaCellViewModel(
     }
 
     fun resetSnackBar() = snackBarController.resetSnackBar()
-
-    //현재 로그인된 유저 정보
-    val user get() = common.user
-
-    // 전체 room 정보
-    val roomList get() = common.roomList
-
-    //방 클릭시 매핑되는 방 id
-    val roomId get() = common.roomId
-
-    //선택된 방의 정보
-    val totalRoomInfo get() = common.totalRoomInfo
-
-    fun setTabStatus(state: RoomState) = common.setTabStatus(state)
-
-    //방에 들어갈경우
-    fun showRoomInfo(roomId: String) = common.showRoom(roomId)
-
-    //방에서 나갈경우
-    fun hideRoomInfo() = common.hideRoom()
-
-    fun showDialog(modal :Modal) = getDialogAction().showDialog(modal)
-    fun hideDialog() = getDialogAction().hideDialog()
-
-    val myRole
-        get()= common.myRole
-    var tempOfFBData
-        get() = common.tempOfFBData
-        set(value) {
-            common.tempOfFBData = value
-        }
-
-    fun checkByScheme(roomId: String) = common.checkByScheme(roomId)
-
-    val syncData get() = common.syncData
-    fun syncStart(force: Boolean = false) = common.syncStart(user.value!!.uid, force)
-    fun syncStartForce(uuid:String) = common.syncStart(uuid,true)
-    fun signOut() = common.signOut()
-    fun setNowUserInfo(userName: String) = common.setNowUserInfo(userName)
-    fun setNowRaidInfo(raidId: String) = common.setNowRaidInfo(raidId)
-    fun clearFocusItem() = common.clearFocusItem()
+    //endregion
 
     var showSetting by mutableStateOf(false)
-    val showLoading get() = common.showLoading
-    val msg get() = common.msg
-    fun updateCharacter(roomId: String,userInfo: UserInfo) = common.updateCharacter(roomId, userInfo)
-    override fun getSetting() :Boolean = showSetting
+    override fun getSetting(): Boolean = showSetting
 
     override fun closeSetting() {
         showSetting = false
     }
 
-    fun bottomAddAction() = common.bottomAddAction()
-    fun topBackAction() = common.topBackAction()
+    var user: FBUser? by mutableStateOf(null)
+        private  set
+    var roomList: List<RoomInfo> by mutableStateOf(emptyList())
+        private  set
+    var roomId: String by mutableStateOf("")
+        private  set
+    var totalRoomInfoValue: TotalRoomInfo by mutableStateOf(TotalRoomInfo.getInit())
+        private set
 
-    suspend fun deleteRoom(roomId:String) = common.deleteRoom(roomId)
-
-    fun getDialogAction() = common.dialogAction
-
-    fun updatePartyFocusIndex(index:Int) = common.updatePartyFocusIndex(index)
-
-    fun outOrSignOut() = common.outOrSignOut()
-
-    val sheetSpace get() =  common.sheetSpace
-
-    val defaultUrl get() = common.defaultUrl
-
-    fun setDefaultUrl(url:String) = common.setDefaultUrl(url)
-
-    fun setSheetSpace(space:Float) = common.setSheetSpace(space)
-
+    var syncData: Boolean by mutableStateOf(false)
+        private  set
+    var showLoading: Boolean by mutableStateOf(false)
+        private  set
+    var msg: String by mutableStateOf("")
+        private  set
+    var sheetSpace: Float by mutableFloatStateOf(20f)
+        private  set
+    var defaultUrl: String by mutableStateOf(ILOA)
+        private  set
+    init {
+        viewModelScope.launch {
+            userFlow.collect {
+                user = it
+            }
+        }
+        viewModelScope.launch {
+            roomListFlow.collect {
+                roomList = it
+            }
+        }
+        viewModelScope.launch {
+            roomIdFlow.collect {
+                roomId = it
+            }
+        }
+        viewModelScope.launch {
+            totalRoomInfoFlow.collect {
+                totalRoomInfoValue = it
+            }
+        }
+        viewModelScope.launch {
+            syncDataFlow.collect {
+                syncData = it
+            }
+        }
+        viewModelScope.launch {
+            showLoadingFlow.collect {
+                showLoading = it
+            }
+        }
+        viewModelScope.launch {
+            msgFlow.collect {
+                msg = it
+            }
+        }
+        viewModelScope.launch {
+            sheetSpaceFlow.collect {
+                sheetSpace = it
+            }
+        }
+        viewModelScope.launch {
+            defaultUrlFlow.collect {
+                defaultUrl = it
+            }
+        }
+    }
 }

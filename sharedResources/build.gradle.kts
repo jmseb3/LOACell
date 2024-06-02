@@ -1,9 +1,10 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
     id("dev.icerock.mobile.multiplatform-resources")
 }
+
 kotlin {
     androidTarget {
         compilations.all {
@@ -15,6 +16,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
 
     cocoapods {
         summary = "share Resources"

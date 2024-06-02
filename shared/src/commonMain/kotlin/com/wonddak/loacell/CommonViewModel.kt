@@ -1,5 +1,7 @@
 package com.wonddak.loacell
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.delete
@@ -15,6 +17,8 @@ import com.wonddak.loacell.model.ModalConst
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.Sheet
+import com.wonddak.loacell.model.Synergy
+import com.wonddak.loacell.storage.SynergyReferenceHelper
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -28,33 +32,30 @@ import com.wonddak.sharedapi.lostark.model.CharacterInfo
 import com.wonddak.sharedapi.onFail
 import com.wonddak.sharedapi.onFailOnlyMsg
 import com.wonddak.sharedapi.onSuccess
-import kotlinx.coroutines.CoroutineScope
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 //동일하게 동작하는 액션을 담아둔 Model
 open class CommonViewModel(
-    coroutineScope: CoroutineScope? = null,
-    private val dataBase: AppDataBase,
-    private val config: Config,
+    protected val dataBase: AppDataBase,
+    protected val config: Config,
     val loginHelper: LoginHelper,
-    private val viewModelImpl: ViewModelImpl
-) {
-    // Ios 의 경우 CoroutineScope(Dispatchers.Main)로 작동
-    private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
+    val synergyReferenceHelper: SynergyReferenceHelper,
+) : ViewModel(), DialogAction {
 
     //현재 로그인된 유저 정보
-    val user get() = loginHelper.auth.user
+    protected val userFlow get() = loginHelper.auth.user
 
-
-    val roomList = dataBase.roomInfoQueriesHelper.getAll()
+    protected val roomListFlow = dataBase.roomInfoQueriesHelper.getAll()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
@@ -62,9 +63,11 @@ open class CommonViewModel(
         )
         .toCommonStateFlow()
 
-    //region 방 클릭시 매핑되는 방 id
+    //owner가 사용자 정보를 볼경우 저장되는 temp값
+    var tempOfFBData: List<FBDataItem> = emptyList()
+
     private var _roomId = MutableStateFlow("")
-    val roomId = _roomId
+    protected val roomIdFlow = _roomId
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
@@ -72,7 +75,8 @@ open class CommonViewModel(
         )
         .toCommonStateFlow()
 
-    fun showRoom(roomId: String) {
+    //방에 들어갈경우
+    fun showRoomInfo(roomId: String) {
         CommonRoomHelper.checkExist(
             roomId,
             successAction = {
@@ -86,10 +90,8 @@ open class CommonViewModel(
 
     }
 
-    //owner가 사용자 정보를 볼경우 저장되는 temp값
-    var tempOfFBData: List<FBDataItem> = emptyList()
-
-    fun hideRoom() {
+    //방에서 나갈경우
+    fun hideRoomInfo() {
         _roomId.value = ""
         observeRoom?.remove()
         observeUser?.remove()
@@ -101,10 +103,9 @@ open class CommonViewModel(
     }
     //endregion
 
-    //region 방 id 선택시 불러오는 정보
     private var _totalRoomInfo: MutableStateFlow<TotalRoomInfo> =
         MutableStateFlow(TotalRoomInfo.getInit())
-    val totalRoomInfo = _totalRoomInfo
+    protected val totalRoomInfoFlow = _totalRoomInfo
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
@@ -129,7 +130,7 @@ open class CommonViewModel(
     }
 
     val myRole: RoomRole
-        get() = _totalRoomInfo.value.getMyRole(user.value?.uid)
+        get() = _totalRoomInfo.value.getMyRole(userFlow.value?.uid)
 
     //endregion
 
@@ -138,35 +139,15 @@ open class CommonViewModel(
     private var observeRaid: CommonListenerRegistration? = null
     private var totalJob: Job? = null
 
-    init {
-        viewModelScope.launch {
-            launch(Dispatchers.IO) {
-                roomId.collect {id ->
-                    if (id.isEmpty()) {
-
-                    } else {
-                        observeRoom = CommonRoomHelper.observe(id, dataBase)
-                        observeUser = CommonUserHelper.observe(id, dataBase)
-                        observeRaid = CommonRaidHelper.observe(id, dataBase)
-                        totalJob = viewModelScope.launch{
-                            dataBase.getAllInfoByRoomId(id).collect {
-                                _totalRoomInfo.value = _totalRoomInfo.value.update(it)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     //region sync 관련
     private var _syncData = MutableStateFlow(false)
-    val syncData = _syncData.toCommonStateFlow()
+    protected val syncDataFlow = _syncData.toCommonStateFlow()
+
     private fun updateSync(value: Boolean) {
         _syncData.value = value
     }
 
-    fun syncStart(uid: String, force: Boolean = false) {
+    private fun syncStart(uid: String, force: Boolean = false) {
         viewModelScope.launch {
             val syncSuccess = {
                 updateSync(true)
@@ -174,29 +155,39 @@ open class CommonViewModel(
                     uid,
                     dataBase,
                     failAction = { _ ->
-                        viewModelImpl.showSnackBar("동기화에 실패하였습니다.")
+                        showSnackBar("동기화에 실패하였습니다.")
                         updateSync(false)
                     },
                     successAction = {
-                        viewModelImpl.showSnackBar("동기화가 완료되었습니다")
+                        showSnackBar("동기화가 완료되었습니다")
                         updateSync(false)
                     }
                 )
             }
             val nowTime = Clock.System.now().toEpochMilliseconds()
             if (force) {
-                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
+                config.updateHomeRefreshTime(nowTime)
                 syncSuccess()
                 return@launch
             }
-            val syncTime = config.getLong(ConfigKeys.HomeRefreshKey)
+            val syncTime = config.homeRefreshTime.first()
             if (nowTime - syncTime > 60 * 5 * 1000) {
-                config.putLong(ConfigKeys.HomeRefreshKey, nowTime)
+                config.updateHomeRefreshTime(nowTime)
                 syncSuccess()
             } else {
-                viewModelImpl.showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
+                showSnackBar("최근에 동기화를 하여 현재는 할 수 없습니다.")
             }
         }
+    }
+
+    fun syncStart(force: Boolean = false) {
+        userFlow.value?.let {
+            syncStart(it.uid, force)
+        }
+    }
+
+    fun syncStartForce(uuid: String) {
+        syncStart(uuid, true)
     }
     //endregion
 
@@ -222,33 +213,33 @@ open class CommonViewModel(
     }
 
     fun bottomAddAction() {
-        _totalRoomInfo.value.bottomAction(roomId.value, user.value?.isAnonymous)?.let {
+        _totalRoomInfo.value.bottomAction(roomIdFlow.value, userFlow.value?.isAnonymous)?.let {
             _totalRoomInfo.value = it
         }
     }
 
     fun topBackAction() {
-        if (viewModelImpl.getSetting()) {
-            viewModelImpl.closeSetting()
+        if (getSetting()) {
+            closeSetting()
         } else {
-            if (totalRoomInfo.value.isFocus()) {
+            if (totalRoomInfoFlow.value.isFocus()) {
                 clearFocusItem()
                 return
             }
-            hideRoom()
+            hideRoomInfo()
         }
     }
 
     fun signOut() {
-        viewModelImpl.closeSetting()
-        hideRoom()
+        closeSetting()
+        hideRoomInfo()
         dataBase.clearAll()
     }
 
     private var _showLoading = MutableStateFlow(false)
-    val showLoading = _showLoading.toCommonStateFlow()
+    protected val showLoadingFlow = _showLoading.toCommonStateFlow()
     private var _msg = MutableStateFlow("")
-    val msg = _msg.toCommonStateFlow()
+    protected val msgFlow = _msg.toCommonStateFlow()
 
     fun updateCharacter(roomId: String, userInfo: UserInfo) {
         viewModelScope.launch {
@@ -290,13 +281,15 @@ open class CommonViewModel(
     //endregion
 
     fun deleteRoom(roomId: String) {
-        hideRoom()
-        dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
+        viewModelScope.launch {
+            hideRoomInfo()
+            dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId)
+        }
     }
 
     //login/out
     fun outOrSignOut() {
-        if (user.value!!.isAnonymous) {
+        if (userFlow.value!!.isAnonymous) {
             loginHelper.delete()
         } else {
             loginHelper.signOut()
@@ -306,280 +299,283 @@ open class CommonViewModel(
 
     //DialogAction
 
-    val sheetSpace = config.getFloatFlow(ConfigKeys.SheetSpace, 20f)
-    fun setSheetSpace(space: Float) {
+    val sheetSpaceFlow
+        get() = config.sheetSpace
+    fun updateSheetSpace(space: Float) {
         viewModelScope.launch {
-            config.putFloat(ConfigKeys.SheetSpace, space)
+            config.updateSheetSpace(space)
         }
     }
 
-    val defaultUrl = config.getStringFlow(ConfigKeys.DefaultUrl, ILOA)
+    val defaultUrlFlow
+        get() = config.defaultUrl
 
-    fun setDefaultUrl(url:String) {
+    fun updateDefaultUrl(url: String) {
         viewModelScope.launch {
-            config.putSting(ConfigKeys.DefaultUrl,url)
+            config.updateDefaultUrl(url)
         }
     }
 
-    val dialogAction = object : DialogAction {
-        override fun showDialog(modal: Modal) {
-            _totalRoomInfo.value = _totalRoomInfo.value.showDialog(modal)
+    //region dialogAction
+    fun getDialogAction() : DialogAction = this
+    override fun showDialog(modal: Modal) {
+        _totalRoomInfo.value = _totalRoomInfo.value.showDialog(modal)
+    }
+
+    override fun hideDialog() {
+        _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
+    }
+
+    override fun getDisplayName(): String {
+        return userFlow.value?.displayName ?: ""
+    }
+
+    override fun getRoomListToUniqueId(): List<String> = roomListFlow.value.map { it.uniqueId }
+    override fun getTotalRoomInfo(): TotalRoomInfo = _totalRoomInfo.value
+
+    override fun dialogRoomAction(status: Int) {
+        when (status) {
+            ModalConst.ROOM_ACTION_ENTER -> showDialog(Dialog.ROOM_ENTER)
+            ModalConst.ROOM_ACTION_ADD -> showDialog(Sheet.ROOM_ADD)
         }
+    }
 
-        override fun hideDialog() {
-            _totalRoomInfo.value = _totalRoomInfo.value.hideDialog()
-        }
-
-        override fun getDisplayName(): String {
-            return user.value?.displayName ?: ""
-        }
-
-        override fun getRoomListToUniqueId(): List<String> = roomList.value.map { it.uniqueId }
-        override fun getTotalRoomInfo(): TotalRoomInfo = _totalRoomInfo.value
-
-        override fun dialogRoomAction(status: Int) {
-            when (status) {
-                ModalConst.ROOM_ACTION_ENTER -> showDialog(Dialog.ROOM_ENTER)
-                ModalConst.ROOM_ACTION_ADD -> showDialog(Sheet.ROOM_ADD)
+    override fun dialogRoomAdd(title: String, description: String, password: String) {
+        userFlow.value?.uid?.let { owner ->
+            CommonRoomHelper.makeInfo(
+                title, description, password, owner
+            ) { id ->
+                dataBase.roomInfoQueriesHelper.addRoomInfo(
+                    title,
+                    description,
+                    id,
+                    owner,
+                    password,
+                    emptyList(),
+                    emptyList(),
+                )
             }
+            hideDialog()
         }
+    }
 
-        override fun dialogRoomAdd(title: String, description: String, password: String) {
-            user.value?.uid?.let { owner ->
-                CommonRoomHelper.makeInfo(
-                    title, description, password, owner
-                ) { id ->
-                    dataBase.roomInfoQueriesHelper.addRoomInfo(
-                        title,
-                        description,
-                        id,
-                        owner,
-                        password,
-                        emptyList(),
-                        emptyList(),
-                    )
-                }
+    override fun dialogRoomEnter(roomId: String, roomInfo: FBRoomInfo) {
+        CommonRoomHelper.enterRoom(
+            roomId,
+            userFlow.value!!.uid,
+            successAction = {
+                hideDialog()
+            },
+            failAction = { error ->
+                showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
                 hideDialog()
             }
-        }
+        )
+        dataBase.initFBRoomInfo(roomInfo, roomId)
+    }
 
-        override fun dialogRoomEnter(roomId: String, roomInfo: FBRoomInfo) {
-            CommonRoomHelper.enterRoom(
-                roomId,
-                user.value!!.uid,
-                successAction = {
-                    hideDialog()
-                },
-                failAction = { error ->
-                    viewModelImpl.showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
-                    hideDialog()
-                }
-            )
-            dataBase.initFBRoomInfo(roomInfo, roomId)
-        }
+    override fun dialogRoomEnterByScheme(roomId: String, roomInfo: FBRoomInfo) {
+        dialogRoomEnter(roomId, roomInfo)
+        _totalRoomInfo.value = _totalRoomInfo.value.copy(schemeData = null)
+    }
 
-        override fun dialogRoomEnterByScheme(roomId: String, roomInfo: FBRoomInfo) {
-            dialogRoomEnter(roomId,roomInfo)
-            _totalRoomInfo.value = _totalRoomInfo.value.copy(schemeData = null)
+    override fun dialogRoomEnterError() {
+        viewModelScope.launch {
+            dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomIdFlow.value)
+            hideRoomInfo()
+            hideDialog()
         }
+    }
 
-        override fun dialogRoomEnterError() {
-            viewModelScope.launch {
-                dataBase.roomInfoQueriesHelper.deleteRoomInfo(roomId.value)
-                hideRoom()
-                hideDialog()
+    override fun dialogRoomExit() {
+        val roomInfo = totalRoomInfoFlow.value.roomInfo!!
+        println("ROOM VM 1")
+        CommonRoomHelper.exitRoom(
+            roomInfo.uniqueId,
+            userFlow.value!!.uid,
+            myRole,
+            successAction = {
+                println("ROOM VM 2")
+                deleteRoom(roomInfo.uniqueId)
+            },
+            failAction = {
+                println("ROOM VM 3")
             }
-        }
+        )
+    }
 
-        override fun dialogRoomExit() {
-            val roomInfo = totalRoomInfo.value.roomInfo!!
-            println("ROOM VM 1")
-            CommonRoomHelper.exitRoom(
-                roomInfo.uniqueId,
-                user.value!!.uid,
-                myRole,
-                successAction = {
-                    println("ROOM VM 2")
-                    deleteRoom(roomInfo.uniqueId)
-                },
-                failAction = {
-                    println("ROOM VM 3")
-                }
-            )
-        }
-
-        override fun dialogRoomEdit(title: String, description: String, password: String) {
-            CommonRoomHelper.updateRoom(
-                getRoomInfoUniqueId(), title, description, password,
-                successAction = {
-                    hideDialog()
-                },
-                failAction = {
-                    hideDialog()
-                    viewModelImpl.showSnackBar("변경에 실패했습니다(${it.errorMsg}")
-                }
-            )
-        }
-
-        override fun dialogRaidAdd(fbRaidInfo: FBRaidInfo) {
-            CommonRaidHelper.add(
-                roomId.value,
-                fbRaidInfo,
-                { e -> }
-            ) {
+    override fun dialogRoomEdit(title: String, description: String, password: String) {
+        CommonRoomHelper.updateRoom(
+            getRoomInfoUniqueId(), title, description, password,
+            successAction = {
                 hideDialog()
-            }
-        }
-
-        override fun dialogRaidEdit(fbRaidInfo: FBRaidInfo) {
-            val raidInfo = getRaidInfo()
-            CommonRaidHelper.update(
-                raidInfo.roomId,
-                raidInfo.raidId,
-                fbRaidInfo.checkLevelParty(totalRoomInfo = getTotalRoomInfo()),
-                { e -> }
-            ) {
+            },
+            failAction = {
                 hideDialog()
+                showSnackBar("변경에 실패했습니다(${it.errorMsg}")
             }
-        }
+        )
+    }
 
-        override fun dialogRaidDelete() {
-            CommonRaidHelper.delete(
-                roomId.value,
-                getRaidInfo().raidId,
-                failAction = { error ->
-                    viewModelImpl.showSnackBar(error.errorMsg)
-                }) {
+    override fun dialogRaidAdd(fbRaidInfo: FBRaidInfo) {
+        CommonRaidHelper.add(
+            roomIdFlow.value,
+            fbRaidInfo,
+            { e -> }
+        ) {
+            hideDialog()
+        }
+    }
+
+    override fun dialogRaidEdit(fbRaidInfo: FBRaidInfo) {
+        val raidInfo = getRaidInfo()
+        CommonRaidHelper.update(
+            raidInfo.roomId,
+            raidInfo.raidId,
+            fbRaidInfo.checkLevelParty(totalRoomInfo = getTotalRoomInfo()),
+            { e -> }
+        ) {
+            hideDialog()
+        }
+    }
+
+    override fun dialogRaidDelete() {
+        CommonRaidHelper.delete(
+            roomIdFlow.value,
+            getRaidInfo().raidId,
+            failAction = { error ->
+                showSnackBar(error.errorMsg)
+            }) {
+            clearFocusItem()
+            hideDialog()
+        }
+    }
+
+    override fun dialogUserAdd(character: Character) {
+        val focusIndex = _totalRoomInfo.value.focusIndex
+        val raidInfo = getRaidInfo()
+        val partyIndex = focusIndex / 4
+        println("$$$ focusIndex : $focusIndex")
+        println("$$$ party Index : $partyIndex")
+
+        val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+            .also {
+                println("$$$ prev Party $it")
+            }
+            .toMutableList().also {
+                it[focusIndex % 4] = character.name
+            }
+            .also {
+                println("$$$ change Party $it")
+            }
+        CommonRaidHelper.updatePartList(
+            roomIdFlow.value,
+            raidInfo.raidId,
+            partyIndex + 1,
+            partyTemp,
+            failAction = { error ->
+                showSnackBar("인원 추가에 실패했습니다.\n${error.errorMsg}")
+            })
+        {
+            updatePartyFocusIndex(focusIndex - 1)
+            hideDialog()
+        }
+    }
+
+    override fun dialogUserDelete() {
+        val focusIndex = _totalRoomInfo.value.focusIndex
+        val raidInfo = getRaidInfo()
+        val partyIndex = focusIndex / 4
+        println("$$$ focusIndex : $focusIndex")
+        println("$$$ party Index : $partyIndex")
+
+        val partyTemp = raidInfo.getPartyByIndex(partyIndex)
+            .also {
+                println("$$$ prev Party $it")
+            }
+            .toMutableList().also {
+                it[focusIndex % 4] = ""
+            }
+            .also {
+                println("$$$ change Party $it")
+            }
+
+        CommonRaidHelper.updatePartList(
+            roomIdFlow.value,
+            raidInfo.raidId,
+            partyIndex + 1,
+            partyTemp,
+            failAction = { error ->
+                showSnackBar("유저 삭제에 실패했습니다.")
+            })
+        {
+            hideDialog()
+        }
+    }
+
+    override fun dialogSearchCharacter(
+        name: String,
+        updateProgress: (Boolean) -> Unit,
+        updateList: (List<CharacterInfo>) -> Unit,
+        updateError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            updateProgress(true)
+            val characterResult = LostArkApi().getCharacterInfo(name)
+            characterResult.onSuccess { list ->
+                updateList(list)
+            }
+            characterResult.onFail { code, message ->
+                updateError("$message($code)")
+            }
+            characterResult.onFailOnlyMsg { message ->
+                updateError(message)
+            }
+            updateProgress(false)
+        }
+    }
+
+    override fun dialogCharacterEdit(name: String) {
+        CommonUserHelper.updateRepresentativeCharacter(
+            roomIdFlow.value,
+            getUserInfo().name,
+            name
+        )
+        hideDialog()
+    }
+
+    override fun dialogCharacterDelete() {
+        CommonUserHelper.delete(
+            roomIdFlow.value,
+            getUserInfo().name,
+            failAction = { e ->
+                showSnackBar(e)
+            },
+            successAction = {
                 clearFocusItem()
                 hideDialog()
             }
-        }
-
-        override fun dialogUserAdd(character: Character) {
-            val focusIndex = _totalRoomInfo.value.focusIndex
-            val raidInfo = getRaidInfo()
-            val partyIndex = focusIndex / 4
-            println("$$$ focusIndex : $focusIndex")
-            println("$$$ party Index : $partyIndex")
-
-            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
-                .also {
-                    println("$$$ prev Party $it")
-                }
-                .toMutableList().also {
-                    it[focusIndex % 4] = character.name
-                }
-                .also {
-                    println("$$$ change Party $it")
-                }
-            CommonRaidHelper.updatePartList(
-                roomId.value,
-                raidInfo.raidId,
-                partyIndex + 1,
-                partyTemp,
-                failAction = { error ->
-                    viewModelImpl.showSnackBar("인원 추가에 실패했습니다.\n${error.errorMsg}")
-                })
-            {
-                updatePartyFocusIndex(focusIndex - 1)
-                hideDialog()
-            }
-        }
-
-        override fun dialogUserDelete() {
-            val focusIndex = _totalRoomInfo.value.focusIndex
-            val raidInfo = getRaidInfo()
-            val partyIndex = focusIndex / 4
-            println("$$$ focusIndex : $focusIndex")
-            println("$$$ party Index : $partyIndex")
-
-            val partyTemp = raidInfo.getPartyByIndex(partyIndex)
-                .also {
-                    println("$$$ prev Party $it")
-                }
-                .toMutableList().also {
-                    it[focusIndex % 4] = ""
-                }
-                .also {
-                    println("$$$ change Party $it")
-                }
-
-            CommonRaidHelper.updatePartList(
-                roomId.value,
-                raidInfo.raidId,
-                partyIndex + 1,
-                partyTemp,
-                failAction = { error ->
-                    viewModelImpl.showSnackBar("유저 삭제에 실패했습니다.")
-                })
-            {
-                hideDialog()
-            }
-        }
-
-        override fun dialogSearchCharacter(
-            name: String,
-            updateProgress: (Boolean) -> Unit,
-            updateList: (List<CharacterInfo>) -> Unit,
-            updateError: (String) -> Unit
-        ) {
-            viewModelScope.launch {
-                updateProgress(true)
-                val characterResult = LostArkApi().getCharacterInfo(name)
-                characterResult.onSuccess { list ->
-                    updateList(list)
-                }
-                characterResult.onFail { code, message ->
-                    updateError("$message($code)")
-                }
-                characterResult.onFailOnlyMsg { message ->
-                    updateError(message)
-                }
-                updateProgress(false)
-            }
-        }
-
-        override fun dialogCharacterEdit(name: String) {
-            CommonUserHelper.updateRepresentativeCharacter(
-                roomId.value,
-                getUserInfo().name,
-                name
-            )
-            hideDialog()
-        }
-
-        override fun dialogCharacterDelete() {
-            CommonUserHelper.delete(
-                roomId.value,
-                getUserInfo().name,
-                failAction = { e ->
-                    viewModelImpl.showSnackBar(e)
-                },
-                successAction = {
-                    clearFocusItem()
-                    hideDialog()
-                }
-            )
-        }
-
-        override fun dialogFilterUpdate(filter: Filter) {
-            _totalRoomInfo.value = _totalRoomInfo.value.updateFilter(filter)
-        }
-
-        override fun dialogEditName(name: String) {
-            loginHelper.auth.updateDisplayName(name)
-            hideDialog()
-        }
+        )
     }
+
+    override fun dialogFilterUpdate(filter: Filter) {
+        _totalRoomInfo.value = _totalRoomInfo.value.updateFilter(filter)
+    }
+
+    override fun dialogEditName(name: String) {
+        loginHelper.auth.updateDisplayName(name)
+        hideDialog()
+    }
+    //endregion
 
     fun checkByScheme(
         roomId: String
     ) {
         if (roomId.isNotEmpty()) {
-            hideRoom()
-            val nowEnterRoomList = roomList.value.map { it.uniqueId }
+            hideRoomInfo()
+            val nowEnterRoomList = roomListFlow.value.map { it.uniqueId }
             if (nowEnterRoomList.contains(roomId)) {
-                viewModelImpl.showSnackBar("이미 입장한 방입니다.")
+                showSnackBar("이미 입장한 방입니다.")
             } else {
                 CommonRoomHelper.checkExist(
                     roomId,
@@ -587,30 +583,60 @@ open class CommonViewModel(
                         if (roomInfo.enterPassword.isEmpty()) {
                             CommonRoomHelper.enterRoom(
                                 roomId,
-                                user.value!!.uid,
+                                userFlow.value!!.uid,
                                 successAction = {
                                     dataBase.initFBRoomInfo(roomInfo, roomId)
-                                    viewModelImpl.showSnackBar("방 정보가 추가되었습니다.")
+                                    showSnackBar("방 정보가 추가되었습니다.")
                                 },
                                 failAction = { error ->
-                                    viewModelImpl.showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
+                                    showSnackBar("입장에 실패했습니다.(${error.errorMsg}")
                                 }
                             )
                         } else {
-                            _totalRoomInfo.value = _totalRoomInfo.value.updateSchemeData(SchemeData(roomId,roomInfo))
+                            _totalRoomInfo.value =
+                                _totalRoomInfo.value.updateSchemeData(SchemeData(roomId, roomInfo))
                         }
                     },
                     failAction = {
-                        viewModelImpl.showSnackBar("방이 존재 하지 않습니다.")
+                        showSnackBar("방이 존재 하지 않습니다.")
                     }
                 )
             }
         }
     }
-}
 
-interface ViewModelImpl {
-    fun showSnackBar(msg: String)
-    fun closeSetting()
-    fun getSetting(): Boolean
+    open fun showSnackBar(msg: String) {
+
+    }
+
+    open fun closeSetting() {
+
+    }
+
+    open fun getSetting(): Boolean = true
+
+    init {
+        viewModelScope.launch {
+            launch(Dispatchers.IO) {
+                roomIdFlow.collect { id ->
+                    if (id.isNotEmpty()) {
+                        observeRoom = CommonRoomHelper.observe(id, dataBase)
+                        observeUser = CommonUserHelper.observe(id, dataBase)
+                        observeRaid = CommonRaidHelper.observe(id, dataBase)
+                        totalJob = viewModelScope.launch {
+                            dataBase.getAllInfoByRoomId(id).collect {
+                                _totalRoomInfo.value = _totalRoomInfo.value.update(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        viewModelScope.launch {
+            synergyReferenceHelper.downloadFile {synergyData ->
+                Napier.d { "synergyData : $synergyData" }
+                Synergy.addData(synergyData)
+            }
+        }
+    }
 }

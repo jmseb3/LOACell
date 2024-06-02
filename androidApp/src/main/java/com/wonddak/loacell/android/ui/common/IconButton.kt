@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -62,11 +60,9 @@ fun MyRoomIconButton(
         RoomState.User -> SharedRes.images.person
         RoomState.Setting -> SharedRes.images.room_setting
     }
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val tabState = totalRoomInfo.tabState
     MyIconButton(
         id = imageResource.drawableResId,
-        enabled = (tabState != state),
+        enabled = (loaCellViewModel.totalRoomInfoValue.tabState != state),
         onClick = {
             loaCellViewModel.setTabStatus(state)
         }

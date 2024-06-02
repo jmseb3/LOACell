@@ -11,16 +11,14 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.ext.checkTimeOver
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton
 import com.wonddak.loacell.android.ui.common.MyRoomIconButton
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import com.wonddak.loacell.ext.checkTimeOver
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.RoomState
@@ -33,13 +31,13 @@ fun BottomAppBar(
     loaCellViewModel: LoaCellViewModel
 ) {
     val role = loaCellViewModel.myRole
-
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val focusUserInfo = totalRoomInfo.userInfo
     val focusRaidInfo  = totalRoomInfo.raidInfo
     val tabState = totalRoomInfo.tabState
-    val syncData by loaCellViewModel.syncData.collectAsState()
+
+    val selectedRoomId = loaCellViewModel.roomId
+    val syncData = loaCellViewModel.syncData
 
     loaCellViewModel.apply {
         BottomAppBar(

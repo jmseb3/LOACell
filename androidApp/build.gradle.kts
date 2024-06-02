@@ -1,10 +1,11 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.googleGmsService)
 }
 
 apply("../keystore/signing.gradle")
@@ -16,16 +17,13 @@ android {
         applicationId = "com.wonddak.loacell.android"
         minSdk = 26
         targetSdk = 33
-        versionCode = 11
-        versionName = "1.1.4"
+        versionCode = 12
+        versionName = "1.2.0"
         setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
     }
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     packaging {
         resources {
@@ -75,4 +73,8 @@ dependencies {
     implementation(libs.kakao.share)
     implementation(libs.browser)
     implementation(libs.capturable)
+
+    // Koin DI
+    // https://github.com/InsertKoinIO/koin
+    implementation(libs.bundles.koin.android)
 }

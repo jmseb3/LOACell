@@ -5,32 +5,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModelProvider
-import com.wonddak.database.AppDataBase
-import com.wonddak.database.DriverFactory
-import com.wonddak.loacell.Config
 import com.wonddak.loacell.android.ui.home.MainContent
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
-import com.wonddak.loacell.android.viewModel.LoaCellViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private lateinit var loaCellViewModel: LoaCellViewModel
+    private val loaCellViewModel: LoaCellViewModel by viewModel()
     private var waitTime = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val db = AppDataBase(DriverFactory(this))
-        val config = Config(this)
 
-        loaCellViewModel = ViewModelProvider(
-            this,
-            LoaCellViewModelFactory(db, config)
-        )[LoaCellViewModel::class.java]
         kakaoIntent(intent)
         setContent {
-            val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-            BackHandler(selectedRoomId.isEmpty()) {
+            BackHandler(loaCellViewModel.roomId.isEmpty()) {
                 if (System.currentTimeMillis() - waitTime >= 1500) {
                     waitTime = System.currentTimeMillis()
                     loaCellViewModel.showSnackBar("뒤로가기 버튼을 한번 더 누르면 종료됩니다.")
@@ -38,11 +25,11 @@ class MainActivity : ComponentActivity() {
                     finish()
                 }
             }
-            MainContent(db, loaCellViewModel)
+            MainContent()
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         kakaoIntent(intent)
     }

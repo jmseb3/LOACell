@@ -97,7 +97,7 @@ private struct RaidSheetBase: View {
     var dismiss : () -> Void
 
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title: title,
             text: buttonText,
             action: {

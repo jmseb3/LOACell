@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
     id("app.cash.sqldelight") version libs.versions.sqldelight.get()
 }
 
@@ -16,6 +16,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
 
     cocoapods {
         summary = "share db"
@@ -33,6 +43,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
+            api(libs.bundles.koin.shared)
         }
 
         androidMain.dependencies {

@@ -16,7 +16,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
-import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -37,10 +36,6 @@ class FBApi {
         }
         expectSuccess = true
         defaultRequest {
-            url {
-                protocol = URLProtocol.HTTP
-                host = "loacell.cafe24app.com"
-            }
             headers {
                 append(HttpHeaders.Accept, "application/json")
                 append(HttpHeaders.ContentType, "application/json")
@@ -50,7 +45,10 @@ class FBApi {
 
     suspend fun getData(request : FBRequest) : FBData {
         val response =  httpClient.post {
-            url.path("users")
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "getuserinfos-aknb6doirq-uc.a.run.app"
+            }
             setBody(request)
         }
         return response.body()

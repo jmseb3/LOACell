@@ -13,11 +13,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.wonddak.database.AppDataBase
 import com.wonddak.loacell.android.ui.common.LoadingView
 import com.wonddak.loacell.android.ui.login.LoginView
 import com.wonddak.loacell.android.ui.modal.ModalHost
@@ -26,16 +23,16 @@ import com.wonddak.loacell.android.ui.room.RoomView
 import com.wonddak.loacell.android.ui.setting.SettingView
 import com.wonddak.loacell.android.ui.theme.LoaCellTheme
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
+import org.koin.compose.koinInject
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainContent(
-    db: AppDataBase,
-    loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel = koinInject()
 ) {
-    val userInfo by loaCellViewModel.user.collectAsState()
-    val totalRoomInfo by loaCellViewModel.totalRoomInfo.collectAsState()
+    val user = loaCellViewModel.user
+    val totalRoomInfo = loaCellViewModel.totalRoomInfoValue
     val dialogStatus = totalRoomInfo.dialogState
     LoaCellTheme {
         val snackBarHostState = remember { SnackbarHostState() }
@@ -60,7 +57,7 @@ fun MainContent(
                 }
             }
         }
-        if (userInfo == null) {
+        if (user == null) {
             LoginView(loaCellViewModel)
         } else {
             Scaffold(
@@ -73,7 +70,7 @@ fun MainContent(
                 }
             ) {
                 ModalHost(dialogStatus, loaCellViewModel.getDialogAction()) {
-                    MainContentView(it, db, loaCellViewModel)
+                    MainContentView(it,loaCellViewModel)
                 }
             }
         }
@@ -83,11 +80,10 @@ fun MainContent(
 @Composable
 private fun MainContentView(
     padding: PaddingValues,
-    db: AppDataBase,
-    loaCellViewModel: LoaCellViewModel
+    loaCellViewModel: LoaCellViewModel = koinInject()
 ) {
-    val selectedRoomId by loaCellViewModel.roomId.collectAsState()
-    val syncData by loaCellViewModel.syncData.collectAsState()
+    val selectedRoomId = loaCellViewModel.roomId
+    val syncData = loaCellViewModel.syncData
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -96,8 +92,6 @@ private fun MainContentView(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val roomList by loaCellViewModel.roomList.collectAsState()
-
             if (loaCellViewModel.showSetting) {
                 SettingView(loaCellViewModel)
             } else {
@@ -105,7 +99,7 @@ private fun MainContentView(
                     AnimatedVisibility(selectedRoomId.isEmpty()) {
                         Column() {
                             RooListView(
-                                roomList = roomList,
+                                roomList = loaCellViewModel.roomList,
                                 showRoomInfo = { roomId ->
                                     loaCellViewModel.showRoomInfo(roomId)
                                 }

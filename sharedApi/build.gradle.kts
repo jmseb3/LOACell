@@ -1,8 +1,8 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
-    kotlin("plugin.serialization") version libs.versions.kotlin.get()
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -17,6 +17,16 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
+
     cocoapods {
         summary = "shared api"
         homepage = "Link to the Shared Module homepage"
@@ -26,7 +36,15 @@ kotlin {
             baseName = "sharedApi"
         }
     }
-
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {

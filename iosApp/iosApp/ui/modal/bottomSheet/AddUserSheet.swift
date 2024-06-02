@@ -39,7 +39,7 @@ struct AddUserSheet: View {
     @FocusState private var focusField: Field?
         
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title : Sheet.userAdd.title,
             text: searchResult.isEmpty ? "검색" : "추가",
             action: {

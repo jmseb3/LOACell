@@ -1,7 +1,8 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -16,6 +17,16 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
+
     cocoapods {
         summary = "shared Module"
         homepage = "Link to the Shared Module homepage"
@@ -29,22 +40,29 @@ kotlin {
             export(project(":sharedResources"))
             export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:0.23.0")
-//            transitiveExport = true
         }
         pod("FirebaseCore") {
-            version = "10.16"
+            version = "10.23.0"
+        }
+        // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
+        // Adding it manually seems to resolve the issue
+        pod("FirebaseFirestoreInternal") {
+            version = "10.23.0"
         }
         pod("FirebaseFirestore") {
-            version = "10.16"
+            version = "10.23.0"
+            extraOpts += listOf("-compiler-option", "-fmodules")
+            useInteropBindingFrom("FirebaseFirestoreInternal")
         }
         pod("FirebaseAuth") {
-            version = "10.16"
+            version = "10.23.0"
         }
-//        pod("FirebaseMessaging") {
-//            version = "10.16"
-//        }
+        pod("FirebaseStorage") {
+            version = "10.23.0"
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
         pod("GoogleSignIn") {
-            version = "7.0"
+            version = "7.1"
         }
     }
     sourceSets {
@@ -55,33 +73,34 @@ kotlin {
             api(project(":sharedApi"))
             api(project(":sharedResources"))
             api(project(":sharedDatabase"))
+
+            api(libs.bundles.koin.shared)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
-            implementation("com.russhwolf:multiplatform-settings:1.0.0")
-            implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
-
-
+            implementation(libs.androidx.lifecycle.viewmodel)
+            api(libs.napier)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.androidx.datastore.preferences.core)
         }
+
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.kotlin.test)
         }
 
         androidMain.dependencies {
+            api(libs.koin.android)
+
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
+            implementation(libs.firebase.storage)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
-//            implementation("com.google.firebase:firebase-messaging-ktx")
+            implementation(libs.androidx.datastore.preferences)
 
-            implementation("com.russhwolf:multiplatform-settings-datastore:1.0.0")
-            implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-            implementation("androidx.credentials:credentials:1.3.0-alpha01")
-
+            implementation("androidx.credentials:credentials:1.3.0-alpha04")
             // optional - needed for credentials support from play services, for devices running
             // Android 13 and below.
-            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
-
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
         }
     }

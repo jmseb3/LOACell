@@ -54,7 +54,7 @@ struct AddRaidUserSheet: View {
         }
     }
     var body: some View {
-        BaseSheet2(
+        BaseSheet(
             title: "캐릭터 정보 추가",
             text: "추가",
             action: {
