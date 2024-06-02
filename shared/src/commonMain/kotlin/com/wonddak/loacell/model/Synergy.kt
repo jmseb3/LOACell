@@ -21,7 +21,7 @@ object Synergy {
         }
     }
 
-    private fun getSynergyList(classList: List<String?>) : List<String> {
+    private fun getSynergy(classList: List<String?>) : List<String> {
         Napier.d(tag = TAG) { "getItem : ${classList.joinToString("/")}" }
 
         return classList.map { getSynergy(it) }.filter { it.isNotEmpty() }.also {
@@ -30,6 +30,6 @@ object Synergy {
     }
 
     fun getSynergyList(characterList: List<Character?>) : List<String> {
-        return getSynergyList(classList = characterList.map { it?.className })
+        return getSynergy(classList = characterList.map { it?.className })
     }
 }
