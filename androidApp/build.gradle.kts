@@ -16,9 +16,9 @@ android {
     defaultConfig {
         applicationId = "com.wonddak.loacell.android"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 12
-        versionName = "1.2.0"
+        targetSdk = 34
+        versionCode = 13
+        versionName = "1.2.1"
         setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
     }
     buildFeatures {
