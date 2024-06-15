@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinCocoapods)
@@ -7,10 +10,9 @@ plugins {
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
     iosX64()
@@ -42,12 +44,6 @@ kotlin {
         commonMain.dependencies {
             api(libs.moko.resources)
         }
-        androidMain {
-            dependsOn(commonMain.get())
-        }
-        iosMain {
-            dependsOn(commonMain.get())
-        }
     }
 }
 
@@ -60,7 +56,8 @@ android {
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "com.wonddak.loacell" // required
-    multiplatformResourcesClassName = "SharedRes" // optional, default MR
-    iosBaseLocalizationRegion = "ko" // optional, default "en"
+    resourcesPackage.set("com.wonddak.loacell")
+    resourcesClassName.set("SharedRes")
+    iosBaseLocalizationRegion.set("ko")
+    iosMinimalDeploymentTarget.set("16.0")
 }
