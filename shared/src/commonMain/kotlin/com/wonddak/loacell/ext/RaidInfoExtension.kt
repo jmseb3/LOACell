@@ -72,7 +72,7 @@ fun RaidInfo.getImg(): ImageResource? {
             SharedRes.images.raid_behemoth
         }
         RaidType.EGIR -> {
-            null
+            SharedRes.images.raid_egir
         }
         else -> {
             null
