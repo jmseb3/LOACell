@@ -71,7 +71,9 @@ fun RaidInfo.getImg(): ImageResource? {
         RaidType.BETHEMOTH -> {
             SharedRes.images.raid_behemoth
         }
-
+        RaidType.EGIR -> {
+            null
+        }
         else -> {
             null
         }
@@ -138,8 +140,8 @@ fun RaidInfo.getPartyByIndex(index: Int): List<String> {
         else -> {
             throw IllegalArgumentException(
                 """
-                올바르지 않은 index
-            """.trimIndent()
+                    잘못된 index 0~3
+                """.trimIndent()
             )
         }
     }

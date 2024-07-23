@@ -12,6 +12,7 @@ enum class RaidType(val maxPerson: Int) {
     IVORYTOWER(4),
     ECHIDNA(8),
     BETHEMOTH(16),
+    EGIR(8),
     ETC(8);
 
     fun toKorString(): String {
@@ -26,6 +27,7 @@ enum class RaidType(val maxPerson: Int) {
             IVORYTOWER -> "상아탑"
             ECHIDNA -> "에키드나"
             BETHEMOTH -> "베히모스"
+            EGIR -> "에기르"
             ETC -> "기타"
         }
     }
@@ -59,6 +61,11 @@ enum class RaidType(val maxPerson: Int) {
 
             BETHEMOTH -> listOf(
                 Difficulty.Normal
+            )
+
+            EGIR -> listOf(
+                Difficulty.Normal,
+                Difficulty.Hard
             )
         }
     }
@@ -141,24 +148,31 @@ enum class RaidType(val maxPerson: Int) {
                 else -> 0
             }
 
+            EGIR -> when (difficulty) {
+                Difficulty.Normal -> 1660
+                Difficulty.Hard -> 1680
+                else -> 0
+            }
+
             ETC -> 0
         }
     }
 
     //관문 수
     fun getMaxGate(
-        difficulty: Difficulty
+        difficulty: Difficulty,
     ): Int {
         return when (this) {
-            VALTAN, VYKAS, ECHIDNA, BETHEMOTH -> 2
+            VALTAN, VYKAS, ECHIDNA, BETHEMOTH, EGIR -> 2
             KOUKU, ILLIAKAN, KAYANGEL -> 3
             ABRELSHUD, IVORYTOWER -> 4
             KAMEN -> {
-                when(difficulty) {
-                    Difficulty.Normal ->3
+                when (difficulty) {
+                    Difficulty.Normal -> 3
                     else -> 4
                 }
             }
+
             ETC -> 0
         }
     }
@@ -166,7 +180,7 @@ enum class RaidType(val maxPerson: Int) {
     //파티 수
     fun getMaxParty(): Int {
         return when (this) {
-            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, KAMEN, ECHIDNA, ETC -> 2
+            VALTAN, VYKAS, ABRELSHUD, ILLIAKAN, KAMEN, ECHIDNA, EGIR, ETC -> 2
             KOUKU, KAYANGEL, IVORYTOWER -> 1
             BETHEMOTH -> 4
         }
