@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi
+package com.wonddak.loacell.sharedapi
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -46,7 +46,6 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     } catch (e: Exception) {
         ApiResult.Exception(e)
     }
-
 
 
 suspend inline fun <reified T> HttpClient.safeFlowRequest(

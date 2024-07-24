@@ -29,7 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.model.Dialog
-import com.wonddak.sharedapi.firebase.model.FBDataItem
+import com.wonddak.loacell.sharedapi.firebase.model.FBDataItem
 
 @Composable
 fun ProfileNameDialog(

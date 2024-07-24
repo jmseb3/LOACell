@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi.lostark.model
+package com.wonddak.loacell.sharedapi.lostark.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,5 +17,5 @@ data class CharacterInfo(
     @SerialName("ItemMaxLevel")
     val itemMaxLevel: String,
     @SerialName("ServerName")
-    val serverName: String
+    val serverName: String,
 )

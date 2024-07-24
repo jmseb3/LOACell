@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi.lostark.resource
+package com.wonddak.loacell.sharedapi.lostark.resource
 
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable

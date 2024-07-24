@@ -39,7 +39,7 @@ import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.Error
-import com.wonddak.sharedapi.firebase.model.FBDataItem
+import com.wonddak.loacell.sharedapi.firebase.model.FBDataItem
 import kotlinx.coroutines.launch
 
 @Composable

@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi.firebase.model
+package com.wonddak.loacell.sharedapi.firebase.model
 
 
 import kotlinx.serialization.SerialName
@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FBRequest(
     @SerialName("id")
-    val req: List<String>
+    val req: List<String>,
 )
 
 @Serializable
@@ -31,6 +31,7 @@ data class ProviderData(
     @SerialName("uid")
     var uid: String
 )
+
 @Serializable
 data class FBDataItem(
     @SerialName("uid")
@@ -42,5 +43,5 @@ data class FBDataItem(
 //    @SerialName("providerData")
 //    var providerData: List<ProviderData> = emptyList()
 ) {
-    fun getName() :String = displayName ?: "이름없음($uid)"
+    fun getName(): String = displayName ?: "이름없음($uid)"
 }

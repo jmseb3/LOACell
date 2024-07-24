@@ -1,4 +1,4 @@
-package com.wonddak.sharedapi.lostark.armories
+package com.wonddak.loacell.sharedapi.lostark.armories
 
 
 import kotlinx.serialization.SerialName
@@ -41,7 +41,7 @@ data class ProfilesItem(
     @SerialName("TownName")
     val townName: String,
     @SerialName("UsingSkillPoint")
-    val usingSkillPoint: Int
+    val usingSkillPoint: Int,
 )
 
 @Serializable

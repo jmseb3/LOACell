@@ -18,5 +18,4 @@ dependencyResolutionManagement {
 rootProject.name = "LoaCell"
 include(":androidApp")
 include(":shared")
-include(":sharedApi")
 include(":sharedDatabase")

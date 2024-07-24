@@ -6,7 +6,7 @@ import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.store.FBRaidInfo
 import com.wonddak.loacell.store.FBRoomInfo
-import com.wonddak.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
 
 interface DialogAction {
     fun showDialog(modal: Modal)

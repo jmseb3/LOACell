@@ -1,14 +1,15 @@
-package com.wonddak.sharedapi
+package com.wonddak.loacell.sharedapi
 
 import io.ktor.client.statement.HttpResponse
 
-fun String?.toError() :String {
+fun String?.toError(): String {
     return this ?: "unknown error"
 }
+
 sealed class LostArkResult<out T> {
-    data class Success<out T>(val data:T) : LostArkResult<T>()
-    data class Fail(val code: Int,val message: String) :LostArkResult<Nothing>()
-    data class FailOnlyMsg(val message: String) :LostArkResult<Nothing>()
+    data class Success<out T>(val data: T) : LostArkResult<T>()
+    data class Fail(val code: Int, val message: String) : LostArkResult<Nothing>()
+    data class FailOnlyMsg(val message: String) : LostArkResult<Nothing>()
 }
 
 inline fun <reified T : Any> LostArkResult<T>.onSuccess(action: (data: T) -> Unit) {
@@ -18,16 +19,20 @@ inline fun <reified T : Any> LostArkResult<T>.onSuccess(action: (data: T) -> Uni
 inline fun <reified T : Any> LostArkResult<T>.onFail(action: (code: Int, message: String) -> Unit) {
     if (this is LostArkResult.Fail) action(code, message)
 }
+
 inline fun <reified T : Any> LostArkResult<T>.onFailOnlyMsg(action: (message: String) -> Unit) {
     if (this is LostArkResult.FailOnlyMsg) action(message)
 }
+
 sealed class ApiResult<out T> {
     //로딩시 (최초값으로 사용하기)
     object Loading : ApiResult<Nothing>() // 상태값이 바뀌지 않는 서브 클래스의 경우 object 를 사용하는 것을 권장
+
     // 성공적으로 수신할 경우 body 데이터를 반환
     data class Success<out T>(val data: T) : ApiResult<T>()
+
     // 오류 메시지가 포함된 응답을 성공적으로 수신한 경우
-    data class Error(val response:HttpResponse,val message: String?) : ApiResult<Nothing>()
+    data class Error(val response: HttpResponse, val message: String?) : ApiResult<Nothing>()
     data class ErrorOnlyMsg(val message: String) : ApiResult<Nothing>()
 
     //예외 발생시

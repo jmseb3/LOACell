@@ -26,12 +26,12 @@ import com.wonddak.loacell.store.CommonUserHelper
 import com.wonddak.loacell.store.FBRaidInfo
 import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.store.initFBRoomInfo
-import com.wonddak.sharedapi.firebase.model.FBDataItem
-import com.wonddak.sharedapi.lostark.LostArkApi
-import com.wonddak.sharedapi.lostark.model.CharacterInfo
-import com.wonddak.sharedapi.onFail
-import com.wonddak.sharedapi.onFailOnlyMsg
-import com.wonddak.sharedapi.onSuccess
+import com.wonddak.loacell.sharedapi.firebase.model.FBDataItem
+import com.wonddak.loacell.sharedapi.lostark.LostArkApi
+import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.loacell.sharedapi.onFail
+import com.wonddak.loacell.sharedapi.onFailOnlyMsg
+import com.wonddak.loacell.sharedapi.onSuccess
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -301,6 +301,7 @@ open class CommonViewModel(
 
     val sheetSpaceFlow
         get() = config.sheetSpace
+
     fun updateSheetSpace(space: Float) {
         viewModelScope.launch {
             config.updateSheetSpace(space)
@@ -317,7 +318,7 @@ open class CommonViewModel(
     }
 
     //region dialogAction
-    fun getDialogAction() : DialogAction = this
+    fun getDialogAction(): DialogAction = this
     override fun showDialog(modal: Modal) {
         _totalRoomInfo.value = _totalRoomInfo.value.showDialog(modal)
     }
@@ -517,7 +518,7 @@ open class CommonViewModel(
         name: String,
         updateProgress: (Boolean) -> Unit,
         updateList: (List<CharacterInfo>) -> Unit,
-        updateError: (String) -> Unit
+        updateError: (String) -> Unit,
     ) {
         viewModelScope.launch {
             updateProgress(true)
@@ -569,7 +570,7 @@ open class CommonViewModel(
     //endregion
 
     fun checkByScheme(
-        roomId: String
+        roomId: String,
     ) {
         if (roomId.isNotEmpty()) {
             hideRoomInfo()
@@ -633,7 +634,7 @@ open class CommonViewModel(
             }
         }
         viewModelScope.launch {
-            synergyReferenceHelper.downloadFile {synergyData ->
+            synergyReferenceHelper.downloadFile { synergyData ->
                 Napier.d { "synergyData : $synergyData" }
                 Synergy.addData(synergyData)
             }

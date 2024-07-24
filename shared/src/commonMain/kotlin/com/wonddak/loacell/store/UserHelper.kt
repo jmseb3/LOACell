@@ -1,7 +1,7 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.database.AppDataBase
-import com.wonddak.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

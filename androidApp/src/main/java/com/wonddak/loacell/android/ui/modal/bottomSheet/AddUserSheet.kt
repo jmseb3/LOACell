@@ -26,7 +26,7 @@ import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.android.ui.common.LengthLimitTextField
 import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.store.CommonUserHelper
-import com.wonddak.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
 
 @Composable
 fun AddUserSheet(

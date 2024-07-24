@@ -1,13 +1,13 @@
-package com.wonddak.sharedapi.lostark
+package com.wonddak.loacell.sharedapi.lostark
 
-import com.wonddak.sharedapi.ApiResult
-import com.wonddak.sharedapi.LostArkResult
-import com.wonddak.sharedapi.lostark.armories.EquipmentItem
-import com.wonddak.sharedapi.lostark.armories.ProfilesItem
-import com.wonddak.sharedapi.lostark.model.CharacterInfo
-import com.wonddak.sharedapi.lostark.resource.Armories
-import com.wonddak.sharedapi.safeRequest
-import com.wonddak.sharedapi.toError
+import com.wonddak.loacell.sharedapi.ApiResult
+import com.wonddak.loacell.sharedapi.LostArkResult
+import com.wonddak.loacell.sharedapi.lostark.armories.EquipmentItem
+import com.wonddak.loacell.sharedapi.lostark.armories.ProfilesItem
+import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
+import com.wonddak.loacell.sharedapi.lostark.resource.Armories
+import com.wonddak.loacell.sharedapi.safeRequest
+import com.wonddak.loacell.sharedapi.toError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -60,6 +60,7 @@ class LostArkApi {
             }
         }
     }
+
     @Throws(Throwable::class)
     suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
         val result: ApiResult<List<CharacterInfo>> = httpClient.safeRequest {
@@ -73,13 +74,15 @@ class LostArkApi {
                     503 -> {
                         LostArkResult.Fail(code, "로스트아크 서버가 점검중 입니다.")
                     }
+
                     else -> {
                         LostArkResult.Fail(code, result.message.toError())
                     }
                 }
             }
-            is ApiResult.Exception -> LostArkResult.Fail(0,result.e.message.toError())
-            is ApiResult.Loading -> LostArkResult.Fail(0,"")
+
+            is ApiResult.Exception -> LostArkResult.Fail(0, result.e.message.toError())
+            is ApiResult.Loading -> LostArkResult.Fail(0, "")
         }
     }
 

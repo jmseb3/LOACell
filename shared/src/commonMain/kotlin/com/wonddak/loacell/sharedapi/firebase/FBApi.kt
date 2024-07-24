@@ -1,7 +1,7 @@
-package com.wonddak.sharedapi.firebase
+package com.wonddak.loacell.sharedapi.firebase
 
-import com.wonddak.sharedapi.firebase.model.FBData
-import com.wonddak.sharedapi.firebase.model.FBRequest
+import com.wonddak.loacell.sharedapi.firebase.model.FBData
+import com.wonddak.loacell.sharedapi.firebase.model.FBRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -43,8 +43,8 @@ class FBApi {
         }
     }
 
-    suspend fun getData(request : FBRequest) : FBData {
-        val response =  httpClient.post {
+    suspend fun getData(request: FBRequest): FBData {
+        val response = httpClient.post {
             url {
                 protocol = URLProtocol.HTTPS
                 host = "getuserinfos-aknb6doirq-uc.a.run.app"

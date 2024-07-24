@@ -37,7 +37,6 @@ kotlin {
         framework {
             baseName = "shared"
             linkerOpts.add("-lsqlite3")
-            export(project(":sharedApi"))
             export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:${libs.moko.resources.get().version}")
         }
@@ -70,7 +69,6 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
         commonMain.dependencies {
-            api(project(":sharedApi"))
             api(project(":sharedDatabase"))
 
             api(libs.moko.resources)
@@ -82,6 +80,8 @@ kotlin {
             api(libs.napier)
             implementation(libs.kotlinx.serialization)
             implementation(libs.androidx.datastore.preferences.core)
+
+            implementation(libs.bundles.ktor)
         }
 
         commonTest.dependencies {
@@ -90,7 +90,7 @@ kotlin {
 
         androidMain.dependencies {
             api(libs.koin.android)
-
+            implementation(libs.ktor.android)
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.storage)
@@ -103,6 +103,9 @@ kotlin {
             // Android 13 and below.
             implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.ios)
         }
     }
 }
