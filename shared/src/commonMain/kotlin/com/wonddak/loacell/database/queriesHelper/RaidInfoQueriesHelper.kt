@@ -1,11 +1,11 @@
-package com.wonddak.database.queriesHelper
+package com.wonddak.loacell.database.queriesHelper
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.wonddak.database.model.Day
-import com.wonddak.database.model.Difficulty
-import com.wonddak.database.model.RaidType
-import com.wonddak.database.model.convertToDay
+import com.wonddak.loacell.database.model.Day
+import com.wonddak.loacell.database.model.Difficulty
+import com.wonddak.loacell.database.model.RaidType
+import com.wonddak.loacell.database.model.convertToDay
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RaidInfoQueries
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class RaidInfoQueriesHelper(
-    private val queries: RaidInfoQueries
+    private val queries: RaidInfoQueries,
 ) {
     fun getAllByRoomId(roomId: String): Flow<List<RaidInfo>> {
         return queries.selectByRoomId(roomId).asFlow().mapToList(Dispatchers.IO)
@@ -22,6 +22,7 @@ class RaidInfoQueriesHelper(
     fun getAllByRoomIdValue(roomId: String): List<RaidInfo> {
         return queries.selectByRoomId(roomId).executeAsList()
     }
+
     fun addRaidInfo(
         raidId: String,
         roomId: String,
@@ -36,7 +37,7 @@ class RaidInfoQueriesHelper(
         party4: List<String> = emptyList(),
         day: Day = Day.NONE,
         hour: Long = 0,
-        minute: Long = 0
+        minute: Long = 0,
     ) {
         queries.insertRaidInfo(
             raidId,
@@ -70,9 +71,9 @@ class RaidInfoQueriesHelper(
         party2: List<String>,
         party3: List<String>,
         party4: List<String>,
-        dayIndex :Long?,
-        hour :Long?,
-        minute: Long?
+        dayIndex: Long?,
+        hour: Long?,
+        minute: Long?,
     ) {
         val day = dayIndex?.convertToDay() ?: Day.NONE
         queries.updateRaidInfo(
@@ -85,7 +86,7 @@ class RaidInfoQueriesHelper(
             party1,
             party2,
             day,
-            hour ?:0L,
+            hour ?: 0L,
             minute ?: 0L,
             party3,
             party4,
@@ -96,7 +97,7 @@ class RaidInfoQueriesHelper(
 
     fun delete(
         id: String,
-        roomId: String
+        roomId: String,
     ) {
         queries.delete(id, roomId)
     }

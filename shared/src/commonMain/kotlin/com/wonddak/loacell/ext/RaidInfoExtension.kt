@@ -1,6 +1,6 @@
 package com.wonddak.loacell.ext
 
-import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.util.TimeHelper

@@ -1,7 +1,7 @@
 package com.wonddak.loacell.model
 
-import com.wonddak.database.model.Day
-import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.database.model.Day
+import com.wonddak.loacell.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 
 data class Filter(

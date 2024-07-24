@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.database.model.RaidType
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable

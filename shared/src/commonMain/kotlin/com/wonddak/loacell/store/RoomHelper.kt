@@ -1,6 +1,6 @@
 package com.wonddak.loacell.store
 
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.model.RoomRole
 
 data class

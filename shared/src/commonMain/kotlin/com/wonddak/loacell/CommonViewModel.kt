@@ -2,7 +2,7 @@ package com.wonddak.loacell
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.delete
 import com.wonddak.loacell.auth.signOut

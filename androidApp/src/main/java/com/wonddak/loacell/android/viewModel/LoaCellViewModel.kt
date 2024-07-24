@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.CommonViewModel
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.ILOA

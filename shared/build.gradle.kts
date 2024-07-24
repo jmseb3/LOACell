@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
     id("dev.icerock.mobile.multiplatform-resources")
+    id("app.cash.sqldelight") version libs.versions.sqldelight.get()
 }
 
 kotlin {
@@ -37,7 +38,6 @@ kotlin {
         framework {
             baseName = "shared"
             linkerOpts.add("-lsqlite3")
-            export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:${libs.moko.resources.get().version}")
         }
         pod("FirebaseCore") {
@@ -69,8 +69,6 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
         commonMain.dependencies {
-            api(project(":sharedDatabase"))
-
             api(libs.moko.resources)
 
             api(libs.bundles.koin.shared)
@@ -82,6 +80,9 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
 
             implementation(libs.bundles.ktor)
+
+            implementation(libs.sqldelight.adapters)
+            implementation(libs.sqldelight.coroutines)
         }
 
         commonTest.dependencies {
@@ -91,12 +92,15 @@ kotlin {
         androidMain.dependencies {
             api(libs.koin.android)
             implementation(libs.ktor.android)
+            implementation(libs.sqldelight.android)
+
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.storage)
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
             implementation(libs.androidx.datastore.preferences)
+
 
             implementation("androidx.credentials:credentials:1.3.0-alpha04")
             // optional - needed for credentials support from play services, for devices running
@@ -106,6 +110,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.ios)
+            implementation(libs.sqldelight.ios)
         }
     }
 }
@@ -122,4 +127,12 @@ multiplatformResources {
     resourcesClassName.set("SharedRes")
     iosBaseLocalizationRegion.set("ko")
     iosMinimalDeploymentTarget.set("16.0")
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.wonddak.loacell")
+        }
+    }
 }

@@ -1,9 +1,9 @@
-package com.wonddak.database.model
+package com.wonddak.loacell.database.model
 
 fun String.convertType(): RaidType {
     RaidType.entries.forEach {
         if (it.name == this) {
-            return  it
+            return it
         }
     }
     return RaidType.ETC
@@ -12,17 +12,17 @@ fun String.convertType(): RaidType {
 fun String.convertDifficulty(): Difficulty {
     Difficulty.entries.forEach {
         if (it.name == this) {
-            return  it
+            return it
         }
     }
     return Difficulty.Normal
 }
 
-fun Long.convertToDay() :Day {
+fun Long.convertToDay(): Day {
     Day.entries.forEach {
         if (it.index == this.toInt()) {
-            return  it
+            return it
         }
     }
-    return  Day.NONE
+    return Day.NONE
 }

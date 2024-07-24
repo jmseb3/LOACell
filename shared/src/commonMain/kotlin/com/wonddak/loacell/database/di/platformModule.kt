@@ -1,7 +1,7 @@
-package com.wonddak.database.di
+package com.wonddak.loacell.database.di
 
-import com.wonddak.database.AppDataBase
-import com.wonddak.database.DriverFactory
+import com.wonddak.loacell.database.AppDataBase
+import com.wonddak.loacell.database.DriverFactory
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 

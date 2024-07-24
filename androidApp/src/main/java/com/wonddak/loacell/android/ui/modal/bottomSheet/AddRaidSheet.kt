@@ -38,9 +38,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.commandiron.wheel_picker_compose.WheelTimePicker
-import com.wonddak.database.model.Day
-import com.wonddak.database.model.Difficulty
-import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.database.model.Day
+import com.wonddak.loacell.database.model.Difficulty
+import com.wonddak.loacell.database.model.RaidType
 import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.android.ui.common.CheckBoxRow

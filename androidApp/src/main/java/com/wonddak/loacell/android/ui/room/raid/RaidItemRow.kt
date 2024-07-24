@@ -22,9 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.database.model.Day
-import com.wonddak.database.model.Difficulty
-import com.wonddak.database.model.RaidType
+import com.wonddak.loacell.database.model.Day
+import com.wonddak.loacell.database.model.Difficulty
+import com.wonddak.loacell.database.model.RaidType
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.ui.common.MyIconButton

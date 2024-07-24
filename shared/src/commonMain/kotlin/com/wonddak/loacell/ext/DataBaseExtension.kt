@@ -1,6 +1,6 @@
 package com.wonddak.loacell.ext
 
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.Character
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.RoomInfo

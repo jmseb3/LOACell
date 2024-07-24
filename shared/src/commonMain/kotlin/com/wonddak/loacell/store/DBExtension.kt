@@ -1,6 +1,6 @@
 package com.wonddak.loacell.store
 
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 
 fun AppDataBase.initFBRoomInfo(roomInfo: FBRoomInfo, roomId: String) {
     this.roomInfoQueriesHelper.addRoomInfo(

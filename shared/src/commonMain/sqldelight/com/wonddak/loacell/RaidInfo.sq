@@ -1,6 +1,6 @@
-import com.wonddak.database.model.Day;
-import com.wonddak.database.model.RaidType;
-import com.wonddak.database.model.Difficulty;
+import com.wonddak.loacell.database.model.Day;
+import com.wonddak.loacell.database.model.RaidType;
+import com.wonddak.loacell.database.model.Difficulty;
 import kotlin.Boolean;
 import kotlin.String;
 import kotlin.collections.List;

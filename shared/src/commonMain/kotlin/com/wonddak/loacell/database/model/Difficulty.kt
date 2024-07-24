@@ -1,4 +1,4 @@
-package com.wonddak.database.model
+package com.wonddak.loacell.database.model
 
 enum class Difficulty {
     Normal,

@@ -1,6 +1,6 @@
 package com.wonddak.loacell.di
 
-import com.wonddak.database.di.dataBaseModule
+import com.wonddak.loacell.database.di.dataBaseModule
 import com.wonddak.loacell.Config
 import com.wonddak.loacell.DataStoreProvider
 import com.wonddak.loacell.auth.LoginHelper

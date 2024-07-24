@@ -1,4 +1,4 @@
-package com.wonddak.database.queriesHelper
+package com.wonddak.loacell.database.queriesHelper
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -10,7 +10,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class RoomInfoQueriesHelper(
-    private val queries: RoomInfoQueries
+    private val queries: RoomInfoQueries,
 ) {
 
     fun getAll(): Flow<List<RoomInfo>> {
@@ -30,8 +30,8 @@ class RoomInfoQueriesHelper(
         description: String,
         uniqueId: String,
         owner: String,
-        enterPassword :String,
-        enterUser: List<String> ,
+        enterPassword: String,
+        enterUser: List<String>,
         editableUser: List<String>,
     ) {
         queries.insertRoomInfo(
@@ -52,7 +52,7 @@ class RoomInfoQueriesHelper(
         enterPassword: String,
         enterUser: List<String>,
         editableUser: List<String>,
-        uniqueId: String
+        uniqueId: String,
     ) {
         queries.updateInfo(
             title,
@@ -64,11 +64,13 @@ class RoomInfoQueriesHelper(
             uniqueId
         )
     }
+
     fun getAllRoomListByOwnerId(
-        ownerId :String
-    ) : List<RoomInfo> {
+        ownerId: String,
+    ): List<RoomInfo> {
         return queries.selectByOwner(ownerId).executeAsList()
     }
+
     fun deleteRoomInfo(roomId: String) {
         if (roomId.isNotEmpty()) {
             queries.deleteById(roomId)

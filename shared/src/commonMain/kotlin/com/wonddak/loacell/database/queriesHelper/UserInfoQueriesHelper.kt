@@ -1,4 +1,4 @@
-package com.wonddak.database.queriesHelper;
+package com.wonddak.loacell.database.queriesHelper;
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -9,13 +9,13 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 
 class UserInfoQueriesHelper(
-    private val queries: UserInfoQueries
+    private val queries: UserInfoQueries,
 ) {
     fun addUser(
         userString: String,
         roomId: String,
         representativeCharacter: String,
-        timeStamp: Long
+        timeStamp: Long,
     ) {
         queries.insertUserInfo(
             userString,
@@ -29,7 +29,7 @@ class UserInfoQueriesHelper(
         userName: String,
         roomId: String,
         representativeCharacter: String,
-        timeStamp: Long
+        timeStamp: Long,
     ) {
         queries.updateUserInfo(
             representativeCharacter, timeStamp, userName, roomId
@@ -40,6 +40,7 @@ class UserInfoQueriesHelper(
         return queries.selectByRoomId(roomId).asFlow()
             .mapToList(Dispatchers.IO)
     }
+
     fun getUsersByRoomIdValue(roomId: String): List<UserInfo> {
         return queries.selectByRoomId(roomId).executeAsList()
     }

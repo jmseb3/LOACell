@@ -1,4 +1,4 @@
-package com.wonddak.database
+package com.wonddak.loacell.database
 
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -7,8 +7,8 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.wonddak.loacell.Database
 import org.koin.java.KoinJavaComponent
 
-actual class DriverFactory{
-    private val context : Context = KoinJavaComponent.getKoin().get()
+actual class DriverFactory {
+    private val context: Context = KoinJavaComponent.getKoin().get()
     actual fun createDriver(): SqlDriver {
         return AndroidSqliteDriver(
             Database.Schema,
