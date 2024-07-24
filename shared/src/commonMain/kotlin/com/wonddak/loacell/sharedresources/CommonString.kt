@@ -1,4 +1,4 @@
-package com.wonddak.sharedresources.store
+package com.wonddak.loacell.sharedresources
 
 import com.wonddak.loacell.SharedRes
 import dev.icerock.moko.resources.desc.Resource

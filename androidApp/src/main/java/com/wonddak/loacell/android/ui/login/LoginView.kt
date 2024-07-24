@@ -43,7 +43,7 @@ import com.wonddak.loacell.android.ui.theme.roboto
 import com.wonddak.loacell.android.viewModel.LoaCellViewModel
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.requestAnonymousLogin
-import com.wonddak.sharedresources.store.CommonString
+import com.wonddak.loacell.sharedresources.CommonString
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 

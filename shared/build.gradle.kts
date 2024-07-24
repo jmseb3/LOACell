@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -37,7 +38,6 @@ kotlin {
             baseName = "shared"
             linkerOpts.add("-lsqlite3")
             export(project(":sharedApi"))
-            export(project(":sharedResources"))
             export(project(":sharedDatabase"))
             export("dev.icerock.moko:resources:${libs.moko.resources.get().version}")
         }
@@ -71,8 +71,9 @@ kotlin {
         }
         commonMain.dependencies {
             api(project(":sharedApi"))
-            api(project(":sharedResources"))
             api(project(":sharedDatabase"))
+
+            api(libs.moko.resources)
 
             api(libs.bundles.koin.shared)
             implementation(libs.kotlinx.datetime)
@@ -112,4 +113,10 @@ android {
     defaultConfig {
         minSdk = 26
     }
+}
+multiplatformResources {
+    resourcesPackage.set("com.wonddak.loacell")
+    resourcesClassName.set("SharedRes")
+    iosBaseLocalizationRegion.set("ko")
+    iosMinimalDeploymentTarget.set("16.0")
 }
