@@ -1,7 +1,7 @@
 package com.wonddak.loacell
 
 import androidx.annotation.MainThread
-import com.wonddak.database.AppDataBase
+import com.wonddak.loacell.database.AppDataBase
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.storage.SynergyReferenceHelper

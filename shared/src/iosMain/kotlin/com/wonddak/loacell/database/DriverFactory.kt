@@ -1,5 +1,6 @@
 package com.wonddak.loacell.database
 
+import com.wonddak.loacell.Database
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 

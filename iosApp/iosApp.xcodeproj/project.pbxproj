@@ -55,13 +55,13 @@
 		07FE61462AD7BA35004701DF /* BottomAppBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61452AD7BA35004701DF /* BottomAppBar.swift */; };
 		07FE61482AD7BE20004701DF /* ColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61472AD7BE20004701DF /* ColorManager.swift */; };
 		07FE614A2AD7C40D004701DF /* SwiftUi+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */; };
-		0D4042C7D6AC991EE830995C /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 127870E8367175D7332DE6F7 /* Pods_iosApp.framework */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		3E462E502B899DFF00A35684 /* DropDownCharacterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */; };
 		3E462E522B89AD0E00A35684 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E462E512B89AD0E00A35684 /* SafariWebView.swift */; };
 		3ED15F772BAB023200B7B849 /* LoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED15F762BAB023200B7B849 /* LoginInfoView.swift */; };
 		3ED62B9E2A2E29C6007D640A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3ED62B9D2A2E29C6007D640A /* GoogleService-Info.plist */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		F054B50A88A5D6A15728F065 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 964FFC6C375C1E19DE5A8B0B /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -109,8 +109,8 @@
 		07FE61452AD7BA35004701DF /* BottomAppBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomAppBar.swift; sourceTree = "<group>"; };
 		07FE61472AD7BE20004701DF /* ColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorManager.swift; sourceTree = "<group>"; };
 		07FE61492AD7C40D004701DF /* SwiftUi+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUi+Extension.swift"; sourceTree = "<group>"; };
-		127870E8367175D7332DE6F7 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		27BAF8019754E95D399F178F /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		3E462E4F2B899DFE00A35684 /* DropDownCharacterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownCharacterNameView.swift; sourceTree = "<group>"; };
 		3E462E512B89AD0E00A35684 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		3E66B5982B4421E4000F7377 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
@@ -119,8 +119,8 @@
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9274114DD903B8D4D3540EB8 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
-		954B3F5DB2D7EC402DC9EA9D /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
+		964FFC6C375C1E19DE5A8B0B /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFD31A4F57E01B2EC488D3F2 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,7 +132,7 @@
 				073614C92B16E155002D0BA8 /* AlertToast in Frameworks */,
 				070783522B18329700F18AC9 /* KakaoSDKShare in Frameworks */,
 				0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */,
-				0D4042C7D6AC991EE830995C /* Pods_iosApp.framework in Frameworks */,
+				F054B50A88A5D6A15728F065 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,8 +326,8 @@
 		60823FB2992DCA43E2906BC0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				954B3F5DB2D7EC402DC9EA9D /* Pods-iosApp.debug.xcconfig */,
-				9274114DD903B8D4D3540EB8 /* Pods-iosApp.release.xcconfig */,
+				BFD31A4F57E01B2EC488D3F2 /* Pods-iosApp.debug.xcconfig */,
+				27BAF8019754E95D399F178F /* Pods-iosApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -338,7 +338,7 @@
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				60823FB2992DCA43E2906BC0 /* Pods */,
-				8A7DBABE72D5DA966621863A /* Frameworks */,
+				8DCB1B5E1EB6EC1C58A2287D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -369,10 +369,10 @@
 			path = iosApp;
 			sourceTree = "<group>";
 		};
-		8A7DBABE72D5DA966621863A /* Frameworks */ = {
+		8DCB1B5E1EB6EC1C58A2287D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				127870E8367175D7332DE6F7 /* Pods_iosApp.framework */,
+				964FFC6C375C1E19DE5A8B0B /* Pods_iosApp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -384,12 +384,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				9493D27687529D05887B6BF6 /* [CP] Check Pods Manifest.lock */,
+				37BF99B8CACB780BCD7A132A /* [CP] Check Pods Manifest.lock */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
 				AE42901D5221B6A72B012EF4 /* Frameworks */,
 				07410A162A08DE81005135AD /* Make Moko-Resources */,
-				CD2CB530297887083AB84E2E /* [CP] Embed Pods Frameworks */,
+				4498A984810EDACAD53E6DB4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -474,9 +474,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :sharedResources:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :shared:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
 		};
-		9493D27687529D05887B6BF6 /* [CP] Check Pods Manifest.lock */ = {
+		37BF99B8CACB780BCD7A132A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -498,7 +498,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CD2CB530297887083AB84E2E /* [CP] Embed Pods Frameworks */ = {
+		4498A984810EDACAD53E6DB4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -693,7 +693,7 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 954B3F5DB2D7EC402DC9EA9D /* Pods-iosApp.debug.xcconfig */;
+			baseConfigurationReference = BFD31A4F57E01B2EC488D3F2 /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
@@ -730,7 +730,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9274114DD903B8D4D3540EB8 /* Pods-iosApp.release.xcconfig */;
+			baseConfigurationReference = 27BAF8019754E95D399F178F /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
@@ -795,8 +795,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.19.0;
+				kind = exactVersion;
+				version = 2.19.0;
 			};
 		};
 		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */ = {
