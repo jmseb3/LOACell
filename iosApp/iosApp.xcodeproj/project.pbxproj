@@ -12,8 +12,6 @@
 		070625312B05AAED00B9E95F /* RoomDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625302B05AAED00B9E95F /* RoomDialog.swift */; };
 		070625332B05B2F000B9E95F /* RoomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625322B05B2F000B9E95F /* RoomSheet.swift */; };
 		070625352B05B50400B9E95F /* CheckButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070625342B05B50400B9E95F /* CheckButton.swift */; };
-		070783502B18329700F18AC9 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 0707834F2B18329700F18AC9 /* KakaoSDKCommon */; };
-		070783522B18329700F18AC9 /* KakaoSDKShare in Frameworks */ = {isa = PBXBuildFile; productRef = 070783512B18329700F18AC9 /* KakaoSDKShare */; };
 		070CF3252AC148440099F2D6 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070CF3242AC148440099F2D6 /* LoadingView.swift */; };
 		070F506C2B32B5090041C646 /* AppleLoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070F506B2B32B5090041C646 /* AppleLoginHelper.swift */; };
 		0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */ = {isa = PBXBuildFile; productRef = 0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */; };
@@ -22,7 +20,6 @@
 		07179F432ACD530D003A415E /* RoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07179F422ACD530D003A415E /* RoomListView.swift */; };
 		07256EE12B1D9FD2008B572B /* FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07256EE02B1D9FD2008B572B /* FilterSheet.swift */; };
 		073614C62B16D1FC002D0BA8 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073614C52B16D1FC002D0BA8 /* ShareSheet.swift */; };
-		073614C92B16E155002D0BA8 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 073614C82B16E155002D0BA8 /* AlertToast */; };
 		07420B782AD8E16E0081E5FE /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B772AD8E16E0081E5FE /* RoomView.swift */; };
 		07420B7B2AD901C30081E5FE /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7A2AD901C30081E5FE /* IconButton.swift */; };
 		07420B7E2AD90CAC0081E5FE /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07420B7D2AD90CAC0081E5FE /* UserView.swift */; };
@@ -82,6 +79,7 @@
 		07420B7D2AD90CAC0081E5FE /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		07420B7F2AD90CC80081E5FE /* UserFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFocusView.swift; sourceTree = "<group>"; };
 		07420B812AD912BE0081E5FE /* UserInfoCharacters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCharacters.swift; sourceTree = "<group>"; };
+		074F42DC2C52459E00AB5893 /* leveldb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = leveldb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		075377E92B0210F7003872EF /* RaidFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidFocusView.swift; sourceTree = "<group>"; };
 		07540B682B15876300DABAFA /* SettingRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingRoomView.swift; sourceTree = "<group>"; };
 		075856782BF5E561007CCF5E /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
@@ -128,9 +126,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				070783502B18329700F18AC9 /* KakaoSDKCommon in Frameworks */,
-				073614C92B16E155002D0BA8 /* AlertToast in Frameworks */,
-				070783522B18329700F18AC9 /* KakaoSDKShare in Frameworks */,
 				0711E1C62AC3CDA700651B11 /* SwiftUI-Snackbar in Frameworks */,
 				F054B50A88A5D6A15728F065 /* Pods_iosApp.framework in Frameworks */,
 			);
@@ -372,6 +367,7 @@
 		8DCB1B5E1EB6EC1C58A2287D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				074F42DC2C52459E00AB5893 /* leveldb.framework */,
 				964FFC6C375C1E19DE5A8B0B /* Pods_iosApp.framework */,
 			);
 			name = Frameworks;
@@ -398,9 +394,6 @@
 			name = iosApp;
 			packageProductDependencies = (
 				0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */,
-				073614C82B16E155002D0BA8 /* AlertToast */,
-				0707834F2B18329700F18AC9 /* KakaoSDKCommon */,
-				070783512B18329700F18AC9 /* KakaoSDKShare */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -432,8 +425,6 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */,
-				073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */,
-				0707834E2B18329700F18AC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -791,14 +782,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0707834E2B18329700F18AC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
-			requirement = {
-				kind = exactVersion;
-				version = 2.19.0;
-			};
-		};
 		0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jmseb3/SwiftUI-Snackbar.git";
@@ -807,36 +790,13 @@
 				kind = branch;
 			};
 		};
-		073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/elai950/AlertToast.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.9;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0707834F2B18329700F18AC9 /* KakaoSDKCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0707834E2B18329700F18AC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
-			productName = KakaoSDKCommon;
-		};
-		070783512B18329700F18AC9 /* KakaoSDKShare */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0707834E2B18329700F18AC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
-			productName = KakaoSDKShare;
-		};
 		0711E1C52AC3CDA700651B11 /* SwiftUI-Snackbar */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0711E1C42AC3CDA700651B11 /* XCRemoteSwiftPackageReference "SwiftUI-Snackbar" */;
 			productName = "SwiftUI-Snackbar";
-		};
-		073614C82B16E155002D0BA8 /* AlertToast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 073614C72B16E155002D0BA8 /* XCRemoteSwiftPackageReference "AlertToast" */;
-			productName = AlertToast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

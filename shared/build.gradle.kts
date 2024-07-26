@@ -37,6 +37,7 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
+            isStatic = true
             linkerOpts.add("-lsqlite3")
             export("dev.icerock.moko:resources:${libs.moko.resources.get().version}")
         }
