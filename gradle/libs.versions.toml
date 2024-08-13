@@ -1,11 +1,12 @@
 [versions]
 agp = "8.3.2"
+compose = "1.6.11"
 kotlin = "2.0.0"
 ktor = "2.3.5"
 sqldelight = "2.0.1"
-moko = "0.24.0"
 datastore = "1.1.1"
 koin = "3.5.6"
+androidx-uiTest = "1.6.8"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version = "1.8.0" }
@@ -13,7 +14,9 @@ capturable = { module = "dev.shreyaspatil:capturable", version = "2.1.0" }
 kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
 wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
 
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
+androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
+
 compose-bom = { module = "androidx.compose:compose-bom", version = "2024.06.00" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.0" }
 compose-ui = { module = "androidx.compose.ui:ui" }
@@ -49,9 +52,6 @@ sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", 
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 
-moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko" }
-moko-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko" }
-
 napier = { module = "io.github.aakira:napier", version = "2.7.1" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
@@ -62,6 +62,7 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

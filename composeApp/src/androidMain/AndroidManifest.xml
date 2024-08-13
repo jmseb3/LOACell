@@ -8,12 +8,9 @@
     </queries>
 
     <application
-        android:name=".LoaCellApp"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
         android:label="LoaCell"
-        android:supportsRtl="true"
-        android:com.wonddak.loacell.theme="@style/AppTheme"
+        android:theme="@android:style/Theme.Material.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
@@ -39,15 +36,15 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.wonddak.loacell.android.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+<!--        <provider-->
+<!--            android:name="androidx.core.content.FileProvider"-->
+<!--            android:authorities="com.wonddak.loacell.android.fileprovider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/file_paths" />-->
+<!--        </provider>-->
 
     </application>
 </manifest> 

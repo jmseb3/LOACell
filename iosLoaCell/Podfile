@@ -1,0 +1,11 @@
+target 'iosApp' do
+  use_frameworks!
+  platform :ios, '16.0'
+  pod 'AlertToast'
+  pod 'FirebaseAnalytics', '~> 10.27.0'
+  pod 'FirebaseCrashlytics', '~> 10.27.0'
+  pod 'GoogleSignIn', '~> 7.1'
+  pod 'GoogleSignInSwiftSupport', '~> 7.1'
+  pod 'KakaoSDKShare'
+  pod 'composeApp', :path => '../composeApp'
+end
