@@ -10,6 +10,7 @@
     <application
         android:allowBackup="false"
         android:label="LoaCell"
+        android:name=".LoaCellApplication"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity

@@ -5,9 +5,9 @@ import com.wonddak.loacell.util.DataStoreProvider
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.storage.SynergyReferenceHelper
+import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-
 
 val platformModule = module {
     singleOf(::LoginHelper)
@@ -20,7 +20,9 @@ val storageModule = module {
 }
 
 val viewmodelModule = module {
-    viewModelOf(::AuthViewModel)
+    viewModel<AuthViewModel>{
+        AuthViewModel(get())
+    }
 }
 
 fun commonModule() = listOf(platformModule, viewmodelModule, storageModule)

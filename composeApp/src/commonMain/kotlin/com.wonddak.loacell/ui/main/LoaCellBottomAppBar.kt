@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.wonddak.loacell.ui.isMain
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.refresh
 import org.jetbrains.compose.resources.painterResource

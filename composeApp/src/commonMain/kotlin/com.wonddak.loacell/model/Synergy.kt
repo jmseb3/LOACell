@@ -1,6 +1,5 @@
 package com.wonddak.loacell.model
 
-import com.wonddak.loacell.Character
 import io.github.aakira.napier.Napier
 
 

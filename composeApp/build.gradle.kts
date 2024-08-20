@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.googleGmsService)
 }
 
 kotlin {
@@ -93,6 +95,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
 
             implementation(libs.bundles.koin.shared)
+
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
             implementation(libs.androidx.lifecycle.viewmodel)

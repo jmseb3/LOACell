@@ -12,16 +12,13 @@ import cocoapods.FirebaseCore.FIRApp
 import cocoapods.GoogleSignIn.GIDConfiguration
 import cocoapods.GoogleSignIn.GIDSignIn
 import cocoapods.GoogleSignIn.GIDSignInResult
-import com.wonddak.loacell.CommonMutableStateFlow
-import com.wonddak.loacell.CommonStateFlow
-import com.wonddak.loacell.toCommonMutableStateFlow
-import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.Foundation.NSError
 import platform.Foundation.NSString
@@ -32,7 +29,7 @@ import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
 
 actual class LoginHelper {
-    actual val loginIn: CommonMutableStateFlow<Boolean> = MutableStateFlow(false).toCommonMutableStateFlow()
+    actual val loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     actual val auth: FBAuth = FBAuth(FIRAuth.auth())
 
@@ -143,8 +140,8 @@ actual class FBAuth(
 ) {
     private var _user: MutableStateFlow<FBUser?> = MutableStateFlow(null)
 
-    actual val user: CommonStateFlow<FBUser?>
-        get() = _user.toCommonStateFlow()
+    actual val user: StateFlow<FBUser?>
+        get() = _user
 
     init {
         auth.addAuthStateDidChangeListener { _, firUser ->
@@ -232,6 +229,10 @@ actual class FBUser(
         get() = user.photoURL.toString()
     actual val isAnonymous: Boolean
         get() = user.isAnonymous()
+
+    override fun toString(): String {
+        return "FBUser(uid='$uid', displayName=$displayName, photoUrl='$photoUrl', isAnonymous=$isAnonymous)"
+    }
 }
 
 

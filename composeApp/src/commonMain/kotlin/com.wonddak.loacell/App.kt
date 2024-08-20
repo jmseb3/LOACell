@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.wonddak.loacell.theme.AppTheme
-import com.wonddak.loacell.ui.LoaCellNavGraph
+import com.wonddak.loacell.ui.main.LoaCellNavGraph
 
 @Composable
 fun App() = AppTheme {

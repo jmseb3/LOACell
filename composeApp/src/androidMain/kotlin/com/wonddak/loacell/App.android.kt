@@ -1,16 +1,24 @@
 package com.wonddak.loacell
 
+import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.wonddak.loacell.di.commonModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import java.lang.ref.WeakReference
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        AppContext.set(this@MainActivity)
         setContent { App() }
     }
 }
@@ -18,3 +26,30 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppPreview() { App() }
+
+
+class LoaCellApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        startKoin{
+            // Log Koin into Android logger
+            androidLogger()
+            // Reference Android context
+            androidContext(this@LoaCellApplication)
+            // Load modules
+            modules(commonModule())
+        }
+    }
+}
+
+object AppContext {
+    private var value: WeakReference<Context?>? = null
+    fun set(context: Context) {
+        value = WeakReference(context)
+    }
+
+    internal fun get(): Context {
+        return value?.get() ?: throw RuntimeException("Context Error")
+    }
+}

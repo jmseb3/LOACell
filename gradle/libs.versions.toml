@@ -3,9 +3,9 @@ agp = "8.3.2"
 compose = "1.6.11"
 kotlin = "2.0.0"
 ktor = "2.3.5"
-sqldelight = "2.0.1"
 datastore = "1.1.1"
-koin = "3.5.6"
+koin = "3.6.0-Beta4"
+koin2 = "1.2.0-Beta4"
 androidx-uiTest = "1.6.8"
 
 [libraries]
@@ -47,17 +47,12 @@ ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", versi
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-ios = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
-sqldelight-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
-sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
-sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
-sqldelight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
-
 napier = { module = "io.github.aakira:napier", version = "2.7.1" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin2" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin2" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -75,5 +70,5 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 compose = ["compose-ui", "compose-ui-tooling-preview", "compose-material3", "androidx-activity-compose"]
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth"]
 ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
-koin-android = ["koin-core", "koin-android", "koin-compose"]
-koin-shared = ["koin-core","koin-test"]
+koin-android = ["koin-core", "koin-android"]
+koin-shared = ["koin-compose", "koin-compose-viewmodel"]

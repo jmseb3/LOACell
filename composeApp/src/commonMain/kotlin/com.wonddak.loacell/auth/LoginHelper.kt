@@ -1,10 +1,11 @@
 package com.wonddak.loacell.auth
 
-import com.wonddak.loacell.CommonMutableStateFlow
-import com.wonddak.loacell.CommonStateFlow
+
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 expect class LoginHelper(){
-    val loginIn : CommonMutableStateFlow<Boolean>
+    val loginIn : MutableStateFlow<Boolean>
     val auth : FBAuth
     fun registerTokenAction(
         result : GoogleResult,
@@ -12,6 +13,7 @@ expect class LoginHelper(){
         successAction: (credential : FBAuthCredential) -> Unit,
     )
 }
+
 fun LoginHelper.registerGoogleToken(
     result : GoogleResult,
     successAction: (FBAuthResult) -> Unit,
@@ -56,7 +58,7 @@ expect class FBAuthCredential
 expect class GoogleResult
 
 expect class FBAuth {
-    val user: CommonStateFlow<FBUser?>
+    val user: StateFlow<FBUser?>
     fun signInWithCredential(
         credential: FBAuthCredential,
         failAction: () -> Unit,

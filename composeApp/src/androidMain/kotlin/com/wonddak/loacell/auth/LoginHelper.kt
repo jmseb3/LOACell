@@ -20,12 +20,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
-import com.wonddak.loacell.CommonMutableStateFlow
-import com.wonddak.loacell.CommonStateFlow
-import com.wonddak.loacell.toCommonMutableStateFlow
-import com.wonddak.loacell.toCommonStateFlow
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.java.KoinJavaComponent
 
 actual class LoginHelper {
@@ -40,7 +37,7 @@ actual class LoginHelper {
         CredentialManager.create(context)
     }
 
-    actual val loginIn: CommonMutableStateFlow<Boolean> = MutableStateFlow(false).toCommonMutableStateFlow()
+    actual val loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     actual val auth: FBAuth = FBAuth(Firebase.auth)
     actual fun registerTokenAction(
@@ -149,12 +146,12 @@ actual class FBAuth(
 ) {
     private var _user: MutableStateFlow<FBUser?> = MutableStateFlow(null)
 
-    actual val user: CommonStateFlow<FBUser?>
-        get() = _user.toCommonStateFlow()
+    actual val user: StateFlow<FBUser?>
+        get() = _user
 
     init {
-        auth.addAuthStateListener { fAtuh ->
-            _user.value = fAtuh.currentUser?.let { it -> FBUser(it) }
+        auth.addAuthStateListener { auth ->
+            _user.value = auth.currentUser?.let { FBUser(it) }
         }
     }
 
@@ -233,6 +230,10 @@ actual class FBUser(
         get() = user.isAnonymous
     actual val photoUrl: String
         get() = user.photoUrl.toString()
+
+    override fun toString(): String {
+        return "FBUser(uid='$uid', displayName=$displayName, isAnonymous=$isAnonymous, photoUrl='$photoUrl')"
+    }
 }
 
 actual class FBAuthResult(

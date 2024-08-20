@@ -2,10 +2,9 @@ package com.wonddak.loacell.model
 
 import com.wonddak.loacell.database.model.Day
 import com.wonddak.loacell.database.model.RaidType
-import com.wonddak.loacell.RaidInfo
 
 data class Filter(
-    val raidType: List<RaidType> = RaidType.values().toList(),
+    val raidType: List<RaidType> = RaidType.entries,
     val finish: FINISH = FINISH.ALL,
     val userList: List<String> = emptyList(),
     val timeStep : Int = 60,

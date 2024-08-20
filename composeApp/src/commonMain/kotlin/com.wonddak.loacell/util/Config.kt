@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
 
@@ -46,9 +47,9 @@ class Config(provider: DataStoreProvider) {
     val homeRefreshTime: Flow<Long>
         get() = dataStore.data.map {
             it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] ?: 0L
-        }.suspend
+        }
 
-    fun updateHomeRefreshTime(time: Long) {
+    suspend fun updateHomeRefreshTime(time: Long) {
         dataStore.edit {
             it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] = time
         }
