@@ -12,7 +12,6 @@ object NameHelper {
             .append(Random.nextInt(8) + 1)
             .append(Random.nextInt(8) + 1)
             .toString()
-        println(">>>>>>>>> $st")
         return st
     }
 }

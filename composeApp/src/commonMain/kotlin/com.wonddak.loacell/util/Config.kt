@@ -1,4 +1,4 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.util
 
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
@@ -26,8 +26,9 @@ internal fun createDataStoreWithDefaults(
     )
 
 expect class DataStoreProvider() {
-    fun getDataStore() : DataStore<Preferences>
+    fun getDataStore(): DataStore<Preferences>
 }
+
 class Config(provider: DataStoreProvider) {
     private val dataStore = provider.getDataStore()
     suspend fun remove(key: String) {
@@ -37,36 +38,39 @@ class Config(provider: DataStoreProvider) {
             }
         }
     }
+
     suspend fun clear() {
         dataStore.edit { it.clear() }
     }
-    val homeRefreshTime: CommonFlow<Long>
+
+    val homeRefreshTime: Flow<Long>
         get() = dataStore.data.map {
             it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] ?: 0L
-        }.toCommonFlow()
+        }.suspend
 
-    suspend fun updateHomeRefreshTime(time:Long) {
+    fun updateHomeRefreshTime(time: Long) {
         dataStore.edit {
             it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] = time
         }
     }
-    val sheetSpace : CommonFlow<Float>
+
+    val sheetSpace: Flow<Float>
         get() = dataStore.data.map {
             it[floatPreferencesKey(ConfigKeys.SheetSpace)] ?: 20f
-        }.toCommonFlow()
+        }
 
-    suspend fun updateSheetSpace(space:Float) {
+    suspend fun updateSheetSpace(space: Float) {
         dataStore.edit {
             it[floatPreferencesKey(ConfigKeys.SheetSpace)] = space
         }
     }
 
-    val defaultUrl : CommonFlow<String>
+    val defaultUrl: Flow<String>
         get() = dataStore.data.map {
             it[stringPreferencesKey(ConfigKeys.DefaultUrl)] ?: ILOA
-        }.toCommonFlow()
+        }
 
-    suspend fun updateDefaultUrl(url:String) {
+    suspend fun updateDefaultUrl(url: String) {
         dataStore.edit {
             it[stringPreferencesKey(ConfigKeys.DefaultUrl)] = url
         }
