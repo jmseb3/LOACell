@@ -1,8 +1,10 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.util
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.wonddak.loacell.util.LOA_CELL_PREFERENCES
+import com.wonddak.loacell.util.createDataStoreWithDefaults
 import org.koin.java.KoinJavaComponent
 
 

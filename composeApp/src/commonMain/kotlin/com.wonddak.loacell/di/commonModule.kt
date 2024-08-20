@@ -1,8 +1,8 @@
 package com.wonddak.loacell.di
 
-import com.wonddak.loacell.database.di.dataBaseModule
-import com.wonddak.loacell.Config
-import com.wonddak.loacell.DataStoreProvider
+import com.wonddak.loacell.util.Config
+import com.wonddak.loacell.util.DataStoreProvider
+import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.storage.SynergyReferenceHelper
 import org.koin.core.module.dsl.singleOf
@@ -19,5 +19,9 @@ val storageModule = module {
     singleOf(::SynergyReferenceHelper)
 }
 
-fun commonModule() = listOf(platformModule,dataBaseModule, storageModule)
+val viewmodelModule = module {
+    viewModelOf(::AuthViewModel)
+}
+
+fun commonModule() = listOf(platformModule, viewmodelModule, storageModule)
 

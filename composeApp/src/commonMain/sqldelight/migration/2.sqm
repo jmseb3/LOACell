@@ -1,2 +1,0 @@
-ALTER TABLE RaidInfo ADD COLUMN party3characterList TEXT NOT NULL DEFAULT "^^^^^^";
-ALTER TABLE RaidInfo ADD COLUMN party4characterList TEXT NOT NULL DEFAULT "^^^^^^";

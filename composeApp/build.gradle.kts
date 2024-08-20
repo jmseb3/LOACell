@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinSerialization)
-    id("app.cash.sqldelight") version libs.versions.sqldelight.get()
 }
 
 kotlin {
@@ -103,8 +102,7 @@ kotlin {
 
             implementation(libs.bundles.ktor)
 
-            implementation(libs.sqldelight.adapters)
-            implementation(libs.sqldelight.coroutines)
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
         }
 
         commonTest.dependencies {
@@ -119,7 +117,6 @@ kotlin {
 
             implementation(libs.koin.android)
             implementation(libs.ktor.android)
-            implementation(libs.sqldelight.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
@@ -138,7 +135,6 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.ktor.ios)
-            implementation(libs.sqldelight.ios)
         }
     }
 }
@@ -181,13 +177,5 @@ dependencies {
     //temporary fix: https://youtrack.jetbrains.com/issue/CMP-5864
     androidTestImplementation("androidx.test:monitor") {
         version { strictly("1.6.1") }
-    }
-}
-
-sqldelight {
-    databases {
-        create("Database") {
-            packageName.set("com.wonddak.loacell")
-        }
     }
 }

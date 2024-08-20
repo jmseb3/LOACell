@@ -1,4 +1,4 @@
-package com.wonddak.loacell
+package com.wonddak.loacell.util
 
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.wonddak.loacell.util.LOA_CELL_PREFERENCES
+import com.wonddak.loacell.util.createDataStoreWithDefaults
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSBundle
 import platform.Foundation.NSFileManager
@@ -35,7 +37,7 @@ actual class DataStoreProvider actual constructor() {
             create = false,
             error = null,
         )
-        return requireNotNull(filePath).path + "/${LOA_CELL_PREFERENCES}"
+        return requireNotNull(filePath).path + "/$LOA_CELL_PREFERENCES"
     }
 
     actual fun getDataStore(): DataStore<Preferences> {
