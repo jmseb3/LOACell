@@ -32,11 +32,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.wonddak.loacell.BlockBackButton
+import com.wonddak.loacell.Const
 import com.wonddak.loacell.auth.rememberAuthLauncher
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.StoreViewModel
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.btn_google
 import loacell.composeapp.generated.resources.login_anonymous
@@ -46,20 +47,28 @@ import loacell.composeapp.generated.resources.login_progress
 import loacell.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
+import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun LoginView(
     modifier: Modifier,
     navController: NavHostController,
-    authViewModel: AuthViewModel = koinInject(),
+    authViewModel: AuthViewModel,
+    storeViewModel: StoreViewModel,
 ) {
-    LaunchedEffect(authViewModel.user) {
-        if (authViewModel.user != null) {
-            navController.popBackStack()
+    LaunchedEffect(true) {
+        storeViewModel.stopObserveRoom()
+    }
+    LaunchedEffect(authViewModel.initSuccess, authViewModel.user) {
+        if (authViewModel.initSuccess && authViewModel.user != null) {
+            navController.navigate(Const.NAV_MAIN) {
+                popUpTo(Const.NAV_LOGIN) {
+                    inclusive = true
+                }
+            }
         }
     }
-    BlockBackButton()
     val authLauncher = rememberAuthLauncher(authViewModel.loginHelper) {
 
     }
@@ -87,7 +96,8 @@ fun LoginView(
                         textAlign = TextAlign.Center
                     )
                     Image(
-                        painter = painterResource(Res.drawable.logo), contentDescription = null)
+                        painter = painterResource(Res.drawable.logo), contentDescription = null
+                    )
                     Text(
                         text = stringResource(Res.string.login_info_2),
                         textAlign = TextAlign.Center
@@ -151,7 +161,10 @@ fun LoginView(
             }
         }
         if (authViewModel.loginIn) {
-            LoadingView(info = stringResource(Res.string.login_progress), color = Color.Gray.copy(0.5f))
+            LoadingView(
+                info = stringResource(Res.string.login_progress),
+                color = Color.Gray.copy(0.5f)
+            )
         }
     }
 }

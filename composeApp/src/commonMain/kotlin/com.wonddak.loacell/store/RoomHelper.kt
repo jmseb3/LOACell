@@ -2,7 +2,6 @@ package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomInfoField
-import com.wonddak.loacell.model.RoomRole
 import com.wonddak.loacell.model.toRoomInfo
 
 object CommonRoomHelper {
@@ -129,13 +128,13 @@ object CommonRoomHelper {
     fun exitRoom(
         roomId: String,
         userId: String,
-        role: RoomRole,
+        role: RoomInfo.RoomRole,
         successAction: () -> Unit,
         failAction: (e: Error) -> Unit,
     ) {
         val field = when (role) {
-            RoomRole.MANAGER -> RoomInfoField.EDITABLE_USER
-            RoomRole.USER -> RoomInfoField.ENTER_USER
+            RoomInfo.RoomRole.MANAGER -> RoomInfoField.EDITABLE_USER
+            RoomInfo.RoomRole.USER -> RoomInfoField.ENTER_USER
             else -> RoomInfoField.OWNER
         }
         RefHelper.getRoomRef(roomId).update(

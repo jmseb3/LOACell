@@ -20,7 +20,28 @@ data class RoomInfo(
     val enterPassword: String,
     val enterUser: List<String>,
     val editableUser: List<String>,
-)
+) {
+    enum class RoomRole(val toName: String) {
+        OWNER("소유자"),
+        MANAGER("관리자"),
+        USER("일반 유저"),
+        NONE("-")
+    }
+
+    fun getRole(uid: String?): RoomRole {
+        return uid?.let { uid ->
+            if (owner == uid) {
+                RoomRole.OWNER
+            } else if (editableUser.contains(uid)) {
+                RoomRole.MANAGER
+            } else if (enterUser.contains(uid)) {
+                RoomRole.USER
+            } else {
+                RoomRole.NONE
+            }
+        } ?: RoomRole.NONE
+    }
+}
 
 fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo {
     return with(this.data!!) {

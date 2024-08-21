@@ -33,10 +33,9 @@ class AuthViewModel(
         }
         viewModelScope.launch {
             loginHelper.auth.user.collect {
-                user = it
                 initSuccess = true
+                user = it
             }
         }
     }
-
 }

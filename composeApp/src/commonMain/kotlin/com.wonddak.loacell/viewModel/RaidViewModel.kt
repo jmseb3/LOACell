@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 
@@ -15,14 +16,17 @@ class RaidViewModel() : ViewModel() {
     var raidList: List<RaidInfo> by mutableStateOf(emptyList())
         private set
 
+    var tabState: RoomState by mutableStateOf(RoomState.Raid)
+
     var roomId: String? = null
         private set
 
     fun startObserveRaidInfoList(
         roomId: String?,
     ) {
-        this.roomId = roomId
+        stopObserveRaidInfo()
         roomId ?: return
+        this.roomId = roomId
         this.raidListenerRegistration = CommonRaidHelper.observe(roomId) {
             raidList = it
         }

@@ -1,7 +1,5 @@
 package com.wonddak.loacell.ui.main
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,10 +18,17 @@ import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
+import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.viewModel.StoreViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun LoaCellNavGraph(
     navController: NavHostController,
+    authViewModel: AuthViewModel = koinInject(),
+    storeViewModel: StoreViewModel = koinInject(),
+    raidViewModel: RaidViewModel = koinInject(),
 ) {
     Scaffold(
         topBar = {
@@ -35,30 +40,26 @@ fun LoaCellNavGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Const.NAV_MAIN,
+            startDestination = Const.NAV_LOGIN,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            composable(route = Const.NAV_MAIN) {
-                MainView(Modifier.fillMaxSize(), navController)
-            }
             composable(
-                route = Const.NAV_LOGIN,
-                exitTransition = {
-                    ExitTransition.None
-                },
-                enterTransition = {
-                    EnterTransition.None
-                },
-                popExitTransition = {
-                    ExitTransition.None
-                },
-                popEnterTransition = {
-                    EnterTransition.None
-                }
+                route = Const.NAV_LOGIN
             ) {
-                LoginView(Modifier.fillMaxSize(), navController)
+                LoginView(
+                    Modifier.fillMaxSize(),
+                    navController,
+                    authViewModel, storeViewModel
+                )
+            }
+            composable(route = Const.NAV_MAIN) {
+                MainView(
+                    Modifier.fillMaxSize(),
+                    navController,
+                    authViewModel, storeViewModel, raidViewModel
+                )
             }
             composable(
                 route = Const.NAV_ROOM,
@@ -70,7 +71,8 @@ fun LoaCellNavGraph(
             ) { backStackEntry ->
                 RaidRoomView(
                     Modifier.fillMaxSize(),
-                    backStackEntry.arguments?.getString(Const.ARG_ROOM_ID)
+                    backStackEntry.arguments?.getString(Const.ARG_ROOM_ID),
+                    authViewModel, storeViewModel, raidViewModel
                 )
             }
             composable(route = "TEST") {
@@ -85,6 +87,15 @@ fun LoaCellNavGraph(
 @Composable
 fun NavController.isMain(): Boolean {
     val navBackStackEntry by this.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    return currentRoute?.startsWith(Const.NAV_MAIN) ?: false
+    return navBackStackEntry?.destination?.route?.let { currentRoute ->
+        currentRoute.startsWith(Const.NAV_MAIN)
+    } ?: false
+}
+
+@Composable
+fun NavController.isLogin(): Boolean {
+    val navBackStackEntry by this.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route?.let { currentRoute ->
+        currentRoute.startsWith(Const.NAV_LOGIN)
+    } ?: false
 }

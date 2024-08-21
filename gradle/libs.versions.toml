@@ -4,7 +4,7 @@ compose = "1.6.11"
 kotlin = "2.0.0"
 ktor = "2.3.5"
 datastore = "1.1.1"
-koin = "3.6.0-Beta4"
+koin = "4.0.0-RC1"
 koin2 = "1.2.0-Beta4"
 androidx-uiTest = "1.6.8"
 
@@ -18,16 +18,16 @@ androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest"
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
 
 compose-bom = { module = "androidx.compose:compose-bom", version = "2024.06.00" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.0" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.1" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.2" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.4" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.1.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.1.2" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
@@ -63,7 +63,7 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 googleGmsService = { id = "com.google.gms.google-services", version = "4.4.2" }
-firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.1" }
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]

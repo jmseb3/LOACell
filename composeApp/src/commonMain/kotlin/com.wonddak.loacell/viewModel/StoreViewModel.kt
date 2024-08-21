@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRoomHelper
+import io.github.aakira.napier.Napier
 
 class StoreViewModel() : ViewModel() {
 
@@ -18,15 +19,33 @@ class StoreViewModel() : ViewModel() {
     fun startObserveRoom(
         userId: String,
     ) {
+        stopObserveRoom()
         roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
-            roomList = it
+            this@StoreViewModel.roomList = it
+            roomList.forEach {
+                Napier.d(tag = "aa!!2") { ">>> $it" }
+            }
         }
     }
 
-    fun findRoomInfo(roomId: String?): RoomInfo? = roomList.find { it.uniqueId == roomId }
+    fun findRoomInfo(roomId: String?): RoomInfo? {
+        Napier.d(tag = "aa!!") { "roomId >>> $roomId" }
+        Napier.d(tag = "aa!!") { "roomList ==  >>> $roomList" }
+        var find: RoomInfo? = null
+        for (roomInfo in roomList) {
+            Napier.d(tag = "aa!!") { ">>> $roomInfo" }
+            if (roomInfo.uniqueId == roomId) {
+                find = roomInfo
+                break
+            }
+        }
+        return find
+    }
 
     fun stopObserveRoom() {
-        roomListenerRegistration?.remove()
-        roomList = emptyList()
+        if (roomListenerRegistration != null) {
+            roomListenerRegistration?.remove()
+            roomList = emptyList()
+        }
     }
 }
