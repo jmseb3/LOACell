@@ -1,4 +1,4 @@
-package com.wonddak.loacell.sharedapi.lostark.armories
+package com.wonddak.loacell.network.lostark.armories
 
 
 import kotlinx.serialization.SerialName

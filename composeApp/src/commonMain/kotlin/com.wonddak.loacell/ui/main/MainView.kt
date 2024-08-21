@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,7 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainView(
@@ -53,12 +55,8 @@ fun MainView(
         //별개로 raidData는 메인에 오면 계속 탐색할 필요가 없다.
         raidViewModel.stopObserveRaidInfo()
     }
-    LaunchedEffect(raidViewModel.raidList) {
-        if (raidViewModel.raidList.isNotEmpty()) {
-            navController.navigate(Const.NAV_ROOM)
-        }
-    }
     BlockBackButton()
+    val scope = rememberCoroutineScope()
     Column(
         modifier = modifier
     ) {
@@ -76,7 +74,10 @@ fun MainView(
             items(storeViewModel.roomList) { roomInfo ->
                 TextButton(
                     onClick = {
-                        raidViewModel.startObserveRaidInfoList(roomInfo, authViewModel.user?.uid)
+                        scope.launch {
+                            raidViewModel.roomInfo = roomInfo
+                            navController.navigate(Const.NAV_ROOM)
+                        }
                     },
                     Modifier
                         .padding(5.dp)

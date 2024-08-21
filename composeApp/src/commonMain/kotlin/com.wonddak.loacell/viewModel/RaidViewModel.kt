@@ -4,13 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
-import kotlinx.coroutines.launch
 
 class RaidViewModel() : ViewModel() {
 
@@ -27,7 +25,6 @@ class RaidViewModel() : ViewModel() {
     }
 
     var roomInfo: RoomInfo? by mutableStateOf(null)
-        private set
 
     val title: String
         get() = roomInfo?.title ?: ""
@@ -36,28 +33,24 @@ class RaidViewModel() : ViewModel() {
         private set
 
     fun startObserveRaidInfoList(
-        roomInfo: RoomInfo?,
         uid: String?,
     ) {
         stopObserveRaidInfo()
-        roomInfo ?: return
-        viewModelScope.launch {
-            this@RaidViewModel.roomInfo = roomInfo
-            this@RaidViewModel.role = roomInfo.getRole(uid)
-            this@RaidViewModel.raidListenerRegistration =
-                CommonRaidHelper.observe(roomInfo.uniqueId) {
+        roomInfo?.let {
+            this.role = it.getRole(uid)
+            this.raidListenerRegistration =
+                CommonRaidHelper.observe(it.uniqueId) {
                     raidList = it
                 }
         }
+
     }
 
     fun stopObserveRaidInfo() {
         raidListenerRegistration?.let {
             it.remove()
-
             this.raidList = emptyList()
             this.tabState = RoomState.Raid
-            this.roomInfo = null
             this.role = RoomInfo.RoomRole.NONE
         }
     }

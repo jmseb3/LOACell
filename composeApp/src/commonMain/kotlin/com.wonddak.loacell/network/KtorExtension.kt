@@ -1,4 +1,4 @@
-package com.wonddak.loacell.sharedapi
+package com.wonddak.loacell.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

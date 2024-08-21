@@ -1,4 +1,4 @@
-package com.wonddak.loacell.sharedapi.firebase.model
+package com.wonddak.loacell.network.firebase.model
 
 
 import kotlinx.serialization.SerialName

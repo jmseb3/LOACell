@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,7 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.noRippleClickable
+import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
@@ -35,21 +37,29 @@ fun RaidRoomView(
     storeViewModel: StoreViewModel,
     raidViewModel: RaidViewModel,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-            .background(Color.White)
-    ) {
-        with(raidViewModel) {
-            roomInfo?.let {
-                TitleView(it, role) {
+    LaunchedEffect(true) {
+        raidViewModel.startObserveRaidInfoList(authViewModel.user?.uid)
+    }
+    Box(Modifier.fillMaxSize()) {
+        Column(
+            modifier = modifier.fillMaxSize()
+                .background(Color.White)
+        ) {
+            with(raidViewModel) {
+                roomInfo?.let {
+                    TitleView(it, role) {
 
+                    }
+                }
+                if (tabState == RoomState.Raid) {
+                    RaidListView(raidList = raidList) {
+                        navController.navigate(Const.NAV_RAID_DETAIL)
+                    }
                 }
             }
-            if (tabState == RoomState.Raid) {
-                RaidListView(raidList = raidList) {
-                    navController.navigate(Const.NAV_RAID_DETAIL)
-                }
-            }
+        }
+        if (raidViewModel.raidList.isEmpty()) {
+            LoadingView("loading Data...")
         }
     }
 }

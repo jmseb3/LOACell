@@ -1,7 +1,7 @@
-package com.wonddak.loacell.sharedapi.firebase
+package com.wonddak.loacell.network.firebase
 
-import com.wonddak.loacell.sharedapi.firebase.model.FBData
-import com.wonddak.loacell.sharedapi.firebase.model.FBRequest
+import com.wonddak.loacell.network.firebase.model.FBData
+import com.wonddak.loacell.network.firebase.model.FBRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

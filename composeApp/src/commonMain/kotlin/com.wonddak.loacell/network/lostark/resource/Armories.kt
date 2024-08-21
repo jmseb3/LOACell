@@ -1,6 +1,6 @@
-package com.wonddak.loacell.sharedapi.lostark.resource
+package com.wonddak.loacell.network.lostark.resource
 
-import io.ktor.resources.*
+import io.ktor.resources.Resource
 import kotlinx.serialization.Serializable
 
 @Serializable

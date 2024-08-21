@@ -1,13 +1,13 @@
-package com.wonddak.loacell.sharedapi.lostark
+package com.wonddak.loacell.network.lostark
 
-import com.wonddak.loacell.sharedapi.ApiResult
-import com.wonddak.loacell.sharedapi.LostArkResult
-import com.wonddak.loacell.sharedapi.lostark.armories.EquipmentItem
-import com.wonddak.loacell.sharedapi.lostark.armories.ProfilesItem
-import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
-import com.wonddak.loacell.sharedapi.lostark.resource.Armories
-import com.wonddak.loacell.sharedapi.safeRequest
-import com.wonddak.loacell.sharedapi.toError
+import com.wonddak.loacell.network.ApiResult
+import com.wonddak.loacell.network.LostArkResult
+import com.wonddak.loacell.network.lostark.armories.EquipmentItem
+import com.wonddak.loacell.network.lostark.armories.ProfilesItem
+import com.wonddak.loacell.network.lostark.model.CharacterInfo
+import com.wonddak.loacell.network.lostark.resource.Armories
+import com.wonddak.loacell.network.safeRequest
+import com.wonddak.loacell.network.toError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
