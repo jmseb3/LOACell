@@ -1,6 +1,7 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.RaidInfoField
 import com.wonddak.loacell.model.toRaidInfo
 
 //data class FBRaidInfo(
@@ -202,24 +203,24 @@ object CommonRaidHelper {
 //        )
 //    }
 //
-//    private fun updateField(
-//        roomId: String,
-//        raidId: String,
-//        field: String,
-//        value: Any
-//    ) {
-//        RefHelper.getRaidRef(roomId, raidId).update(
-//            field, value
-//        )
-//    }
-//
-//    fun updateFinish(
-//        roomId: String,
-//        raidId: String,
-//        isFinish: Boolean
-//    ) {
-//        updateField(roomId, raidId, "finish", isFinish)
-//    }
+private fun updateField(
+    roomId: String,
+    raidId: String,
+    field: String,
+    value: Any,
+) {
+    RefHelper.getRaidRef(roomId, raidId).update(
+        field, value
+    )
+}
+
+    fun updateFinish(
+        roomId: String,
+        raidId: String,
+        isFinish: Boolean,
+    ) {
+        updateField(roomId, raidId, RaidInfoField.FINISH, isFinish)
+    }
 //
 //    // 파티 리스트를 업데이트 한다.
 //    fun updatePartList(

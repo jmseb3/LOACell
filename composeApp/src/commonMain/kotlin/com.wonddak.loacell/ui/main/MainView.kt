@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.wonddak.loacell.BlockBackButton
 import com.wonddak.loacell.Const
-import com.wonddak.loacell.Const.navigationToRoom
 import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.viewModel.AuthViewModel
@@ -66,7 +65,8 @@ fun MainView(
             items(storeViewModel.roomList) { roomInfo ->
                 TextButton(
                     onClick = {
-                        navController.navigate(roomInfo.navigationToRoom())
+                        raidViewModel.startObserveRaidInfoList(roomInfo, authViewModel.user?.uid)
+                        navController.navigate(Const.NAV_ROOM)
                     },
                     Modifier
                         .fillMaxWidth()

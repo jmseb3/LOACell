@@ -10,11 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
@@ -32,10 +30,16 @@ fun LoaCellNavGraph(
 ) {
     Scaffold(
         topBar = {
-            LoaCellTopAppBar(navController)
+            LoaCellTopAppBar(
+                navController,
+                storeViewModel, raidViewModel
+            )
         },
         bottomBar = {
-            LoaCellBottomAppBar(navController)
+            LoaCellBottomAppBar(
+                navController,
+                raidViewModel
+            )
         }
     ) { innerPadding ->
         NavHost(
@@ -63,15 +67,9 @@ fun LoaCellNavGraph(
             }
             composable(
                 route = Const.NAV_ROOM,
-                arguments = listOf(
-                    navArgument(Const.ARG_ROOM_ID) {
-                        type = NavType.StringType
-                    }
-                )
-            ) { backStackEntry ->
+            ) { _ ->
                 RaidRoomView(
                     Modifier.fillMaxSize(),
-                    backStackEntry.arguments?.getString(Const.ARG_ROOM_ID),
                     authViewModel, storeViewModel, raidViewModel
                 )
             }
@@ -97,5 +95,13 @@ fun NavController.isLogin(): Boolean {
     val navBackStackEntry by this.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route?.let { currentRoute ->
         currentRoute.startsWith(Const.NAV_LOGIN)
+    } ?: false
+}
+
+@Composable
+fun NavController.isRaidRoom(): Boolean {
+    val navBackStackEntry by this.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route?.let { currentRoute ->
+        currentRoute.startsWith(Const.NAV_ROOM)
     } ?: false
 }

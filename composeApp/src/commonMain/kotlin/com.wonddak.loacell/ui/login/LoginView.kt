@@ -160,11 +160,25 @@ fun LoginView(
                 }
             }
         }
+
         if (authViewModel.loginIn) {
             LoadingView(
                 info = stringResource(Res.string.login_progress),
                 color = Color.Gray.copy(0.5f)
             )
+        }
+
+        if (!authViewModel.initSuccess) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.logo),
+                    null,
+                    modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 }
