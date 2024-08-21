@@ -1,16 +1,8 @@
-//package com.wonddak.loacell.store
-//
-//import com.wonddak.loacell.database.AppDataBase
-//import com.wonddak.loacell.database.model.Day
-//import com.wonddak.loacell.database.model.Difficulty
-//import com.wonddak.loacell.database.model.RaidType
-//import com.wonddak.loacell.database.model.convertDifficulty
-//import com.wonddak.loacell.database.model.convertToDay
-//import com.wonddak.loacell.database.model.convertType
-//import com.wonddak.loacell.RaidInfo
-//import com.wonddak.loacell.ext.TotalRoomInfo
-//import kotlin.jvm.JvmField
-//
+package com.wonddak.loacell.store
+
+import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.toRaidInfo
+
 //data class FBRaidInfo(
 //    val title: String = "",
 //    val type: RaidType = RaidType.ETC,
@@ -165,8 +157,8 @@
 //        )
 //    }
 //}
-//
-//object CommonRaidHelper {
+
+object CommonRaidHelper {
 //    //레이드 정보를 추가한다.
 //    fun add(
 //        roomId: String,
@@ -246,90 +238,18 @@
 //            failAction = failAction
 //        )
 //    }
-//
-//    fun observe(
-//        roomId: String,
-//        db: AppDataBase
-//    ): CommonListenerRegistration {
-//        return RefHelper.getRaidsRef(roomId).getListenerRegistration(
-//            successAction = { value ->
-//                val dbRaidList =
-//                    db.raidInfoQueriesHelper.getAllByRoomIdValue(roomId).map { it.raidId }
-//                        .toMutableSet()
-//
-//                value.documents.forEach {
-//                    val raidId = it.id
-//                    val title = it.data!!["title"] as String
-//                    val typeString = it.data!!["type"] as String
-//                    val difficultyString = it.data!!["difficulty"] as String
-//                    val startGateNumber = it.data!!["startGateNumber"] as Long
-//                    val endGateNumber = it.data!!["endGateNumber"] as Long
-//                    val isFinish = it.data!!["finish"] as Boolean
-//                    val party1 = it.data!!["party1"] as List<String>
-//                    val party2 = it.data!!["party2"] as List<String>
-//
-//                    //베히모스 관련 로직 파티 추가(4파티까지 가능)
-//                    val party3 = runCatching { it.data?.get("party3") as List<*> }.getOrDefault(
-//                        List(4) { "" }
-//                    ) as List<String>
-//                    val party4 = runCatching { it.data?.get("party4") as List<*> }.getOrDefault(
-//                        List(4) { "" }
-//                    ) as List<String>
-//
-//                    //일정 관련 로직
-//                    val day = runCatching { it.data?.get("day") as Long? }.getOrNull()
-//                    val hour = runCatching { it.data?.get("hour") as Long? }.getOrNull()
-//                    val minute = runCatching { it.data?.get("minute") as Long? }.getOrNull()
-//
-//                    //이미 값이 있는 경우
-//                    if (raidId in dbRaidList) {
-//                        //업데이트
-//                        db.raidInfoQueriesHelper.updateRaidInfo(
-//                            raidId,
-//                            roomId,
-//                            title,
-//                            typeString.convertType(),
-//                            difficultyString.convertDifficulty(),
-//                            startGateNumber,
-//                            endGateNumber,
-//                            isFinish,
-//                            party1,
-//                            party2,
-//                            party3,
-//                            party4,
-//                            day,
-//                            hour,
-//                            minute
-//                        )
-//                        dbRaidList.remove(raidId)
-//                    } else {
-//                        //없는 경우 추가
-//                        db.raidInfoQueriesHelper.addRaidInfo(
-//                            raidId,
-//                            roomId,
-//                            title,
-//                            typeString.convertType(),
-//                            difficultyString.convertDifficulty(),
-//                            startGateNumber,
-//                            endGateNumber,
-//                            party1,
-//                            party2,
-//                            party3,
-//                            party4,
-//                            (day ?: -1L).convertToDay(),
-//                            hour ?: 0,
-//                            minute ?: 0
-//                        )
-//                    }
-//                }
-//
-//                dbRaidList.forEach { name ->
-//                    db.raidInfoQueriesHelper.delete(name, roomId)
-//                }
-//            },
-//            failAction = {
-//
-//            }
-//        )
-//    }
-//}
+
+    fun observe(
+        roomId: String,
+        successAction: (List<RaidInfo>) -> Unit,
+    ): CommonListenerRegistration {
+        return RefHelper.getRaidsRef(roomId).getListenerRegistration(
+            successAction = { value ->
+                successAction(value.documents.map { it.toRaidInfo(roomId) })
+            },
+            failAction = {
+
+            }
+        )
+    }
+}

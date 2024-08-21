@@ -13,6 +13,7 @@ import com.wonddak.loacell.Const
 import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @Composable
@@ -23,6 +24,7 @@ fun MainView(
     storeViewModel: StoreViewModel = koinInject(),
 ) {
     LaunchedEffect(authViewModel.initSuccess, authViewModel.user) {
+        delay(500)
         if (authViewModel.user == null) {
             navController.navigate(Const.NAV_LOGIN) {
                 this.launchSingleTop = true
@@ -49,7 +51,7 @@ fun MainView(
             items(storeViewModel.roomList) { roomInfo ->
                 TextButton(
                     onClick = {
-
+                        navController.navigate("TEST")
                     }
                 ) {
                     Column {
