@@ -9,3 +9,10 @@ actual fun BlockBackButton() {
 
     }
 }
+
+@Composable
+actual fun SetBackAction(action: () -> Unit) {
+    BackHandler {
+        action()
+    }
+}

@@ -10,10 +10,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.wonddak.loacell.Const
+import com.wonddak.loacell.Const.navigationToRoom
 import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
-import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @Composable
@@ -22,18 +23,19 @@ fun MainView(
     navController: NavHostController,
     authViewModel: AuthViewModel = koinInject(),
     storeViewModel: StoreViewModel = koinInject(),
+    raidViewModel: RaidViewModel = koinInject(),
 ) {
     LaunchedEffect(authViewModel.initSuccess, authViewModel.user) {
-        delay(500)
-        if (authViewModel.user == null) {
-            navController.navigate(Const.NAV_LOGIN) {
-                this.launchSingleTop = true
-            }
-            storeViewModel.stopObserveRoom()
-        } else {
-            if (authViewModel.initSuccess) {
+        if (authViewModel.initSuccess) {
+            if (authViewModel.user == null) {
+                navController.navigate(Const.NAV_LOGIN) {
+                    this.launchSingleTop = true
+                }
+                storeViewModel.stopObserveRoom()
+            } else {
                 storeViewModel.startObserveRoom(authViewModel.user!!.uid)
             }
+            raidViewModel.stopObserveRaidInfo()
         }
     }
     Column(
@@ -51,7 +53,7 @@ fun MainView(
             items(storeViewModel.roomList) { roomInfo ->
                 TextButton(
                     onClick = {
-                        navController.navigate("TEST")
+                        navController.navigate(roomInfo.navigationToRoom())
                     }
                 ) {
                     Column {

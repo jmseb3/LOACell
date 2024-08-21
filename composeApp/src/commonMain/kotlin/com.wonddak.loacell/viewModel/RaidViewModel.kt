@@ -7,29 +7,30 @@ import androidx.lifecycle.ViewModel
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
-import io.github.aakira.napier.Napier
 
-class RaidStoreViewModel() : ViewModel() {
+class RaidViewModel() : ViewModel() {
 
     private var raidListenerRegistration: CommonListenerRegistration? = null
 
     var raidList: List<RaidInfo> by mutableStateOf(emptyList())
         private set
 
-    fun startObserveRaidInfoLust(
+    var roomId: String? = null
+        private set
+
+    fun startObserveRaidInfoList(
         roomId: String?,
     ) {
+        this.roomId = roomId
         roomId ?: return
-        raidListenerRegistration = CommonRaidHelper.observe(roomId) {
+        this.raidListenerRegistration = CommonRaidHelper.observe(roomId) {
             raidList = it
-            raidList.forEach {
-                Napier.d(tag = "raidInfo") { it.toString() }
-            }
         }
     }
 
     fun stopObserveRaidInfo() {
-        raidListenerRegistration?.remove()
-        raidList = emptyList()
+        this.raidListenerRegistration?.remove()
+        this.raidList = emptyList()
+        this.roomId = null
     }
 }

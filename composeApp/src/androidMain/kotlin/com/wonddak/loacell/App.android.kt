@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.wonddak.loacell.di.commonModule
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -40,6 +42,7 @@ class LoaCellApplication : Application() {
             // Load modules
             modules(commonModule())
         }
+        Napier.base(DebugAntilog())
     }
 }
 

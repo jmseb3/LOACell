@@ -10,18 +10,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.wonddak.loacell.viewModel.RaidStoreViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun RaidRoomView(
     modifier: Modifier,
     roomId: String?,
-    raidStoreViewModel: RaidStoreViewModel = koinInject(),
+    roomViewModel: StoreViewModel = koinInject(),
+    raidStoreViewModel: RaidViewModel = koinInject(),
 ) {
     LaunchedEffect(true) {
-        raidStoreViewModel.startObserveRaidInfoLust(roomId)
+        raidStoreViewModel.startObserveRaidInfoList(roomId)
     }
+    val roomInfo = roomViewModel.findRoomInfo(roomId)
     Column(
         modifier = modifier.fillMaxSize()
             .background(Color.White)

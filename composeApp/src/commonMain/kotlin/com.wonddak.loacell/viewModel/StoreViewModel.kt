@@ -23,6 +23,8 @@ class StoreViewModel() : ViewModel() {
         }
     }
 
+    fun findRoomInfo(roomId: String?): RoomInfo? = roomList.find { it.uniqueId == roomId }
+
     fun stopObserveRoom() {
         roomListenerRegistration?.remove()
         roomList = emptyList()

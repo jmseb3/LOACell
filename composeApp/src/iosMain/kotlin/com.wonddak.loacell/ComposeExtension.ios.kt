@@ -6,3 +6,8 @@ import androidx.compose.runtime.Composable
 actual fun BlockBackButton() {
     //Nothing
 }
+
+@Composable
+actual fun SetBackAction(action: () -> Unit) {
+    //Nothing
+}

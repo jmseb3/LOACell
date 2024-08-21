@@ -5,6 +5,7 @@ import com.wonddak.loacell.storage.SynergyReferenceHelper
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.DataStoreProvider
 import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
@@ -26,6 +27,9 @@ val viewmodelModule = module {
     }
     viewModel<StoreViewModel> {
         StoreViewModel()
+    }
+    viewModel<RaidViewModel> {
+        RaidViewModel()
     }
 }
 
