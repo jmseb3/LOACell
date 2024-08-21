@@ -1,10 +1,7 @@
 package com.wonddak.loacell.model
 
-import com.wonddak.loacell.database.model.Day
-import com.wonddak.loacell.database.model.RaidType
-
 data class Filter(
-    val raidType: List<RaidType> = RaidType.entries,
+    val raidType: List<String> = emptyList(),
     val finish: FINISH = FINISH.ALL,
     val userList: List<String> = emptyList(),
     val timeStep : Int = 60,
@@ -14,7 +11,7 @@ data class Filter(
         ALL("전체"),CLEAR("완료"),NOT_CLEAR("미완료"),
     }
 
-    fun updateRaidType(type: RaidType): Filter {
+    fun updateRaidType(type: String): Filter {
         val temp = raidType.toMutableList()
         return if (temp.contains(type)) {
             temp.remove(type)
@@ -48,14 +45,14 @@ data class Filter(
         return this.copy(showEmptyCalendarRow = show)
     }
 
-    fun isSelected(type: RaidType) :Boolean {
+    fun isSelectedType(type: String) :Boolean {
         return  this.raidType.contains(type)
     }
 
     fun isSelected(finish: FINISH) :Boolean {
         return  this.finish == finish
     }
-    fun isSelected(user: String) :Boolean {
+    fun isSelectedUser(user: String) :Boolean {
         return  this.userList.contains(user)
     }
 

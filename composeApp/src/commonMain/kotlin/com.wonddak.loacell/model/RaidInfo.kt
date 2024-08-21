@@ -1,11 +1,5 @@
 package com.wonddak.loacell.model
 
-import com.wonddak.loacell.database.model.Day
-import com.wonddak.loacell.database.model.Difficulty
-import com.wonddak.loacell.database.model.RaidType
-import com.wonddak.loacell.database.model.convertDifficulty
-import com.wonddak.loacell.database.model.convertToDay
-import com.wonddak.loacell.database.model.convertType
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
 import loacell.composeapp.generated.resources.Res
@@ -42,8 +36,8 @@ data class RaidInfo(
     val raidId: String,
     val roomId: String,
     val title: String,
-    val type: RaidType,
-    val difficulty: Difficulty,
+    val type: String,
+    val difficulty: String,
     val startGateNumber: Int,
     val endGateNumber: Int,
     val isFinish: Boolean,
@@ -62,8 +56,8 @@ fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
             this@toRaidInfo.id,
             roomId,
             this[RaidInfoField.TITLE] as String,
-            (this[RaidInfoField.TYPE] as String).convertType(),
-            (this[RaidInfoField.DIFFICULTY] as String).convertDifficulty(),
+            this[RaidInfoField.TYPE] as String,
+            this[RaidInfoField.DIFFICULTY] as String,
             (this[RaidInfoField.START_GATE_NUMBER] as Long).toInt(),
             (this[RaidInfoField.END_GATE_NUMBER] as Long).toInt(),
             this[RaidInfoField.FINISH] as Boolean,
@@ -88,75 +82,88 @@ fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
     }
 }
 
+fun Long.convertToDay(): Day {
+    Day.entries.forEach {
+        if (it.index == this.toInt()) {
+            return it
+        }
+    }
+    return Day.NONE
+}
+
 fun RaidInfo.getMinLevel(): Int {
-    return this.type.getMinLevel(this.difficulty, this.endGateNumber)
+    return 0
+//    return this.type.getMinLevel(this.difficulty, this.endGateNumber)
 }
 
 fun RaidInfo.getRaidText(): String {
-    return "${this.type.toKorString()} - ${this.difficulty.toKorString()}"
+    return  ""
+//    return "${this.type.toKorString()} - ${this.difficulty.toKorString()}"
 }
 
 fun RaidInfo.getMaxParty(): Int {
-    return this.type.getMaxParty()
+    return  1
+//    return this.type.getMaxParty()
 }
 
 fun RaidInfo.makeGateText(): String {
-    return when (this.type) {
-        RaidType.ETC -> {
-            "관문 정보 없음"
-        }
-
-        else -> {
-            "1 ~ ${this.type.getMaxGate(this.difficulty)} 관문"
-        }
-    }
+    return ""
+//    return when (this.type) {
+//        RaidType.ETC -> {
+//            "관문 정보 없음"
+//        }
+//
+//        else -> {
+//            "1 ~ ${this.type.getMaxGate(this.difficulty)} 관문"
+//        }
+//    }
 }
 
 fun RaidInfo.getImg(): DrawableResource? {
     return when (this.type) {
-        RaidType.VALTAN -> {
-            Res.drawable.raid_valtan
-        }
-
-        RaidType.VYKAS -> {
-            Res.drawable.raid_vykas
-        }
-
-        RaidType.KOUKU -> {
-            Res.drawable.raid_kouku
-        }
-
-        RaidType.ABRELSHUD -> {
-            Res.drawable.raid_abrelshud
-        }
-
-        RaidType.ILLIAKAN -> {
-            Res.drawable.raid_illiakan
-        }
-
-        RaidType.KAMEN -> {
-            Res.drawable.raid_kamen
-        }
-
-        RaidType.KAYANGEL -> {
-            Res.drawable.raid_kayangel
-        }
-
-        RaidType.IVORYTOWER -> {
-            Res.drawable.raid_ivory_tower
-        }
-
-        RaidType.ECHIDNA -> {
-            Res.drawable.raid_echidna
-        }
-
-        RaidType.BETHEMOTH -> {
-            Res.drawable.raid_behemoth
-        }
-
-        RaidType.EGIR -> {
-            Res.drawable.raid_egir
-        }
+//        RaidType.VALTAN -> {
+//            Res.drawable.raid_valtan
+//        }
+//
+//        RaidType.VYKAS -> {
+//            Res.drawable.raid_vykas
+//        }
+//
+//        RaidType.KOUKU -> {
+//            Res.drawable.raid_kouku
+//        }
+//
+//        RaidType.ABRELSHUD -> {
+//            Res.drawable.raid_abrelshud
+//        }
+//
+//        RaidType.ILLIAKAN -> {
+//            Res.drawable.raid_illiakan
+//        }
+//
+//        RaidType.KAMEN -> {
+//            Res.drawable.raid_kamen
+//        }
+//
+//        RaidType.KAYANGEL -> {
+//            Res.drawable.raid_kayangel
+//        }
+//
+//        RaidType.IVORYTOWER -> {
+//            Res.drawable.raid_ivory_tower
+//        }
+//
+//        RaidType.ECHIDNA -> {
+//            Res.drawable.raid_echidna
+//        }
+//
+//        RaidType.BETHEMOTH -> {
+//            Res.drawable.raid_behemoth
+//        }
+//
+//        RaidType.EGIR -> {
+//            Res.drawable.raid_egir
+//        }
 
         else -> {
             null

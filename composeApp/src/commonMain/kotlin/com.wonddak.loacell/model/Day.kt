@@ -1,4 +1,4 @@
-package com.wonddak.loacell.database.model
+package com.wonddak.loacell.model
 
 enum class Day(val index: Int, val text: String) {
     NONE(-1, ""),
@@ -12,7 +12,7 @@ enum class Day(val index: Int, val text: String) {
 
     fun getList(): List<Day> {
         val startDay = this
-        val result = listOf(Day.MON, Day.TUE, Day.WED, Day.THU, Day.FRI, Day.SAT, Day.SUN)
+        val result = listOf(MON, TUE, WED, THU, FRI, SAT, SUN)
         return result.subList(startDay.index, 7) + result.subList(0, startDay.index)
     }
 }
