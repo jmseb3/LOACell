@@ -70,8 +70,16 @@ fun LoaCellNavGraph(
             ) { _ ->
                 RaidRoomView(
                     Modifier.fillMaxSize(),
+                    navController,
                     authViewModel, storeViewModel, raidViewModel
                 )
+            }
+            composable(
+                route = Const.NAV_RAID_DETAIL
+            ) {
+                Column {
+                    Text("DETAIL")
+                }
             }
             composable(route = "TEST") {
                 Column {

@@ -6,4 +6,6 @@ object Const {
     const val NAV_MAIN = "nav_home"
 
     const val NAV_ROOM = "nav_room"
+
+    const val NAV_RAID_DETAIL = "nav_raid_detail"
 }

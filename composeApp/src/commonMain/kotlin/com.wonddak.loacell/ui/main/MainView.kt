@@ -36,16 +36,27 @@ fun MainView(
     raidViewModel: RaidViewModel,
 ) {
     LaunchedEffect(authViewModel.user) {
+        //메인에서 유저 정보에 변동이 생긴 경우
         if (authViewModel.user == null) {
+            //로그아웃 된경우
+            //다시 로그인으로 보낸다.
             navController.navigate(Const.NAV_LOGIN) {
                 popUpTo(Const.NAV_MAIN) {
                     inclusive = true
                 }
             }
         } else {
+            //로그인 된경우
+            //다시 로그인으로 보낸다.
             storeViewModel.startObserveRoom(authViewModel.user!!.uid)
         }
+        //별개로 raidData는 메인에 오면 계속 탐색할 필요가 없다.
         raidViewModel.stopObserveRaidInfo()
+    }
+    LaunchedEffect(raidViewModel.raidList) {
+        if (raidViewModel.raidList.isNotEmpty()) {
+            navController.navigate(Const.NAV_ROOM)
+        }
     }
     BlockBackButton()
     Column(
@@ -66,13 +77,12 @@ fun MainView(
                 TextButton(
                     onClick = {
                         raidViewModel.startObserveRaidInfoList(roomInfo, authViewModel.user?.uid)
-                        navController.navigate(Const.NAV_ROOM)
                     },
                     Modifier
+                        .padding(5.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(10))
                         .background(Color.Gray)
-                        .padding(5.dp)
                 ) {
                     RoomInfoRow(roomInfo)
                 }

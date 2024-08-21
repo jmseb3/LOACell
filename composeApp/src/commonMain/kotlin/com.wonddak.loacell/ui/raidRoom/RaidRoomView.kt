@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavHostController
+import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.Modal
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
@@ -28,6 +30,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun RaidRoomView(
     modifier: Modifier,
+    navController: NavHostController,
     authViewModel: AuthViewModel,
     storeViewModel: StoreViewModel,
     raidViewModel: RaidViewModel,
@@ -43,7 +46,9 @@ fun RaidRoomView(
                 }
             }
             if (tabState == RoomState.Raid) {
-                RaidListView(raidList = raidList)
+                RaidListView(raidList = raidList) {
+                    navController.navigate(Const.NAV_RAID_DETAIL)
+                }
             }
         }
     }

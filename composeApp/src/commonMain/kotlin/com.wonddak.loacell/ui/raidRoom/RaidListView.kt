@@ -39,13 +39,15 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun RaidListView(
     raidList: List<RaidInfo>,
+    navigation: (RaidInfo) -> Unit,
 ) {
     LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(10.dp)
     ) {
-        items(raidList) {
-            RaidItemRow(it) {
-
+        items(raidList) { raidInfo ->
+            RaidItemRow(Modifier.padding(vertical = 5.dp, horizontal = 5.dp), raidInfo) {
+                navigation(raidInfo)
             }
         }
     }
@@ -53,13 +55,14 @@ fun RaidListView(
 
 @Composable
 fun RaidItemRow(
+    modifier: Modifier = Modifier,
     raidInfo: RaidInfo,
     onClick: () -> Unit,
 ) {
     val size = 100.dp
     val rShape = RoundedCornerShape(10.dp)
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(size)
             .clickable { onClick() },
@@ -113,7 +116,7 @@ fun RaidItemRow(
                 Res.drawable.task_finish_not
             }
             IconButton(
-                modifier = Modifier.align(Alignment.BottomEnd),
+                modifier = Modifier.align(Alignment.BottomEnd).size(30.dp),
                 onClick = {
                     CommonRaidHelper.updateFinish(
                         raidInfo.roomId,

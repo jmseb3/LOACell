@@ -111,7 +111,6 @@ actual class CommonCollection(
                 } else {
                     failAction(null)
                 }
-
             }
         )
     }

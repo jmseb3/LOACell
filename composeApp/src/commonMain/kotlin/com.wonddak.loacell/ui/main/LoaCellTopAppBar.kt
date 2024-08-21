@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.wonddak.loacell.Const
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
 
@@ -39,15 +38,7 @@ fun LoaCellTopAppBar(
                 if (!navController.isMain()) {
                     IconButton(
                         onClick = {
-                            navController.currentBackStackEntry?.destination?.route?.let {
-                                if (it.startsWith(Const.NAV_ROOM)) {
-                                    navController.navigate(Const.NAV_MAIN) {
-                                        popUpTo(Const.NAV_ROOM) {
-                                            inclusive = true
-                                        }
-                                    }
-                                }
-                            }
+                            navController.popBackStack()
                         },
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
