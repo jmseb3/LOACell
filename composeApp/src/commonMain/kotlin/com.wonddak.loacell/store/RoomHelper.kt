@@ -1,306 +1,205 @@
-//package com.wonddak.loacell.store
-//
-//import com.wonddak.loacell.database.AppDataBase
-//import com.wonddak.loacell.model.RoomRole
-//
-//data class
-//FBRoomInfo(
-//    val title: String = "",
-//    val description: String = "",
-//    val owner: String = "",
-//    val enterPassword: String = "",
-//    val editableUser: List<String> = emptyList(),
-//    val enterUser: List<String> = emptyList(),
-//) {
-//    fun toMap(): Map<String, Any> = mapOf(
-//        "title" to title,
-//        "description" to description,
-//        "owner" to owner,
-//        "password" to enterPassword,
-//        "editableUser" to editableUser,
-//        "enterUser" to enterUser,
-//    )
-//}
-//
-//object CommonRoomHelper {
-//
-//    //동기화를 위한 메서드
-//    fun syncRoom(
-//        userId: String,
-//        db: AppDataBase,
-//        failAction: (error: Error) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        RefHelper.getRoomsRef()
-//            .where(
-//                CommonFilter.or(
-//                    CommonFilter.equalTo("owner", userId),
-//                    CommonFilter.arrayContains("editableUser", userId),
-//                    CommonFilter.arrayContains("enterUser", userId),
-//                )
-//            ).get(
-//                successAction = { querySnapshot ->
-//                    val allRooms = db.roomInfoQueriesHelper.getAllValue().map { it.uniqueId }.toMutableSet()
-//
-//                    querySnapshot.documents.forEach { document ->
-//                        val id = document.id
-//                        val data = document.data!!
-//                        val title = data["title"] as String
-//                        val description = data["description"] as String
-//                        val owner = data["owner"] as String
-//                        val enterPassword = data["password"] as String
-//                        val enterUser = data["enterUser"] as List<String>
-//                        val editableUser = data["editableUser"] as List<String>
-//
-//                        if (allRooms.contains(id)) {
-//                            db.roomInfoQueriesHelper.updateRoomInfo(
-//                                title = title,
-//                                description = description,
-//                                owner = owner,
-//                                enterPassword = enterPassword,
-//                                enterUser = enterUser,
-//                                editableUser = editableUser,
-//                                uniqueId = id
-//                            )
-//                            allRooms.remove(id)
-//                        } else {
-//                            db.roomInfoQueriesHelper.addRoomInfo(
-//                                title = title,
-//                                description = description,
-//                                uniqueId = id,
-//                                owner = owner,
-//                                enterPassword = enterPassword,
-//                                enterUser = enterUser,
-//                                editableUser = editableUser
-//                            )
-//                        }
-//                    }
-//                    if (allRooms.isNotEmpty()) {
-//                        allRooms.forEach {uid ->
-//                            db.roomInfoQueriesHelper.deleteRoomInfo(uid)
-//                        }
-//                    }
-//                    successAction()
-//                },
-//                failAction = failAction
-//            )
-//
-//    }
-//
-//    // 방 입장요청시 실제 존재하는 방인지 체크
-//    fun checkExist(
-//        roomId: String,
-//        successAction: (roomInfo: FBRoomInfo) -> Unit,
-//        failAction: () -> Unit
-//    ) {
-//        RefHelper.getRoomRef(roomId)
-//            .get(
-//                successAction = {
-//                    if (it.exist) {
-//                        val roomInfo = FBRoomInfo(
-//                            title = it.data!!["title"] as String,
-//                            description = it.data!!["description"] as String,
-//                            owner = it.data!!["owner"] as String,
-//                            enterPassword = it.data!!["password"] as String,
-//                            editableUser = it.data!!["editableUser"] as List<String>,
-//                            enterUser = it.data!!["enterUser"] as List<String>
-//                        )
-//                        successAction(roomInfo)
-//                    } else {
-//                        failAction()
-//                    }
-//
-//                },
-//                failAction = { failAction() }
-//            )
-//    }
-//
-//    // 방 생성시 인포를 넣고 id값 을 가져옴
-//    fun makeInfo(
-//        title: String,
-//        description: String,
-//        password: String,
-//        owner: String,
-//        successAction: (id: String) -> Unit
-//    ) {
-//        val data = FBRoomInfo(
-//            title = title,
-//            description = description,
-//            enterPassword = password,
-//            owner = owner
-//        )
-//        val ref = RefHelper.getRoomsRef().document()
-//        ref.set(
-//            data.toMap(),
-//            successAction = {
-//                successAction(ref.id)
-//            },
-//            failAction = {
-//
-//            }
-//        )
-//    }
-//
-//    // 유저를 방에 추가한다.
-//    fun enterRoom(
-//        roomId: String,
-//        userId: String,
-//        successAction: () -> Unit,
-//        failAction: (e: Error) -> Unit
-//    ) {
-//        val field = "enterUser"
-//        RefHelper.getRoomRef(roomId).update(
-//            field = field,
-//            value = CommonFieldValue.arrayUnion(userId),
-//            successAction = successAction,
-//            failAction = failAction
-//        )
-//    }
-//
-//    //방 정보를 업데이트 한다
-//    fun updateRoom(
-//        roomId: String,
-//        title: String,
-//        description: String,
-//        password: String,
-//        successAction: () -> Unit,
-//        failAction: (e: Error) -> Unit
-//    ) {
-//        RefHelper.getRoomRef(roomId)
-//            .update(
-//                mapOf(
-//                    "title" to title,
-//                    "description" to description,
-//                    "password" to password
-//                ),
-//                successAction = successAction,
-//                failAction = failAction
-//            )
-//    }
-//
-//    fun exitUsersFromRoom(
-//        roomId: String,
-//        userId: List<String>,
-//        field: String,
-//        commonAction: () -> Unit = {},
-//        successAction: () -> Unit = {},
-//        failAction: (e: Error) -> Unit = {}
-//    ) {
-//        getFireStore().runBatch(
-//            write = {
-//                val ref = RefHelper.getRoomRef(roomId)
-//                userId.forEach { uid ->
-//                    it.update(ref,field,CommonFieldValue.arrayRemove(uid))
-//                }
-//            },
-//            successAction = {
-//                commonAction()
-//                successAction()
-//            },
-//            failAction = {
-//                commonAction()
-//                failAction(it)
-//            }
-//        )
-//    }
-//
-//    fun exitEditableUserFromRoom(
-//        roomId: String,
-//        editableUser: List<String>,
-//        commonAction: () -> Unit
-//    ) = exitUsersFromRoom(roomId, editableUser, "editableUser", commonAction)
-//
-//    fun exitEnterUserFromRoom(
-//        roomId: String,
-//        enterUser: List<String>,
-//        commonAction: () -> Unit
-//    ) = exitUsersFromRoom(roomId, enterUser, "enterUser", commonAction)
-//
-//    fun exitRoom(
-//        roomId: String,
-//        userId: String,
-//        role: RoomRole,
-//        successAction: () -> Unit,
-//        failAction: (e: Error) -> Unit
-//    ) {
-//        val field = when (role) {
-//            RoomRole.MANAGER -> "editableUser"
-//            RoomRole.USER -> "enterUser"
-//            else -> "owner"
-//        }
-//        println("ROOM Helper$field")
-//
-//        RefHelper.getRoomRef(roomId).update(
-//            field = field,
-//            value = CommonFieldValue.arrayRemove(userId),
-//            successAction = successAction,
-//            failAction = failAction
-//        )
-//    }
-//
-//    fun observe(
-//        roomId: String,
-//        db: AppDataBase
-//    ): CommonListenerRegistration {
-//        return RefHelper.getRoomRef(roomId).getListenerRegistration(
-//            successAction = {
-//                it.data?.let { data ->
-//                    val title = data["title"] as String
-//                    val description = data["description"] as String
-//                    val owner = data["owner"] as String
-//                    val enterPassword = data["password"] as String
-//                    val enterUser = data["enterUser"] as List<String>
-//                    val editableUser = data["editableUser"] as List<String>
-//                    db.roomInfoQueriesHelper.updateRoomInfo(
-//                        title,
-//                        description,
-//                        owner,
-//                        enterPassword,
-//                        enterUser,
-//                        editableUser,
-//                        roomId
-//                    )
-//                }
-//            },
-//            failAction = {
-//            }
-//        )
-//    }
-//
-//    fun deleteRoom(
-//        roomId: String,
-//        successAction: () -> Unit,
-//        failAction: (e: Error) -> Unit
-//    ) {
-//        RefHelper.getRoomRef(roomId).delete(
-//            successAction = successAction,
-//            failAction = failAction
-//        )
-//    }
-//
-//    fun changeOwner(
-//        roomId: String,
-//        preOwner: String,
-//        newOwnerUid: String,
-//        commonAction: () -> Unit = {},
-//        successAction: () -> Unit,
-//        failAction: (e: Error) -> Unit
-//    ) {
-//        getFireStore().runBatch(
-//            write = {
-//                val roomDoc = RefHelper.getRoomRef(roomId)
-//                it.update(roomDoc, "enterUser", CommonFieldValue.arrayUnion(preOwner))
-//                it.update(roomDoc, "owner", newOwnerUid)
-//                it.update(roomDoc, "enterUser", CommonFieldValue.arrayRemove(newOwnerUid))
-//            },
-//            successAction = {
-//                commonAction()
-//                successAction()
-//            },
-//            failAction = {
-//                commonAction()
-//                failAction(it)
-//            }
-//        )
-//    }
-//}
+package com.wonddak.loacell.store
+
+import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.model.RoomInfoField
+import com.wonddak.loacell.model.RoomRole
+import com.wonddak.loacell.model.toRoomInfo
+
+object CommonRoomHelper {
+    // 방 입장요청시 실제 존재하는 방인지 체크
+    fun checkExist(
+        roomId: String,
+        successAction: (roomInfo: RoomInfo) -> Unit,
+        failAction: () -> Unit,
+    ) {
+        RefHelper.getRoomRef(roomId)
+            .get(
+                successAction = {
+                    if (it.exist) {
+                        successAction(it.toRoomInfo())
+                    } else {
+                        failAction()
+                    }
+
+                },
+                failAction = { failAction() }
+            )
+    }
+
+    // 방 생성시 인포를 넣고 id값 을 가져옴
+    fun makeInfo(
+        title: String,
+        description: String,
+        password: String,
+        owner: String,
+        successAction: (id: String) -> Unit,
+    ) {
+        val data = mapOf(
+            RoomInfoField.TITLE to title,
+            RoomInfoField.DESCRIPTION to description,
+            RoomInfoField.OWNER to password,
+            RoomInfoField.PASSWORD to owner,
+        )
+        val ref = RefHelper.getRoomsRef().document()
+        ref.set(
+            data,
+            successAction = {
+                successAction(ref.id)
+            },
+            failAction = {
+
+            }
+        )
+    }
+
+    // 유저를 방에 추가한다.
+    fun enterRoom(
+        roomId: String,
+        userId: String,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit,
+    ) {
+        RefHelper.getRoomRef(roomId).update(
+            field = RoomInfoField.ENTER_USER,
+            value = CommonFieldValue.arrayUnion(userId),
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
+
+    //방 정보를 업데이트 한다
+    fun updateRoom(
+        roomId: String,
+        title: String,
+        description: String,
+        password: String,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit,
+    ) {
+        RefHelper.getRoomRef(roomId)
+            .update(
+                mapOf(
+                    RoomInfoField.TITLE to title,
+                    RoomInfoField.DESCRIPTION to description,
+                    RoomInfoField.PASSWORD to password
+                ),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
+
+    fun exitUsersFromRoom(
+        roomId: String,
+        userId: List<String>,
+        field: String,
+        commonAction: () -> Unit = {},
+        successAction: () -> Unit = {},
+        failAction: (e: Error) -> Unit = {},
+    ) {
+        getFireStore().runBatch(
+            write = {
+                val ref = RefHelper.getRoomRef(roomId)
+                userId.forEach { uid ->
+                    it.update(ref, field, CommonFieldValue.arrayRemove(uid))
+                }
+            },
+            successAction = {
+                commonAction()
+                successAction()
+            },
+            failAction = {
+                commonAction()
+                failAction(it)
+            }
+        )
+    }
+
+    fun exitEditableUserFromRoom(
+        roomId: String,
+        editableUser: List<String>,
+        commonAction: () -> Unit,
+    ) = exitUsersFromRoom(roomId, editableUser, RoomInfoField.EDITABLE_USER, commonAction)
+
+    fun exitEnterUserFromRoom(
+        roomId: String,
+        enterUser: List<String>,
+        commonAction: () -> Unit,
+    ) = exitUsersFromRoom(roomId, enterUser, RoomInfoField.ENTER_USER, commonAction)
+
+    fun exitRoom(
+        roomId: String,
+        userId: String,
+        role: RoomRole,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit,
+    ) {
+        val field = when (role) {
+            RoomRole.MANAGER -> RoomInfoField.EDITABLE_USER
+            RoomRole.USER -> RoomInfoField.ENTER_USER
+            else -> RoomInfoField.OWNER
+        }
+        RefHelper.getRoomRef(roomId).update(
+            field = field,
+            value = CommonFieldValue.arrayRemove(userId),
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
+
+    fun observeAllRoom(
+        userId: String,
+        successAction: (List<RoomInfo>) -> Unit,
+    ): CommonListenerRegistration {
+        return RefHelper.getRoomsRef()
+            .where(
+                CommonFilter.or(
+                    CommonFilter.equalTo(RoomInfoField.OWNER, userId),
+                    CommonFilter.arrayContains(RoomInfoField.EDITABLE_USER, userId),
+                    CommonFilter.arrayContains(RoomInfoField.EDITABLE_USER, userId),
+                )
+            )
+            .getListenerRegistration(
+                successAction = { documentList ->
+                    successAction(documentList.map { it.toRoomInfo() })
+                },
+                failAction = {}
+            )
+    }
+
+    fun deleteRoom(
+        roomId: String,
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit,
+    ) {
+        RefHelper.getRoomRef(roomId).delete(
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
+
+    fun changeOwner(
+        roomId: String,
+        preOwner: String,
+        newOwnerUid: String,
+        commonAction: () -> Unit = {},
+        successAction: () -> Unit,
+        failAction: (e: Error) -> Unit,
+    ) {
+        getFireStore().runBatch(
+            write = {
+                val roomDoc = RefHelper.getRoomRef(roomId)
+                it.update(roomDoc, "enterUser", CommonFieldValue.arrayUnion(preOwner))
+                it.update(roomDoc, "owner", newOwnerUid)
+                it.update(roomDoc, "enterUser", CommonFieldValue.arrayRemove(newOwnerUid))
+            },
+            successAction = {
+                commonAction()
+                successAction()
+            },
+            failAction = {
+                commonAction()
+                failAction(it)
+            }
+        )
+    }
+}

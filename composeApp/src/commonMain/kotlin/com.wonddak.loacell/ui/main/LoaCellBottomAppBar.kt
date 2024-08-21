@@ -1,17 +1,15 @@
 package com.wonddak.loacell.ui.main
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import loacell.composeapp.generated.resources.Res
-import loacell.composeapp.generated.resources.refresh
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -33,17 +31,7 @@ fun LoaCellBottomAppBar(
                 )
             },
             actions = {
-                Row() {
-                    IconButton(
-                        {}
-                    ) {
-                        Icon(
-                            painterResource(Res.drawable.refresh),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
+
             }
         )
     }

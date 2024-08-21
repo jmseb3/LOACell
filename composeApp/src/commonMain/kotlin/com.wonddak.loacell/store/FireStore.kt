@@ -101,7 +101,15 @@ expect class CommonQuerySnapshot {
 }
 
 expect class CommonQuery {
-    fun get(successAction: (querySnapshot : CommonQuerySnapshot) -> Unit, failAction: (error :Error) -> Unit)
+    fun get(
+        successAction: (querySnapshot: CommonQuerySnapshot) -> Unit,
+        failAction: (error: Error) -> Unit,
+    )
+
+    fun getListenerRegistration(
+        successAction: (a: List<CommonDocumentSnapshot>) -> Unit,
+        failAction: (error: Error?) -> Unit,
+    ): CommonListenerRegistration
 }
 
 expect class CommonFieldValue{

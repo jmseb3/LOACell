@@ -23,6 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.wonddak.loacell.BlockBackButton
 import com.wonddak.loacell.auth.rememberAuthLauncher
 import com.wonddak.loacell.theme.roboto
@@ -49,11 +51,17 @@ import org.koin.compose.koinInject
 @Composable
 fun LoginView(
     modifier: Modifier,
-    authViewModel: AuthViewModel = koinInject()
+    navController: NavHostController,
+    authViewModel: AuthViewModel = koinInject(),
 ) {
+    LaunchedEffect(authViewModel.user) {
+        if (authViewModel.user != null) {
+            navController.popBackStack()
+        }
+    }
     BlockBackButton()
     val authLauncher = rememberAuthLauncher(authViewModel.loginHelper) {
-        //TODO 동기화
+
     }
     Box(
         modifier = modifier

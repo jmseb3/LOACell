@@ -8,11 +8,11 @@ import cocoapods.FirebaseFirestoreInternal.FIRDocumentSnapshot
 import cocoapods.FirebaseFirestoreInternal.FIRFieldPath
 import cocoapods.FirebaseFirestoreInternal.FIRFieldValue
 import cocoapods.FirebaseFirestoreInternal.FIRFilter
+import cocoapods.FirebaseFirestoreInternal.FIRFirestore
 import cocoapods.FirebaseFirestoreInternal.FIRListenerRegistrationProtocol
 import cocoapods.FirebaseFirestoreInternal.FIRQuery
 import cocoapods.FirebaseFirestoreInternal.FIRQuerySnapshot
 import cocoapods.FirebaseFirestoreInternal.FIRWriteBatch
-import cocoapods.FirebaseFirestoreInternal.FIRFirestore
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSError
@@ -25,7 +25,7 @@ actual class Error(error: NSError?) {
 actual fun getFireStore(): CommonFireStore = CommonFireStore(FIRFirestore.firestore())
 
 actual class CommonFireStore(
-    private val ref: FIRFirestore
+    private val ref: FIRFirestore,
 ) {
     actual fun collection(path: String): CommonCollection =
         CommonCollection(ref.collectionWithPath(path))
@@ -35,7 +35,7 @@ actual class CommonFireStore(
         refDoc: CommonDocument,
         successAction: () -> Unit,
         failAction: (error: Error) -> Unit,
-        action: (transaction: CommonDocumentSnapshot) -> Unit
+        action: (transaction: CommonDocumentSnapshot) -> Unit,
     ) {
         ref.runTransactionWithBlock(
             updateBlock = { transaction, errorPointer ->
@@ -80,12 +80,12 @@ actual class CommonFireStore(
 }
 
 actual class CommonBatch(
-    val ref: FIRWriteBatch
+    val ref: FIRWriteBatch,
 ) {
     actual fun update(
         doc: CommonDocument,
         field: String,
-        value: Any
+        value: Any,
     ) {
         ref.updateData(mapOf(field to value), doc.ref)
     }
@@ -93,14 +93,14 @@ actual class CommonBatch(
     actual fun update(
         doc: CommonDocument,
         field: String,
-        value: CommonFieldValue
+        value: CommonFieldValue,
     ) {
         ref.updateData(mapOf(field to value.ref), doc.ref)
     }
 }
 
 actual class CommonCollection(
-    private val ref: FIRCollectionReference
+    private val ref: FIRCollectionReference,
 ) {
     actual val id: String = ref.collectionID
     actual val parent: CommonDocument? = ref.parent?.let { CommonDocument(it) }
@@ -111,7 +111,7 @@ actual class CommonCollection(
 
     actual fun getListenerRegistration(
         successAction: (a: CommonQuerySnapshot) -> Unit,
-        failAction: (error: Error?) -> Unit
+        failAction: (error: Error?) -> Unit,
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
@@ -134,31 +134,31 @@ actual class CommonCollection(
 
     actual fun whereIn(
         filed: String,
-        list: List<Any>
+        list: List<Any>,
     ): CommonQuery {
         return CommonQuery(ref.queryWhereField(field = filed, `in` = list))
     }
 
     actual fun whereIn(
         filed: CommonFieldPath,
-        list: List<Any>
+        list: List<Any>,
     ): CommonQuery {
         return CommonQuery(ref.queryWhereFieldPath(path = filed.ref, `in` = list))
     }
 }
 
 actual class CommonFilter(
-    val ref: FIRFilter
+    val ref: FIRFilter,
 ) {
     actual companion object {
         actual fun equalTo(
             filed: String,
-            value: Any
+            value: Any,
         ): CommonFilter = CommonFilter(FIRFilter.filterWhereField(filed, isEqualTo = value))
 
         actual fun arrayContains(
             filed: String,
-            value: Any
+            value: Any,
         ): CommonFilter = CommonFilter(FIRFilter.filterWhereField(filed, arrayContains = value))
 
 
@@ -172,7 +172,7 @@ actual class CommonFilter(
 }
 
 actual class CommonDocument(
-    val ref: FIRDocumentReference
+    val ref: FIRDocumentReference,
 ) {
     actual val id: String = ref.documentID
     actual val path: String = ref.path
@@ -183,12 +183,13 @@ actual class CommonDocument(
 
     actual fun getListenerRegistration(
         successAction: (a: CommonDocumentSnapshot) -> Unit,
-        failAction: (error: Error?) -> Unit
+        failAction: (error: Error?) -> Unit,
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
                 if (error != null) {
                     failAction(Error(error))
+                    return@addSnapshotListener
                 }
                 if (value != null) {
                     successAction(CommonDocumentSnapshot(value))
@@ -207,7 +208,7 @@ actual class CommonDocument(
     actual fun set(
         data: Map<String, Any>,
         successAction: () -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         runCatching {
             set(data)
@@ -229,7 +230,7 @@ actual class CommonDocument(
     actual fun update(
         data: Map<String, Any>,
         successAction: () -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         runCatching {
             update(data)
@@ -242,7 +243,7 @@ actual class CommonDocument(
 
     actual fun update(
         field: String, value: Any, successAction: () -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         runCatching {
             update(mapOf(field to value))
@@ -255,7 +256,7 @@ actual class CommonDocument(
 
     actual fun update(
         field: String, value: CommonFieldValue, successAction: () -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         runCatching {
             println("ROOM Store 1")
@@ -276,7 +277,7 @@ actual class CommonDocument(
 
     actual fun delete(
         successAction: () -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         runBlocking {
             runCatching {
@@ -291,7 +292,7 @@ actual class CommonDocument(
 
     actual fun get(
         successAction: (documentSnapshot: CommonDocumentSnapshot) -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         ref.getDocumentWithCompletion { firDocumentSnapshot, nsError ->
             if (nsError == null) {
@@ -310,7 +311,7 @@ actual class CommonDocument(
 }
 
 actual class CommonDocumentSnapshot(
-    private val ref: FIRDocumentSnapshot
+    private val ref: FIRDocumentSnapshot,
 ) {
     actual val exist: Boolean
         get() = ref.exists()
@@ -324,19 +325,19 @@ actual class CommonDocumentSnapshot(
 }
 
 actual class CommonQuerySnapshot(
-    val ref: FIRQuerySnapshot
+    val ref: FIRQuerySnapshot,
 ) {
     actual val documents: List<CommonDocumentSnapshot> =
         (ref.documents.filterIsInstance<FIRDocumentSnapshot>()).map { CommonDocumentSnapshot(it) }
 }
 
 actual class CommonQuery(
-    val ref: FIRQuery
+    val ref: FIRQuery,
 ) {
 
     actual fun get(
         successAction: (querySnapshot: CommonQuerySnapshot) -> Unit,
-        failAction: (error: Error) -> Unit
+        failAction: (error: Error) -> Unit,
     ) {
         ref.getDocumentsWithCompletion { firQuerySnapshot, nsError ->
             if (nsError == null) {
@@ -351,10 +352,30 @@ actual class CommonQuery(
         }
     }
 
+    actual fun getListenerRegistration(
+        successAction: (a: List<CommonDocumentSnapshot>) -> Unit,
+        failAction: (error: Error?) -> Unit,
+    ): CommonListenerRegistration {
+        return CommonListenerRegistration(
+            ref.addSnapshotListener { value, error ->
+                if (error != null) {
+                    failAction(Error(error))
+                    return@addSnapshotListener
+                }
+                if (value != null) {
+                    successAction(value.documents.map { CommonDocumentSnapshot(it as FIRDocumentSnapshot) })
+                } else {
+                    failAction(null)
+                }
+
+            }
+        )
+    }
+
 }
 
 actual class CommonFieldValue(
-    val ref: FIRFieldValue
+    val ref: FIRFieldValue,
 ) {
     actual companion object {
         actual fun arrayUnion(value: Any): CommonFieldValue {
@@ -368,7 +389,7 @@ actual class CommonFieldValue(
 }
 
 actual class CommonFieldPath(
-    val ref: FIRFieldPath
+    val ref: FIRFieldPath,
 ) {
     actual companion object {
         actual fun documentId(): CommonFieldPath = CommonFieldPath(FIRFieldPath.documentID())
@@ -376,7 +397,7 @@ actual class CommonFieldPath(
 }
 
 actual class CommonListenerRegistration(
-    val ref: FIRListenerRegistrationProtocol
+    val ref: FIRListenerRegistrationProtocol,
 ) {
     actual fun remove() = ref.remove()
 }

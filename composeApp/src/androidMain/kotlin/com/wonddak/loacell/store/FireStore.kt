@@ -174,6 +174,7 @@ actual class CommonDocument(
             ref.addSnapshotListener { value, error ->
                 if (error != null) {
                     failAction(Error(error))
+                    return@addSnapshotListener
                 }
                 if (value != null) {
                     successAction(CommonDocumentSnapshot(value))
@@ -323,6 +324,26 @@ actual class CommonQuery(
             .addOnFailureListener {
                 failAction(Error(it))
             }
+    }
+
+    actual fun getListenerRegistration(
+        successAction: (a: List<CommonDocumentSnapshot>) -> Unit,
+        failAction: (error: Error?) -> Unit,
+    ): CommonListenerRegistration {
+        return CommonListenerRegistration(
+            ref.addSnapshotListener { value, error ->
+                if (error != null) {
+                    failAction(Error(error))
+                    return@addSnapshotListener
+                }
+                if (value != null) {
+                    successAction(value.documents.map { CommonDocumentSnapshot(it) })
+                } else {
+                    failAction(null)
+                }
+
+            }
+        )
     }
 
 }
