@@ -25,7 +25,14 @@ actual class FileUtil {
     actual fun getCachePath(): String = providePath("")
 
     actual fun getAssetPath(): String {
-        return providePath(ASSETS_PATH)
+        val assetPath = providePath(ASSETS_PATH)
+        fileManager.createDirectoryAtPath(
+            path = assetPath,
+            withIntermediateDirectories = true,
+            null,
+            null
+        )
+        return assetPath
     }
 
     actual fun isExist(path: String): Boolean {

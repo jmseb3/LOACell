@@ -5,7 +5,6 @@ import com.wonddak.loacell.model.RaidTypeItem
 import io.github.aakira.napier.Napier
 
 object RaidItem {
-
     private const val TAG = "RaidItem"
     private var data: List<RaidTypeItem> = emptyList()
 

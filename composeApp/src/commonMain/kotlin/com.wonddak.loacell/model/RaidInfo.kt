@@ -1,6 +1,7 @@
 package com.wonddak.loacell.model
 
 import com.wonddak.loacell.assetData.RaidItem
+import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
 
@@ -44,7 +45,7 @@ data class RaidInfo(
         get() = raidItem?.level?.find { it.difficulty == difficulty }
 
     fun getRaidText(): String {
-        return "$type - $difficulty"
+        return "${Translate.getTranslate(type)} - ${Translate.getTranslate(difficulty)}"
     }
 
     fun getMaxParty(): Int {
@@ -57,7 +58,11 @@ data class RaidInfo(
 
     fun makeGateText(): String {
         return level?.let {
-            "1 ~ ${it.maxGate} 관문"
+            if (it.differentPerGate) {
+                "1 ~ $endGateNumber 관문"
+            } else {
+                "1 ~ ${it.maxGate} 관문"
+            }
         } ?: "관문 정보 없음"
     }
 }

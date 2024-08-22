@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.assetData.Synergy
+import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.network.firebase.FBApi
 import com.wonddak.loacell.storage.FireStorageReferenceHelper
@@ -15,6 +16,7 @@ import com.wonddak.loacell.util.FileHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 
 class SplashViewModel(
     private val fbApi: FBApi,
@@ -90,6 +92,10 @@ class SplashViewModel(
                     val jsonString = fileHelper.readFile(savePath)
                     val data: Map<String, String> = Json.decodeFromString(jsonString)
                     Synergy.addData(data)
+                } else if (fileName.startsWith("translate_")) {
+                    val jsonString = fileHelper.readFile(savePath)
+                    val data: List<JsonElement> = Json.decodeFromString(jsonString)
+                    Translate.addData(data)
                 }
             }
         }
