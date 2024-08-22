@@ -19,10 +19,17 @@ expect fun CommonStorageReference.downloadToFile(
     failCompletion: (error: FSError) -> Unit,
 )
 
+expect fun CommonStorageReference.getDownloadUrl(
+    success: (String) -> Unit,
+)
+
 object FireStorageReferenceHelper {
     private val storage : CommonFireStorage = getFireStorage()
 
     fun getAssetReference(fileName: String): CommonStorageReference {
         return storage.getCommonReference().getChildPath("dataFiles/$fileName")
+    }
+    fun getAssetRaidImage(type: String): CommonStorageReference {
+        return storage.getCommonReference().getChildPath("dataFiles/raid/raid_$type.png")
     }
 }

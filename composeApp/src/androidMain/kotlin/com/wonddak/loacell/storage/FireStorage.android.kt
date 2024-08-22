@@ -35,3 +35,10 @@ actual fun CommonStorageReference.downloadToFile(
             failCompletion(it)
         }
 }
+
+actual fun CommonStorageReference.getDownloadUrl(success: (String) -> Unit) {
+    this.downloadUrl
+        .addOnSuccessListener {
+            success(it.toString())
+        }
+}

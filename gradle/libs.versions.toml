@@ -2,11 +2,12 @@
 agp = "8.3.2"
 compose = "1.6.11"
 kotlin = "2.0.0"
-ktor = "2.3.5"
+ktor = "2.3.12"
 datastore = "1.1.1"
 koin = "4.0.0-RC1"
 koin2 = "1.2.0-Beta4"
 androidx-uiTest = "1.6.8"
+coil = "3.0.0-alpha10"
 
 [libraries]
 browser = { module = "androidx.browser:browser", version = "1.8.0" }
@@ -17,7 +18,7 @@ wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version =
 androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
 
-compose-bom = { module = "androidx.compose:compose-bom", version = "2024.06.00" }
+compose-bom = { module = "androidx.compose:compose-bom", version = "2024.08.00" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.1" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -54,6 +55,10 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin2" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin2" }
 
+coil-core = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-ktor = { module = "io.coil-kt.coil3:coil-network-ktor2", version.ref = "coil" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -72,3 +77,4 @@ firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", 
 ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
 koin-android = ["koin-core", "koin-android"]
 koin-shared = ["koin-compose", "koin-compose-viewmodel"]
+coil = ["coil-core", "coil-compose", "coil-ktor"]

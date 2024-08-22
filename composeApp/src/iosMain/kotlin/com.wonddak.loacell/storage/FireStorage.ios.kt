@@ -34,3 +34,11 @@ actual fun CommonStorageReference.downloadToFile(
         }
     }
 }
+
+actual fun CommonStorageReference.getDownloadUrl(success: (String) -> Unit) {
+    this.downloadURLWithCompletion { nsurl, nsError ->
+        if (nsError != null) {
+            success(nsurl.toString())
+        }
+    }
+}

@@ -1,6 +1,5 @@
 package com.wonddak.loacell.ui.raidRoom
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,10 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.LocalPlatformContext
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.store.CommonRaidHelper
 import loacell.composeapp.generated.resources.Res
@@ -76,25 +79,19 @@ fun RaidItemRow(
                     .fillMaxWidth()
                     .height(size)
             ) {
-//                val imgSrc = raidInfo.getImg()
-//                if (imgSrc != null) {
-//                    Image(
-//                        painter = painterResource(imgSrc),
-//                        contentDescription = null,
-//                        Modifier
-//                            .size(size)
-//                            .clip(rShape)
-//                    )
-//                } else {
-                    Image(
-                        bitmap = ImageBitmap(100, 100),
-                        contentDescription = null,
-                        Modifier
-                            .size(size)
-                            .clip(rShape)
-                    )
-//                }
-
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(raidInfo.getImage())
+                        .crossfade(true)
+                        .build(),
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(size)
+                        .clip(rShape)
+                )
                 Column(
                     modifier = Modifier.padding(5.dp)
                 ) {

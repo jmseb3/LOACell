@@ -1,5 +1,5 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import com.android.build.api.dsl.ManagedVirtualDevice
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
@@ -104,6 +104,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
 
             implementation(libs.bundles.ktor)
+            implementation(libs.bundles.coil)
 
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
         }

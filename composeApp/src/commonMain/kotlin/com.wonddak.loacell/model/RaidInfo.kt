@@ -65,6 +65,8 @@ data class RaidInfo(
             }
         } ?: "관문 정보 없음"
     }
+
+    fun getImage() = RaidItem.getImage(type.lowercase())
 }
 
 fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
