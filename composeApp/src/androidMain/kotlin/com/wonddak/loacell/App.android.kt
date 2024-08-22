@@ -9,11 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.wonddak.loacell.di.commonModule
+import com.wonddak.loacell.util.FileUtil
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 import java.lang.ref.WeakReference
 
 class MainActivity : ComponentActivity() {
@@ -40,6 +43,9 @@ class LoaCellApplication : Application() {
             // Reference Android context
             androidContext(this@LoaCellApplication)
             // Load modules
+            modules(module {
+                singleOf(::FileUtil)
+            })
             modules(commonModule())
         }
         Napier.base(DebugAntilog())

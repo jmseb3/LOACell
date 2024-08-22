@@ -1,7 +1,5 @@
 package com.wonddak.loacell.storage
 
-import kotlinx.serialization.json.Json
-
 expect class CommonFireStorage
 expect class CommonStorageReference
 expect class FSError
@@ -15,26 +13,16 @@ expect fun CommonFireStorage.getCommonReference() : CommonStorageReference
 //Reference로부터 Child를 가져온다
 expect fun CommonStorageReference.getChildPath(path:String) : CommonStorageReference
 
-
-internal const val SynergyJson = "dataFiles/synergy.json"
+expect fun CommonStorageReference.downloadToFile(
+    path: String,
+    successCompletion: () -> Unit,
+    failCompletion: (error: FSError) -> Unit,
+)
 
 object FireStorageReferenceHelper {
     private val storage : CommonFireStorage = getFireStorage()
 
-    fun getSynergyReference(): CommonStorageReference {
-        return storage.getCommonReference().getChildPath(SynergyJson)
+    fun getAssetReference(fileName: String): CommonStorageReference {
+        return storage.getCommonReference().getChildPath("dataFiles/$fileName")
     }
-
-    fun jsonStringToData(jsonStr:String) : Map<String,String> {
-        val res = Json.decodeFromString<Map<String, String>>(jsonStr)
-        return res
-    }
-}
-
-
-internal const val FileName = "synergy.json"
-expect class SynergyReferenceHelper() {
-    fun isExist() :Boolean
-
-    fun downloadFile(callBack:(Map<String,String>) -> Unit)
 }

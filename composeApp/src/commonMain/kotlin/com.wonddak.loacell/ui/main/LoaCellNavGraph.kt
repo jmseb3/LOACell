@@ -15,15 +15,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
+import com.wonddak.loacell.ui.login.SplashView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.viewModel.SplashViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun LoaCellNavGraph(
     navController: NavHostController,
+    splashViewModel: SplashViewModel = koinInject(),
     authViewModel: AuthViewModel = koinInject(),
     storeViewModel: StoreViewModel = koinInject(),
     raidViewModel: RaidViewModel = koinInject(),
@@ -44,11 +47,33 @@ fun LoaCellNavGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Const.NAV_LOGIN,
+            startDestination = Const.NAV_SPLASH,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            composable(
+                route = Const.NAV_SPLASH
+            ) {
+                SplashView(
+                    splashViewModel,
+                    authViewModel,
+                    goToMain = {
+                        navController.navigate(Const.NAV_MAIN) {
+                            popUpTo(Const.NAV_SPLASH) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    goToLogin = {
+                        navController.navigate(Const.NAV_LOGIN) {
+                            popUpTo(Const.NAV_SPLASH) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
             composable(
                 route = Const.NAV_LOGIN
             ) {
@@ -103,6 +128,14 @@ fun NavController.isLogin(): Boolean {
     val navBackStackEntry by this.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route?.let { currentRoute ->
         currentRoute.startsWith(Const.NAV_LOGIN)
+    } ?: false
+}
+
+@Composable
+fun NavController.isSplash(): Boolean {
+    val navBackStackEntry by this.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route?.let { currentRoute ->
+        currentRoute.startsWith(Const.NAV_SPLASH)
     } ?: false
 }
 

@@ -1,15 +1,21 @@
 package com.wonddak.loacell.di
 
 import com.wonddak.loacell.auth.LoginHelper
-import com.wonddak.loacell.storage.SynergyReferenceHelper
+import com.wonddak.loacell.network.firebase.FBApi
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.DataStoreProvider
+import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.viewModel.SplashViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+
+val networkModule = module {
+    singleOf(::FBApi)
+}
 
 val platformModule = module {
     singleOf(::LoginHelper)
@@ -18,11 +24,14 @@ val platformModule = module {
 }
 
 val storageModule = module {
-    singleOf(::SynergyReferenceHelper)
+    singleOf(::FileHelper)
 }
 
 val viewmodelModule = module {
-    viewModel<AuthViewModel>{
+    viewModel<SplashViewModel> {
+        SplashViewModel(get(), get())
+    }
+    viewModel<AuthViewModel> {
         AuthViewModel(get())
     }
     viewModel<StoreViewModel> {
@@ -33,5 +42,5 @@ val viewmodelModule = module {
     }
 }
 
-fun commonModule() = listOf(platformModule, viewmodelModule, storageModule)
+fun commonModule() = listOf(networkModule, platformModule, viewmodelModule, storageModule)
 

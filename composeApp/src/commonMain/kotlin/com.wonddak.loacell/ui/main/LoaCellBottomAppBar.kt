@@ -29,7 +29,7 @@ fun LoaCellBottomAppBar(
     navController: NavHostController,
     raidViewModel: RaidViewModel,
 ) {
-    if (navController.isLogin()) {
+    if (navController.isLogin() || navController.isSplash()) {
 
     } else {
         BottomAppBar(

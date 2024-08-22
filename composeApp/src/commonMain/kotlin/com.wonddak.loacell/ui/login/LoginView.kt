@@ -167,19 +167,6 @@ fun LoginView(
                 color = Color.Gray.copy(0.5f)
             )
         }
-
-        if (!authViewModel.initSuccess) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.logo),
-                    null,
-                    modifier.align(Alignment.Center)
-                )
-            }
-        }
     }
 }
 

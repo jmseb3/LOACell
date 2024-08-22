@@ -1,15 +1,10 @@
 package com.wonddak.loacell.storage
 
-import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
-import io.github.aakira.napier.Napier
-import org.koin.java.KoinJavaComponent
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
 
 actual typealias CommonFireStorage = FirebaseStorage
 actual typealias CommonStorageReference = StorageReference
@@ -27,62 +22,16 @@ actual fun CommonStorageReference.getChildPath(path: String): CommonStorageRefer
     return this.child(path)
 }
 
-fun CommonStorageReference.downloadToFile(
-    filePath: String,
-    successCompletion: () -> Unit = {},
-    failCompletion: (error: FSError) -> Unit = {}
+actual fun CommonStorageReference.downloadToFile(
+    path: String,
+    successCompletion: () -> Unit,
+    failCompletion: (error: FSError) -> Unit,
 ) {
-    this.getFile(File(filePath))
+    this.getFile(File(path))
         .addOnSuccessListener {
             successCompletion()
         }
         .addOnFailureListener {
             failCompletion(it)
         }
-}
-
-actual class SynergyReferenceHelper {
-    private val context: Context = KoinJavaComponent.getKoin().get()
-
-    private val file = File(context.filesDir, FileName)
-    actual fun isExist(): Boolean {
-        return file.exists()
-    }
-
-    actual fun downloadFile(callBack: (Map<String, String>) -> Unit) {
-        if (!isExist()) {
-            Napier.d(tag = "SynergyReferenceHelper") { "file no exist start download.." }
-            FireStorageReferenceHelper
-                .getSynergyReference()
-                .downloadToFile(
-                    file.path,
-                    successCompletion = {
-                        callBack(readFile())
-                    }
-                )
-        } else {
-            Napier.d(tag = "SynergyReferenceHelper") { "file exist pass download.." }
-            callBack(readFile())
-        }
-    }
-
-    private fun readFile(): Map<String, String> {
-        val data = StringBuilder()
-        try {
-            file.inputStream().use { fis ->
-                InputStreamReader(fis).use { isr ->
-                    BufferedReader(isr).use { bufferedReader ->
-                        var line: String?
-                        while (bufferedReader.readLine().also { line = it } != null) {
-                            data.append(line)
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-
-        }
-        return FireStorageReferenceHelper.jsonStringToData(data.toString())
-    }
-
 }

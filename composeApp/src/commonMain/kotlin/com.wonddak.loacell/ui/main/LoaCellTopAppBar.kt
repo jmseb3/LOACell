@@ -20,7 +20,7 @@ fun LoaCellTopAppBar(
     storeViewModel: StoreViewModel,
     raidViewModel: RaidViewModel,
 ) {
-    if (navController.isLogin()) {
+    if (navController.isLogin() || navController.isSplash()) {
 
     } else {
         TopAppBar(
