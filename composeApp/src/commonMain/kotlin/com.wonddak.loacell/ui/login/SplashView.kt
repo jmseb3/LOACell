@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
+import kotlinx.coroutines.delay
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
@@ -36,16 +37,21 @@ fun SplashView(
     var needDownload by remember {
         mutableStateOf(false)
     }
+
+    fun navigationTo() {
+        splashViewModel.readAssetsFile()
+        if (authViewModel.initSuccess) {
+            if (authViewModel.user == null) {
+                goToLogin()
+            } else {
+                goToMain()
+            }
+        }
+    }
     LaunchedEffect(splashViewModel.timeCheck, splashViewModel.downloadCheck) {
         if (splashViewModel.timeCheck && splashViewModel.downloadCheck) {
             if (splashViewModel.downloadFileSet.isEmpty()) {
-                if (authViewModel.initSuccess) {
-                    if (authViewModel.user == null) {
-                        goToLogin()
-                    } else {
-                        goToMain()
-                    }
-                }
+                navigationTo()
             } else {
                 needDownload = true
                 splashViewModel.startDownload()
@@ -54,13 +60,8 @@ fun SplashView(
     }
     LaunchedEffect(splashViewModel.maxCnt, splashViewModel.successCnt) {
         if (splashViewModel.maxCnt > 0 && splashViewModel.maxCnt == splashViewModel.successCnt) {
-            if (authViewModel.initSuccess) {
-                if (authViewModel.user == null) {
-                    goToLogin()
-                } else {
-                    goToMain()
-                }
-            }
+            delay(500L)
+            navigationTo()
         }
     }
     Box(

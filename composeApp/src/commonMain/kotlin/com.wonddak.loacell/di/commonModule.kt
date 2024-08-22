@@ -9,7 +9,7 @@ import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
-import org.koin.compose.viewmodel.dsl.viewModel
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -28,18 +28,10 @@ val storageModule = module {
 }
 
 val viewmodelModule = module {
-    viewModel<SplashViewModel> {
-        SplashViewModel(get(), get())
-    }
-    viewModel<AuthViewModel> {
-        AuthViewModel(get())
-    }
-    viewModel<StoreViewModel> {
-        StoreViewModel()
-    }
-    viewModel<RaidViewModel> {
-        RaidViewModel()
-    }
+    viewModelOf(::SplashViewModel)
+    viewModelOf(::AuthViewModel)
+    viewModelOf(::StoreViewModel)
+    viewModelOf(::RaidViewModel)
 }
 
 fun commonModule() = listOf(networkModule, platformModule, viewmodelModule, storageModule)

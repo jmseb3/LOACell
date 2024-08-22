@@ -53,7 +53,7 @@ fun LoaCellNavGraph(
                 .padding(innerPadding)
         ) {
             composable(
-                route = Const.NAV_SPLASH
+                route = Const.NAV_SPLASH,
             ) {
                 SplashView(
                     splashViewModel,

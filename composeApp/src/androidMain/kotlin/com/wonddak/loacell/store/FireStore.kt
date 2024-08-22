@@ -13,6 +13,9 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 actual class Error(error: Exception?) {
     actual val errorMsg: String = error?.localizedMessage ?: "unknown error"
@@ -103,13 +106,15 @@ actual class CommonCollection(
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
-                if (error != null) {
-                    failAction(Error(error))
-                }
-                if (value != null) {
-                    successAction(CommonQuerySnapshot(value))
-                } else {
-                    failAction(null)
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (error != null) {
+                        failAction(Error(error))
+                    }
+                    if (value != null) {
+                        successAction(CommonQuerySnapshot(value))
+                    } else {
+                        failAction(null)
+                    }
                 }
             }
         )

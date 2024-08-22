@@ -45,6 +45,7 @@ fun MainView(
             navController.navigate(Const.NAV_LOGIN) {
                 popUpTo(Const.NAV_MAIN) {
                     inclusive = true
+                    saveState = true
                 }
             }
         } else {
@@ -76,6 +77,7 @@ fun MainView(
                     onClick = {
                         scope.launch {
                             raidViewModel.roomInfo = roomInfo
+                            raidViewModel.startObserveRaidInfoList(authViewModel.user?.uid)
                             navController.navigate(Const.NAV_ROOM)
                         }
                     },

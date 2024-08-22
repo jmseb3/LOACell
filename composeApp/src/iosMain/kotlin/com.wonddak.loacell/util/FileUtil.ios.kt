@@ -2,9 +2,12 @@ package com.wonddak.loacell.util
 
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSString
 import platform.Foundation.NSURL
+import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.URLByAppendingPathComponent
+import platform.Foundation.stringWithContentsOfFile
 
 actual class FileUtil {
 
@@ -29,4 +32,13 @@ actual class FileUtil {
         return fileManager.fileExistsAtPath(path = path)
     }
 
+    actual fun readFile(path: String): String {
+        return runCatching {
+            NSString.stringWithContentsOfFile(
+                path = path,
+                encoding = NSUTF8StringEncoding,
+                null
+            ) as String
+        }.getOrDefault("")
+    }
 }

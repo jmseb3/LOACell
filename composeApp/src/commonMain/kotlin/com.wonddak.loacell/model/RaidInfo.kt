@@ -1,20 +1,8 @@
 package com.wonddak.loacell.model
 
+import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
-import loacell.composeapp.generated.resources.Res
-import loacell.composeapp.generated.resources.raid_abrelshud
-import loacell.composeapp.generated.resources.raid_behemoth
-import loacell.composeapp.generated.resources.raid_echidna
-import loacell.composeapp.generated.resources.raid_egir
-import loacell.composeapp.generated.resources.raid_illiakan
-import loacell.composeapp.generated.resources.raid_ivory_tower
-import loacell.composeapp.generated.resources.raid_kamen
-import loacell.composeapp.generated.resources.raid_kayangel
-import loacell.composeapp.generated.resources.raid_kouku
-import loacell.composeapp.generated.resources.raid_valtan
-import loacell.composeapp.generated.resources.raid_vykas
-import org.jetbrains.compose.resources.DrawableResource
 
 object RaidInfoField {
     internal const val TITLE = "title"
@@ -48,7 +36,31 @@ data class RaidInfo(
     val day: Day,
     val hour: Int,
     val minute: Int,
-)
+) {
+    private val raidItem: RaidData?
+        get() = RaidItem.findByName(type)
+
+    private val level: Level?
+        get() = raidItem?.level?.find { it.difficulty == difficulty }
+
+    fun getRaidText(): String {
+        return "$type - $difficulty"
+    }
+
+    fun getMaxParty(): Int {
+        return level?.partySize ?: 0
+    }
+
+    fun getMinLevel(): Int {
+        return level?.info?.get(endGateNumber) ?: 0
+    }
+
+    fun makeGateText(): String {
+        return level?.let {
+            "1 ~ ${it.maxGate} 관문"
+        } ?: "관문 정보 없음"
+    }
+}
 
 fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
     return with(this.data!!) {
@@ -89,86 +101,6 @@ fun Long.convertToDay(): Day {
         }
     }
     return Day.NONE
-}
-
-fun RaidInfo.getMinLevel(): Int {
-    return 0
-//    return this.type.getMinLevel(this.difficulty, this.endGateNumber)
-}
-
-fun RaidInfo.getRaidText(): String {
-    return  ""
-//    return "${this.type.toKorString()} - ${this.difficulty.toKorString()}"
-}
-
-fun RaidInfo.getMaxParty(): Int {
-    return  1
-//    return this.type.getMaxParty()
-}
-
-fun RaidInfo.makeGateText(): String {
-    return ""
-//    return when (this.type) {
-//        RaidType.ETC -> {
-//            "관문 정보 없음"
-//        }
-//
-//        else -> {
-//            "1 ~ ${this.type.getMaxGate(this.difficulty)} 관문"
-//        }
-//    }
-}
-
-fun RaidInfo.getImg(): DrawableResource? {
-    return when (this.type) {
-//        RaidType.VALTAN -> {
-//            Res.drawable.raid_valtan
-//        }
-//
-//        RaidType.VYKAS -> {
-//            Res.drawable.raid_vykas
-//        }
-//
-//        RaidType.KOUKU -> {
-//            Res.drawable.raid_kouku
-//        }
-//
-//        RaidType.ABRELSHUD -> {
-//            Res.drawable.raid_abrelshud
-//        }
-//
-//        RaidType.ILLIAKAN -> {
-//            Res.drawable.raid_illiakan
-//        }
-//
-//        RaidType.KAMEN -> {
-//            Res.drawable.raid_kamen
-//        }
-//
-//        RaidType.KAYANGEL -> {
-//            Res.drawable.raid_kayangel
-//        }
-//
-//        RaidType.IVORYTOWER -> {
-//            Res.drawable.raid_ivory_tower
-//        }
-//
-//        RaidType.ECHIDNA -> {
-//            Res.drawable.raid_echidna
-//        }
-//
-//        RaidType.BETHEMOTH -> {
-//            Res.drawable.raid_behemoth
-//        }
-//
-//        RaidType.EGIR -> {
-//            Res.drawable.raid_egir
-//        }
-
-        else -> {
-            null
-        }
-    }
 }
 
 fun RaidInfo.getDayText(): String =

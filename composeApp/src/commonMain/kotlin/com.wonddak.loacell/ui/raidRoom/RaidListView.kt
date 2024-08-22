@@ -26,9 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.model.RaidInfo
-import com.wonddak.loacell.model.getImg
-import com.wonddak.loacell.model.getRaidText
-import com.wonddak.loacell.model.makeGateText
 import com.wonddak.loacell.store.CommonRaidHelper
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.task_finish_done
@@ -61,6 +58,7 @@ fun RaidItemRow(
 ) {
     val size = 100.dp
     val rShape = RoundedCornerShape(10.dp)
+    Text(raidInfo.toString())
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -78,16 +76,16 @@ fun RaidItemRow(
                     .fillMaxWidth()
                     .height(size)
             ) {
-                val imgSrc = raidInfo.getImg()
-                if (imgSrc != null) {
-                    Image(
-                        painter = painterResource(imgSrc),
-                        contentDescription = null,
-                        Modifier
-                            .size(size)
-                            .clip(rShape)
-                    )
-                } else {
+//                val imgSrc = raidInfo.getImg()
+//                if (imgSrc != null) {
+//                    Image(
+//                        painter = painterResource(imgSrc),
+//                        contentDescription = null,
+//                        Modifier
+//                            .size(size)
+//                            .clip(rShape)
+//                    )
+//                } else {
                     Image(
                         bitmap = ImageBitmap(100, 100),
                         contentDescription = null,
@@ -95,8 +93,7 @@ fun RaidItemRow(
                             .size(size)
                             .clip(rShape)
                     )
-
-                }
+//                }
 
                 Column(
                     modifier = Modifier.padding(5.dp)

@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRoomHelper
+import kotlinx.coroutines.launch
 
 class StoreViewModel() : ViewModel() {
 
@@ -19,8 +21,10 @@ class StoreViewModel() : ViewModel() {
         userId: String,
     ) {
         stopObserveRoom()
-        roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
-            this@StoreViewModel.roomList = it
+        viewModelScope.launch {
+            roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
+                this@StoreViewModel.roomList = it
+            }
         }
     }
 

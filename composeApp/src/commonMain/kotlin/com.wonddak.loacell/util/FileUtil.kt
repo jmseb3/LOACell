@@ -8,8 +8,8 @@ expect class FileUtil {
 
     fun getCachePath(): String
     fun getAssetPath(): String
-
     fun isExist(path: String): Boolean
+    fun readFile(path: String): String
 }
 
 class FileHelper(
@@ -20,4 +20,6 @@ class FileHelper(
     }
 
     fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName))
+
+    fun readFile(path: String): String = util.readFile(path)
 }
