@@ -135,7 +135,7 @@ fun LoaCellNavGraph(
                 Scaffold(
                     topBar = {
                         LoaCellTopAppBar(
-                            raidViewModel.roomInfo?.title ?: "",
+                            raidInfo.title,
                         ) {
                             navController.popBackStack()
                         }

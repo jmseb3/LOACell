@@ -2,6 +2,10 @@ package com.wonddak.loacell.storage
 
 import cocoapods.FirebaseStorage.FIRStorage
 import cocoapods.FirebaseStorage.FIRStorageReference
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
 
@@ -36,8 +40,8 @@ actual fun CommonStorageReference.downloadToFile(
 }
 
 actual fun CommonStorageReference.getDownloadUrl(success: (String) -> Unit) {
-    this.downloadURLWithCompletion { nsurl, nsError ->
-        if (nsError != null) {
+    CoroutineScope(Dispatchers.Main).launch {
+        this@getDownloadUrl.downloadURLWithCompletion { nsurl, nsError ->
             success(nsurl.toString())
         }
     }

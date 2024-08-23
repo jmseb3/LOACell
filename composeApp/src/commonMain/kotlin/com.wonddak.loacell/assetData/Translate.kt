@@ -4,7 +4,9 @@ import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.native.concurrent.ThreadLocal
 
+@ThreadLocal
 object Translate {
     private const val TAG = "Translate"
     private var data: List<JsonElement> = emptyList()

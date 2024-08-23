@@ -5,7 +5,9 @@ import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.storage.FireStorageReferenceHelper
 import com.wonddak.loacell.storage.getDownloadUrl
 import io.github.aakira.napier.Napier
+import kotlin.native.concurrent.ThreadLocal
 
+@ThreadLocal
 object RaidItem {
     private const val TAG = "RaidItem"
     private var data: List<RaidTypeItem> = emptyList()
@@ -17,12 +19,17 @@ object RaidItem {
                 val type = raidData.name.lowercase()
                 FireStorageReferenceHelper
                     .getAssetRaidImage(type)
+                    .also {
+                        Napier.d(tag = TAG) { "getAssetRaidImage : $it" }
+                    }
                     .getDownloadUrl { url ->
                         imageCacheMap[type] = url
+                        Napier.d(tag = TAG) { "imageCacheMap : $imageCacheMap" }
                     }
             }
-            Napier.d(tag = TAG) { "RaidItem Add : $data" }
         }
+        Napier.d(tag = TAG) { "RaidItem Add : $data" }
+
         this.data = data
     }
 

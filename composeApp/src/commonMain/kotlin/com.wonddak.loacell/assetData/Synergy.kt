@@ -2,8 +2,10 @@ package com.wonddak.loacell.assetData
 
 import com.wonddak.loacell.model.Character
 import io.github.aakira.napier.Napier
+import kotlin.native.concurrent.ThreadLocal
 
 
+@ThreadLocal
 object Synergy {
     private const val TAG = "Synergy"
     private var data: Map<String, String> = emptyMap()

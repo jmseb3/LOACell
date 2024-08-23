@@ -4,6 +4,7 @@ import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
+import io.github.aakira.napier.Napier
 
 object RaidInfoField {
     internal const val TITLE = "title"
