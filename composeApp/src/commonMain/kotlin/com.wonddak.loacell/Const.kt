@@ -7,7 +7,7 @@ object Const {
     const val NAV_MAIN = "nav_home"
     const val NAV_ROOM = "nav_room"
 
-    const val NAV_RAID_DETAIL_ARG = "roomId"
+    const val NAV_RAID_DETAIL_ARG = "raidId"
     const val NAV_RAID_DETAIL_MAIN = "nav_raid_detail/"
     const val NAV_RAID_DETAIL = "$NAV_RAID_DETAIL_MAIN{$NAV_RAID_DETAIL_ARG}"
 

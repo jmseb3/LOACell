@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -125,30 +126,38 @@ fun LoaCellNavGraph(
             route = Const.NAV_RAID_DETAIL,
             arguments = listOf(navArgument(Const.NAV_RAID_DETAIL_ARG) { type = NavType.StringType })
         ) { backStackEntry ->
-            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: "error"
-            Scaffold(
-                topBar = {
-                    LoaCellTopAppBar(
-                        raidViewModel.roomInfo?.title ?: "",
-                    ) {
-                        navController.navigate(Const.NAV_ROOM) {
-                            popUpTo(Const.NAV_RAID_DETAIL) {
-                                inclusive = true
+            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
+            val raidInfo = raidViewModel.raidList.find { it.raidId == raidId }
+            if (raidInfo == null) {
+                TextButton({
+                    navController.navigate(Const.NAV_ROOM) {
+                        popUpTo(Const.NAV_RAID_DETAIL) {
+                            inclusive = true
+                        }
+                    }
+                }) {
+                    Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
+                }
+            } else {
+                Scaffold(
+                    topBar = {
+                        LoaCellTopAppBar(
+                            raidViewModel.roomInfo?.title ?: "",
+                        ) {
+                            navController.navigate(Const.NAV_ROOM) {
+                                popUpTo(Const.NAV_RAID_DETAIL) {
+                                    inclusive = true
+                                }
                             }
                         }
                     }
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding)
+                    ) {
+                        Text(Const.NAV_RAID_DETAIL)
+                        Text(raidInfo.toString())
                     }
-                }
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding)
-                ) {
-                    Text(Const.NAV_RAID_DETAIL)
-                    Text(raidId)
                 }
             }
         }
@@ -156,30 +165,38 @@ fun LoaCellNavGraph(
             route = Const.NAV_USER_DETAIL,
             arguments = listOf(navArgument(Const.NAV_USER_DETAIL_ARG) { type = NavType.StringType })
         ) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: "error"
-            Scaffold(
-                topBar = {
-                    LoaCellTopAppBar(
-                        "User",
-                    ) {
-                        navController.navigate(Const.NAV_ROOM) {
-                            popUpTo(Const.NAV_USER_DETAIL) {
-                                inclusive = true
+            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
+            val userInfo = raidViewModel.userList.find { it.name == userName }
+            if (userInfo == null) {
+                TextButton({
+                    navController.navigate(Const.NAV_ROOM) {
+                        popUpTo(Const.NAV_RAID_DETAIL) {
+                            inclusive = true
+                        }
+                    }
+                }) {
+                    Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
+                }
+            } else {
+                Scaffold(
+                    topBar = {
+                        LoaCellTopAppBar(
+                            "User",
+                        ) {
+                            navController.navigate(Const.NAV_ROOM) {
+                                popUpTo(Const.NAV_USER_DETAIL) {
+                                    inclusive = true
+                                }
                             }
                         }
                     }
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding)
+                    ) {
+                        Text(Const.NAV_USER_DETAIL)
+                        Text(userInfo.toString())
                     }
-                }
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding)
-                ) {
-                    Text(Const.NAV_USER_DETAIL)
-                    Text(userName)
                 }
             }
         }
