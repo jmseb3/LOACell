@@ -20,6 +20,7 @@ import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
+import com.wonddak.loacell.ui.raidRoom.UserDetailView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
@@ -102,11 +103,7 @@ fun LoaCellNavGraph(
                     LoaCellTopAppBar(
                         raidViewModel.roomInfo?.title ?: "",
                     ) {
-                        navController.navigate(Const.NAV_MAIN) {
-                            popUpTo(Const.NAV_ROOM) {
-                                inclusive = true
-                            }
-                        }
+                        navController.popBackStack(Const.NAV_MAIN, inclusive = false)
                     }
                 },
                 bottomBar = {
@@ -130,11 +127,7 @@ fun LoaCellNavGraph(
             val raidInfo = raidViewModel.raidList.find { it.raidId == raidId }
             if (raidInfo == null) {
                 TextButton({
-                    navController.navigate(Const.NAV_ROOM) {
-                        popUpTo(Const.NAV_RAID_DETAIL) {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack()
                 }) {
                     Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
                 }
@@ -144,11 +137,7 @@ fun LoaCellNavGraph(
                         LoaCellTopAppBar(
                             raidViewModel.roomInfo?.title ?: "",
                         ) {
-                            navController.navigate(Const.NAV_ROOM) {
-                                popUpTo(Const.NAV_RAID_DETAIL) {
-                                    inclusive = true
-                                }
-                            }
+                            navController.popBackStack()
                         }
                     }
                 ) { innerPadding ->
@@ -167,37 +156,8 @@ fun LoaCellNavGraph(
         ) { backStackEntry ->
             val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
             val userInfo = raidViewModel.userList.find { it.name == userName }
-            if (userInfo == null) {
-                TextButton({
-                    navController.navigate(Const.NAV_ROOM) {
-                        popUpTo(Const.NAV_RAID_DETAIL) {
-                            inclusive = true
-                        }
-                    }
-                }) {
-                    Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
-                }
-            } else {
-                Scaffold(
-                    topBar = {
-                        LoaCellTopAppBar(
-                            "User",
-                        ) {
-                            navController.navigate(Const.NAV_ROOM) {
-                                popUpTo(Const.NAV_USER_DETAIL) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding)
-                    ) {
-                        Text(Const.NAV_USER_DETAIL)
-                        Text(userInfo.toString())
-                    }
-                }
+            UserDetailView(userInfo) {
+                navController.popBackStack()
             }
         }
     }

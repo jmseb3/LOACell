@@ -5,8 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -32,6 +30,7 @@ expect class DataStoreProvider() {
 
 class Config(provider: DataStoreProvider) {
     private val dataStore = provider.getDataStore()
+
     suspend fun remove(key: String) {
         dataStore.edit {
             if (it.contains(stringPreferencesKey(key))) {
@@ -42,28 +41,6 @@ class Config(provider: DataStoreProvider) {
 
     suspend fun clear() {
         dataStore.edit { it.clear() }
-    }
-
-    val homeRefreshTime: Flow<Long>
-        get() = dataStore.data.map {
-            it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] ?: 0L
-        }
-
-    suspend fun updateHomeRefreshTime(time: Long) {
-        dataStore.edit {
-            it[longPreferencesKey(ConfigKeys.HomeRefreshKey)] = time
-        }
-    }
-
-    val sheetSpace: Flow<Float>
-        get() = dataStore.data.map {
-            it[floatPreferencesKey(ConfigKeys.SheetSpace)] ?: 20f
-        }
-
-    suspend fun updateSheetSpace(space: Float) {
-        dataStore.edit {
-            it[floatPreferencesKey(ConfigKeys.SheetSpace)] = space
-        }
     }
 
     val defaultUrl: Flow<String>
@@ -79,8 +56,6 @@ class Config(provider: DataStoreProvider) {
 }
 
 object ConfigKeys {
-    const val HomeRefreshKey = "home_refresh"
-    const val SheetSpace = "sheet_space"
     const val DefaultUrl = "default_url"
 }
 
@@ -89,5 +64,3 @@ const val LOAWA = "https://loawa.com/char/"
 const val KLOA = "https://m.kloa.gg/characters/"
 
 val UrlList = arrayListOf("일로아" to ILOA, "로아와" to LOAWA, "클로아" to KLOA)
-val UrlNameList = UrlList.map { it.first }
-val UrlAddressList = UrlList.map { it.second }

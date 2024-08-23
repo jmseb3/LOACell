@@ -51,7 +51,7 @@ fun CommonDocumentSnapshot.toUserInfo(roomId: String): UserInfo {
                     it[UserInfoField.CLASS_NAME] as String,
                     it[UserInfoField.LEVEL] as String
                 )
-            }
+            }.sortedBy { -it.getLevel() }
         )
     }
 }
