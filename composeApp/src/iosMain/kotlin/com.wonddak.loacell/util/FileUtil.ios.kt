@@ -1,12 +1,12 @@
 package com.wonddak.loacell.util
 
+import io.github.aakira.napier.Napier
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
-import platform.Foundation.URLByAppendingPathComponent
 import platform.Foundation.stringWithContentsOfFile
 
 actual class FileUtil {
@@ -19,7 +19,7 @@ actual class FileUtil {
             inDomains = NSUserDomainMask
         ) as List<NSURL>
         val filePath = dirPaths[0].URLByAppendingPathComponent(path)
-        return filePath!!.path!!
+        return filePath.toString()
     }
 
     actual fun getCachePath(): String = providePath("")
@@ -42,10 +42,12 @@ actual class FileUtil {
     actual fun readFile(path: String): String {
         return runCatching {
             NSString.stringWithContentsOfFile(
-                path = path,
+                path.replace("file://", ""),
                 encoding = NSUTF8StringEncoding,
                 null
             ) as String
-        }.getOrDefault("")
+        }.onFailure {
+            Napier.e(tag = "readFile", throwable = it) { "error to read file from $path" }
+        }.getOrDefault("{}")
     }
 }

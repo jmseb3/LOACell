@@ -13,7 +13,7 @@ expect class FileUtil {
 class FileHelper(
     private val util: FileUtil,
 ) {
-    fun getAssetFilePath(fileName: String): String = (util.getAssetPath() + "/" + fileName)
+    fun getAssetFilePath(fileName: String): String = (util.getAssetPath() + fileName)
 
     fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName))
 

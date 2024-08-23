@@ -103,7 +103,7 @@ fun LoaCellNavGraph(
                     LoaCellTopAppBar(
                         raidViewModel.roomInfo?.title ?: "",
                     ) {
-                        navController.popBackStack(Const.NAV_MAIN, inclusive = false)
+                        navController.popBackStack()
                     }
                 },
                 bottomBar = {

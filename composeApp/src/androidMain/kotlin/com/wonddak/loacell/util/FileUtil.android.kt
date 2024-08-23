@@ -15,7 +15,7 @@ actual class FileUtil(
     actual fun getAssetPath(): String {
         val file = File(context.cacheDir, ASSETS_PATH)
         file.mkdirs()
-        return file.path
+        return file.path + "/"
     }
 
     actual fun isExist(path: String): Boolean {

@@ -13,6 +13,7 @@ import com.wonddak.loacell.network.firebase.FBApi
 import com.wonddak.loacell.storage.FireStorageReferenceHelper
 import com.wonddak.loacell.storage.downloadToFile
 import com.wonddak.loacell.util.FileHelper
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -84,19 +85,22 @@ class SplashViewModel(
         viewModelScope.launch {
             totalFileName.forEach { fileName ->
                 val savePath = fileHelper.getAssetFilePath(fileName)
-                if (fileName.startsWith("raid_")) {
+                runCatching {
                     val jsonString = fileHelper.readFile(savePath)
-                    val data: List<RaidTypeItem> = Json.decodeFromString(jsonString)
-                    RaidItem.addData(data)
-                } else if (fileName.startsWith("synergy_")) {
-                    val jsonString = fileHelper.readFile(savePath)
-                    val data: Map<String, String> = Json.decodeFromString(jsonString)
-                    Synergy.addData(data)
-                } else if (fileName.startsWith("translate_")) {
-                    val jsonString = fileHelper.readFile(savePath)
-                    val data: List<JsonElement> = Json.decodeFromString(jsonString)
-                    Translate.addData(data)
+                    if (fileName.startsWith("raid_")) {
+                        val data: List<RaidTypeItem> = Json.decodeFromString(jsonString)
+                        RaidItem.addData(data)
+                    } else if (fileName.startsWith("synergy_")) {
+                        val data: Map<String, String> = Json.decodeFromString(jsonString)
+                        Synergy.addData(data)
+                    } else if (fileName.startsWith("translate_")) {
+                        val data: List<JsonElement> = Json.decodeFromString(jsonString)
+                        Translate.addData(data)
+                    }
+                }.onFailure {
+                    Napier.e(throwable = it) { "error" }
                 }
+
             }
         }
     }
