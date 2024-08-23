@@ -20,7 +20,6 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.noRippleClickable
-import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
@@ -49,13 +48,14 @@ fun RaidRoomView(
                 }
                 if (tabState == RoomState.Raid) {
                     RaidListView(raidList = raidList) {
-                        navController.navigate(Const.NAV_RAID_DETAIL)
+                        navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
+                    }
+                } else if (tabState == RoomState.User) {
+                    UserListView(userList = userList) {
+                        navController.navigate(Const.NAV_USER_DETAIL_MAIN + it.name)
                     }
                 }
             }
-        }
-        if (raidViewModel.raidList.isEmpty()) {
-            LoadingView("loading Data...")
         }
     }
 }

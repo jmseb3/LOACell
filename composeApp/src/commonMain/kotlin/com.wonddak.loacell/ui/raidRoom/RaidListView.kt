@@ -71,7 +71,7 @@ fun RaidItemRow(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth() 
                 .height(size)
         ) {
             Row(
@@ -112,11 +112,7 @@ fun RaidItemRow(
             IconButton(
                 modifier = Modifier.align(Alignment.BottomEnd).size(30.dp),
                 onClick = {
-                    CommonRaidHelper.updateFinish(
-                        raidInfo.roomId,
-                        raidInfo.raidId,
-                        !raidInfo.isFinish
-                    )
+                    CommonRaidHelper.updateFinish(raidInfo)
                 }
             ) {
                 Icon(

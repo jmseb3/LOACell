@@ -1,3 +1,8 @@
+import com.wonddak.loacell.model.UserInfo
+import com.wonddak.loacell.model.toUserInfo
+import com.wonddak.loacell.store.CommonListenerRegistration
+import com.wonddak.loacell.store.RefHelper
+
 //package com.wonddak.loacell.store
 //
 //import com.wonddak.loacell.sharedapi.lostark.model.CharacterInfo
@@ -33,7 +38,7 @@
 //    )
 //}
 //
-//object CommonUserHelper {
+object CommonUserHelper {
 //
 //    // 방에 유저정보를 추가한다.
 //    fun addOrUpdate(
@@ -113,75 +118,17 @@
 //            )
 //    }
 //
-//    fun observe(
-//        roomId: String,
-//        db: AppDataBase
-//    ): CommonListenerRegistration {
-//        return RefHelper.getUsersRef(roomId).getListenerRegistration(
-//            successAction = { value ->
-//                val dbUserList =
-//                    db.userInfoQueriesHelper.getUsersByRoomIdValue(roomId).map { it.name }
-//                        .toMutableSet()
-//                // 이름 조회..
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    value.documents.forEach {
-//                        val userName = it.id
-//
-//                        val representativeCharacter =
-//                            it.data!!["representativeCharacter"] as String
-//                        val getCharacterList =
-//                            it.data!!["characterList"] as List<Map<String, Any>>
-//
-//                        val characterList = getCharacterList.map {
-//                            FBCharacterInfo(
-//                                it["name"] as String,
-//                                it["server"] as String,
-//                                it["className"] as String,
-//                                it["level"] as String
-//                            )
-//                        }
-//
-//                        val timeStamp = it.data!!["timeStamp"] as Long
-//                        //이미 값이 있는 경우
-//                        if (userName in dbUserList) {
-//                            //업데이트
-//                            db.userInfoQueriesHelper.updateUserInfo(
-//                                userName,
-//                                roomId,
-//                                representativeCharacter,
-//                                timeStamp
-//                            )
-//                            dbUserList.remove(userName)
-//                        } else {
-//                            //없는 경우 추가
-//                            db.userInfoQueriesHelper.addUser(
-//                                userName,
-//                                roomId,
-//                                representativeCharacter,
-//                                timeStamp
-//                            )
-//                        }
-//                        characterList.forEach {
-//                            db.characterQueriesHelper.insertCharacter(
-//                                userName,
-//                                roomId,
-//                                it.name,
-//                                it.server,
-//                                it.className,
-//                                it.level
-//                            )
-//
-//                        }
-//                    }
-//                    // 동작이 끝난후 남아있다면
-//                    dbUserList.forEach { name ->
-//                        db.userInfoQueriesHelper.deleteUserName(name, roomId)
-//                    }
-//                }
-//            },
-//            failAction = {
-//
-//            }
-//        )
-//    }
-//}
+fun observe(
+    roomId: String,
+    successAction: (List<UserInfo>) -> Unit,
+): CommonListenerRegistration {
+    return RefHelper.getUsersRef(roomId).getListenerRegistration(
+        successAction = { value ->
+            successAction(value.documents.map { it.toUserInfo(roomId) })
+        },
+        failAction = {
+
+        }
+    )
+}
+}

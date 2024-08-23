@@ -213,13 +213,10 @@ private fun updateField(
         field, value
     )
 }
-
     fun updateFinish(
-        roomId: String,
-        raidId: String,
-        isFinish: Boolean,
+        raidInfo: RaidInfo,
     ) {
-        updateField(roomId, raidId, RaidInfoField.FINISH, isFinish)
+        updateField(raidInfo.roomId, raidInfo.raidId, RaidInfoField.FINISH, !raidInfo.isFinish)
     }
 //
 //    // 파티 리스트를 업데이트 한다.

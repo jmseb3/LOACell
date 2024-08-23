@@ -12,8 +12,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -26,17 +26,16 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun LoaCellBottomAppBar(
-    navController: NavHostController,
-    raidViewModel: RaidViewModel,
+    onAction: (() -> Unit)? = null,
+    iconImage: ImageVector? = null,
+    content: @Composable () -> Unit,
 ) {
-    if (navController.isLogin() || navController.isSplash()) {
-
-    } else {
-        BottomAppBar(
-            floatingActionButton = {
+    BottomAppBar(
+        floatingActionButton = {
+            onAction?.let {
                 SmallFloatingActionButton(
                     content = {
-                        Icon(Icons.Filled.Add, null)
+                        Icon(iconImage ?: Icons.Filled.Add, null)
                     },
                     onClick = {
 
@@ -44,20 +43,16 @@ fun LoaCellBottomAppBar(
                     containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
                 )
-            },
-            actions = {
-                if (navController.isMain()) {
-
-                } else if (navController.isRaidRoom()) {
-                    RaidRoomActions(raidViewModel)
-                }
             }
-        )
-    }
+        },
+        actions = {
+            content()
+        }
+    )
 }
 
 @Composable
-private fun RaidRoomActions(
+fun RaidRoomActions(
     raidViewModel: RaidViewModel,
 ) {
     Row() {

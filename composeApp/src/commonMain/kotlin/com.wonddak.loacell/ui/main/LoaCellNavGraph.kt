@@ -10,9 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
@@ -31,84 +33,153 @@ fun LoaCellNavGraph(
     storeViewModel: StoreViewModel = koinInject(),
     raidViewModel: RaidViewModel = koinInject(),
 ) {
-    Scaffold(
-        topBar = {
-            LoaCellTopAppBar(
-                navController,
-                storeViewModel, raidViewModel
-            )
-        },
-        bottomBar = {
-            LoaCellBottomAppBar(
-                navController,
-                raidViewModel
+    NavHost(
+        navController = navController,
+        startDestination = Const.NAV_SPLASH,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        composable(
+            route = Const.NAV_SPLASH,
+        ) {
+            SplashView(
+                splashViewModel,
+                authViewModel,
+                goToMain = {
+                    navController.navigate(Const.NAV_MAIN) {
+                        popUpTo(Const.NAV_SPLASH) {
+                            inclusive = true
+                        }
+                    }
+                },
+                goToLogin = {
+                    navController.navigate(Const.NAV_LOGIN) {
+                        popUpTo(Const.NAV_SPLASH) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Const.NAV_SPLASH,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+
+        composable(
+            route = Const.NAV_LOGIN
         ) {
-            composable(
-                route = Const.NAV_SPLASH,
-            ) {
-                SplashView(
-                    splashViewModel,
-                    authViewModel,
-                    goToMain = {
+            LoginView(
+                Modifier.fillMaxSize(),
+                navController,
+                authViewModel, storeViewModel
+            )
+        }
+
+        composable(route = Const.NAV_MAIN) {
+            Scaffold(
+                topBar = {
+                    LoaCellTopAppBar(
+                        "LoaCell",
+                        null
+                    )
+                },
+                bottomBar = {
+                    LoaCellBottomAppBar {
+
+                    }
+                }
+            ) { innerPadding ->
+                MainView(
+                    Modifier.fillMaxSize().padding(innerPadding),
+                    navController,
+                    authViewModel, storeViewModel, raidViewModel
+                )
+            }
+        }
+        composable(
+            route = Const.NAV_ROOM,
+        ) { _ ->
+            Scaffold(
+                topBar = {
+                    LoaCellTopAppBar(
+                        raidViewModel.roomInfo?.title ?: "",
+                    ) {
                         navController.navigate(Const.NAV_MAIN) {
-                            popUpTo(Const.NAV_SPLASH) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    goToLogin = {
-                        navController.navigate(Const.NAV_LOGIN) {
-                            popUpTo(Const.NAV_SPLASH) {
+                            popUpTo(Const.NAV_ROOM) {
                                 inclusive = true
                             }
                         }
                     }
-                )
-            }
-            composable(
-                route = Const.NAV_LOGIN
-            ) {
-                LoginView(
-                    Modifier.fillMaxSize(),
-                    navController,
-                    authViewModel, storeViewModel
-                )
-            }
-            composable(route = Const.NAV_MAIN) {
-                MainView(
-                    Modifier.fillMaxSize(),
-                    navController,
-                    authViewModel, storeViewModel, raidViewModel
-                )
-            }
-            composable(
-                route = Const.NAV_ROOM,
-            ) { _ ->
+                },
+                bottomBar = {
+                    LoaCellBottomAppBar {
+                        RaidRoomActions(raidViewModel)
+                    }
+                }
+            ) { innerPadding ->
                 RaidRoomView(
-                    Modifier.fillMaxSize(),
+                    Modifier.fillMaxSize().padding(innerPadding),
                     navController,
                     authViewModel, storeViewModel, raidViewModel
                 )
             }
-            composable(
-                route = Const.NAV_RAID_DETAIL
-            ) {
-                Column {
-                    Text("DETAIL")
+        }
+        composable(
+            route = Const.NAV_RAID_DETAIL,
+            arguments = listOf(navArgument(Const.NAV_RAID_DETAIL_ARG) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: "error"
+            Scaffold(
+                topBar = {
+                    LoaCellTopAppBar(
+                        raidViewModel.roomInfo?.title ?: "",
+                    ) {
+                        navController.navigate(Const.NAV_ROOM) {
+                            popUpTo(Const.NAV_RAID_DETAIL) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                },
+                bottomBar = {
+                    LoaCellBottomAppBar {
+
+                    }
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                ) {
+                    Text(Const.NAV_RAID_DETAIL)
+                    Text(raidId)
                 }
             }
-            composable(route = "TEST") {
-                Column {
-                    Text("TEST")
+        }
+        composable(
+            route = Const.NAV_USER_DETAIL,
+            arguments = listOf(navArgument(Const.NAV_USER_DETAIL_ARG) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: "error"
+            Scaffold(
+                topBar = {
+                    LoaCellTopAppBar(
+                        "User",
+                    ) {
+                        navController.navigate(Const.NAV_ROOM) {
+                            popUpTo(Const.NAV_USER_DETAIL) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                },
+                bottomBar = {
+                    LoaCellBottomAppBar {
+
+                    }
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                ) {
+                    Text(Const.NAV_USER_DETAIL)
+                    Text(userName)
                 }
             }
         }
