@@ -33,7 +33,9 @@ inline fun Modifier.noRippleClickable(
 }
 
 @Composable
-expect fun BlockBackButton()
+fun BlockBackButton() {
+    SetBackAction(true) {}
+}
 
 @Composable
-expect fun SetBackAction(action: () -> Unit)
+expect fun SetBackAction(enabled: Boolean, action: () -> Unit)

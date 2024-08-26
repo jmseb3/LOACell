@@ -14,7 +14,7 @@ import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun App() = AppTheme {
+fun App() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {
@@ -30,7 +30,9 @@ fun App() = AppTheme {
     }
     KoinContext {
         val navController: NavHostController = rememberNavController()
-        LoaCellNavGraph(navController)
+        AppTheme {
+            LoaCellNavGraph(navController)
+        }
     }
 }
 

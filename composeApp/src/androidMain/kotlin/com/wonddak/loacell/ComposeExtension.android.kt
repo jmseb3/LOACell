@@ -4,15 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 
 @Composable
-actual fun BlockBackButton() {
-    BackHandler {
-
-    }
-}
-
-@Composable
-actual fun SetBackAction(action: () -> Unit) {
-    BackHandler {
+actual fun SetBackAction(enabled: Boolean, action: () -> Unit) {
+    BackHandler(enabled) {
         action()
     }
 }

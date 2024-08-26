@@ -85,7 +85,11 @@ fun RaidItemRow(
                         .crossfade(true)
                         .build(),
                     loading = {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            modifier
+                                .align(Alignment.Center)
+                                .size(size / 2)
+                        )
                     },
                     contentDescription = null,
                     modifier = Modifier

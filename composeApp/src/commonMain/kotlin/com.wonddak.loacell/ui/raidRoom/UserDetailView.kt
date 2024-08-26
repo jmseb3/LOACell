@@ -2,6 +2,7 @@ package com.wonddak.loacell.ui.raidRoom
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -29,13 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.noRippleClickable
+import com.wonddak.loacell.ui.common.FabMenuItem
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.rememberWebLauncher
 import com.wonddak.loacell.util.Config
 import loacell.composeapp.generated.resources.Res
+import loacell.composeapp.generated.resources.change_person
+import loacell.composeapp.generated.resources.delete
+import loacell.composeapp.generated.resources.refresh
 import loacell.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -46,22 +57,46 @@ fun UserDetailView(
     onBack: () -> Unit,
 ) {
     if (userInfo == null) {
-        TextButton({
-            onBack()
-        }) {
+        TextButton(onClick = onBack) {
             Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
         }
     } else {
+        var expand by remember {
+            mutableStateOf(false)
+        }
+        SetBackAction(expand) {
+            expand = false
+        }
         Scaffold(
             topBar = {
                 LoaCellTopAppBar(
                     userInfo.name,
-                ) {
-                    onBack()
-                }
+                    onBack = onBack
+                )
             },
             floatingActionButton = {
-
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+                    FabMenuItem(expand, Res.drawable.change_person) {}
+                    FabMenuItem(expand, Res.drawable.refresh) {}
+                    FabMenuItem(expand, Res.drawable.delete) {}
+                    FloatingActionButton(
+                        onClick = {
+                            expand = !expand
+                        },
+                        shape = FloatingActionButtonDefaults.largeShape
+                    ) {
+                        Icon(
+                            if (expand) {
+                                Icons.Filled.Clear
+                            } else {
+                                Icons.Filled.Add
+                            }, null
+                        )
+                    }
+                }
             }
         ) { innerPadding ->
             LazyColumn(
