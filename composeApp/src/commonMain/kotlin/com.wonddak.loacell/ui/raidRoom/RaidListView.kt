@@ -61,7 +61,6 @@ fun RaidItemRow(
 ) {
     val size = 100.dp
     val rShape = RoundedCornerShape(10.dp)
-    Text(raidInfo.toString())
     Card(
         modifier = modifier
             .fillMaxWidth()

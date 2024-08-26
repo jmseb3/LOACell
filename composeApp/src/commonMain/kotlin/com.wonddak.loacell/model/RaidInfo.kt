@@ -22,22 +22,40 @@ object RaidInfoField {
 }
 
 data class RaidInfo(
-    val raidId: String,
-    val roomId: String,
-    val title: String,
-    val type: String,
-    val difficulty: String,
-    val startGateNumber: Int,
-    val endGateNumber: Int,
-    val isFinish: Boolean,
-    val party1characterList: List<String>,
-    val party2characterList: List<String>,
-    val party3characterList: List<String>,
-    val party4characterList: List<String>,
-    val day: Day,
-    val hour: Int,
-    val minute: Int,
+    var raidId: String,
+    var roomId: String,
+    var title: String,
+    var type: String,
+    var difficulty: String,
+    var startGateNumber: Int,
+    var endGateNumber: Int,
+    var isFinish: Boolean,
+    var party1characterList: List<String>,
+    var party2characterList: List<String>,
+    var party3characterList: List<String>,
+    var party4characterList: List<String>,
+    var day: Day,
+    var hour: Int,
+    var minute: Int,
 ) {
+    constructor() : this(
+        "",
+        "",
+        "",
+        "",
+        "",
+        0,
+        0,
+        false,
+        List(4) { "" },
+        List(4) { "" },
+        List(4) { "" },
+        List(4) { "" },
+        Day.NONE,
+        0,
+        0
+    )
+
     private val raidItem: RaidData?
         get() = RaidItem.findByName(type)
 

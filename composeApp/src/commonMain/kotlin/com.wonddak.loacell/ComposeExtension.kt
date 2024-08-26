@@ -60,4 +60,8 @@ class ModalStatus() {
     fun hide() {
         status = false
     }
+
+    fun toggle() {
+        status = !status
+    }
 }

@@ -3,7 +3,6 @@ package com.wonddak.loacell.ui.raidRoom
 import CommonUserHelper
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,13 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -47,8 +41,9 @@ import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.ui.common.FabMenuItem
+import com.wonddak.loacell.ui.common.FABInfo
 import com.wonddak.loacell.ui.common.LoadingView
+import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
 import com.wonddak.loacell.ui.modal.dialog.EditCharacterDialog
@@ -76,16 +71,14 @@ fun UserDetailView(
     } else {
         val lostArkApi: LostArkApi = koinInject()
         val scope = rememberCoroutineScope()
-        var expand by remember {
-            mutableStateOf(false)
-        }
+        val fabStatus = rememberModalStatus()
         var sync by remember {
             mutableStateOf(false)
         }
         val deleteDialogStatus = rememberModalStatus()
         val changeCharacterStatus = rememberModalStatus()
-        SetBackAction(expand) {
-            expand = false
+        SetBackAction(fabStatus.status) {
+            fabStatus.hide()
         }
         Scaffold(
             topBar = {
@@ -95,52 +88,45 @@ fun UserDetailView(
                 )
             },
             floatingActionButton = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(15.dp)
-                ) {
-                    FabMenuItem(expand, Res.drawable.change_person) {
-                        changeCharacterStatus.show()
-                    }
-                    FabMenuItem(expand, Res.drawable.refresh) {
-                        Napier.d { "갱신: ${userInfo.timeStamp}" }
-                        Napier.d { "갱신: ${userInfo.checkTimeOver()}" }
-                        if (userInfo.checkTimeOver()) {
-                            scope.launch {
-                                sync = true
-                                lostArkApi.getCharacterInfo(userInfo.representativeCharacter)
-                                    .onSuccess {
-                                        sync = false
-                                        CommonUserHelper.updateUserInfo(
-                                            userInfo, it
-                                        )
-                                    }
-                                    .onFailMsg {
-                                        sync = false
-                                    }
-                            }
-                        } else {
-                            Napier.d { "갱신 ㄴㄴ" }
-                        }
-                    }
-                    FabMenuItem(expand, Res.drawable.delete) {
-                        deleteDialogStatus.show()
-                    }
-                    FloatingActionButton(
-                        onClick = {
-                            expand = !expand
+                OpenableFabMenu(
+                    fabStatus,
+                    listOf(
+                        FABInfo.Default(
+                            Res.drawable.change_person
+                        ) {
+                            changeCharacterStatus.show()
                         },
-                        shape = FloatingActionButtonDefaults.largeShape
-                    ) {
-                        Icon(
-                            if (expand) {
-                                Icons.Filled.Clear
+                        FABInfo.Default(
+                            Res.drawable.refresh
+                        ) {
+                            Napier.d { "갱신: ${userInfo.timeStamp}" }
+                            Napier.d { "갱신: ${userInfo.checkTimeOver()}" }
+                            if (userInfo.checkTimeOver()) {
+                                scope.launch {
+                                    sync = true
+                                    lostArkApi.getCharacterInfo(userInfo.representativeCharacter)
+                                        .onSuccess {
+                                            sync = false
+                                            CommonUserHelper.updateUserInfo(
+                                                userInfo, it
+                                            )
+                                        }
+                                        .onFailMsg {
+                                            sync = false
+                                        }
+                                }
                             } else {
-                                Icons.Filled.Add
-                            }, null
+                                Napier.d { "갱신 ㄴㄴ" }
+                            }
+                        },
+                        FABInfo.Default(
+                            Res.drawable.delete
+                        ) {
+                            deleteDialogStatus.show()
+                        },
+
                         )
-                    }
-                }
+                )
             }
         ) { innerPadding ->
             Box(Modifier.fillMaxSize().padding(innerPadding)) {

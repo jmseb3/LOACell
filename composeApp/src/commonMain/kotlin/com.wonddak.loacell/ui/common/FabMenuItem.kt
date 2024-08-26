@@ -7,22 +7,25 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun FabMenuItem(
     expand: Boolean,
-    drawableResource: DrawableResource,
-    onClick: () -> Unit,
+    info: FABInfo,
 ) {
     val enterTransition = remember {
         expandVertically(
@@ -43,14 +46,26 @@ fun FabMenuItem(
     }
 
     AnimatedVisibility(expand, enter = enterTransition, exit = exitTransition) {
-        SmallFloatingActionButton(
-            onClick = onClick,
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier.padding(horizontal = 4.dp)
         ) {
-            Icon(
-                painter = painterResource(drawableResource),
-                null,
-                modifier = Modifier.size(20.dp)
-            )
+            if (info is FABInfo.Label) {
+                Text(
+                    info.title,
+                    modifier = Modifier.width(50.dp),
+                    textAlign = TextAlign.End
+                )
+            }
+            SmallFloatingActionButton(
+                onClick = info.action,
+            ) {
+                Icon(
+                    painter = painterResource(info.img),
+                    null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
