@@ -2,14 +2,10 @@ package com.wonddak.loacell.network.lostark
 
 import com.wonddak.loacell.network.ApiResult
 import com.wonddak.loacell.network.LostArkResult
-import com.wonddak.loacell.network.lostark.armories.EquipmentItem
-import com.wonddak.loacell.network.lostark.armories.ProfilesItem
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
-import com.wonddak.loacell.network.lostark.resource.Armories
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -17,7 +13,6 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.plugins.resources.Resources
-import io.ktor.client.plugins.resources.get
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
@@ -84,16 +79,6 @@ class LostArkApi {
             is ApiResult.Exception -> LostArkResult.Fail(0, result.e.message.toError())
             is ApiResult.Loading -> LostArkResult.Fail(0, "")
         }
-    }
-
-    suspend fun getArmoriesProfiles(characterName: String): ProfilesItem {
-        return httpClient.get(Armories.Character.Profiles(Armories.Character(characterName = characterName)))
-            .body()
-    }
-
-    suspend fun getArmoriesEquipment(characterName: String): List<EquipmentItem> {
-        return httpClient.get(Armories.Character.Equipment(Armories.Character(characterName = characterName)))
-            .body()
     }
 
 }

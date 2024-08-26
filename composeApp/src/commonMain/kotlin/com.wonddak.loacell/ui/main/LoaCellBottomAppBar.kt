@@ -1,5 +1,6 @@
 package com.wonddak.loacell.ui.main
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -32,17 +33,17 @@ fun LoaCellBottomAppBar(
 ) {
     BottomAppBar(
         floatingActionButton = {
-            onAction?.let {
-                SmallFloatingActionButton(
-                    content = {
-                        Icon(iconImage ?: Icons.Filled.Add, null)
-                    },
-                    onClick = {
-
-                    },
-                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
-                )
+            onAction?.let { onClick ->
+                AnimatedVisibility(true) {
+                    SmallFloatingActionButton(
+                        content = {
+                            Icon(iconImage ?: Icons.Filled.Add, null)
+                        },
+                        onClick = onClick,
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
+                    )
+                }
             }
         },
         actions = {

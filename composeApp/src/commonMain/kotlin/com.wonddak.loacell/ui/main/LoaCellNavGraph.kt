@@ -1,6 +1,7 @@
 package com.wonddak.loacell.ui.main
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ fun LoaCellNavGraph(
         startDestination = Const.NAV_SPLASH,
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
     ) {
         composable(
             route = Const.NAV_SPLASH,
@@ -79,11 +81,6 @@ fun LoaCellNavGraph(
                         "LoaCell",
                         null
                     )
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-
-                    }
                 }
             ) { innerPadding ->
                 MainView(
@@ -96,26 +93,11 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_ROOM,
         ) { _ ->
-            Scaffold(
-                topBar = {
-                    LoaCellTopAppBar(
-                        raidViewModel.roomInfo?.title ?: "",
-                    ) {
-                        navController.popBackStack()
-                    }
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-                        RaidRoomActions(raidViewModel)
-                    }
-                }
-            ) { innerPadding ->
-                RaidRoomView(
-                    Modifier.fillMaxSize().padding(innerPadding),
-                    navController,
-                    authViewModel, storeViewModel, raidViewModel
-                )
-            }
+            RaidRoomView(
+                Modifier.fillMaxSize(),
+                navController,
+                authViewModel, storeViewModel, raidViewModel
+            )
         }
         composable(
             route = Const.NAV_RAID_DETAIL,

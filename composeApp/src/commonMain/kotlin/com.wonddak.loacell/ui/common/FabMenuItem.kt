@@ -44,7 +44,7 @@ fun FabMenuItem(
 
     AnimatedVisibility(expand, enter = enterTransition, exit = exitTransition) {
         SmallFloatingActionButton(
-            onClick = onClick
+            onClick = onClick,
         ) {
             Icon(
                 painter = painterResource(drawableResource),

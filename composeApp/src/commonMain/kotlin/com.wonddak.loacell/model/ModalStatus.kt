@@ -1,4 +1,5 @@
 package com.wonddak.loacell.model
+
 interface Modal {
     val title: String
 }
@@ -25,7 +26,6 @@ enum class Sheet(override val title: String) : Modal {
     RAID_FILTER("필터 설정"),
     RAID_USER_ADD("캐릭터 정보 추가"),
     SHARE_SHEET("공유하기"),
-    TEST_SHEET("여백 테스트")
 }
 
 object ModalConst {
