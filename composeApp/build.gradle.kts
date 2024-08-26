@@ -130,11 +130,11 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
 
 
-            implementation("androidx.credentials:credentials:1.3.0-alpha04")
+            implementation("androidx.credentials:credentials:1.3.0-rc01")
             // optional - needed for credentials support from play services, for devices running
             // Android 13 and below.
-            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
-            implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-rc01")
+            implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
         }
 
         iosMain.dependencies {
