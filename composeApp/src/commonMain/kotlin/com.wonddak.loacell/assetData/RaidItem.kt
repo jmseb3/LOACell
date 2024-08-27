@@ -10,6 +10,14 @@ object RaidItem {
     private const val TAG = "RaidItem"
     private var data: List<RaidTypeItem> = emptyList()
 
+    fun getMapData(): Map<String, List<RaidData>> {
+        val result = mutableMapOf<String, List<RaidData>>()
+        for (datum in data) {
+            result[datum.type] = datum.raidData
+        }
+        return result
+    }
+
     private val imageCacheMap: MutableMap<String, String> = mutableMapOf()
     fun addData(data: List<RaidTypeItem>) {
         data.forEach {

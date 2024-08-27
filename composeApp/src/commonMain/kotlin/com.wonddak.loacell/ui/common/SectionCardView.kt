@@ -1,25 +1,29 @@
-package com.wonddak.loacell.android.ui.common
+package com.wonddak.loacell.ui.common
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SectionCardView(
     title: String? = null,
-    @DrawableRes icon: Int = 0,
+    icon: DrawableResource? = null,
     iconAction: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -41,18 +45,17 @@ fun SectionCardView(
                         fontSize = 20.sp
                     )
                 }
-                if (icon != 0) {
-                    MyIconButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        id = icon,
-                        size = 18.dp
+                icon?.let {
+                    IconButton(
+                        onClick = iconAction,
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
-                        iconAction()
+                        Icon(painter = painterResource(it), null, modifier = Modifier.size(18.dp))
                     }
                 }
             }
-            if (title != null || icon != 0) {
-                Divider()
+            if (title != null || icon != null) {
+                HorizontalDivider()
             }
             content()
         }

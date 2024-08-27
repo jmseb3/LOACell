@@ -22,7 +22,6 @@ import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.ui.main.LoaCellBottomAppBar
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.main.RaidRoomActions
-import com.wonddak.loacell.ui.modal.sheet.AddRaidSheet
 import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -39,12 +38,11 @@ fun RaidRoomView(
     storeViewModel: StoreViewModel,
     raidViewModel: RaidViewModel,
 ) {
-    val showRaidAddSheet = rememberModalStatus()
     val showUserAddSheet = rememberModalStatus()
     val action: (() -> Unit)? = when (raidViewModel.tabState) {
         RoomState.Raid -> {
             {
-                showRaidAddSheet.show()
+                navController.navigate(Const.NAV_RAID_ADD)
             }
         }
 
@@ -103,11 +101,6 @@ fun RaidRoomView(
         Modifier,
         roomInfo!!
     )
-    AddRaidSheet(
-        showRaidAddSheet,
-    ) {
-
-    }
 }
 
 @Composable

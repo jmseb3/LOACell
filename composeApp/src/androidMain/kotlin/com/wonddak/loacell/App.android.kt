@@ -64,3 +64,8 @@ object AppContext {
         return value?.get() ?: throw RuntimeException("Context Error")
     }
 }
+
+actual fun getCacheDir(): String {
+    val context = AppContext.get()
+    return context.cacheDir.resolve("image_cache").path
+}

@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
+import com.wonddak.loacell.ui.raidRoom.RaidAddView
 import com.wonddak.loacell.ui.raidRoom.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.ui.raidRoom.UserDetailView
@@ -86,6 +87,13 @@ fun LoaCellNavGraph(
                 navController,
                 authViewModel, storeViewModel, raidViewModel
             )
+        }
+        composable(
+            route = Const.NAV_RAID_ADD
+        ) {
+            RaidAddView {
+                navController.popBackStack()
+            }
         }
         composable(
             route = Const.NAV_RAID_DETAIL,
