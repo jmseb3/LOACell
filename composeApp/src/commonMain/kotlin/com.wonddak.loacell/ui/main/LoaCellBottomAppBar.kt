@@ -54,44 +54,43 @@ fun LoaCellBottomAppBar(
 
 @Composable
 fun RaidRoomActions(
-    raidViewModel: RaidViewModel,
+    role: RoomInfo.RoomRole,
+    changePage: (Int) -> Unit
 ) {
     Row() {
-        with(raidViewModel) {
+        IconButton(
+            {
+                changePage(RoomState.Raid.index)
+            }
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.room),
+                null,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        IconButton(
+            {
+                changePage(RoomState.User.index)
+            }
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.person),
+                null,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        if (role == RoomInfo.RoomRole.OWNER || role == RoomInfo.RoomRole.MANAGER) {
             IconButton(
                 {
-                    raidViewModel.changeTabState(RoomState.Raid)
+                    changePage(RoomState.Setting.index)
                 }
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.room),
+                    painter = painterResource(Res.drawable.room_setting),
                     null,
                     modifier = Modifier.size(30.dp)
                 )
-            }
-            IconButton(
-                {
-                    raidViewModel.changeTabState(RoomState.User)
-                }
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.person),
-                    null,
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-            if (role == RoomInfo.RoomRole.OWNER || role == RoomInfo.RoomRole.MANAGER) {
-                IconButton(
-                    {
-                        raidViewModel.changeTabState(RoomState.Setting)
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.room_setting),
-                        null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
             }
         }
     }

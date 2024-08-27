@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -31,6 +32,7 @@ import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
+import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.room_exit
 import org.jetbrains.compose.resources.painterResource
@@ -44,15 +46,18 @@ fun RaidRoomView(
     storeViewModel: StoreViewModel,
     raidViewModel: RaidViewModel,
 ) {
+    val pagerState = rememberPagerState(pageCount = {
+        if (raidViewModel.role == RoomInfo.RoomRole.OWNER) 3 else 2
+    })
     val showUserAddSheet = rememberModalStatus()
-    val action: (() -> Unit)? = when (raidViewModel.tabState) {
-        RoomState.Raid -> {
+    val action: (() -> Unit)? = when (pagerState.currentPage) {
+        RoomState.Raid.index -> {
             {
                 navController.navigate(Const.NAV_RAID_ADD)
             }
         }
 
-        RoomState.User -> {
+        RoomState.User.index -> {
             {
                 showUserAddSheet.show()
             }
@@ -63,12 +68,8 @@ fun RaidRoomView(
         }
     }
     val roomInfo = raidViewModel.roomInfo
-    val pagerState = rememberPagerState(pageCount = {
-        if (raidViewModel.role == RoomInfo.RoomRole.OWNER) 3 else 2
-    })
-    LaunchedEffect(raidViewModel.tabState) {
-        pagerState.scrollToPage(raidViewModel.tabState.index)
-    }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
@@ -81,7 +82,11 @@ fun RaidRoomView(
             LoaCellBottomAppBar(
                 onAction = action
             ) {
-                RaidRoomActions(raidViewModel)
+                RaidRoomActions(raidViewModel.role) {
+                    scope.launch {
+                        pagerState.scrollToPage(it)
+                    }
+                }
             }
         }
     ) { innerPadding ->

@@ -24,13 +24,6 @@ class RaidViewModel() : ViewModel() {
     var userList: List<UserInfo> by mutableStateOf(emptyList())
         private set
 
-    var tabState: RoomState by mutableStateOf(RoomState.Raid)
-        private set
-
-    fun changeTabState(state: RoomState) {
-        this.tabState = state
-    }
-
     var roomInfo: RoomInfo? by mutableStateOf(null)
 
     var role: RoomInfo.RoomRole by mutableStateOf(RoomInfo.RoomRole.NONE)
@@ -61,7 +54,6 @@ class RaidViewModel() : ViewModel() {
 
         this.raidList = emptyList()
         this.userList = emptyList()
-        this.tabState = RoomState.Raid
         this.role = RoomInfo.RoomRole.NONE
 
     }

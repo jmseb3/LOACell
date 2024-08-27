@@ -1,10 +1,12 @@
 package com.wonddak.loacell.ui.raidRoom
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +32,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.store.CommonRaidHelper
+import io.github.aakira.napier.Napier
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.task_finish_done
 import loacell.composeapp.generated.resources.task_finish_not
@@ -41,13 +44,17 @@ fun RaidListView(
     raidList: List<RaidInfo>,
     navigation: (RaidInfo) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(10.dp)
-    ) {
-        items(raidList) { raidInfo ->
-            RaidItemRow(Modifier.padding(vertical = 5.dp, horizontal = 5.dp), raidInfo) {
-                navigation(raidInfo)
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            items(raidList) { raidInfo ->
+                RaidItemRow(Modifier.padding(vertical = 5.dp, horizontal = 5.dp), raidInfo) {
+                    navigation(raidInfo)
+                }
             }
         }
     }
@@ -70,7 +77,7 @@ fun RaidItemRow(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth() 
+                .fillMaxWidth()
                 .height(size)
         ) {
             Row(
@@ -89,6 +96,13 @@ fun RaidItemRow(
                                 .align(Alignment.Center)
                                 .size(size / 2)
                         )
+                    },
+                    error = { it ->
+                        Napier.d(
+                            tag = "JWH",
+                            throwable = it.result.throwable
+                        ) { it.result.toString() }
+                        Text("Error $it")
                     },
                     contentDescription = null,
                     modifier = Modifier

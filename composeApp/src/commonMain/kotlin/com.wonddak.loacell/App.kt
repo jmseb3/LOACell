@@ -28,12 +28,6 @@ fun App() {
                     .maxSizePercent(context, percent = 0.25)
                     .build()
             }
-            .diskCache {
-                DiskCache.Builder()
-                    .directory(getCacheDir().toPath())
-                    .maxSizePercent(0.02)
-                    .build()
-            }
             .build()
     }
     KoinContext {
@@ -43,6 +37,4 @@ fun App() {
         }
     }
 }
-
-expect fun getCacheDir(): String
 
