@@ -38,12 +38,12 @@ data class RaidInfo(
     var hour: Int,
     var minute: Int,
 ) {
-    constructor() : this(
+    constructor(roomId: String, type: String, difficulty: String) : this(
         "",
+        roomId,
         "",
-        "",
-        "",
-        "",
+        type,
+        difficulty,
         1,
         1,
         false,
@@ -54,6 +54,22 @@ data class RaidInfo(
         Day.NONE,
         0,
         0
+    )
+
+    fun toMap() = mapOf(
+        RaidInfoField.TITLE to title,
+        RaidInfoField.TYPE to type,
+        RaidInfoField.DIFFICULTY to difficulty,
+        RaidInfoField.START_GATE_NUMBER to startGateNumber,
+        RaidInfoField.END_GATE_NUMBER to endGateNumber,
+        RaidInfoField.FINISH to isFinish,
+        RaidInfoField.PARTY_1 to party1characterList,
+        RaidInfoField.PARTY_2 to party2characterList,
+        RaidInfoField.PARTY_3 to party3characterList,
+        RaidInfoField.PARTY_4 to party4characterList,
+        RaidInfoField.DAY to day.index,
+        RaidInfoField.HOUR to hour,
+        RaidInfoField.MINUTE to minute
     )
 
     private val raidItem: RaidData?
@@ -71,7 +87,7 @@ data class RaidInfo(
     }
 
     fun getMinLevel(): Int {
-        return level?.info?.get(endGateNumber) ?: 0
+        return level?.info?.get(endGateNumber - 1) ?: 0
     }
 
     fun makeGateText(): String {

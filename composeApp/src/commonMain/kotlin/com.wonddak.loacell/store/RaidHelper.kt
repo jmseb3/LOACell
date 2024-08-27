@@ -160,20 +160,19 @@ import com.wonddak.loacell.model.toRaidInfo
 //}
 
 object CommonRaidHelper {
-//    //레이드 정보를 추가한다.
-//    fun add(
-//        roomId: String,
-//        fbRaidInfo: FBRaidInfo,
-//        failAction: (e: Error) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        RefHelper.getRaidsRef(roomId).document()
-//            .set(
-//                fbRaidInfo.toMap(),
-//                successAction = successAction,
-//                failAction = failAction
-//            )
-//    }
+    //레이드 정보를 추가한다.
+    fun add(
+        raidInfo: RaidInfo,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit,
+    ) {
+        RefHelper.getRaidsRef(raidInfo.roomId).document()
+            .set(
+                raidInfo.toMap(),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
 //
 //    fun update(
 //        roomId: String,
