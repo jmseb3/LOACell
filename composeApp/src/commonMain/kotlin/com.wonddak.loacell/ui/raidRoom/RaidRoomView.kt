@@ -1,16 +1,21 @@
 package com.wonddak.loacell.ui.raidRoom
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -30,6 +35,7 @@ import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.room_exit
 import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RaidRoomView(
     modifier: Modifier,
@@ -57,7 +63,12 @@ fun RaidRoomView(
         }
     }
     val roomInfo = raidViewModel.roomInfo
-
+    val pagerState = rememberPagerState(pageCount = {
+        if (raidViewModel.role == RoomInfo.RoomRole.OWNER) 3 else 2
+    })
+    LaunchedEffect(raidViewModel.tabState) {
+        pagerState.animateScrollToPage(raidViewModel.tabState.index)
+    }
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
@@ -74,27 +85,42 @@ fun RaidRoomView(
             }
         }
     ) { innerPadding ->
-        Box(Modifier.fillMaxSize()) {
-            Column(
-                modifier = modifier.fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                with(raidViewModel) {
+        Column(
+            modifier = modifier.fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            with(raidViewModel) {
+                AnimatedVisibility(pagerState.currentPage == 0 || pagerState.currentPage == 1) {
                     roomInfo?.let {
                         TitleView(it, role)
                     }
-                    if (tabState == RoomState.Raid) {
-                        RaidListView(raidList = raidList) {
-                            navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
-                        }
-                    } else if (tabState == RoomState.User) {
-                        UserListView(userList = userList) {
-                            navController.navigate(Const.NAV_USER_DETAIL_MAIN + it.name)
+                }
+                HorizontalPager(pagerState) { page ->
+                    Column(
+                        modifier = modifier.fillMaxSize()
+                    ) {
+                        when (page) {
+                            RoomState.Raid.index -> {
+                                RaidListView(raidList = raidList) {
+                                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
+                                }
+                            }
+
+                            RoomState.User.index -> {
+                                UserListView(userList = userList) {
+                                    navController.navigate(Const.NAV_USER_DETAIL_MAIN + it.name)
+                                }
+                            }
+
+                            else -> {
+                                Text("$page")
+                            }
                         }
                     }
                 }
             }
         }
+
     }
     AddUserSheet(
         showUserAddSheet,
