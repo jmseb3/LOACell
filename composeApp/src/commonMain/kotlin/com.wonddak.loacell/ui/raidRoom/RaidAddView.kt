@@ -135,6 +135,7 @@ fun RaidAddView(
                 ) {
                     DropDownTextField(
                         modifier = textFieldModifier,
+                        label = "레이드 구분",
                         value = selectedType,
                         expand = expandType,
                         updateExpand = {
@@ -166,6 +167,7 @@ fun RaidAddView(
                     data[selectedType]?.let { raidData: List<RaidData> ->
                         DropDownTextField(
                             modifier = textFieldModifier,
+                            label = "레이드 선택",
                             value = selectedRaid?.name?.let { Translate.getTranslate(it) }
                                 ?: "error",
                             expand = expandRaid,
@@ -355,6 +357,7 @@ fun RaidAddView(
 @Composable
 private fun DropDownTextField(
     modifier: Modifier,
+    label: String,
     value: String,
     expand: Boolean,
     updateExpand: (Boolean) -> Unit,
@@ -367,26 +370,31 @@ private fun DropDownTextField(
             updateExpand(!expand)
         },
     ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor()
-                .padding(horizontal = 10.dp),
-            value = value,
-            onValueChange = {},
-            readOnly = true,
-            label = {
-                Text(text = "레이드 선택")
-            },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expand) })
-
-        ExposedDropdownMenu(
-            expanded = expand,
-            onDismissRequest = { updateExpand(false) },
-            modifier = Modifier.padding(horizontal = 20.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            dropDownContent()
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
+                    .padding(horizontal = 10.dp),
+                value = value,
+                onValueChange = {},
+                readOnly = true,
+                label = {
+                    Text(text = label)
+                },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expand) })
+
+            ExposedDropdownMenu(
+                expanded = expand,
+                onDismissRequest = { updateExpand(false) },
+                modifier = Modifier.padding(horizontal = 20.dp)
+            ) {
+                dropDownContent()
+            }
         }
+
     }
 }
 

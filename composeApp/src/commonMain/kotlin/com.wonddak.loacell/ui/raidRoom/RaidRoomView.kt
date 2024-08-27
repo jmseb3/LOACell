@@ -67,7 +67,7 @@ fun RaidRoomView(
         if (raidViewModel.role == RoomInfo.RoomRole.OWNER) 3 else 2
     })
     LaunchedEffect(raidViewModel.tabState) {
-        pagerState.animateScrollToPage(raidViewModel.tabState.index)
+        pagerState.scrollToPage(raidViewModel.tabState.index)
     }
     Scaffold(
         topBar = {
@@ -95,26 +95,25 @@ fun RaidRoomView(
                         TitleView(it, role)
                     }
                 }
-                HorizontalPager(pagerState) { page ->
-                    Column(
-                        modifier = modifier.fillMaxSize()
-                    ) {
-                        when (page) {
-                            RoomState.Raid.index -> {
-                                RaidListView(raidList = raidList) {
-                                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
-                                }
+                HorizontalPager(
+                    pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    when (page) {
+                        RoomState.Raid.index -> {
+                            RaidListView(raidList = raidList) {
+                                navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
                             }
+                        }
 
-                            RoomState.User.index -> {
-                                UserListView(userList = userList) {
-                                    navController.navigate(Const.NAV_USER_DETAIL_MAIN + it.name)
-                                }
+                        RoomState.User.index -> {
+                            UserListView(userList = userList) {
+                                navController.navigate(Const.NAV_USER_DETAIL_MAIN + it.name)
                             }
+                        }
 
-                            else -> {
-                                Text("$page")
-                            }
+                        else -> {
+                            Text("$page")
                         }
                     }
                 }
