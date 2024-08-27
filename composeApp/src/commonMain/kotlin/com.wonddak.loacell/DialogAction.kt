@@ -1,11 +1,10 @@
 package com.wonddak.loacell
 
+//import com.wonddak.loacell.store.FBRaidInfo
+//import com.wonddak.loacell.store.FBRoomInfo
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.Modal
-//import com.wonddak.loacell.store.FBRaidInfo
-//import com.wonddak.loacell.store.FBRoomInfo
-import com.wonddak.loacell.network.lostark.model.CharacterInfo
 
 interface DialogAction {
     fun showDialog(modal: Modal)
@@ -39,15 +38,6 @@ interface DialogAction {
 
     // user
     fun dialogUserAdd(character : Character)
-    fun dialogUserDelete()
-
-    //search 관련
-    fun dialogSearchCharacter(
-        name:String,
-        updateProgress:(Boolean) -> Unit,
-        updateList:(List<CharacterInfo>) -> Unit,
-        updateError :(String) -> Unit
-    )
 
     //character
     fun dialogCharacterEdit(name:String)

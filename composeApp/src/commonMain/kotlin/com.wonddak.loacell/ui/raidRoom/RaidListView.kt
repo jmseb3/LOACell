@@ -61,7 +61,6 @@ fun RaidItemRow(
 ) {
     val size = 100.dp
     val rShape = RoundedCornerShape(10.dp)
-    Text(raidInfo.toString())
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -85,7 +84,11 @@ fun RaidItemRow(
                         .crossfade(true)
                         .build(),
                     loading = {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            modifier
+                                .align(Alignment.Center)
+                                .size(size / 2)
+                        )
                     },
                     contentDescription = null,
                     modifier = Modifier

@@ -2,6 +2,7 @@ package com.wonddak.loacell.di
 
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.network.firebase.FBApi
+import com.wonddak.loacell.network.lostark.LostArkApi
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.DataStoreProvider
 import com.wonddak.loacell.util.FileHelper
@@ -15,6 +16,7 @@ import org.koin.dsl.module
 
 val networkModule = module {
     singleOf(::FBApi)
+    singleOf(::LostArkApi)
 }
 
 val platformModule = module {

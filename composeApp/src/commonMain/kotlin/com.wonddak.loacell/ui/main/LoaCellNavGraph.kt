@@ -1,11 +1,7 @@
 package com.wonddak.loacell.ui.main
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -19,6 +15,8 @@ import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
+import com.wonddak.loacell.ui.raidRoom.RaidAddView
+import com.wonddak.loacell.ui.raidRoom.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.ui.raidRoom.UserDetailView
 import com.wonddak.loacell.viewModel.AuthViewModel
@@ -40,6 +38,7 @@ fun LoaCellNavGraph(
         startDestination = Const.NAV_SPLASH,
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
     ) {
         composable(
             route = Const.NAV_SPLASH,
@@ -75,84 +74,49 @@ fun LoaCellNavGraph(
         }
 
         composable(route = Const.NAV_MAIN) {
-            Scaffold(
-                topBar = {
-                    LoaCellTopAppBar(
-                        "LoaCell",
-                        null
-                    )
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-
-                    }
-                }
-            ) { innerPadding ->
-                MainView(
-                    Modifier.fillMaxSize().padding(innerPadding),
-                    navController,
-                    authViewModel, storeViewModel, raidViewModel
-                )
-            }
+            MainView(
+                navController,
+                authViewModel, storeViewModel, raidViewModel
+            )
         }
         composable(
             route = Const.NAV_ROOM,
         ) { _ ->
-            Scaffold(
-                topBar = {
-                    LoaCellTopAppBar(
-                        raidViewModel.roomInfo?.title ?: "",
-                    ) {
-                        navController.popBackStack()
-                    }
-                },
-                bottomBar = {
-                    LoaCellBottomAppBar {
-                        RaidRoomActions(raidViewModel)
-                    }
-                }
-            ) { innerPadding ->
-                RaidRoomView(
-                    Modifier.fillMaxSize().padding(innerPadding),
-                    navController,
-                    authViewModel, storeViewModel, raidViewModel
-                )
+            RaidRoomView(
+                Modifier.fillMaxSize(),
+                navController,
+                authViewModel, storeViewModel, raidViewModel
+            )
+        }
+        composable(
+            route = Const.NAV_RAID_ADD
+        ) {
+            val roomInfo = raidViewModel.roomInfo
+            RaidAddView(roomInfo!!.uniqueId) {
+                navController.popBackStack()
             }
         }
         composable(
             route = Const.NAV_RAID_DETAIL,
-            arguments = listOf(navArgument(Const.NAV_RAID_DETAIL_ARG) { type = NavType.StringType })
+            arguments = listOf(
+                navArgument(Const.NAV_RAID_DETAIL_ARG) {
+                    type = NavType.StringType
+                }
+            )
         ) { backStackEntry ->
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
             val raidInfo = raidViewModel.raidList.find { it.raidId == raidId }
-            if (raidInfo == null) {
-                TextButton({
-                    navController.popBackStack()
-                }) {
-                    Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
-                }
-            } else {
-                Scaffold(
-                    topBar = {
-                        LoaCellTopAppBar(
-                            raidInfo.title,
-                        ) {
-                            navController.popBackStack()
-                        }
-                    }
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding)
-                    ) {
-                        Text(Const.NAV_RAID_DETAIL)
-                        Text(raidInfo.toString())
-                    }
-                }
+            RaidDetailView(raidInfo) {
+                navController.popBackStack()
             }
         }
         composable(
             route = Const.NAV_USER_DETAIL,
-            arguments = listOf(navArgument(Const.NAV_USER_DETAIL_ARG) { type = NavType.StringType })
+            arguments = listOf(
+                navArgument(Const.NAV_USER_DETAIL_ARG) {
+                    type = NavType.StringType
+                }
+            )
         ) { backStackEntry ->
             val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
             val userInfo = raidViewModel.userList.find { it.name == userName }

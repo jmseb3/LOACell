@@ -25,4 +25,6 @@ data class Level(
 ) {
     val maxGate : Int
         get() = info.size
+
+    val enterPerson = partySize * 4
 }

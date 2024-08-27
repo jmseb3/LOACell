@@ -4,4 +4,7 @@
     <cache-path
         name="assets"
         path="/assets" />
+    <cache-path
+        name="raid_image"
+        path="/image_cache" />
 </paths>

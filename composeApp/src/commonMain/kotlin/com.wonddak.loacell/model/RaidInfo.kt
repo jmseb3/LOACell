@@ -23,22 +23,56 @@ object RaidInfoField {
 }
 
 data class RaidInfo(
-    val raidId: String,
-    val roomId: String,
-    val title: String,
-    val type: String,
-    val difficulty: String,
-    val startGateNumber: Int,
-    val endGateNumber: Int,
-    val isFinish: Boolean,
-    val party1characterList: List<String>,
-    val party2characterList: List<String>,
-    val party3characterList: List<String>,
-    val party4characterList: List<String>,
-    val day: Day,
-    val hour: Int,
-    val minute: Int,
+    var raidId: String,
+    var roomId: String,
+    var title: String,
+    var type: String,
+    var difficulty: String,
+    var startGateNumber: Int,
+    var endGateNumber: Int,
+    var isFinish: Boolean,
+    var party1characterList: List<String>,
+    var party2characterList: List<String>,
+    var party3characterList: List<String>,
+    var party4characterList: List<String>,
+    var day: Day,
+    var hour: Int,
+    var minute: Int,
 ) {
+    constructor(roomId: String, type: String, difficulty: String) : this(
+        "",
+        roomId,
+        "",
+        type,
+        difficulty,
+        1,
+        1,
+        false,
+        List(4) { "" },
+        List(4) { "" },
+        List(4) { "" },
+        List(4) { "" },
+        Day.NONE,
+        0,
+        0
+    )
+
+    fun toMap() = mapOf(
+        RaidInfoField.TITLE to title,
+        RaidInfoField.TYPE to type,
+        RaidInfoField.DIFFICULTY to difficulty,
+        RaidInfoField.START_GATE_NUMBER to startGateNumber,
+        RaidInfoField.END_GATE_NUMBER to endGateNumber,
+        RaidInfoField.FINISH to isFinish,
+        RaidInfoField.PARTY_1 to party1characterList,
+        RaidInfoField.PARTY_2 to party2characterList,
+        RaidInfoField.PARTY_3 to party3characterList,
+        RaidInfoField.PARTY_4 to party4characterList,
+        RaidInfoField.DAY to day.index,
+        RaidInfoField.HOUR to hour,
+        RaidInfoField.MINUTE to minute
+    )
+
     private val raidItem: RaidData?
         get() = RaidItem.findByName(type)
 
@@ -54,7 +88,7 @@ data class RaidInfo(
     }
 
     fun getMinLevel(): Int {
-        return level?.info?.get(endGateNumber) ?: 0
+        return level?.info?.get(endGateNumber - 1) ?: 0
     }
 
     fun makeGateText(): String {

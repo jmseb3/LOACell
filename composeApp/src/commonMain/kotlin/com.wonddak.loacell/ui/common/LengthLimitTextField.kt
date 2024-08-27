@@ -1,9 +1,15 @@
-package com.wonddak.loacell.android.ui.common
+package com.wonddak.loacell.ui.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,20 +25,15 @@ fun LengthLimitTextField(
     placeHolder: String,
     maxLine: Int,
     maxLength: Int,
-    enabled :Boolean = true,
+    enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     keyboardActions: KeyboardActions = KeyboardActions(),
-    textChange: (text: String) -> Unit
+    textChange: (text: String) -> Unit,
 ) {
 
     Column(
-        modifier = modifier,
+        modifier = Modifier.imePadding().then(modifier),
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "${text.length}/$maxLength",
-            textAlign = TextAlign.End
-        )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = text,
@@ -47,10 +48,25 @@ fun LengthLimitTextField(
             placeholder = {
                 Text(text = placeHolder)
             },
+            trailingIcon = {
+                if (text.isNotEmpty()) {
+                    IconButton(onClick = {
+                        textChange("")
+                    }) {
+                        Icon(Icons.Filled.Clear, null)
+                    }
+                }
+            },
             maxLines = maxLine,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             enabled = enabled
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "${text.length}/$maxLength",
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.labelSmall
         )
     }
 }
@@ -63,10 +79,10 @@ fun LengthLimitTextField(
     placeHolder: String,
     maxLine: Int,
     maxLength: Int,
-    enabled :Boolean = true,
+    enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     keyboardActions: KeyboardActions = KeyboardActions(),
-    textChange: (text: TextFieldValue) -> Unit
+    textChange: (text: TextFieldValue) -> Unit,
 ) {
 
     Column(

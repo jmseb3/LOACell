@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.util.FileUtil
 import io.github.aakira.napier.DebugAntilog
@@ -22,6 +23,7 @@ import java.lang.ref.WeakReference
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         AppContext.set(this@MainActivity)
         setContent { App() }
@@ -61,4 +63,9 @@ object AppContext {
     internal fun get(): Context {
         return value?.get() ?: throw RuntimeException("Context Error")
     }
+}
+
+actual fun getCacheDir(): String {
+    val context = AppContext.get()
+    return context.cacheDir.resolve("image_cache").path
 }

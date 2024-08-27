@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun LoaCellTopAppBar(
     title: String,
-    onBack: (() -> Unit)?,
+    onBack: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {

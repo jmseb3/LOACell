@@ -17,7 +17,7 @@ data class UserInfo(
     val name: String,
     val roomId: String,
     val representativeCharacter: String,
-    val timeStamp: Int,
+    val timeStamp: Long,
     val characterList: List<Character>,
 ) {
     fun checkTimeOver(): Boolean {
@@ -43,7 +43,7 @@ fun CommonDocumentSnapshot.toUserInfo(roomId: String): UserInfo {
             this@toUserInfo.id,
             roomId,
             this[UserInfoField.REPRESENTATIVE_CHARACTER] as String,
-            (this[UserInfoField.TIME_STAMP] as Long).toInt(),
+            this[UserInfoField.TIME_STAMP] as Long,
             (this[UserInfoField.CHARACTER_LIST] as List<Map<String, Any>>).map {
                 Character(
                     it[UserInfoField.NAME] as String,

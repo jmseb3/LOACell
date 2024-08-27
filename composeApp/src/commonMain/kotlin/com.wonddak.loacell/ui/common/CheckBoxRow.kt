@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.common
+package com.wonddak.loacell.ui.common
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.ClickableText
@@ -12,16 +12,16 @@ import androidx.compose.ui.text.AnnotatedString
 fun CheckBoxRow(
     modifier: Modifier = Modifier,
     text: String,
-    value: Boolean,
+    checked: Boolean,
     enabled: Boolean,
-    onClick: (value: Boolean) -> Unit
+    onClick: (value: Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = value,
+            checked = checked,
             enabled = enabled,
             onCheckedChange = onClick
         )
@@ -29,8 +29,9 @@ fun CheckBoxRow(
             text = AnnotatedString(text),
             onClick = {
                 if (enabled) {
-                    onClick(!value)
+                    onClick(!checked)
                 }
-            })
+            }
+        )
     }
 }

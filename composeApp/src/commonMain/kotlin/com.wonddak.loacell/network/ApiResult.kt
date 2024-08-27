@@ -12,17 +12,28 @@ sealed class LostArkResult<out T> {
     data class FailOnlyMsg(val message: String) : LostArkResult<Nothing>()
 }
 
-inline fun <reified T : Any> LostArkResult<T>.onSuccess(action: (data: T) -> Unit) {
+inline fun <reified T : Any> LostArkResult<T>.onSuccess(action: (data: T) -> Unit): LostArkResult<T> {
     if (this is LostArkResult.Success) action(data)
+    return this
 }
 
-inline fun <reified T : Any> LostArkResult<T>.onFail(action: (code: Int, message: String) -> Unit) {
+inline fun <reified T : Any> LostArkResult<T>.onFail(action: (code: Int, message: String) -> Unit): LostArkResult<T> {
     if (this is LostArkResult.Fail) action(code, message)
+    return this
 }
 
-inline fun <reified T : Any> LostArkResult<T>.onFailOnlyMsg(action: (message: String) -> Unit) {
+inline fun <reified T : Any> LostArkResult<T>.onFailOnlyMsg(action: (message: String) -> Unit): LostArkResult<T> {
     if (this is LostArkResult.FailOnlyMsg) action(message)
+    return this
 }
+
+inline fun <reified T : Any> LostArkResult<T>.onFailMsg(action: (message: String) -> Unit): LostArkResult<T> {
+    if (this is LostArkResult.FailOnlyMsg) action(message) else if (this is LostArkResult.Fail) action(
+        "$message($code)"
+    )
+    return this
+}
+
 
 sealed class ApiResult<out T> {
     //로딩시 (최초값으로 사용하기)
