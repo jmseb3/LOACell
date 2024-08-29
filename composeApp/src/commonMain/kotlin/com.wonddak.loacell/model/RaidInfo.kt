@@ -4,7 +4,6 @@ import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
-import io.github.aakira.napier.Napier
 
 object RaidInfoField {
     internal const val TITLE = "title"
@@ -102,6 +101,84 @@ data class RaidInfo(
     }
 
     fun getImage() = RaidItem.getImage(type.lowercase())
+
+    fun getDayText(): String =
+        "${this.day.text} ${TimeHelper.makeTimeText(this.hour, this.minute)}"
+
+    /**
+     * 모든 파티 리스트를 가져온다.
+     */
+    fun getAllPartyList(): List<String> {
+        val maxParty = this.getMaxParty()
+
+        return when (maxParty) {
+            1 -> {
+                this.party1characterList
+            }
+
+            2 -> {
+                arrayListOf(
+                    this.party1characterList,
+                    this.party2characterList,
+                ).flatten()
+            }
+
+            4 -> {
+                arrayListOf(
+                    this.party1characterList,
+                    this.party2characterList,
+                    this.party3characterList,
+                    this.party4characterList
+                ).flatten()
+            }
+
+            else -> {
+                emptyList()
+            }
+        }
+    }
+
+    /**
+     * partyIndex 번호로 partyList를 가져온다.
+     */
+    fun getPartyByIndex(index: Int): List<String> {
+        return when (index) {
+            0 -> {
+                this.party1characterList
+            }
+
+            1 -> {
+                this.party2characterList
+            }
+
+            2 -> {
+                this.party3characterList
+            }
+
+            3 -> {
+                this.party4characterList
+            }
+
+            else -> {
+                throw IllegalArgumentException(
+                    """
+                    잘못된 index 0~3
+                """.trimIndent()
+                )
+            }
+        }
+    }
+
+    /**
+     * Party에 들어간 이름목록 집합을 가져온다.
+     */
+    fun getPartNameList(): Set<String> {
+        return getAllPartyList()
+            .toMutableSet()
+            .also {
+                it.remove("")
+            }.toSet()
+    }
 }
 
 fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
@@ -145,80 +222,3 @@ fun Long.convertToDay(): Day {
     return Day.NONE
 }
 
-fun RaidInfo.getDayText(): String =
-    "${this.day.text} ${TimeHelper.makeTimeText(this.hour, this.minute)}"
-
-/**
- * 모든 파티 리스트를 가져온다.
- */
-fun RaidInfo.getAllPartyList(): List<String> {
-    val maxParty = this.getMaxParty()
-
-    return when (maxParty) {
-        1 -> {
-            this.party1characterList
-        }
-
-        2 -> {
-            arrayListOf(
-                this.party1characterList,
-                this.party2characterList,
-            ).flatten()
-        }
-
-        4 -> {
-            arrayListOf(
-                this.party1characterList,
-                this.party2characterList,
-                this.party3characterList,
-                this.party4characterList
-            ).flatten()
-        }
-
-        else -> {
-            emptyList()
-        }
-    }
-}
-
-/**
- * partyIndex 번호로 partyList를 가져온다.
- */
-fun RaidInfo.getPartyByIndex(index: Int): List<String> {
-    return when (index) {
-        0 -> {
-            this.party1characterList
-        }
-
-        1 -> {
-            this.party2characterList
-        }
-
-        2 -> {
-            this.party3characterList
-        }
-
-        3 -> {
-            this.party4characterList
-        }
-
-        else -> {
-            throw IllegalArgumentException(
-                """
-                    잘못된 index 0~3
-                """.trimIndent()
-            )
-        }
-    }
-}
-
-/**
- * Party에 들어간 이름목록 집합을 가져온다.
- */
-fun RaidInfo.getPartNameList(): Set<String> {
-    return getAllPartyList()
-        .toMutableSet()
-        .also {
-            it.remove("")
-        }.toSet()
-}

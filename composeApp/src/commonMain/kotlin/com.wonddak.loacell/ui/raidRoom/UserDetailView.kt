@@ -1,36 +1,25 @@
 package com.wonddak.loacell.ui.raidRoom
 
 import CommonUserHelper
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.Character
@@ -39,24 +28,20 @@ import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.network.lostark.LostArkApi
 import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
-import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.rememberModalStatus
+import com.wonddak.loacell.ui.common.DropDownNameView
 import com.wonddak.loacell.ui.common.FABInfo
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
 import com.wonddak.loacell.ui.modal.dialog.EditCharacterDialog
-import com.wonddak.loacell.ui.rememberWebLauncher
-import com.wonddak.loacell.util.Config
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.change_person
 import loacell.composeapp.generated.resources.delete
 import loacell.composeapp.generated.resources.refresh
-import loacell.composeapp.generated.resources.search
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -179,50 +164,21 @@ fun UserDetailView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInfoCharacter(
     character: Character,
     bold: Boolean,
 ) {
-    val webLauncher = rememberWebLauncher()
-    val config: Config = koinInject()
-    val base by config.defaultUrl.collectAsState("")
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.dp)
     ) {
-        var openMenu by remember {
-            mutableStateOf(false)
-        }
-        Text(
-            modifier = Modifier.noRippleClickable { openMenu = true }.basicMarquee(),
-            text = character.name,
-            fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
-            maxLines = 1
+
+        DropDownNameView(
+            character.name,
+            bold
         )
-        DropdownMenu(expanded = openMenu, onDismissRequest = { openMenu = false }) {
-            DropdownMenuItem(
-                text = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.search),
-                            contentDescription = null,
-                            modifier = Modifier.size(15.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text("검색")
-                    }
-                },
-                onClick = {
-                    webLauncher.launchWeb(base + character.name)
-                    openMenu = false
-                }
-            )
-        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()

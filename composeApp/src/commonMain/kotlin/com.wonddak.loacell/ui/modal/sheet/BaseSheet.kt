@@ -63,7 +63,9 @@ fun BaseSheet(
             },
             sheetState = sheetState,
             dragHandle = null,
-            windowInsets = WindowInsets.ime.only(WindowInsetsSides.Bottom),
+            contentWindowInsets = {
+                WindowInsets.ime.only(WindowInsetsSides.Bottom)
+            },
         ) {
             Column(
                 Modifier.padding(

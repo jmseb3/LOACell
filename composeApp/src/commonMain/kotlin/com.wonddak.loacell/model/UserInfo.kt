@@ -24,6 +24,9 @@ data class UserInfo(
         val nowTime = Clock.System.now().toEpochMilliseconds()
         return (nowTime - this.timeStamp) / 1000 >= 3_600
     }
+
+    val characterNameList
+        get() = characterList.map { it.name }.toSet()
 }
 
 data class Character(
