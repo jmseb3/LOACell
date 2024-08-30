@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -54,6 +55,7 @@ fun RaidPartyView(
         Card(
             border = BorderStroke(1.dp, Color.Black),
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 5.dp, vertical = 3.dp)
         ) {
             LazyColumn(modifier = Modifier.padding(5.dp)) {
@@ -69,12 +71,12 @@ fun RaidPartyView(
                             if (item != null) {
                                 DropDownNameView(
                                     name = item.name,
+                                    textAlign = TextAlign.Start,
+                                    textHorizontalAlignment = Alignment.Start,
                                     otherContent = {
-                                        Row(
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
+                                        Row() {
                                             Text(text = item.className)
-                                            Spacer(modifier = Modifier)
+                                            Spacer(Modifier.width(10.dp))
                                             Text(text = item.getLevel().toString())
                                         }
                                     }
@@ -97,7 +99,11 @@ fun RaidPartyView(
                             } else {
                                 Res.drawable.delete
                             }
-                            Icon(painter = painterResource(iconRes), null)
+                            Icon(
+                                painter = painterResource(iconRes),
+                                null,
+                                modifier = Modifier.size(30.dp)
+                            )
                         }
                     }
                 }
@@ -107,9 +113,12 @@ fun RaidPartyView(
         Card(
             border = BorderStroke(1.dp, Color.Black),
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 5.dp, vertical = 3.dp)
         ) {
-            Column {
+            Column(
+                modifier = Modifier.padding(5.dp)
+            ) {
                 Text(text = "시너지")
                 Spacer(Modifier.height(10.dp))
                 Synergy.getSynergyList(list).forEach {
@@ -142,7 +151,7 @@ fun RaidPartySimpleView(
                     .padding(horizontal = 5.dp, vertical = 3.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(4.dp)
+                    modifier = Modifier.padding(5.dp)
                 ) {
                     Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
                     if (raidInfo.day != Day.NONE) {

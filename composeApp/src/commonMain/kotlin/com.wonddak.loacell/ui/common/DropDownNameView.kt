@@ -36,6 +36,8 @@ import org.koin.compose.koinInject
 fun DropDownNameView(
     name: String,
     bold: Boolean = false,
+    textHorizontalAlignment: Alignment.Horizontal? = null,
+    textAlign: TextAlign? = null,
     fontSize: TextUnit? = null,
     otherContent: (@Composable () -> Unit)? = null,
 ) {
@@ -49,13 +51,13 @@ fun DropDownNameView(
         Column(
             modifier = Modifier.noRippleClickable { openMenu = true },
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = textHorizontalAlignment ?: Alignment.CenterHorizontally
         ) {
             Text(
                 text = name,
                 fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
                 fontSize = fontSize ?: TextUnit.Unspecified,
-                textAlign = TextAlign.Center
+                textAlign = textAlign ?: TextAlign.Center
             )
             otherContent?.invoke()
         }
