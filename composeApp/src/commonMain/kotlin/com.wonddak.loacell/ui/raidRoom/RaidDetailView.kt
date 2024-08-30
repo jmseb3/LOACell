@@ -79,7 +79,13 @@ fun RaidDetailView(
 
                         1, 2, 3, 4 -> {
                             RaidPartyView(
-                                getCharacterList(page - 1, raidInfo, userList)
+                                getCharacterList(page - 1, raidInfo, userList),
+                                openAction = {
+
+                                },
+                                deleteAction = {
+
+                                }
                             )
                         }
                     }

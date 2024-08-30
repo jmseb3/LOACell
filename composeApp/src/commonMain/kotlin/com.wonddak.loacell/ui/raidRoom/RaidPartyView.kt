@@ -45,8 +45,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun RaidPartyView(
     list: List<Character?>,
-    openAction: (index: Int) -> Unit = {},
-    deleteAction: (index: Int) -> Unit = {},
+    openAction: (index: Int) -> Unit,
+    deleteAction: (index: Int) -> Unit,
 ) {
     Column(
         modifier = Modifier

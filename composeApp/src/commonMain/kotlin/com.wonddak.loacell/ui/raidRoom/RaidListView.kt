@@ -32,7 +32,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.store.CommonRaidHelper
-import io.github.aakira.napier.Napier
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.task_finish_done
 import loacell.composeapp.generated.resources.task_finish_not
@@ -98,11 +97,7 @@ fun RaidItemRow(
                         )
                     },
                     error = { it ->
-                        Napier.d(
-                            tag = "JWH",
-                            throwable = it.result.throwable
-                        ) { it.result.toString() }
-                        Text("Error $it")
+                        Text("Error")
                     },
                     contentDescription = null,
                     modifier = Modifier
