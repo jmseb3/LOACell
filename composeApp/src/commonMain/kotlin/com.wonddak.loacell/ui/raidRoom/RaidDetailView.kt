@@ -73,12 +73,14 @@ fun RaidDetailView(
                         0 -> {
                             RaidPartySimpleView(
                                 raidInfo,
-                                chrList(raidInfo, userList)
+                                getCharacterList(null, raidInfo, userList)
                             )
                         }
 
                         1, 2, 3, 4 -> {
-                            Text(page.toString())
+                            RaidPartyView(
+                                getCharacterList(page - 1, raidInfo, userList)
+                            )
                         }
                     }
                 }
@@ -87,12 +89,13 @@ fun RaidDetailView(
     }
 }
 
-private fun chrList(
+private fun getCharacterList(
+    index: Int? = null,
     raidInfo: RaidInfo,
     userList: List<UserInfo>,
 ): List<Character?> {
 
-    val findList = raidInfo.getAllPartyList()
+    val findList = index?.let { raidInfo.getPartyByIndex(it) } ?: raidInfo.getAllPartyList()
     val result: MutableList<Character?> = List(findList.size) { null }.toMutableList()
     val findNames = findList.filter { it.isNotEmpty() }.toMutableList()
     for (userInfo in userList) {

@@ -162,8 +162,8 @@ data class RaidInfo(
             else -> {
                 throw IllegalArgumentException(
                     """
-                    잘못된 index 0~3
-                """.trimIndent()
+                        잘못된 index 0~3
+                    """.trimIndent()
                 )
             }
         }

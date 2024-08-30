@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,76 +29,96 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Day
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.common.DropDownNameView
 import loacell.composeapp.generated.resources.Res
+import loacell.composeapp.generated.resources.add
+import loacell.composeapp.generated.resources.delete
 import loacell.composeapp.generated.resources.screenshot
 import org.jetbrains.compose.resources.painterResource
 
 
-//@Composable
-//fun RaidPartyView(
-//    list: List<Character?>,
-//    baseUrl: String,
-//    openAction: (index: Int) -> Unit,
-//    deleteAction: (index: Int) -> Unit,
-//) {
-//    Column {
-//        Card(
-//            border = BorderStroke(1.dp, Color.Black),
-//            modifier = Modifier
-//                .padding(horizontal = 5.dp, vertical = 3.dp)
-//        ) {
-//            LazyColumn(modifier = Modifier.padding(5.dp)) {
-//                itemsIndexed(list) { index, item ->
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(55.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Column {
-//                            if (item != null) {
-//                                DropDownCharacterNameView(
-//                                    base = baseUrl,
-//                                    name = item.name
-//                                )
-//                                Row(
-//                                    horizontalArrangement = Arrangement.SpaceBetween
-//                                ) {
-//                                    Text(text = item.className)
-//                                    Spacer(modifier = Modifier)
-//                                    Text(text = item.level)
-//                                }
-//                            } else {
-//                                Text(text = "캐릭터를 추가해주세요")
-//                            }
-//                        }
-//                        MyIconButton(
-//                            imageResource = if (item == null) SharedRes.images.add else SharedRes.images.delete
-//                        ) {
-//                            if (item == null) {
-//                                openAction(index)
-//                            } else {
-//                                deleteAction(index)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        Column {
-//            Text(text = "시너지")
-//            Synergy.getSynergyList(list).forEach {
-//                Text(it)
-//            }
-//        }
-//    }
-//}
+@Composable
+fun RaidPartyView(
+    list: List<Character?>,
+    openAction: (index: Int) -> Unit = {},
+    deleteAction: (index: Int) -> Unit = {},
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Card(
+            border = BorderStroke(1.dp, Color.Black),
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 3.dp)
+        ) {
+            LazyColumn(modifier = Modifier.padding(5.dp)) {
+                itemsIndexed(list) { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            if (item != null) {
+                                DropDownNameView(
+                                    name = item.name,
+                                    otherContent = {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(text = item.className)
+                                            Spacer(modifier = Modifier)
+                                            Text(text = item.getLevel().toString())
+                                        }
+                                    }
+                                )
+                            } else {
+                                Text(text = "캐릭터를 추가해주세요")
+                            }
+                        }
+                        IconButton(
+                            onClick = {
+                                if (item == null) {
+                                    openAction(index)
+                                } else {
+                                    deleteAction(index)
+                                }
+                            }
+                        ) {
+                            val iconRes = if (item == null) {
+                                Res.drawable.add
+                            } else {
+                                Res.drawable.delete
+                            }
+                            Icon(painter = painterResource(iconRes), null)
+                        }
+                    }
+                }
+            }
+        }
+
+        Card(
+            border = BorderStroke(1.dp, Color.Black),
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 3.dp)
+        ) {
+            Column {
+                Text(text = "시너지")
+                Spacer(Modifier.height(10.dp))
+                Synergy.getSynergyList(list).forEach {
+                    Text(it)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun RaidPartySimpleView(
@@ -136,7 +160,8 @@ fun RaidPartySimpleView(
                     arrayOf(0, 4, 8, 12).forEach { idx ->
                         runCatching { list.subList(idx, idx + 4) }.getOrNull()?.let { party ->
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth()
+                                    .defaultMinSize(minHeight = 50.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
