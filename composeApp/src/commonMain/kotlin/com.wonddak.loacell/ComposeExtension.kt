@@ -45,11 +45,10 @@ expect fun SetBackAction(enabled: Boolean, action: () -> Unit)
 
 @Composable
 fun rememberModalStatus() = remember {
-    val modalStatus = ModalStatus()
-    modalStatus
+    ModalStatus()
 }
 
-class ModalStatus() {
+open class ModalStatus() {
     var status by mutableStateOf(false)
         private set
 
@@ -64,4 +63,16 @@ class ModalStatus() {
     fun toggle() {
         status = !status
     }
+}
+
+@Composable
+fun <T> rememberPartyIndexModalStatus() = remember {
+    PartIndexModalStatus<T>()
+}
+
+open class PartIndexModalStatus<T>() : ModalStatus() {
+    var partyIndex: Int = 0
+    var subIndex: Int = 0
+
+    var subItem: T? = null
 }

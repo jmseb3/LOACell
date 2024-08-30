@@ -40,25 +40,6 @@ fun DeleteRaidDialog(
     }
 }
 
-@Composable
-fun DeleteRaidUserDialog(
-    dialogAction: DialogAction
-) {
-    DeleteDialog(
-        title = Dialog.RAID_USER_DELETE.title,
-        confirm = {
-            dialogAction.dialogUserDelete()
-        },
-        dismiss = {
-            dialogAction.hideDialog()
-        }
-    ) {
-        Column() {
-            Text(text = "선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectIdDialog(

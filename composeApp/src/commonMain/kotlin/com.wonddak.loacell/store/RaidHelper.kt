@@ -217,24 +217,23 @@ private fun updateField(
     ) {
         updateField(raidInfo.roomId, raidInfo.raidId, RaidInfoField.FINISH, !raidInfo.isFinish)
     }
-//
-//    // 파티 리스트를 업데이트 한다.
-//    fun updatePartList(
-//        roomId: String,
-//        raidId: String,
-//        partyIndex: Int,
-//        partyList: List<String>,
-//        failAction: (e: Error) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        println("$$$ update Party$partyIndex to $partyList")
-//        RefHelper.getRaidRef(roomId, raidId).update(
-//            field = "party$partyIndex",
-//            value = partyList,
-//            successAction = successAction,
-//            failAction = failAction
-//        )
-//    }
+
+    // 파티 리스트를 업데이트 한다.
+    fun updatePartList(
+        roomId: String,
+        raidId: String,
+        partyNumber: Int,
+        partyList: List<String>,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit,
+    ) {
+        RefHelper.getRaidRef(roomId, raidId).update(
+            field = "party$partyNumber",
+            value = partyList,
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
 
     fun observe(
         roomId: String,

@@ -14,9 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.wonddak.loacell.model.Character
+import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.UserInfo
+import com.wonddak.loacell.rememberPartyIndexModalStatus
+import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
+import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
+import com.wonddak.loacell.ui.modal.sheet.RaidUserAddSheet
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,7 +46,9 @@ fun RaidDetailView(
             tabs.size
         })
         val scope = rememberCoroutineScope()
-        val partyIndex = arrayOf(0, 4, 8, 12)
+        val deleteDialogStatus = rememberPartyIndexModalStatus<List<String>>()
+        val addUserStatus = rememberPartyIndexModalStatus<Any>()
+
         Scaffold(
             topBar = {
                 LoaCellTopAppBar(
@@ -80,11 +87,19 @@ fun RaidDetailView(
                         1, 2, 3, 4 -> {
                             RaidPartyView(
                                 getCharacterList(page - 1, raidInfo, userList),
-                                openAction = {
-
+                                openAction = { subIndex ->
+                                    addUserStatus.partyIndex = page - 1
+                                    addUserStatus.subItem = subIndex
+                                    addUserStatus.show()
                                 },
-                                deleteAction = {
-
+                                deleteAction = { subIndex ->
+                                    deleteDialogStatus.partyIndex = page - 1
+                                    deleteDialogStatus.subItem = raidInfo
+                                        .getPartyByIndex(deleteDialogStatus.partyIndex)
+                                        .toMutableList().also {
+                                            it[subIndex] = ""
+                                        }
+                                    deleteDialogStatus.show()
                                 }
                             )
                         }
@@ -92,6 +107,32 @@ fun RaidDetailView(
                 }
             }
         }
+
+        DeleteDialog(
+            deleteDialogStatus,
+            title = Dialog.CHARACTER_DELETE.title,
+            confirm = {
+                CommonRaidHelper.updatePartList(
+                    raidInfo.roomId,
+                    raidInfo.raidId,
+                    deleteDialogStatus.partyIndex + 1,
+                    deleteDialogStatus.subItem!!,
+                    {
+                        deleteDialogStatus.hide()
+                    },
+                    {
+                        deleteDialogStatus.hide()
+                    }
+                )
+            },
+        ) {
+            Text(text = "선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")
+        }
+
+        RaidUserAddSheet(
+            addUserStatus,
+            getUserMap(raidInfo, raidList, userList)
+        )
     }
 }
 
