@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.wonddak.loacell.model.Character
@@ -29,6 +33,7 @@ fun RaidDetailView(
     raidId: String,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
+    goToUserPage: () -> Unit,
     onBack: () -> Unit,
 ) {
     val raidInfo = raidList.find { it.raidId == raidId }
@@ -47,7 +52,8 @@ fun RaidDetailView(
         })
         val scope = rememberCoroutineScope()
         val deleteDialogStatus = rememberPartyIndexModalStatus<List<String>>()
-        val addUserStatus = rememberPartyIndexModalStatus<Any>()
+        val addUserStatus = rememberPartyIndexModalStatus<List<String>>()
+        val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
         Scaffold(
             topBar = {
@@ -55,6 +61,9 @@ fun RaidDetailView(
                     raidInfo.title,
                     onBack = onBack
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
             }
         ) { innerPadding ->
             Column(
@@ -88,12 +97,35 @@ fun RaidDetailView(
                             RaidPartyView(
                                 getCharacterList(page - 1, raidInfo, userList),
                                 openAction = { subIndex ->
-                                    addUserStatus.partyIndex = page - 1
-                                    addUserStatus.subItem = subIndex
-                                    addUserStatus.show()
+                                    val charMap = getUserMap(raidInfo, raidList, userList)
+                                    if (charMap.isEmpty()) {
+                                        scope.launch {
+                                            val snackbar = snackbarHostState.showSnackbar(
+                                                "추가 가능한 인원이 없습니다.",
+                                                actionLabel = "이동"
+                                            )
+                                            when (snackbar) {
+                                                SnackbarResult.ActionPerformed -> {
+                                                    goToUserPage()
+                                                }
+
+                                                SnackbarResult.Dismissed -> {
+
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        addUserStatus.partyIndex = page - 1
+                                        addUserStatus.subIndex = subIndex
+                                        addUserStatus.subItem = raidInfo
+                                            .getPartyByIndex(deleteDialogStatus.partyIndex)
+                                            .toMutableList()
+                                        addUserStatus.show()
+                                    }
                                 },
                                 deleteAction = { subIndex ->
                                     deleteDialogStatus.partyIndex = page - 1
+                                    deleteDialogStatus.subIndex = subIndex
                                     deleteDialogStatus.subItem = raidInfo
                                         .getPartyByIndex(deleteDialogStatus.partyIndex)
                                         .toMutableList().also {
@@ -112,17 +144,9 @@ fun RaidDetailView(
             deleteDialogStatus,
             title = Dialog.CHARACTER_DELETE.title,
             confirm = {
-                CommonRaidHelper.updatePartList(
-                    raidInfo.roomId,
-                    raidInfo.raidId,
-                    deleteDialogStatus.partyIndex + 1,
-                    deleteDialogStatus.subItem!!,
-                    {
-                        deleteDialogStatus.hide()
-                    },
-                    {
-                        deleteDialogStatus.hide()
-                    }
+                CommonRaidHelper.deletePartyList(
+                    deleteDialogStatus,
+                    raidInfo
                 )
             },
         ) {
@@ -131,7 +155,10 @@ fun RaidDetailView(
 
         RaidUserAddSheet(
             addUserStatus,
-            getUserMap(raidInfo, raidList, userList)
+            getUserMap(raidInfo, raidList, userList),
+            confirm = { character ->
+                CommonRaidHelper.changePartyList(addUserStatus, raidInfo, character)
+            }
         )
     }
 }

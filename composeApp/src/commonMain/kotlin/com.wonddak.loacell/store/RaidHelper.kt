@@ -1,5 +1,7 @@
 package com.wonddak.loacell.store
 
+import com.wonddak.loacell.PartIndexModalStatus
+import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RaidInfoField
 import com.wonddak.loacell.model.toRaidInfo
@@ -219,7 +221,7 @@ private fun updateField(
     }
 
     // 파티 리스트를 업데이트 한다.
-    fun updatePartList(
+    private fun updatePartList(
         roomId: String,
         raidId: String,
         partyNumber: Int,
@@ -234,6 +236,43 @@ private fun updateField(
             failAction = failAction
         )
     }
+
+    fun deletePartyList(
+        partIndexModalStatus: PartIndexModalStatus<List<String>>,
+        raidInfo: RaidInfo,
+    ) = updatePartList(
+        raidInfo.roomId,
+        raidInfo.raidId,
+        partIndexModalStatus.partyNumber,
+        partIndexModalStatus.subItem!!,
+        {
+            partIndexModalStatus.hide()
+        },
+        {
+            partIndexModalStatus.hide()
+        }
+    )
+
+    fun changePartyList(
+        partIndexModalStatus: PartIndexModalStatus<List<String>>,
+        raidInfo: RaidInfo,
+        character: Character,
+    ) = updatePartList(
+        raidInfo.roomId,
+        raidInfo.raidId,
+        partIndexModalStatus.partyNumber,
+        partIndexModalStatus.subItem!!
+            .toMutableList()
+            .also {
+                it[partIndexModalStatus.subIndex] = character.name
+            },
+        {
+            partIndexModalStatus.hide()
+        },
+        {
+            partIndexModalStatus.hide()
+        }
+    )
 
     fun observe(
         roomId: String,

@@ -1,7 +1,6 @@
 package com.wonddak.loacell.ui.raidRoom
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +35,6 @@ import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.room_exit
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RaidRoomView(
     modifier: Modifier,

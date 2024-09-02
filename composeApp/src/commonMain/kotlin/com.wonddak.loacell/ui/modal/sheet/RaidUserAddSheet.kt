@@ -1,6 +1,11 @@
 package com.wonddak.loacell.ui.modal.sheet
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,30 +13,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.ModalStatus
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Sheet
+import com.wonddak.loacell.ui.common.DropDownTextField
 
 @Composable
 fun RaidUserAddSheet(
     modalStatus: ModalStatus,
     userAndCharacterMap: Map<String, List<Character>>,
+    confirm: (Character) -> Unit,
 ) {
 
     var selectedUser: String? by remember { mutableStateOf(null) }
     var selectedCharacter: Character? by remember { mutableStateOf(null) }
 
     LaunchedEffect(true) {
-//        selectedUser = userList[0]
+        selectedUser = null
+        selectedCharacter = null
     }
 
-    LaunchedEffect(selectedUser) {
-//        if (selectedUser != null) {
-//            characterList = userAndCharacterMap[selectedUser!!]!!
-//            selectedCharacter = characterList[0]
-//            stateCharacter.animateScrollToItem(0)
-//            return@LaunchedEffect
-//        }
+    val textFieldModifier = Modifier.fillMaxWidth()
+    var expandUser by remember {
+        mutableStateOf(false)
+    }
+    var expandCharacter by remember {
+        mutableStateOf(false)
     }
 
     BaseSheet(
@@ -39,107 +50,76 @@ fun RaidUserAddSheet(
         title = Sheet.RAID_USER_ADD.title,
         enabledButton = selectedCharacter != null,
         buttonClickAction = {
-
+            selectedCharacter?.let { confirm(it) }
         }
     ) {
-        Column {
-            userAndCharacterMap.forEach { (k, v) ->
-                Text("key : $k")
-                Text("value : ${v.joinToString("//")}")
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            DropDownTextField(
+                modifier = textFieldModifier,
+                label = "유저 선택",
+                value = selectedUser ?: "유저를 선택해 주세요",
+                expand = expandUser,
+                updateExpand = {
+                    expandUser = it
+                }
+            ) {
+                userAndCharacterMap.forEach { (userName, list) ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = userName,
+                                fontWeight = if (selectedUser == userName) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }, onClick = {
+                            selectedUser = userName
+                            selectedCharacter = runCatching {
+                                list.first()
+                            }.getOrNull()
+                            expandUser = false
+                        }
+                    )
+                }
+            }
+            userAndCharacterMap[selectedUser]?.let { chrList ->
+                DropDownTextField(
+                    modifier = textFieldModifier,
+                    label = "캐릭터 선택",
+                    value = selectedCharacter?.name ?: "캐릭터를 선택해 주세요",
+                    expand = expandCharacter,
+                    updateExpand = {
+                        expandCharacter = it
+                    }
+                ) {
+                    chrList.forEach { character ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = character.name,
+                                    fontWeight = if (selectedCharacter == character) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }, onClick = {
+                                selectedCharacter = character
+                                expandCharacter = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider()
+
+            selectedCharacter?.let { character ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = character.className)
+                    Text(text = character.getLevel().toString())
+                }
             }
         }
-//        Column(modifier = Modifier.fillMaxWidth()) {
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//                val scope = rememberCoroutineScope()
-//                val modifier = Modifier.weight(1f)
-//                if (userList.isNotEmpty()) {
-//                    val stateUser = rememberLazyListState(0)
-//                    var currentIndexUser by remember { mutableStateOf(0) }
-//                    VerticalWheelPicker(
-//                        modifier = modifier,
-//                        state = stateUser,
-//                        count = userList.size,
-//                        itemHeight = 44.dp,
-//                        visibleItemCount = 3,
-//                        onScrollFinish = {
-//                            currentIndexUser = it
-//                            selectedUser = userList[it]
-//                        }
-//                    ) { index ->
-//                        Box(
-//                            modifier = Modifier
-//                                .wrapContentHeight()
-//                                .noRippleClickable() {
-//                                    scope.launch {
-//                                        stateUser.animateScrollToItem(
-//                                            index
-//                                        )
-//                                    }
-//                                },
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text(
-//                                modifier = Modifier.fillMaxWidth(),
-//                                text = userList[index],
-//                                color = if (index == currentIndexUser) Color.Black else Color.Gray,
-//                                textAlign = TextAlign.Center
-//                            )
-//                        }
-//                    }
-//                    Spacer(modifier = Modifier.width(10.dp))
-//                    if (characterList.isNotEmpty()) {
-//                        VerticalWheelPicker(
-//                            modifier = modifier,
-//                            state = stateCharacter,
-//                            count = characterList.size,
-//                            itemHeight = 44.dp,
-//                            visibleItemCount = 3,
-//                            onScrollFinish = {
-//                                currentIndexCharacter = it
-//                                selectedCharacter = characterList[it]
-//                            }
-//                        ) { index ->
-//                            Box(
-//                                modifier = Modifier
-//                                    .wrapContentHeight()
-//                                    .noRippleClickable {
-//                                        scope.launch {
-//                                            stateCharacter.animateScrollToItem(
-//                                                index
-//                                            )
-//                                        }
-//                                    },
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    text = characterList[index].name,
-//                                    color = if (index == currentIndexCharacter) Color.Black else Color.Gray,
-//                                    textAlign = TextAlign.Center
-//                                )
-//                            }
-//                        }
-//                    } else {
-//                        Text(
-//                            modifier = modifier,
-//                            text = "선택 가능한 캐릭터가 없습니다."
-//                        )
-//                    }
-//                }
-//            }
-//            Spacer(modifier = Modifier.height(5.dp))
-//            HorizontalDivider()
-//            selectedCharacter?.let { character ->
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Text(text = character.className)
-//                    Text(text = character.getLevel().toString())
-//                }
-//            }
-//        }
     }
 }

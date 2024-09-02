@@ -18,10 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,6 +49,7 @@ import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.common.CheckBoxRow
+import com.wonddak.loacell.ui.common.DropDownTextField
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import kotlin.math.min
@@ -353,50 +351,7 @@ fun RaidAddView(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DropDownTextField(
-    modifier: Modifier,
-    label: String,
-    value: String,
-    expand: Boolean,
-    updateExpand: (Boolean) -> Unit,
-    dropDownContent: @Composable () -> Unit,
-) {
-    ExposedDropdownMenuBox(
-        modifier = modifier,
-        expanded = expand,
-        onExpandedChange = {
-            updateExpand(!expand)
-        },
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-                    .padding(horizontal = 10.dp),
-                value = value,
-                onValueChange = {},
-                readOnly = true,
-                label = {
-                    Text(text = label)
-                },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expand) })
 
-            ExposedDropdownMenu(
-                expanded = expand,
-                onDismissRequest = { updateExpand(false) },
-                modifier = Modifier.padding(horizontal = 20.dp)
-            ) {
-                dropDownContent()
-            }
-        }
-
-    }
-}
 
 @Composable
 private fun RaidHeaderText(text: String) {

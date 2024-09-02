@@ -74,5 +74,10 @@ open class PartIndexModalStatus<T>() : ModalStatus() {
     var partyIndex: Int = 0
     var subIndex: Int = 0
 
+    val partyNumber: Int
+        get() = partyIndex + 1
+
     var subItem: T? = null
+
+    var presentData: Any? = null
 }
