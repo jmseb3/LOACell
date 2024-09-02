@@ -27,6 +27,7 @@ import com.wonddak.loacell.ui.main.LoaCellBottomAppBar
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.main.RaidRoomActions
 import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
+import com.wonddak.loacell.ui.modal.sheet.ShareSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
@@ -135,6 +136,7 @@ private fun TitleView(
     roomInfo: RoomInfo,
     role: RoomInfo.RoomRole,
 ) {
+    val shareStatus = rememberModalStatus()
     Box(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -148,7 +150,7 @@ private fun TitleView(
             Text(
                 text = roomInfo.uniqueId,
                 modifier = Modifier.noRippleClickable {
-
+                    shareStatus.show()
                 },
             )
             HorizontalDivider()
@@ -174,4 +176,8 @@ private fun TitleView(
             }
         }
     }
+    ShareSheet(
+        shareStatus,
+        roomInfo
+    )
 }
