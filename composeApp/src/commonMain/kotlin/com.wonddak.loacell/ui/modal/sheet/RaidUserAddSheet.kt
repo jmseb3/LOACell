@@ -32,11 +32,6 @@ fun RaidUserAddSheet(
     var selectedUser: String? by remember { mutableStateOf(null) }
     var selectedCharacter: Character? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(true) {
-        selectedUser = null
-        selectedCharacter = null
-    }
-
     val textFieldModifier = Modifier.fillMaxWidth()
     var expandUser by remember {
         mutableStateOf(false)
@@ -53,6 +48,10 @@ fun RaidUserAddSheet(
             selectedCharacter?.let { confirm(it) }
         }
     ) {
+        LaunchedEffect(true) {
+            selectedUser = null
+            selectedCharacter = null
+        }
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {

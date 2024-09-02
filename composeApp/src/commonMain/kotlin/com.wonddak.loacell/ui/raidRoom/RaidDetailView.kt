@@ -20,20 +20,23 @@ import androidx.compose.ui.Modifier
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.UserInfo
+import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.rememberPartyIndexModalStatus
 import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
+import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.ui.modal.sheet.RaidUserAddSheet
 import kotlinx.coroutines.launch
 
 @Composable
 fun RaidDetailView(
+    roomInfo: RoomInfo,
     raidId: String,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
-    goToUserPage: () -> Unit,
     onBack: () -> Unit,
 ) {
     val raidInfo = raidList.find { it.raidId == raidId }
@@ -53,6 +56,7 @@ fun RaidDetailView(
         val scope = rememberCoroutineScope()
         val deleteDialogStatus = rememberPartyIndexModalStatus<List<String>>()
         val addUserStatus = rememberPartyIndexModalStatus<List<String>>()
+        val showUserAddSheet = rememberModalStatus()
         val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
         Scaffold(
@@ -102,11 +106,11 @@ fun RaidDetailView(
                                         scope.launch {
                                             val snackbar = snackbarHostState.showSnackbar(
                                                 "추가 가능한 인원이 없습니다.",
-                                                actionLabel = "이동"
+                                                actionLabel = "추가"
                                             )
                                             when (snackbar) {
                                                 SnackbarResult.ActionPerformed -> {
-                                                    goToUserPage()
+                                                    showUserAddSheet.show()
                                                 }
 
                                                 SnackbarResult.Dismissed -> {
@@ -159,6 +163,11 @@ fun RaidDetailView(
             confirm = { character ->
                 CommonRaidHelper.changePartyList(addUserStatus, raidInfo, character)
             }
+        )
+        AddUserSheet(
+            showUserAddSheet,
+            Modifier,
+            roomInfo
         )
     }
 }

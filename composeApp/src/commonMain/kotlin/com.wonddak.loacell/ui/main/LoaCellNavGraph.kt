@@ -106,12 +106,10 @@ fun LoaCellNavGraph(
         ) { backStackEntry ->
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
             RaidDetailView(
+                raidViewModel.roomInfo!!,
                 raidId,
                 raidViewModel.raidList,
-                raidViewModel.userList,
-                goToUserPage = {
-                    navController.navigate(Const.NAV_ROOM)
-                }
+                raidViewModel.userList
             ) {
                 navController.popBackStack()
             }
