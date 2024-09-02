@@ -19,6 +19,7 @@ import com.wonddak.loacell.ui.raidRoom.RaidAddView
 import com.wonddak.loacell.ui.raidRoom.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.ui.raidRoom.UserDetailView
+import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
@@ -78,6 +79,13 @@ fun LoaCellNavGraph(
                 navController,
                 authViewModel, storeViewModel, raidViewModel
             )
+        }
+        composable(route = Const.NAV_SETTING) {
+            SettingView(
+                authViewModel, storeViewModel
+            ) {
+                navController.popBackStack()
+            }
         }
         composable(
             route = Const.NAV_ROOM,

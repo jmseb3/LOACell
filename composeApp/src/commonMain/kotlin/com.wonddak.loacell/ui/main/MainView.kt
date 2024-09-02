@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,7 +29,6 @@ import androidx.navigation.NavHostController
 import com.wonddak.loacell.BlockBackButton
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.SetBackAction
-import com.wonddak.loacell.auth.signOut
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.ui.common.FABInfo
@@ -72,7 +75,18 @@ fun MainView(
     val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            LoaCellTopAppBar("LoaCell")
+            LoaCellTopAppBar(
+                "LoaCell",
+                actionContent = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Const.NAV_SETTING)
+                        },
+                    ) {
+                        Icon(Icons.Filled.Settings, contentDescription = null)
+                    }
+                }
+            )
         },
         floatingActionButton = {
             OpenableFabMenu(
@@ -91,13 +105,6 @@ fun MainView(
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
         ) {
-            TextButton(
-                onClick = {
-                    authViewModel.loginHelper.signOut()
-                }
-            ) {
-                Text("Logout")
-            }
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(10.dp)

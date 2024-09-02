@@ -104,6 +104,7 @@ fun RaidDetailView(
                                     val charMap = getUserMap(raidInfo, raidList, userList)
                                     if (charMap.isEmpty()) {
                                         scope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
                                             val snackbar = snackbarHostState.showSnackbar(
                                                 "추가 가능한 인원이 없습니다.",
                                                 actionLabel = "추가"
