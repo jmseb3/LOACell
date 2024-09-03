@@ -14,10 +14,10 @@ import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
-import com.wonddak.loacell.ui.raidRoom.RaidAddView
-import com.wonddak.loacell.ui.raidRoom.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.RaidRoomView
-import com.wonddak.loacell.ui.raidRoom.UserDetailView
+import com.wonddak.loacell.ui.raidRoom.raid.RaidAddView
+import com.wonddak.loacell.ui.raidRoom.raid.RaidDetailView
+import com.wonddak.loacell.ui.raidRoom.user.UserDetailView
 import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel

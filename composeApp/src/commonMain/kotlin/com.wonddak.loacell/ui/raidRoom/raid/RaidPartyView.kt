@@ -1,4 +1,4 @@
-package com.wonddak.loacell.ui.raidRoom
+package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

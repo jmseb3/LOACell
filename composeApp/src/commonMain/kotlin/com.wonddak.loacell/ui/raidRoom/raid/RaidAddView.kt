@@ -1,4 +1,4 @@
-package com.wonddak.loacell.ui.raidRoom
+package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -52,6 +53,9 @@ import com.wonddak.loacell.ui.common.DropDownTextField
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.TimePickerDialog
+import loacell.composeapp.generated.resources.Res
+import loacell.composeapp.generated.resources.schedule
+import org.jetbrains.compose.resources.painterResource
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -327,8 +331,12 @@ fun RaidAddView(
                         Button(onClick = {
                             showPicker = true
                         }) {
-                            Row {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(15.dp)
+                            ) {
                                 Text(raidInfo.getDayText())
+                                Icon(painter = painterResource(Res.drawable.schedule), null)
                             }
                         }
                         if (showPicker) {

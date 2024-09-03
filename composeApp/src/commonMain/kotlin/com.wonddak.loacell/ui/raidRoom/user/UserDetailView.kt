@@ -1,4 +1,4 @@
-package com.wonddak.loacell.ui.raidRoom
+package com.wonddak.loacell.ui.raidRoom.user
 
 import CommonUserHelper
 import androidx.compose.foundation.layout.Box

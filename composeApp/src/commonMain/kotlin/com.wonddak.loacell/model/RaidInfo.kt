@@ -102,7 +102,7 @@ data class RaidInfo(
     fun makeGateText(): String {
         return level?.let {
             if (it.differentPerGate) {
-                "1 ~ $endGateNumber 관문"
+                "$startGateNumber ~ $endGateNumber 관문"
             } else {
                 "1 ~ ${it.maxGate} 관문"
             }
