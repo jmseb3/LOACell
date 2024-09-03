@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
@@ -23,10 +24,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +51,7 @@ import com.wonddak.loacell.ui.common.CheckBoxRow
 import com.wonddak.loacell.ui.common.DropDownTextField
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
+import com.wonddak.loacell.ui.modal.dialog.TimePickerDialog
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,17 +94,14 @@ fun RaidAddView(
     var showDayUse by remember {
         mutableStateOf(prevData?.let { it.day != Day.NONE } ?: false)
     }
+    var showPicker by remember {
+        mutableStateOf(false)
+    }
     val timePickerState = rememberTimePickerState(
         is24Hour = false,
         initialHour = prevData?.hour ?: 0,
         initialMinute = prevData?.minute ?: 0
     )
-    LaunchedEffect(timePickerState) {
-        raidInfo = raidInfo.copy(
-            hour = timePickerState.hour,
-            minute = timePickerState.minute
-        )
-    }
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
@@ -327,11 +324,28 @@ fun RaidAddView(
                                 }
                             }
                         }
-                        TimePicker(
-                            timePickerState
-                        )
-                        Text(raidInfo.toString())
-                        Text("${timePickerState.hour} / ${timePickerState.minute}")
+                        Button(onClick = {
+                            showPicker = true
+                        }) {
+                            Row {
+                                Text(raidInfo.getDayText())
+                            }
+                        }
+                        if (showPicker) {
+                            TimePickerDialog(
+                                state = timePickerState,
+                                onCancel = {
+                                    showPicker = false
+                                },
+                                onConfirm = {
+                                    raidInfo = raidInfo.copy(
+                                        hour = timePickerState.hour,
+                                        minute = timePickerState.minute
+                                    )
+                                    showPicker = false
+                                }
+                            )
+                        }
                     }
                 }
             }
