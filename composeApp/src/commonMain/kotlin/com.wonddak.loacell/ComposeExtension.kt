@@ -65,19 +65,27 @@ open class ModalStatus() {
     }
 }
 
+
+@Composable
+fun <T> rememberDataModalStatus() = remember {
+    DataModalStatus<T>()
+}
+
+open class DataModalStatus<T>() : ModalStatus() {
+    var subItem: T? = null
+}
+
 @Composable
 fun <T> rememberPartyIndexModalStatus() = remember {
     PartIndexModalStatus<T>()
 }
 
-open class PartIndexModalStatus<T>() : ModalStatus() {
+open class PartIndexModalStatus<T>() : DataModalStatus<T>() {
     var partyIndex: Int = 0
     var subIndex: Int = 0
 
     val partyNumber: Int
         get() = partyIndex + 1
-
-    var subItem: T? = null
 
     var presentData: Any? = null
 }

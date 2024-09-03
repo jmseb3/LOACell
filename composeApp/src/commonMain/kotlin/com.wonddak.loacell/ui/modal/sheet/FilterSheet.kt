@@ -1,5 +1,6 @@
 package com.wonddak.loacell.android.ui.modal.bottomSheet
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,35 +35,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.database.model.RaidType
-import com.wonddak.loacell.DialogAction
-import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.noRippleClickable
+import com.wonddak.loacell.ModalStatus
+import com.wonddak.loacell.assetData.RaidItem
+import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.Sheet
+import com.wonddak.loacell.model.UserInfo
+import com.wonddak.loacell.noRippleClickable
+import com.wonddak.loacell.ui.modal.sheet.BaseSheet
+import loacell.composeapp.generated.resources.Res
+import loacell.composeapp.generated.resources.arrow
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun FilterSheet(
-    dialogAction: DialogAction
+    modalStatus: ModalStatus,
+    filter: Filter,
+    userInfoList: List<UserInfo>,
+    updateFilter: (Filter) -> Unit,
 ) {
-    val totalRoomInfo = dialogAction.getTotalRoomInfo()
-    val filter = totalRoomInfo.filter
-    val userInfoList = totalRoomInfo.userInfoList
-    val raidTypes = RaidType.entries.toTypedArray()
-
-    val updateFilter = { getFilter :Filter ->
-        dialogAction.dialogFilterUpdate(getFilter)
-    }
     BaseSheet(
+        modalStatus = modalStatus,
         title = Sheet.RAID_FILTER.title,
         useCloseIcon = true,
-        onDismissRequest = {
-            dialogAction.hideDialog()
-        }
     ) {
         Column {
             FilterSection(section = "레이드 종류") {
@@ -70,13 +68,13 @@ fun FilterSheet(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
-                        items(raidTypes) { type ->
+                        items(RaidItem.getAllRaidData()) { item ->
                             ElevatedFilterChip(
-                                selected = filter.isSelected(type),
-                                onClick = { updateFilter(filter.updateRaidType(type)) },
+                                selected = filter.isSelectedType(item.name),
+                                onClick = { updateFilter(filter.updateRaidType(item.name)) },
                                 label = {
                                     Text(
-                                        text = type.toKorString(),
+                                        text = Translate.getTranslate(item.name),
                                         modifier = Modifier,
                                         textAlign = TextAlign.Center
                                     )
@@ -130,7 +128,7 @@ fun FilterSheet(
                         items(userInfoList) { userInfo ->
                             val name = userInfo.name
                             ElevatedFilterChip(
-                                selected = filter.isSelected(name),
+                                selected = filter.isSelectedUser(name),
                                 onClick = {
                                     updateFilter(filter.updateUser(name))
                                 },
@@ -178,12 +176,14 @@ fun FilterSheet(
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "필터 초기화",
-                    modifier = Modifier.noRippleClickable {
+                TextButton(
+                    onClick = {
                         updateFilter(filter.clear())
                     }
-                )
+                ) {
+                    Text("필터 초기화")
+                }
+
             }
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -222,7 +222,7 @@ fun FilterSection(
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
                 Icon(
-                    painter = painterResource(id = SharedRes.images.arrow.drawableResId),
+                    painter = painterResource(Res.drawable.arrow),
                     contentDescription = null,
                     modifier = Modifier
                         .size(18.dp)
@@ -230,7 +230,7 @@ fun FilterSection(
                         .align(Alignment.CenterEnd)
                 )
             }
-            if (show) {
+            AnimatedVisibility(show) {
                 content()
             }
         }

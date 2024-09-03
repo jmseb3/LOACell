@@ -106,7 +106,9 @@ fun RaidRoomView(
                 ) { page ->
                     when (page) {
                         RoomState.Raid.index -> {
-                            RaidListView(raidList = raidList) {
+                            RaidListView(
+                                raidViewModel
+                            ) {
                                 navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.raidId)
                             }
                         }

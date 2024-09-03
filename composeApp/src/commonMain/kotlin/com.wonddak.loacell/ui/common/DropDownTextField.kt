@@ -1,6 +1,7 @@
 package com.wonddak.loacell.ui.common
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +23,7 @@ fun DropDownTextField(
     value: String,
     expand: Boolean,
     updateExpand: (Boolean) -> Unit,
-    dropDownContent: @Composable () -> Unit,
+    dropDownContent: @Composable ColumnScope. () -> Unit,
 ) {
     ExposedDropdownMenuBox(
         modifier = modifier,

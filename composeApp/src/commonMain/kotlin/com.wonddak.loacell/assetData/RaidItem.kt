@@ -20,6 +20,10 @@ object RaidItem {
         return result
     }
 
+    fun getAllRaidData(): List<RaidData> {
+        return data.flatMap { it.raidData }
+    }
+
     private val imageCacheMap: MutableMap<String, String> = mutableMapOf()
     fun addData(data: List<RaidTypeItem>) {
         data.forEach {
