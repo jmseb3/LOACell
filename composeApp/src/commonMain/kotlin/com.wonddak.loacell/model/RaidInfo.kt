@@ -4,6 +4,7 @@ import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
+import kotlinx.serialization.Serializable
 
 object RaidInfoField {
     internal const val TITLE = "title"
@@ -21,6 +22,7 @@ object RaidInfoField {
     internal const val MINUTE = "minute"
 }
 
+@Serializable
 data class RaidInfo(
     var raidId: String,
     var roomId: String,
@@ -34,7 +36,7 @@ data class RaidInfo(
     var party2characterList: List<String>,
     var party3characterList: List<String>,
     var party4characterList: List<String>,
-    var day: Day,
+    var dayIndex: Long,
     var hour: Int,
     var minute: Int,
 ) {
@@ -51,10 +53,13 @@ data class RaidInfo(
         List(4) { "" },
         List(4) { "" },
         List(4) { "" },
-        Day.NONE,
+        -1,
         0,
         0
     )
+
+    val day: Day
+        get() = dayIndex.convertToDay()
 
     fun toMap() = mapOf(
         RaidInfoField.TITLE to title,
@@ -67,15 +72,15 @@ data class RaidInfo(
         RaidInfoField.PARTY_2 to party2characterList,
         RaidInfoField.PARTY_3 to party3characterList,
         RaidInfoField.PARTY_4 to party4characterList,
-        RaidInfoField.DAY to day.index,
+        RaidInfoField.DAY to dayIndex,
         RaidInfoField.HOUR to hour,
         RaidInfoField.MINUTE to minute
     )
 
-    private val raidItem: RaidData?
+    val raidItem: RaidData?
         get() = RaidItem.findByName(type)
 
-    private val level: Level?
+    val level: Level?
         get() = raidItem?.level?.find { it.difficulty == difficulty }
 
     fun getRaidText(): String {
@@ -87,7 +92,11 @@ data class RaidInfo(
     }
 
     fun getMinLevel(): Int {
-        return level?.info?.get(endGateNumber - 1) ?: 0
+        return level?.let {
+            runCatching {
+                it.info[endGateNumber - 1]
+            }.getOrDefault(it.info.last())
+        } ?: 0
     }
 
     fun makeGateText(): String {
@@ -201,8 +210,8 @@ fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
                 this[RaidInfoField.PARTY_4] as List<String>
             }.getOrDefault(List(4) { "" }),
             runCatching {
-                (this[RaidInfoField.DAY] as Long).convertToDay()
-            }.getOrDefault(Day.NONE),
+                (this[RaidInfoField.DAY] as Long)
+            }.getOrDefault(-1),
             runCatching {
                 (this[RaidInfoField.HOUR] as Long).toInt()
             }.getOrDefault(0),

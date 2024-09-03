@@ -58,6 +58,7 @@ import kotlin.math.min
 @Composable
 fun RaidAddView(
     roomId: String,
+    prevData: RaidInfo? = null,
     onBack: () -> Unit,
 ) {
     val textFieldModifier = Modifier.fillMaxWidth()
@@ -74,15 +75,15 @@ fun RaidAddView(
         mutableStateOf(false)
     }
     var selectedRaid: RaidData? by remember {
-        mutableStateOf(data[typeList[0]]?.first())
+        mutableStateOf(prevData?.raidItem ?: data[typeList[0]]?.first())
     }
     var selectedLevel: Level? by remember {
-        mutableStateOf(data[typeList[0]]?.first()?.level?.first())
+        mutableStateOf(prevData?.level ?: data[typeList[0]]?.first()?.level?.first())
     }
 
     var raidInfo: RaidInfo by remember {
         mutableStateOf(
-            RaidInfo(
+            prevData ?: RaidInfo(
                 roomId,
                 selectedRaid?.name ?: "",
                 selectedLevel?.difficulty ?: ""
@@ -91,12 +92,23 @@ fun RaidAddView(
     }
 
     var showDayUse by remember {
-        mutableStateOf(false)
+        mutableStateOf(prevData?.let { it.day != Day.NONE } ?: false)
+    }
+    val timePickerState = rememberTimePickerState(
+        is24Hour = false,
+        initialHour = prevData?.hour ?: 0,
+        initialMinute = prevData?.minute ?: 0
+    )
+    LaunchedEffect(timePickerState) {
+        raidInfo = raidInfo.copy(
+            hour = timePickerState.hour,
+            minute = timePickerState.minute
+        )
     }
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
-                "레이드 추가",
+                if (prevData == null) "레이드 추가" else "레이드 수정",
                 onBack = onBack
             )
         }
@@ -105,7 +117,7 @@ fun RaidAddView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 10.dp, vertical = 6.dp)
         ) {
             val scrollState = rememberScrollState()
             Column(
@@ -211,8 +223,12 @@ fun RaidAddView(
 
                 selectedLevel?.let { level ->
                     if (level.differentPerGate) {
-                        var gateStart by remember { mutableIntStateOf(1) }
-                        var gateEnd by remember { mutableIntStateOf(1) }
+                        var gateStart by remember {
+                            mutableIntStateOf(
+                                prevData?.startGateNumber ?: 1
+                            )
+                        }
+                        var gateEnd by remember { mutableIntStateOf(prevData?.endGateNumber ?: 1) }
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -288,7 +304,7 @@ fun RaidAddView(
                             showDayUse = it
                             if (!showDayUse) {
                                 raidInfo =
-                                    raidInfo.copy(day = Day.NONE, hour = 0, minute = 0)
+                                    raidInfo.copy(dayIndex = -1, hour = 0, minute = 0)
                             }
                         })
                     Spacer(modifier = Modifier.weight(1f))
@@ -298,15 +314,6 @@ fun RaidAddView(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val timePickerState = rememberTimePickerState(
-                            is24Hour = false,
-                        )
-                        LaunchedEffect(timePickerState) {
-                            raidInfo = raidInfo.copy(
-                                hour = timePickerState.hour,
-                                minute = timePickerState.minute
-                            )
-                        }
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp)
                         ) {
@@ -316,41 +323,53 @@ fun RaidAddView(
                                     Modifier.weight(1f),
                                     raidInfo.day == it
                                 ) {
-                                    raidInfo = raidInfo.copy(day = it)
+                                    raidInfo = raidInfo.copy(dayIndex = it.index.toLong())
                                 }
                             }
                         }
                         TimePicker(
                             timePickerState
                         )
+                        Text(raidInfo.toString())
+                        Text("${timePickerState.hour} / ${timePickerState.minute}")
                     }
                 }
             }
             OutlinedButton(
                 onClick = {
-                    CommonRaidHelper.add(
-                        raidInfo,
-                        failAction = {
+                    if (prevData == null) {
+                        CommonRaidHelper.add(
+                            raidInfo,
+                            failAction = {
 
-                        },
-                        successAction = {
-                            onBack()
-                        }
-                    )
+                            },
+                            successAction = {
+                                onBack()
+                            }
+                        )
+                    } else {
+                        CommonRaidHelper.update(
+                            raidInfo,
+                            failAction = {
+
+                            },
+                            successAction = {
+                                onBack()
+                            }
+                        )
+                    }
                 },
-                enabled = if (showDayUse) {
-                    raidInfo.day != Day.NONE
-                } else {
-                    raidInfo.title.isNotEmpty()
-                },
+                enabled =
+                raidInfo.title.isNotEmpty() &&
+                        (if (showDayUse) raidInfo.day != Day.NONE else true) &&
+                        (if (prevData == null) true else (prevData != raidInfo)),
                 modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).height(50.dp),
             ) {
-                Text(text = "추가")
+                Text(text = if (prevData == null) "추가" else "수정")
             }
         }
     }
 }
-
 
 
 @Composable

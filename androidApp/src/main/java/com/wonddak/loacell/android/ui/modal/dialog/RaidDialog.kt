@@ -21,25 +21,6 @@ import com.wonddak.loacell.DialogAction
 import com.wonddak.loacell.RaidInfo
 import com.wonddak.loacell.model.Dialog
 
-@Composable
-fun DeleteRaidDialog(
-    dialogAction: DialogAction
-) {
-    DeleteDialog(
-        title = Dialog.RAID_DELETE.title,
-        confirm = {
-            dialogAction.dialogRaidDelete()
-        },
-        dismiss = {
-            dialogAction.hideDialog()
-        }
-    ) {
-        Column() {
-            Text(text = "레이드 정보를 삭제 하시겠습니까?")
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectIdDialog(

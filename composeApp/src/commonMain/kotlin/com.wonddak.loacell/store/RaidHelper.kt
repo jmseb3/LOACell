@@ -175,45 +175,45 @@ object CommonRaidHelper {
                 failAction = failAction
             )
     }
-//
-//    fun update(
-//        roomId: String,
-//        raidId: String,
-//        fbRaidInfo: FBRaidInfo,
-//        failAction: (e: Error) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        RefHelper.getRaidRef(roomId, raidId)
-//            .update(
-//                fbRaidInfo.toMap(),
-//                successAction = successAction,
-//                failAction = failAction
-//            )
-//    }
-//
-//    //레이드 정보를 삭제한다.
-//    fun delete(
-//        roomId: String,
-//        raidId: String,
-//        failAction: (e: Error) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        RefHelper.getRaidRef(roomId, raidId).delete(
-//            successAction = successAction,
-//            failAction = failAction
-//        )
-//    }
-//
-private fun updateField(
-    roomId: String,
-    raidId: String,
-    field: String,
-    value: Any,
-) {
-    RefHelper.getRaidRef(roomId, raidId).update(
-        field, value
-    )
-}
+
+
+    fun update(
+        raidInfo: RaidInfo,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit,
+    ) {
+        RefHelper.getRaidRef(raidInfo.roomId, raidInfo.raidId)
+            .update(
+                raidInfo.toMap(),
+                successAction = successAction,
+                failAction = failAction
+            )
+    }
+
+    //레이드 정보를 삭제한다.
+    fun delete(
+        roomId: String,
+        raidId: String,
+        failAction: (e: Error) -> Unit,
+        successAction: () -> Unit,
+    ) {
+        RefHelper.getRaidRef(roomId, raidId).delete(
+            successAction = successAction,
+            failAction = failAction
+        )
+    }
+
+    private fun updateField(
+        roomId: String,
+        raidId: String,
+        field: String,
+        value: Any,
+    ) {
+        RefHelper.getRaidRef(roomId, raidId).update(
+            field, value
+        )
+    }
+
     fun updateFinish(
         raidInfo: RaidInfo,
     ) {

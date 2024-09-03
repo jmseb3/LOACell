@@ -3,16 +3,15 @@ package com.wonddak.loacell.ui.main
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.wonddak.loacell.Const
+import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
 import com.wonddak.loacell.ui.raidRoom.RaidAddView
@@ -104,6 +103,13 @@ fun LoaCellNavGraph(
                 navController.popBackStack()
             }
         }
+        composable<RaidInfo> { backStackEntry ->
+            val roomInfo = raidViewModel.roomInfo
+            val raidInfo = backStackEntry.toRoute<RaidInfo>()
+            RaidAddView(roomInfo!!.uniqueId, raidInfo) {
+                navController.popBackStack()
+            }
+        }
         composable(
             route = Const.NAV_RAID_DETAIL,
             arguments = listOf(
@@ -117,7 +123,10 @@ fun LoaCellNavGraph(
                 raidViewModel.roomInfo!!,
                 raidId,
                 raidViewModel.raidList,
-                raidViewModel.userList
+                raidViewModel.userList,
+                navigationEdit = {
+                    navController.navigate(it)
+                }
             ) {
                 navController.popBackStack()
             }
@@ -137,36 +146,4 @@ fun LoaCellNavGraph(
             }
         }
     }
-}
-
-@Composable
-fun NavController.isMain(): Boolean {
-    val navBackStackEntry by this.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route?.let { currentRoute ->
-        currentRoute.startsWith(Const.NAV_MAIN)
-    } ?: false
-}
-
-@Composable
-fun NavController.isLogin(): Boolean {
-    val navBackStackEntry by this.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route?.let { currentRoute ->
-        currentRoute.startsWith(Const.NAV_LOGIN)
-    } ?: false
-}
-
-@Composable
-fun NavController.isSplash(): Boolean {
-    val navBackStackEntry by this.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route?.let { currentRoute ->
-        currentRoute.startsWith(Const.NAV_SPLASH)
-    } ?: false
-}
-
-@Composable
-fun NavController.isRaidRoom(): Boolean {
-    val navBackStackEntry by this.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route?.let { currentRoute ->
-        currentRoute.startsWith(Const.NAV_ROOM)
-    } ?: false
 }

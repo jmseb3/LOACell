@@ -116,23 +116,33 @@ fun RaidItemRow(
                     Text(text = raidInfo.makeGateText())
                 }
             }
-            val icon = if (raidInfo.isFinish) {
-                Res.drawable.task_finish_done
-            } else {
-                Res.drawable.task_finish_not
-            }
-            IconButton(
-                modifier = Modifier.align(Alignment.BottomEnd).size(30.dp),
-                onClick = {
-                    CommonRaidHelper.updateFinish(raidInfo)
-                }
-            ) {
-                Icon(
-                    painter = painterResource(icon),
-                    null
-                )
-            }
+            FinishButton(
+                raidInfo,
+                Modifier.align(Alignment.BottomEnd)
+            )
         }
     }
+}
 
+@Composable
+fun FinishButton(
+    raidInfo: RaidInfo,
+    modifier: Modifier = Modifier,
+) {
+    val icon = if (raidInfo.isFinish) {
+        Res.drawable.task_finish_done
+    } else {
+        Res.drawable.task_finish_not
+    }
+    IconButton(
+        modifier = modifier.size(30.dp),
+        onClick = {
+            CommonRaidHelper.updateFinish(raidInfo)
+        }
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            null
+        )
+    }
 }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.RaidInfo
@@ -25,11 +26,16 @@ import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.rememberPartyIndexModalStatus
 import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.ui.common.FABInfo
+import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
 import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.ui.modal.sheet.RaidUserAddSheet
 import kotlinx.coroutines.launch
+import loacell.composeapp.generated.resources.Res
+import loacell.composeapp.generated.resources.delete
+import loacell.composeapp.generated.resources.room_setting
 
 @Composable
 fun RaidDetailView(
@@ -37,6 +43,7 @@ fun RaidDetailView(
     raidId: String,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
+    navigationEdit: (RaidInfo) -> Unit,
     onBack: () -> Unit,
 ) {
     val raidInfo = raidList.find { it.raidId == raidId }
@@ -54,20 +61,42 @@ fun RaidDetailView(
             tabs.size
         })
         val scope = rememberCoroutineScope()
-        val deleteDialogStatus = rememberPartyIndexModalStatus<List<String>>()
-        val addUserStatus = rememberPartyIndexModalStatus<List<String>>()
+        val raidUserDeleteDialogStatus = rememberPartyIndexModalStatus<List<String>>()
+        val raidDetailDeleteDialog = rememberModalStatus()
+        val raidUserAddSheetStatus = rememberPartyIndexModalStatus<List<String>>()
         val showUserAddSheet = rememberModalStatus()
         val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+        val fabStatus = rememberModalStatus()
 
         Scaffold(
             topBar = {
                 LoaCellTopAppBar(
                     raidInfo.title,
+                    actionContent = {
+                        FinishButton(raidInfo, modifier = Modifier.padding(end = 5.dp))
+                    },
                     onBack = onBack
                 )
             },
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
+            },
+            floatingActionButton = {
+                OpenableFabMenu(
+                    fabStatus,
+                    listOf(
+                        FABInfo.Default(
+                            Res.drawable.room_setting
+                        ) {
+                            navigationEdit(raidInfo)
+                        },
+                        FABInfo.Default(
+                            Res.drawable.delete
+                        ) {
+                            raidDetailDeleteDialog.show()
+                        }
+                    )
+                )
             }
         ) { innerPadding ->
             Column(
@@ -120,23 +149,23 @@ fun RaidDetailView(
                                             }
                                         }
                                     } else {
-                                        addUserStatus.partyIndex = page - 1
-                                        addUserStatus.subIndex = subIndex
-                                        addUserStatus.subItem = raidInfo
-                                            .getPartyByIndex(deleteDialogStatus.partyIndex)
+                                        raidUserAddSheetStatus.partyIndex = page - 1
+                                        raidUserAddSheetStatus.subIndex = subIndex
+                                        raidUserAddSheetStatus.subItem = raidInfo
+                                            .getPartyByIndex(raidUserDeleteDialogStatus.partyIndex)
                                             .toMutableList()
-                                        addUserStatus.show()
+                                        raidUserAddSheetStatus.show()
                                     }
                                 },
                                 deleteAction = { subIndex ->
-                                    deleteDialogStatus.partyIndex = page - 1
-                                    deleteDialogStatus.subIndex = subIndex
-                                    deleteDialogStatus.subItem = raidInfo
-                                        .getPartyByIndex(deleteDialogStatus.partyIndex)
+                                    raidUserDeleteDialogStatus.partyIndex = page - 1
+                                    raidUserDeleteDialogStatus.subIndex = subIndex
+                                    raidUserDeleteDialogStatus.subItem = raidInfo
+                                        .getPartyByIndex(raidUserDeleteDialogStatus.partyIndex)
                                         .toMutableList().also {
                                             it[subIndex] = ""
                                         }
-                                    deleteDialogStatus.show()
+                                    raidUserDeleteDialogStatus.show()
                                 }
                             )
                         }
@@ -146,11 +175,11 @@ fun RaidDetailView(
         }
 
         DeleteDialog(
-            deleteDialogStatus,
+            raidUserDeleteDialogStatus,
             title = Dialog.CHARACTER_DELETE.title,
             confirm = {
                 CommonRaidHelper.deletePartyList(
-                    deleteDialogStatus,
+                    raidUserDeleteDialogStatus,
                     raidInfo
                 )
             },
@@ -158,13 +187,33 @@ fun RaidDetailView(
             Text(text = "선택하신 캐릭터를 파티에서 삭제 하시겠습니까?")
         }
 
+        DeleteDialog(
+            raidDetailDeleteDialog,
+            title = Dialog.RAID_DELETE.title,
+            confirm = {
+                CommonRaidHelper.delete(
+                    raidInfo.roomId,
+                    raidInfo.raidId,
+                    {
+                        raidDetailDeleteDialog.hide()
+                    },
+                    {
+                        raidDetailDeleteDialog.hide()
+                        onBack()
+                    }
+                )
+            },
+        ) {
+            Text(text = "레이드 정보를 삭제 하시겠습니까?")
+        }
+
         RaidUserAddSheet(
-            addUserStatus,
-            getUserMap(raidInfo, raidList, userList),
-            confirm = { character ->
-                CommonRaidHelper.changePartyList(addUserStatus, raidInfo, character)
-            }
-        )
+            raidUserAddSheetStatus,
+            getUserMap(raidInfo, raidList, userList)
+        ) { character ->
+            CommonRaidHelper.changePartyList(raidUserAddSheetStatus, raidInfo, character)
+        }
+
         AddUserSheet(
             showUserAddSheet,
             Modifier,
