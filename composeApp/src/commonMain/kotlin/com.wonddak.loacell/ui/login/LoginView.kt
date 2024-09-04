@@ -48,9 +48,7 @@ import loacell.composeapp.generated.resources.login_progress
 import loacell.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun LoginView(
     modifier: Modifier,

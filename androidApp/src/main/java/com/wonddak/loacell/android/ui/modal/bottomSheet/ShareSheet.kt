@@ -33,58 +33,6 @@ import com.wonddak.loacell.SharedRes
 import com.wonddak.loacell.android.noRippleClickable
 import com.wonddak.loacell.model.Sheet
 
-@Composable
-fun ShareSheet(
-    dialogAction: DialogAction,
-) {
-    val roomInfo = dialogAction.getRoomInfo()
-    val context = LocalContext.current.applicationContext
-    val uniqueId: String = roomInfo.uniqueId
-
-    BaseSheet(
-        title = Sheet.SHARE_SHEET.title,
-        useCloseIcon = true,
-        onDismissRequest = {
-            dialogAction.hideDialog()
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 20.dp),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                                   shareIntent(context,uniqueId)
-//                            copyToClipBoard(context, uniqueId)
-                        },
-                    painter = painterResource(id = SharedRes.images.ic_share_link.drawableResId),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .noRippleClickable {
-                            shareToKakao(context, roomInfo)
-                        },
-                    painter = painterResource(id = SharedRes.images.ic_share_kakaotalk.drawableResId),
-                    contentDescription = null
-                )
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-        }
-    }
-}
 internal fun shareIntent(
     context: Context,
     uniqueId: String

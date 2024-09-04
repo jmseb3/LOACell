@@ -39,6 +39,7 @@ import com.wonddak.loacell.store.Error
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.ui.common.SectionCardView
 import com.wonddak.loacell.ui.modal.dialog.ConfirmDialog
+import com.wonddak.loacell.ui.modal.sheet.RoomSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import kotlinx.coroutines.launch
@@ -138,10 +139,14 @@ fun SettingRoomInfo(
             Text(text = "나가기")
         }
         HorizontalDivider()
-        Text(text = "제목")
-        Text(text = roomInfo.title)
-        Text(text = "설명")
-        Text(text = roomInfo.description)
+        listOf(
+            "제목",
+            roomInfo.title,
+            "설명",
+            roomInfo.description
+        ).forEach {
+            Text(it)
+        }
         if (roomInfo.enterPassword.isNotEmpty()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -170,17 +175,29 @@ fun SettingRoomInfo(
                 roomInfo.uniqueId,
                 successAction = {
                     scope.launch {
-                        backToHome()
                         showExitAlert.hide()
+                        backToHome()
                     }
                 },
                 failAction = {
-                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
                     showExitAlert.hide()
+                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
                 }
             )
         }
     )
+    RoomSheet(
+        showRoomEdit,
+        roomInfo
+    ) { title, description, password ->
+        CommonRoomHelper.updateRoom(
+            roomInfo.uniqueId,
+            title,
+            description,
+            password,
+            { showRoomEdit.hide() },
+            { showRoomEdit.hide() })
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -58,8 +58,12 @@ fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo {
             this[RoomInfoField.DESCRIPTION] as String,
             this[RoomInfoField.OWNER] as String,
             this[RoomInfoField.PASSWORD] as String,
-            this[RoomInfoField.EDITABLE_USER] as List<String>,
-            this[RoomInfoField.ENTER_USER] as List<String>,
+            runCatching { this[RoomInfoField.EDITABLE_USER] as List<String> }.getOrDefault(
+                emptyList()
+            ),
+            runCatching { this[RoomInfoField.ENTER_USER] as List<String> }.getOrDefault(
+                emptyList()
+            ),
         )
     }
 }

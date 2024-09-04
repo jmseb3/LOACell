@@ -31,8 +31,10 @@ import com.wonddak.loacell.Const
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
+import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.common.FABInfo
 import com.wonddak.loacell.ui.common.OpenableFabMenu
+import com.wonddak.loacell.ui.modal.sheet.RoomSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.StoreViewModel
@@ -73,6 +75,7 @@ fun MainView(
         fabStatus.hide()
     }
     val scope = rememberCoroutineScope()
+    val roomAddSheet = rememberModalStatus()
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
@@ -96,7 +99,7 @@ fun MainView(
 
                     },
                     FABInfo.Label(Res.drawable.room_make, "만들기") {
-
+                        roomAddSheet.show()
                     }
                 )
             )
@@ -113,8 +116,11 @@ fun MainView(
                     TextButton(
                         onClick = {
                             scope.launch {
-                                raidViewModel.roomInfo = roomInfo
-                                raidViewModel.startObserveRaidInfoList(authViewModel.user?.uid)
+                                raidViewModel.roomId = roomInfo.uniqueId
+                                raidViewModel.startObserveRaidInfoList(
+                                    authViewModel.user?.uid,
+                                    roomInfo
+                                )
                                 navController.navigate(Const.NAV_ROOM)
                             }
                         },
@@ -127,6 +133,14 @@ fun MainView(
                         RoomInfoRow(roomInfo)
                     }
                 }
+            }
+        }
+        RoomSheet(
+            roomAddSheet,
+            null
+        ) { title, description, password ->
+            CommonRoomHelper.makeInfo(title, description, password, authViewModel.user!!.uid) {
+                roomAddSheet.hide()
             }
         }
     }

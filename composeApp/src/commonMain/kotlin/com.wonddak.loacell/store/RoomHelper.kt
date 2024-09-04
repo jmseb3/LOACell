@@ -3,6 +3,7 @@ package com.wonddak.loacell.store
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomInfoField
 import com.wonddak.loacell.model.toRoomInfo
+import io.github.aakira.napier.Napier
 
 object CommonRoomHelper {
     // 방 입장요청시 실제 존재하는 방인지 체크
@@ -33,20 +34,22 @@ object CommonRoomHelper {
         owner: String,
         successAction: (id: String) -> Unit,
     ) {
+        Napier.d(tag = "Room") { "init [$title/$description/$password/$owner]" }
         val data = mapOf(
             RoomInfoField.TITLE to title,
             RoomInfoField.DESCRIPTION to description,
-            RoomInfoField.OWNER to password,
-            RoomInfoField.PASSWORD to owner,
+            RoomInfoField.OWNER to owner,
+            RoomInfoField.PASSWORD to password,
         )
         val ref = RefHelper.getRoomsRef().document()
         ref.set(
             data,
             successAction = {
+                Napier.d(tag = "Room") { "success init" }
                 successAction(ref.id)
             },
             failAction = {
-
+                Napier.e(tag = "Room") { "fail init $it" }
             }
         )
     }

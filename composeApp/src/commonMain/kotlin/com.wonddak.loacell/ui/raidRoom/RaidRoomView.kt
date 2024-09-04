@@ -73,7 +73,7 @@ fun RaidRoomView(
             null
         }
     }
-    val roomInfo = raidViewModel.roomInfo
+    val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -129,17 +129,19 @@ fun RaidRoomView(
                         }
 
                         else -> {
-                            SettingRoomView(
-                                raidViewModel,
-                                authViewModel,
-                                roomInfo!!,
-                                {
-                                    navController.popBackStack()
-                                }
-                            ) {
-                                scope.launch {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(it, actionLabel = "확인")
+                            roomInfo?.let {
+                                SettingRoomView(
+                                    raidViewModel,
+                                    authViewModel,
+                                    it,
+                                    backToHome = {
+                                        navController.popBackStack()
+                                    }
+                                ) {
+                                    scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(it, actionLabel = "확인")
+                                    }
                                 }
                             }
                         }
@@ -149,11 +151,13 @@ fun RaidRoomView(
         }
 
     }
-    AddUserSheet(
-        showUserAddSheet,
-        Modifier,
-        roomInfo!!
-    )
+    roomInfo?.let {
+        AddUserSheet(
+            showUserAddSheet,
+            Modifier,
+            it
+        )
+    }
 }
 
 @Composable

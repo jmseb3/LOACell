@@ -26,6 +26,7 @@ fun LengthLimitTextField(
     maxLine: Int,
     maxLength: Int,
     enabled: Boolean = true,
+    leadingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     keyboardActions: KeyboardActions = KeyboardActions(),
     textChange: (text: String) -> Unit,
@@ -57,6 +58,7 @@ fun LengthLimitTextField(
                     }
                 }
             },
+            leadingIcon = leadingIcon,
             maxLines = maxLine,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,

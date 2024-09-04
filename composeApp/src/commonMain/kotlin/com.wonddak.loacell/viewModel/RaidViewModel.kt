@@ -46,7 +46,7 @@ class RaidViewModel(
     var userList: List<UserInfo> by mutableStateOf(emptyList())
         private set
 
-    var roomInfo: RoomInfo? by mutableStateOf(null)
+    var roomId: String? by mutableStateOf(null)
 
     var role: RoomInfo.RoomRole by mutableStateOf(RoomInfo.RoomRole.NONE)
         private set
@@ -92,10 +92,11 @@ class RaidViewModel(
 
     fun startObserveRaidInfoList(
         uid: String?,
+        roomInfo: RoomInfo,
     ) {
         viewModelScope.launch {
             stopObserveRaidInfo()
-            roomInfo?.let {
+            roomInfo.let {
                 role = it.getRole(uid)
                 raidListenerRegistration =
                     CommonRaidHelper.observe(it.uniqueId) {
