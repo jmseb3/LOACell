@@ -12,8 +12,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +32,7 @@ import com.wonddak.loacell.ui.main.RaidRoomActions
 import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.ui.modal.sheet.ShareSheet
 import com.wonddak.loacell.ui.raidRoom.raid.RaidListView
+import com.wonddak.loacell.ui.raidRoom.setting.SettingRoomView
 import com.wonddak.loacell.ui.raidRoom.user.UserListView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -50,6 +54,8 @@ fun RaidRoomView(
         if (raidViewModel.role == RoomInfo.RoomRole.OWNER) 3 else 2
     })
     val showUserAddSheet = rememberModalStatus()
+    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+
     val action: (() -> Unit)? = when (pagerState.currentPage) {
         RoomState.Raid.index -> {
             {
@@ -88,6 +94,9 @@ fun RaidRoomView(
                     }
                 }
             }
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { innerPadding ->
         Column(
@@ -120,7 +129,19 @@ fun RaidRoomView(
                         }
 
                         else -> {
-                            Text("$page")
+                            SettingRoomView(
+                                raidViewModel,
+                                authViewModel,
+                                roomInfo!!,
+                                {
+                                    navController.popBackStack()
+                                }
+                            ) {
+                                scope.launch {
+                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                    snackbarHostState.showSnackbar(it, actionLabel = "확인")
+                                }
+                            }
                         }
                     }
                 }

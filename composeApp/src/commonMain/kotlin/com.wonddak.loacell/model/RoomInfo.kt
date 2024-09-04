@@ -41,6 +41,13 @@ data class RoomInfo(
             }
         } ?: RoomRole.NONE
     }
+
+    fun getAllUidList(): List<String> {
+        val result = mutableListOf(this.owner)
+        result.addAll(this.editableUser.filter { it.isNotEmpty() })
+        result.addAll(this.enterUser.filter { it.isNotEmpty() })
+        return result
+    }
 }
 
 fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo {
