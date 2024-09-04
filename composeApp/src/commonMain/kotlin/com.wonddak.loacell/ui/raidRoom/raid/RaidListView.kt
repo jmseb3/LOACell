@@ -68,7 +68,10 @@ fun RaidListView(
     val showType: RoomType = raidViewModel.showType
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Row() {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             IconButton(
                 {
                     raidViewModel.showType = if (showType == RoomType.Default) {
@@ -78,9 +81,12 @@ fun RaidListView(
                     }
                 }
             ) {
-                Icon(painter = painterResource(Res.drawable.calendar), null)
+                Icon(
+                    painter = painterResource(Res.drawable.calendar),
+                    null,
+                )
             }
-            Spacer(modifier = Modifier.weight(1f))
+
             OutlinedButton(
                 onClick = {
                     filterSheetStatus.show()
