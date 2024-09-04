@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import com.kakao.sdk.common.KakaoSdk
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.util.FileUtil
 import io.github.aakira.napier.DebugAntilog
@@ -39,6 +40,7 @@ class LoaCellApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        KakaoSdk.init(this, "eaad613c8a32160c49991040e94170f9")
         startKoin{
             // Log Koin into Android logger
             androidLogger()

@@ -1,4 +1,4 @@
-package com.wonddak.loacell.android.ui.modal.bottomSheet
+package com.wonddak.loacell.ui.modal.sheet
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -45,7 +45,6 @@ import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.Sheet
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.noRippleClickable
-import com.wonddak.loacell.ui.modal.sheet.BaseSheet
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.arrow
 import org.jetbrains.compose.resources.painterResource

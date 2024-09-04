@@ -43,38 +43,6 @@ import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
 
-@Composable
-fun RoomActionDialog(
-    dialogAction: DialogAction
-) {
-    BaseDialog(
-        titleText = Dialog.ROOM_ACTION.title,
-        dismiss = { dialogAction.hideDialog() },
-        modifier = Modifier.wrapContentHeight()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            val sameModifier = Modifier.size(100.dp)
-            EnterButton(
-                sameModifier,
-                SharedRes.images.room_enter.drawableResId,
-                "입장하기"
-            ) {
-                dialogAction.dialogRoomAction(ModalConst.ROOM_ACTION_ENTER)
-            }
-            EnterButton(
-                sameModifier,
-                SharedRes.images.room_make.drawableResId,
-                "방 만들기",
-            ) {
-                dialogAction.dialogRoomAction(ModalConst.ROOM_ACTION_ADD)
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -295,5 +263,4 @@ fun RoomExitDialog(
     ) {
         Text(text = "방에서 나가시겠습니까?")
     }
-
 }

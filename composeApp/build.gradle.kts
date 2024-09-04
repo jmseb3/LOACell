@@ -128,6 +128,7 @@ kotlin {
             implementation(libs.firebase.auth)
             implementation(libs.gms.auth)
             implementation(libs.androidx.datastore.preferences)
+            implementation(libs.kakao.share)
 
 
             implementation("androidx.credentials:credentials:1.3.0-rc01")

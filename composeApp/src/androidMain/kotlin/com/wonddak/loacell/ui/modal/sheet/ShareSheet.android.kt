@@ -1,52 +1,32 @@
-package com.wonddak.loacell.android.ui.modal.bottomSheet
+package com.wonddak.loacell.ui.modal.sheet
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
-import com.wonddak.loacell.DialogAction
-import com.wonddak.loacell.RoomInfo
-import com.wonddak.loacell.SharedRes
-import com.wonddak.loacell.android.noRippleClickable
-import com.wonddak.loacell.model.Sheet
+import com.wonddak.loacell.AppContext
+import com.wonddak.loacell.model.RoomInfo
+import io.github.aakira.napier.Napier
 
-internal fun shareIntent(
-    context: Context,
-    uniqueId: String
-) {
+actual fun copyToClipboard(data: String): Boolean {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, uniqueId)
+        putExtra(Intent.EXTRA_TEXT, data)
         type = "text/plain"
     }
-
     val shareIntent = Intent.createChooser(sendIntent, null).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-    context.startActivity(shareIntent)
+    AppContext.get().startActivity(shareIntent)
+    return false
+}
+
+actual fun shareToKakao(data: RoomInfo) {
+    shareToKakao(AppContext.get(), roomInfo = data)
 }
 
 internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
@@ -64,14 +44,14 @@ internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
         // 카카오톡으로 카카오톡 공유 가능
         ShareClient.instance.shareDefault(context, defaultText) { sharingResult, error ->
             if (error != null) {
-                Log.e(TAG, "카카오톡 공유 실패", error)
+                Napier.e(tag = TAG, throwable = error) { "카카오톡 공유 실패" }
             } else if (sharingResult != null) {
-                Log.d(TAG, "카카오톡 공유 성공 ${sharingResult.intent}")
+                Napier.d(tag = TAG) { "카카오톡 공유 성공 ${sharingResult.intent}" }
                 context.startActivity(sharingResult.intent)
 
                 // 카카오톡 공유에 성공했지만 아래 경고 메시지가 존재할 경우 일부 컨텐츠가 정상 동작하지 않을 수 있습니다.
-                Log.w(TAG, "Warning Msg: ${sharingResult.warningMsg}")
-                Log.w(TAG, "Argument Msg: ${sharingResult.argumentMsg}")
+                Napier.w(tag = TAG) { "Warning Msg: ${sharingResult.warningMsg}" }
+                Napier.w(tag = TAG) { "Argument Msg: ${sharingResult.argumentMsg}" }
             }
         }
     } else {

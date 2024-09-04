@@ -106,7 +106,12 @@ fun RaidRoomView(
             with(raidViewModel) {
                 AnimatedVisibility(pagerState.currentPage == 0 || pagerState.currentPage == 1) {
                     roomInfo?.let {
-                        TitleView(it, role)
+                        TitleView(it, role) {
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar(it, actionLabel = "확인")
+                            }
+                        }
                     }
                 }
                 HorizontalPager(
@@ -164,6 +169,7 @@ fun RaidRoomView(
 private fun TitleView(
     roomInfo: RoomInfo,
     role: RoomInfo.RoomRole,
+    showSnackBar: (String) -> Unit,
 ) {
     val shareStatus = rememberModalStatus()
     Box(
@@ -207,6 +213,7 @@ private fun TitleView(
     }
     ShareSheet(
         shareStatus,
-        roomInfo
+        roomInfo,
+        showSnackBar
     )
 }
