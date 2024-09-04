@@ -28,7 +28,7 @@ fun App() {
                 }
                 .diskCache {
                     DiskCache.Builder()
-                        .directory(fileHelper.getCacheImage().toPath())
+                        .directory(fileHelper.getCacheImage().replace("file://","").toPath())
                         .maxSizePercent(0.03)
                         .build()
                 }

@@ -8,8 +8,8 @@ import java.io.InputStreamReader
 actual class FileUtil(
     private val context: Context,
 ) {
-    actual fun getCachePath(): String {
-        return context.cacheDir.path + "/"
+    actual fun getCachePath(path: String): String {
+        return context.cacheDir.path + "/" + path
     }
 
     actual fun getAssetPath(): String {
