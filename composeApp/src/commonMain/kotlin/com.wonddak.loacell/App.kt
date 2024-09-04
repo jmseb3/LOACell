@@ -7,31 +7,33 @@ import coil3.ImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
-import coil3.memory.MemoryCache
 import coil3.network.ktor2.KtorNetworkFetcherFactory
 import com.wonddak.loacell.theme.AppTheme
 import com.wonddak.loacell.ui.main.LoaCellNavGraph
+import com.wonddak.loacell.util.FileHelper
 import okio.Path.Companion.toPath
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun App() {
-    setSingletonImageLoaderFactory { context ->
-        ImageLoader.Builder(context)
-            .components {
-                add(KtorNetworkFetcherFactory())
-            }
-            .memoryCache {
-                MemoryCache.Builder()
-                    // Set the max size to 25% of the app's available memory.
-                    .maxSizePercent(context, percent = 0.25)
-                    .build()
-            }
-            .build()
-    }
     KoinContext {
         val navController: NavHostController = rememberNavController()
+        val fileHelper: FileHelper = koinInject()
+        setSingletonImageLoaderFactory { context ->
+            ImageLoader.Builder(context)
+                .components {
+                    add(KtorNetworkFetcherFactory())
+                }
+                .diskCache {
+                    DiskCache.Builder()
+                        .directory(fileHelper.getCacheImage().toPath())
+                        .maxSizePercent(0.03)
+                        .build()
+                }
+                .build()
+        }
         AppTheme {
             LoaCellNavGraph(navController)
         }

@@ -18,4 +18,6 @@ class FileHelper(
     fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName))
 
     fun readFile(path: String): String = util.readFile(path)
+
+    fun getCacheImage(): String = util.getCachePath() + "image_cache"
 }

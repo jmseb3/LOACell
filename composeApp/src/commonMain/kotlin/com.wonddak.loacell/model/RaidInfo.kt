@@ -111,8 +111,11 @@ data class RaidInfo(
 
     fun getImage() = RaidItem.getImage(type.lowercase())
 
+    fun getTimeText(): String =
+        TimeHelper.makeTimeText(this.hour, this.minute)
+
     fun getDayText(): String =
-        "${this.day.text} ${TimeHelper.makeTimeText(this.hour, this.minute)}"
+        "${this.day.text} ${getTimeText()}"
 
     /**
      * 모든 파티 리스트를 가져온다.

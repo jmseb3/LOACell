@@ -105,7 +105,7 @@ fun LoaCellNavGraph(
         }
         composable<RaidInfo> { backStackEntry ->
             val roomInfo = raidViewModel.roomInfo
-            val raidInfo = backStackEntry.toRoute<RaidInfo>()
+            val raidInfo: RaidInfo = backStackEntry.toRoute()
             RaidAddView(roomInfo!!.uniqueId, raidInfo) {
                 navController.popBackStack()
             }

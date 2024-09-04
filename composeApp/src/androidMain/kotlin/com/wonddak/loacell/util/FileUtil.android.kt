@@ -9,7 +9,7 @@ actual class FileUtil(
     private val context: Context,
 ) {
     actual fun getCachePath(): String {
-        return context.cacheDir.path
+        return context.cacheDir.path + "/"
     }
 
     actual fun getAssetPath(): String {

@@ -45,6 +45,7 @@ import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.modal.dialog.SelectIdDialog
 import com.wonddak.loacell.ui.raidRoom.raid.calendar.RaidCalendarView
 import com.wonddak.loacell.viewModel.RaidViewModel
+import io.github.aakira.napier.Napier
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.calendar
 import loacell.composeapp.generated.resources.filter
@@ -193,13 +194,16 @@ fun RaidItemRow(
                                 .size(size / 2)
                         )
                     },
-                    error = { it ->
-                        Text("Error")
+                    error = {
+
                     },
                     contentDescription = null,
                     modifier = Modifier
                         .size(size)
-                        .clip(rShape)
+                        .clip(rShape),
+                    onError = {
+                        Napier.e(tag = "JWH") { it.result.toString() }
+                    }
                 )
                 Column(
                     modifier = Modifier.padding(5.dp)

@@ -335,7 +335,7 @@ fun RaidAddView(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(15.dp)
                             ) {
-                                Text(raidInfo.getDayText())
+                                Text(raidInfo.getTimeText())
                                 Icon(painter = painterResource(Res.drawable.schedule), null)
                             }
                         }
