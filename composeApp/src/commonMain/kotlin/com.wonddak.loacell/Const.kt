@@ -8,9 +8,10 @@ object Const {
 
     //DEPTH2
     const val NAV_ROOM = "nav_room"
+    const val NAV_ROOM_ENTER = "nav_room_enter"
     const val NAV_SETTING = "nav_setting"
 
-    //DEPTH3
+    //DEPTH3 (in Room)
     const val NAV_RAID_DETAIL_ARG = "raidId"
     const val NAV_RAID_DETAIL_MAIN = "nav_raid_detail/"
     const val NAV_RAID_DETAIL = "$NAV_RAID_DETAIL_MAIN{$NAV_RAID_DETAIL_ARG}"

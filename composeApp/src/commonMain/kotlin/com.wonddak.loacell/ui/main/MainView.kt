@@ -83,7 +83,9 @@ fun MainView(
                 actionContent = {
                     IconButton(
                         onClick = {
-                            navController.navigate(Const.NAV_SETTING)
+                            navController.navigate(Const.NAV_SETTING) {
+                                launchSingleTop = true
+                            }
                         },
                     ) {
                         Icon(Icons.Filled.Settings, contentDescription = null)
@@ -96,7 +98,9 @@ fun MainView(
                 fabStatus,
                 listOf(
                     FABInfo.Label(Res.drawable.room_enter, "입장") {
-
+                        navController.navigate(Const.NAV_ROOM_ENTER) {
+                            launchSingleTop = true
+                        }
                     },
                     FABInfo.Label(Res.drawable.room_make, "만들기") {
                         roomAddSheet.show()

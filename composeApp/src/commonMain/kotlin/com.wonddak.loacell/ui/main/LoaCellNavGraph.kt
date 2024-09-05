@@ -82,9 +82,17 @@ fun LoaCellNavGraph(
         composable(route = Const.NAV_SETTING) {
             SettingView(
                 authViewModel, storeViewModel,
-                navController::popBackStack
-            )
+            ) {
+                navController.popBackStack(Const.NAV_MAIN, false)
+            }
         }
+
+        composable(
+            route = Const.NAV_ROOM_ENTER,
+        ) { _ ->
+            RoomEnterView()
+        }
+
         composable(
             route = Const.NAV_ROOM,
         ) { _ ->
@@ -100,7 +108,7 @@ fun LoaCellNavGraph(
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             roomInfo?.let {
                 RaidAddView(it.uniqueId) {
-                    navController.popBackStack()
+                    navController.popBackStack(Const.NAV_ROOM, false)
                 }
             }
         }

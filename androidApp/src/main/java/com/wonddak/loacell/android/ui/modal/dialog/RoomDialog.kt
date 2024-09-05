@@ -44,39 +44,6 @@ import com.wonddak.loacell.store.FBRoomInfo
 import kotlinx.coroutines.delay
 
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun EnterButton(
-    modifier: Modifier,
-    @DrawableRes id: Int,
-    text: String,
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier,
-        border = BorderStroke(2.dp, Color.Black),
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = Color.Black
-        )
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(painter = painterResource(id = id), contentDescription = null)
-            Text(
-                text = text,
-                maxLines =  1,
-                modifier = Modifier
-                    .basicMarquee()
-            )
-        }
-    }
-
-}
-
 @Composable
 fun RoomEnterErrorDialog(
     dismiss: () -> Unit,
