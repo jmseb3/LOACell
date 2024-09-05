@@ -26,9 +26,11 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.rememberModalStatus
+import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.main.LoaCellBottomAppBar
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.main.RaidRoomActions
+import com.wonddak.loacell.ui.modal.dialog.RoomExitDialog
 import com.wonddak.loacell.ui.modal.sheet.AddUserSheet
 import com.wonddak.loacell.ui.modal.sheet.ShareSheet
 import com.wonddak.loacell.ui.raidRoom.raid.RaidListView
@@ -76,6 +78,13 @@ fun RaidRoomView(
     val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
     val scope = rememberCoroutineScope()
 
+    fun showSnackBarMsg(msg: String) {
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(msg, actionLabel = "확인")
+        }
+    }
+
     Scaffold(
         topBar = {
             LoaCellTopAppBar(
@@ -106,12 +115,13 @@ fun RaidRoomView(
             with(raidViewModel) {
                 AnimatedVisibility(pagerState.currentPage == 0 || pagerState.currentPage == 1) {
                     roomInfo?.let {
-                        TitleView(it, role) {
-                            scope.launch {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(it, actionLabel = "확인")
-                            }
-                        }
+                        TitleView(
+                            it,
+                            authViewModel.user!!.uid,
+                            role,
+                            ::showSnackBarMsg,
+                            navController::popBackStack
+                        )
                     }
                 }
                 HorizontalPager(
@@ -168,8 +178,10 @@ fun RaidRoomView(
 @Composable
 private fun TitleView(
     roomInfo: RoomInfo,
+    uid: String,
     role: RoomInfo.RoomRole,
     showSnackBar: (String) -> Unit,
+    onBack: () -> Unit,
 ) {
     val shareStatus = rememberModalStatus()
     Box(
@@ -201,12 +213,29 @@ private fun TitleView(
             }
 
             else -> {
+                val exitRoomStatus = rememberModalStatus()
                 IconButton(
                     onClick = {
-
+                        exitRoomStatus.show()
                     }
                 ) {
                     Icon(painterResource(Res.drawable.room_exit), null)
+                }
+                RoomExitDialog(
+                    exitRoomStatus
+                ) {
+                    CommonRoomHelper.exitRoom(
+                        roomInfo.uniqueId,
+                        uid,
+                        role,
+                        {
+                            exitRoomStatus.hide()
+                            onBack()
+                        },
+                        {
+                            exitRoomStatus.hide()
+                        }
+                    )
                 }
             }
         }

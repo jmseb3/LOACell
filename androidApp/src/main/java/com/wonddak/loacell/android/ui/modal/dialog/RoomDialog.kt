@@ -245,22 +245,3 @@ fun RoomEnterDialog(
         }
     }
 }
-
-@Composable
-fun RoomExitDialog(
-    dialogAction: DialogAction,
-) {
-    BaseDialog(
-        dismiss = {
-            dialogAction.hideDialog()
-        },
-        titleText = Dialog.ROOM_EXIT.title,
-        confirmButtonText = "나가기",
-        confirmButtonAction = {
-            dialogAction.dialogRoomExit()
-        },
-        dismissButtonText = "취소"
-    ) {
-        Text(text = "방에서 나가시겠습니까?")
-    }
-}
