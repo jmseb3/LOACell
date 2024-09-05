@@ -4,7 +4,7 @@ internal const val ASSETS_PATH = "assets"
 
 expect class FileUtil {
 
-    fun getCachePath(): String
+    fun getCachePath(path: String): String
     fun getAssetPath(): String
     fun isExist(path: String): Boolean
     fun readFile(path: String): String
@@ -19,5 +19,5 @@ class FileHelper(
 
     fun readFile(path: String): String = util.readFile(path)
 
-    fun getCacheImage(): String = util.getCachePath() + "image_cache"
+    fun getCacheImage(): String = util.getCachePath("image_cache")
 }

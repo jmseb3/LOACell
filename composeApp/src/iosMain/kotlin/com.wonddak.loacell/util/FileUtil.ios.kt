@@ -19,10 +19,16 @@ actual class FileUtil {
             inDomains = NSUserDomainMask
         ) as List<NSURL>
         val filePath = dirPaths[0].URLByAppendingPathComponent(path)
-        return filePath.toString()
+        fileManager.createDirectoryAtPath(
+            path = filePath.toString(),
+            withIntermediateDirectories = true,
+            null,
+            null
+        )
+        return filePath.toString() + "/"
     }
 
-    actual fun getCachePath(): String = providePath("")
+    actual fun getCachePath(path: String): String = providePath(path)
 
     actual fun getAssetPath(): String {
         val assetPath = providePath(ASSETS_PATH)
@@ -32,7 +38,7 @@ actual class FileUtil {
             null,
             null
         )
-        return assetPath
+        return assetPath + "/"
     }
 
     actual fun isExist(path: String): Boolean {
