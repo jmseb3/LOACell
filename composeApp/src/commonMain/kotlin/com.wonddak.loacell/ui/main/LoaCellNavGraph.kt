@@ -81,17 +81,28 @@ fun LoaCellNavGraph(
         }
         composable(route = Const.NAV_SETTING) {
             SettingView(
-                authViewModel, storeViewModel,
+                authViewModel, storeViewModel
             ) {
-                navController.popBackStack(Const.NAV_MAIN, false)
+                navController.navigate(Const.NAV_MAIN) {
+                    this.popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
             }
         }
 
         composable(
             route = Const.NAV_ROOM_ENTER,
         ) { _ ->
-            RoomEnterView()
+            RoomEnterView() {
+                navController.navigate(Const.NAV_MAIN) {
+                    this.popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            }
         }
+
 
         composable(
             route = Const.NAV_ROOM,

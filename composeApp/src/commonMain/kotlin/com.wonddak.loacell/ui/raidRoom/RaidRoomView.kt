@@ -90,7 +90,11 @@ fun RaidRoomView(
             LoaCellTopAppBar(
                 roomInfo?.title ?: "",
             ) {
-                navController.popBackStack()
+                navController.navigate(Const.NAV_MAIN) {
+                    this.popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
             }
         },
         bottomBar = {

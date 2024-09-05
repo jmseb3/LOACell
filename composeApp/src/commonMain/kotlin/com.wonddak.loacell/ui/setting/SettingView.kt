@@ -41,7 +41,7 @@ import org.koin.compose.koinInject
 fun SettingView(
     authViewModel: AuthViewModel,
     storeViewModel: StoreViewModel,
-    onBack: () -> Boolean,
+    onBack: () -> Unit,
 ) {
     var showMenu by remember {
         mutableStateOf(false)
@@ -71,9 +71,8 @@ fun SettingView(
                         storeViewModel.roomList.filter { it.owner == userInfo.uid },
                         authViewModel::updateName,
                         {
-                            if (onBack()) {
-                                authViewModel.outOrSignOut()
-                            }
+                            onBack()
+                            authViewModel.outOrSignOut()
                         },
                         authViewModel::deleteAccount,
                     )
