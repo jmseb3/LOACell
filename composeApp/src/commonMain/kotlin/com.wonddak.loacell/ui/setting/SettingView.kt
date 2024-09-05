@@ -41,7 +41,7 @@ import org.koin.compose.koinInject
 fun SettingView(
     authViewModel: AuthViewModel,
     storeViewModel: StoreViewModel,
-    onBack: () -> Unit,
+    onBack: () -> Boolean,
 ) {
     var showMenu by remember {
         mutableStateOf(false)
@@ -68,7 +68,14 @@ fun SettingView(
                 SectionCardView(title = "로그인 정보") {
                     LoginInfoView(
                         userInfo,
-                        storeViewModel.roomList.filter { it.owner == userInfo.uid }
+                        storeViewModel.roomList.filter { it.owner == userInfo.uid },
+                        authViewModel::updateName,
+                        {
+                            if (onBack()) {
+                                authViewModel.outOrSignOut()
+                            }
+                        },
+                        authViewModel::deleteAccount,
                     )
                 }
             }

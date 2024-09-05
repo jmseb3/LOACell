@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
+import com.wonddak.loacell.auth.delete
+import com.wonddak.loacell.auth.signOut
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
@@ -37,5 +39,23 @@ class AuthViewModel(
                 user = it
             }
         }
+    }
+
+    fun updateName(name: String) {
+        loginHelper.auth.updateDisplayName(name)
+    }
+
+    fun outOrSignOut() {
+        user?.let {
+            if (it.isAnonymous) {
+                loginHelper.delete()
+            } else {
+                loginHelper.signOut()
+            }
+        }
+    }
+
+    fun deleteAccount() {
+        loginHelper.delete()
     }
 }

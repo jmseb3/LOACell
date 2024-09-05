@@ -54,27 +54,3 @@ android {
         jvmTarget = "1.8"
     }
 }
-
-dependencies {
-    api(project(":shared"))
-
-    val composeBom = platform(libs.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.bundles.compose)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
-
-    implementation("com.github.IamCheng5:ComposeWheelPicker:1.1")
-    implementation(libs.wheel.picker)
-    implementation(libs.kakao.share)
-    implementation(libs.browser)
-    implementation(libs.capturable)
-
-    // Koin DI
-    // https://github.com/InsertKoinIO/koin
-    implementation(libs.bundles.koin.android)
-}

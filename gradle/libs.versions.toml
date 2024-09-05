@@ -10,21 +10,13 @@ androidx-uiTest = "1.6.8"
 coil = "3.0.0-alpha10"
 
 [libraries]
-browser = { module = "androidx.browser:browser", version = "1.8.0" }
-capturable = { module = "dev.shreyaspatil:capturable", version = "2.1.0" }
 kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
-wheel-picker = { module = "com.github.commandiron:WheelPickerCompose", version = "1.1.11" }
 
 androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
 
-compose-bom = { module = "androidx.compose:compose-bom", version = "2024.08.00" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.1" }
-compose-ui = { module = "androidx.compose.ui:ui" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-compose-material3 = { module = "androidx.compose.material3:material3" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.4" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.5" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
@@ -72,7 +64,6 @@ firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
-compose = ["compose-ui", "compose-ui-tooling-preview", "compose-material3", "androidx-activity-compose"]
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth"]
 ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
 koin-android = ["koin-core", "koin-android"]

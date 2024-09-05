@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.rememberModalStatus
+import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
@@ -38,9 +40,12 @@ import org.jetbrains.compose.resources.painterResource
 fun LoginInfoView(
     userInfo: FBUser,
     roomList: List<RoomInfo>,
+    updateName: (String) -> Unit,
+    outOrSignOut: () -> Unit,
+    deleteAccount: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-
+    val editNameStatus = rememberModalStatus()
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -61,7 +66,7 @@ fun LoginInfoView(
             }
             IconButton(
                 onClick = {
-//                loaCellViewModel.showDialog(Dialog.SETTING_EDIT_NAME)
+                    editNameStatus.show()
                 }
             ) {
                 Icon(
@@ -88,9 +93,7 @@ fun LoginInfoView(
                 val buttonWeight = Modifier.weight(1f)
                 OutlinedButton(
                     modifier = buttonWeight,
-                    onClick = {
-//                        loaCellViewModel.outOrSignOut()
-                    }
+                    onClick = outOrSignOut
                 ) {
                     Text(text = if (userInfo.isAnonymous) "나가기" else "로그아웃")
                 }
@@ -100,7 +103,7 @@ fun LoginInfoView(
                         modifier = buttonWeight,
                         onClick = {
                             if (roomList.isEmpty()) {
-//                                loginHelper.delete()
+                                deleteAccount()
                             } else {
                                 showDeleteError = true
                                 scope.launch {
@@ -153,4 +156,9 @@ fun LoginInfoView(
             }
         }
     }
+    ProfileNameDialog(
+        editNameStatus,
+        userInfo.displayName ?: "",
+        updateName
+    )
 }
