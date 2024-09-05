@@ -62,7 +62,7 @@ fun SettingView(
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 10.dp)
         ) {
             authViewModel.user?.let { userInfo ->
                 SectionCardView(title = "로그인 정보") {
@@ -110,7 +110,7 @@ fun SettingView(
             SectionText(title = "버그 제보 및 건의하기") {
                 webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
             }
-//        SectionText(title = "앱 버전 : ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})")
+            SectionText(title = "앱 버전 : ${getAppVersion()}")
         }
     }
 }
@@ -119,7 +119,7 @@ fun SettingView(
 internal fun SectionText(
     title: String,
     useDivider: Boolean = true,
-    action: () -> Unit,
+    action: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
@@ -130,19 +130,23 @@ internal fun SectionText(
                 .fillMaxWidth()
                 .padding(5.dp)
                 .noRippleClickable {
-                    action.invoke()
+                    action?.invoke()
                 },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = title)
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-            )
+            if (action != null) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                )
+            }
         }
         if (useDivider) {
             HorizontalDivider()
         }
     }
 }
+
+expect fun getAppVersion(): String
