@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.toRoute
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
@@ -86,18 +83,63 @@ fun LoaCellNavGraph(
             )
         }
 
+        // 그냥 입장하기 한 경우
         composable(
-            route = Const.NAV_ROOM_ENTER,
-        ) { _ ->
+            route = Const.NAV_ROOM_ENTER_MAIN,
+        ) {
             RoomEnterView(
+                "",
                 storeViewModel.roomList,
+                authViewModel.user!!.uid,
                 initRoom = {
-
+                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
+                        launchSingleTop = true
+                        popUpTo(Const.NAV_MAIN) {
+                            inclusive = false
+                        }
+                    }
                 },
                 navController::depth2toMain
             )
         }
 
+        //카카오 공유하기를 눌러 실행한 경우
+        composable(
+            route = Const.NAV_ROOM_ENTER,
+            arguments = listOf(
+                navArgument(Const.NAV_ROOM_ENTER_ARG) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            ),
+            deepLinks = listOf(
+                NavDeepLink("kakaoeaad613c8a32160c49991040e94170f9://kakaolink?uniqueId={${Const.NAV_ROOM_ENTER_ARG}}")
+            )
+        ) { backStackEntry ->
+            if (authViewModel.user == null) {
+                navController.navigate(Const.NAV_LOGIN) {
+                    launchSingleTop = true
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                RoomEnterView(
+                    backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
+                    storeViewModel.roomList,
+                    authViewModel.user!!.uid,
+                    initRoom = {
+                        navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
+                            launchSingleTop = true
+                            popUpTo(Const.NAV_MAIN) {
+                                inclusive = false
+                            }
+                        }
+                    },
+                    navController::depth2toMain
+                )
+            }
+        }
 
         composable(
             route = Const.NAV_ROOM,

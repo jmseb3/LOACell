@@ -31,17 +31,12 @@ object RaidItem {
                 val type = raidData.name.lowercase()
                 FireStorageReferenceHelper
                     .getAssetRaidImage(type)
-                    .also {
-                        Napier.d(tag = TAG) { "getAssetRaidImage : $it" }
-                    }
                     .getDownloadUrl { url ->
+                        Napier.d(tag = TAG) { "getAssetRaidImage : $url" }
                         imageCacheMap[type] = url
-                        Napier.d(tag = TAG) { "imageCacheMap : $imageCacheMap" }
                     }
             }
         }
-        Napier.d(tag = TAG) { "RaidItem Add : $data" }
-
         this.data = data
     }
 

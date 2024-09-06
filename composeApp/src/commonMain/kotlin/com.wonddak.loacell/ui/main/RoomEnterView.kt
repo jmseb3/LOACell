@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.common.LengthLimitTextField
@@ -20,8 +21,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun RoomEnterView(
+	prevId : String,
 	nowEnterRoomList : List<RoomInfo>,
-	initRoom : () -> Unit,
+	uid : String,
+	initRoom : (RoomInfo) -> Unit,
 	onBack : () -> Unit,
 ) {
 	val uniqueIdRoomList = nowEnterRoomList.map { it.uniqueId }.toSet()
@@ -45,10 +48,16 @@ fun RoomEnterView(
 			}
 		}
 		var roomId by remember {
+			mutableStateOf(prevId)
+		}
+		var enterPassword by remember {
 			mutableStateOf("")
 		}
 		Column(
-			modifier = Modifier.fillMaxSize().padding(innerPadding)
+			modifier = Modifier
+				.fillMaxSize()
+				.padding(innerPadding)
+				.padding(10.dp)
 		) {
 			LengthLimitTextField(
 				modifier = Modifier.fillMaxWidth(),
@@ -58,7 +67,7 @@ fun RoomEnterView(
 				maxLine = 1,
 				maxLength = 20,
 				keyboardOptions = KeyboardOptions(
-					imeAction = ImeAction.Done
+					imeAction = ImeAction.Next
 				),
 				textChange = {
 					if (it.isEmpty() || regex.matches(it)) {
@@ -66,21 +75,48 @@ fun RoomEnterView(
 					}
 				}
 			)
+			LengthLimitTextField(
+				modifier = Modifier
+					.fillMaxWidth(),
+				text = enterPassword,
+				label = "방 비밀번호",
+				placeHolder = "방 비밀번호를 입력해주세요.",
+				maxLine = 1,
+				maxLength = 10,
+				keyboardOptions = KeyboardOptions(
+					imeAction = ImeAction.Done
+				),
+				textChange = {
+					if (it.isEmpty() || regex.matches(it)) {
+						enterPassword = it
+					}
+				},
+			)
 			OutlinedButton(
+				modifier = Modifier.fillMaxWidth(),
 				onClick = {
 					if (uniqueIdRoomList.contains(roomId)) {
 						errorMsg = "이미 입장한 방입니다."
 						roomId = ""
+						enterPassword = ""
 					} else {
 						CommonRoomHelper.checkExist(
 							roomId,
 							successAction = { roomInfo ->
-								if (roomInfo.enterPassword.isEmpty()) {
-
-									success(roomInfo)
+								if (roomInfo.enterPassword.isEmpty() || enterPassword == roomInfo.enterPassword) {
+									//init
+									CommonRoomHelper.enterRoom(
+										roomInfo.uniqueId,
+										uid,
+										successAction = {
+											initRoom(roomInfo)
+										},
+										failAction = {
+											errorMsg = "방 입장에 실패 했습니다."
+										}
+									)
 								} else {
-									nowRoomInfo = roomInfo
-									password = roomInfo.enterPassword
+									errorMsg = "방이 존재 하지 않거나 비밀번호가 맞지 않습니다."
 								}
 							},
 							failAction = {
