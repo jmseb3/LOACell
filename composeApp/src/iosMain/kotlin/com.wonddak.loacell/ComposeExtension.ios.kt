@@ -7,3 +7,8 @@ import androidx.compose.runtime.Composable
 actual fun SetBackAction(enabled: Boolean, action: () -> Unit) {
     //Nothing
 }
+
+@Composable
+actual fun SetTwiceClose() {
+	//Nothing
+}

@@ -18,9 +18,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.wonddak.loacell.BlockBackButton
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.SetBackAction
+import com.wonddak.loacell.SetTwiceClose
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.store.CommonRoomHelper
@@ -62,7 +62,7 @@ fun MainView(
 		raidViewModel.stopObserveRaidInfo()
 	}
 	val fabStatus = rememberModalStatus()
-	BlockBackButton()
+	SetTwiceClose()
 	SetBackAction(fabStatus.status) {
 		fabStatus.hide()
 	}
