@@ -77,69 +77,67 @@ fun RaidRoomView(
 		}
 	}
 
-	Scaffold(
-		topBar = {
-			LoaCellTopAppBar(
-				roomInfo?.title ?: "",
-				onBack = onBack
-			)
-		},
-		bottomBar = {
-			LoaCellBottomAppBar(
-				onAction = action
-			) {
-				RaidRoomActions(raidViewModel.role) {
-					scope.launch {
-						pagerState.scrollToPage(it)
+	roomInfo?.let {
+		Scaffold(
+			topBar = {
+				LoaCellTopAppBar(
+					roomInfo.title,
+					onBack = onBack
+				)
+			},
+			bottomBar = {
+				LoaCellBottomAppBar(
+					onAction = action
+				) {
+					RaidRoomActions(raidViewModel.role) {
+						scope.launch {
+							pagerState.scrollToPage(it)
+						}
 					}
 				}
+			},
+			snackbarHost = {
+				SnackbarHost(snackbarHostState)
 			}
-		},
-		snackbarHost = {
-			SnackbarHost(snackbarHostState)
-		}
-	) { innerPadding ->
-		Column(
-			modifier = modifier.fillMaxSize()
-				.padding(innerPadding)
-		) {
-			with(raidViewModel) {
-				AnimatedVisibility(pagerState.currentPage == 0 || pagerState.currentPage == 1) {
-					roomInfo?.let {
+		) { innerPadding ->
+			Column(
+				modifier = modifier.fillMaxSize()
+					.padding(innerPadding)
+			) {
+				with(raidViewModel) {
+					AnimatedVisibility(pagerState.currentPage == 0 || pagerState.currentPage == 1) {
 						TitleView(
-							it,
+							roomInfo,
 							authViewModel.user!!.uid,
 							role,
 							::showSnackBarMsg,
 							onBack
 						)
 					}
-				}
-				HorizontalPager(
-					pagerState,
-					modifier = Modifier.fillMaxSize()
-				) { page ->
-					when (page) {
-						RoomState.Raid.index -> {
-							RaidListView(
-								raidViewModel
-							) {
-								navigateRaidDetail(it.raidId)
+					HorizontalPager(
+						pagerState,
+						modifier = Modifier.fillMaxSize()
+					) { page ->
+						when (page) {
+							RoomState.Raid.index -> {
+								RaidListView(
+									raidViewModel
+								) {
+									navigateRaidDetail(it.raidId)
+								}
 							}
-						}
 
-						RoomState.User.index -> {
-							UserListView(userList = userList) {
-								navigateUserDetail(it.name)
+							RoomState.User.index -> {
+								UserListView(userList = userList) {
+									navigateUserDetail(it.name)
+								}
 							}
-						}
 
-						else -> {
-							roomInfo?.let {
+							else -> {
 								SettingRoomView(
 									raidViewModel,
 									authViewModel,
-									it,
+									roomInfo,
 									onBack
 								) {
 									scope.launch {
@@ -153,14 +151,15 @@ fun RaidRoomView(
 				}
 			}
 		}
-
-	}
-	roomInfo?.let {
 		AddUserSheet(
 			showUserAddSheet,
 			Modifier,
-			it
+			roomInfo
 		)
+	} ?: TextButton(
+		onClick = onBack
+	) {
+		Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
 	}
 }
 
