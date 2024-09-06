@@ -2,13 +2,17 @@ package com.wonddak.loacell
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.core.util.Consumer
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.common.KakaoSdk
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.util.FileUtil
@@ -21,19 +25,37 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import java.lang.ref.WeakReference
 
+val LocalActivity = compositionLocalOf<ComponentActivity> {
+	error("CompositionLocal LocalActivity not present")
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         AppContext.set(this@MainActivity)
-        setContent { App() }
+		setContent {
+			CompositionLocalProvider(
+				LocalActivity provides this
+			) {
+				val activity = LocalActivity.current
+				val navController = rememberNavController()
+
+				DisposableEffect(activity, navController) {
+					val onNewIntentConsumer = Consumer<Intent> {
+						navController.handleDeepLink(it)
+					}
+
+					activity.addOnNewIntentListener(onNewIntentConsumer)
+
+					onDispose { activity.removeOnNewIntentListener(onNewIntentConsumer) }
+				}
+				App(navController)
+			}
+		}
     }
 }
-
-@Preview
-@Composable
-fun AppPreview() { App() }
 
 
 class LoaCellApplication : Application() {

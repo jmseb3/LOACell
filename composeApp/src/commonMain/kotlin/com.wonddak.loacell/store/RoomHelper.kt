@@ -135,6 +135,7 @@ object CommonRoomHelper {
         successAction: () -> Unit,
         failAction: (e: Error) -> Unit,
     ) {
+		Napier.d { "EXIT $roomId / $userId / $role" }
         val field = when (role) {
             RoomInfo.RoomRole.MANAGER -> RoomInfoField.EDITABLE_USER
             RoomInfo.RoomRole.USER -> RoomInfoField.ENTER_USER
@@ -157,7 +158,7 @@ object CommonRoomHelper {
                 CommonFilter.or(
                     CommonFilter.equalTo(RoomInfoField.OWNER, userId),
                     CommonFilter.arrayContains(RoomInfoField.EDITABLE_USER, userId),
-                    CommonFilter.arrayContains(RoomInfoField.EDITABLE_USER, userId),
+					CommonFilter.arrayContains(RoomInfoField.ENTER_USER, userId),
                 )
             )
             .getListenerRegistration(

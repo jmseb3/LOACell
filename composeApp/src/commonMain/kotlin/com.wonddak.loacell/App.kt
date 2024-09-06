@@ -17,9 +17,10 @@ import org.koin.compose.koinInject
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun App() {
+fun App(
+	navController : NavHostController = rememberNavController(),
+) {
     KoinContext {
-        val navController: NavHostController = rememberNavController()
         val fileHelper: FileHelper = koinInject()
         setSingletonImageLoaderFactory { context ->
             ImageLoader.Builder(context)

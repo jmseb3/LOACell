@@ -24,11 +24,11 @@ import org.koin.compose.koinInject
 
 @Composable
 fun LoaCellNavGraph(
-    navController: NavHostController,
-    splashViewModel: SplashViewModel = koinInject(),
-    authViewModel: AuthViewModel = koinInject(),
-    storeViewModel: StoreViewModel = koinInject(),
-    raidViewModel: RaidViewModel = koinInject(),
+    navController : NavHostController,
+    splashViewModel : SplashViewModel = koinInject(),
+    authViewModel : AuthViewModel = koinInject(),
+    storeViewModel : StoreViewModel = koinInject(),
+    raidViewModel : RaidViewModel = koinInject(),
 ) {
     NavHost(
         navController = navController,
@@ -128,13 +128,8 @@ fun LoaCellNavGraph(
                     backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
                     storeViewModel.roomList,
                     authViewModel.user!!.uid,
-                    initRoom = {
-                        navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
-                            launchSingleTop = true
-                            popUpTo(Const.NAV_MAIN) {
-                                inclusive = false
-                            }
-                        }
+                    initRoom = { roomInfo ->
+                        navController::depth2toMain
                     },
                     navController::depth2toMain
                 )
@@ -179,7 +174,7 @@ fun LoaCellNavGraph(
         }
         composable<RaidInfo> { backStackEntry ->
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
-            val raidInfo: RaidInfo = backStackEntry.toRoute()
+            val raidInfo : RaidInfo = backStackEntry.toRoute()
             RaidAddView(
                 roomInfo!!.uniqueId,
                 raidInfo,

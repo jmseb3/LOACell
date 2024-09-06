@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.noRippleClickable
@@ -203,6 +204,7 @@ private fun TitleView(
 			else -> {
 				val exitRoomStatus = rememberModalStatus()
 				IconButton(
+					modifier = Modifier.align(Alignment.CenterEnd).size(20.dp),
 					onClick = {
 						exitRoomStatus.show()
 					}
