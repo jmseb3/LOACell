@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.common.LengthLimitTextField
@@ -29,7 +30,9 @@ fun RoomEnterView(
 ) {
 	val uniqueIdRoomList = nowEnterRoomList.map { it.uniqueId }.toSet()
 	val regex = Regex("[a-zA-Z0-9]+")
-
+	SetBackAction(true) {
+		onBack()
+	}
 	Scaffold(
 		topBar = {
 			LoaCellTopAppBar(

@@ -5,24 +5,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.model.Character
-import com.wonddak.loacell.model.Dialog
-import com.wonddak.loacell.model.RaidInfo
-import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.model.UserInfo
+import com.wonddak.loacell.SetBackAction
+import com.wonddak.loacell.model.*
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.rememberPartyIndexModalStatus
 import com.wonddak.loacell.store.CommonRaidHelper
@@ -39,13 +29,16 @@ import loacell.composeapp.generated.resources.room_setting
 
 @Composable
 fun RaidDetailView(
-    roomInfo: RoomInfo,
+    roomInfo : RoomInfo?,
     raidId: String,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
     navigationEdit: (RaidInfo) -> Unit,
     onBack: () -> Unit,
 ) {
+    SetBackAction(true) {
+        onBack()
+    }
     val raidInfo = raidList.find { it.raidId == raidId }
     if (raidInfo == null) {
         TextButton(onClick = onBack) {
@@ -214,11 +207,13 @@ fun RaidDetailView(
             CommonRaidHelper.changePartyList(raidUserAddSheetStatus, raidInfo, character)
         }
 
-        AddUserSheet(
-            showUserAddSheet,
-            Modifier,
-            roomInfo
-        )
+        roomInfo?.let {
+            AddUserSheet(
+                showUserAddSheet,
+                Modifier,
+                it
+            )
+        }
     }
 }
 

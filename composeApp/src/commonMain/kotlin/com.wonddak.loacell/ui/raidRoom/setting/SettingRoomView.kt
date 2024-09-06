@@ -2,33 +2,17 @@ package com.wonddak.loacell.ui.raidRoom.setting
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.UserInfo
@@ -43,11 +27,7 @@ import com.wonddak.loacell.ui.modal.sheet.RoomSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import kotlinx.coroutines.launch
-import loacell.composeapp.generated.resources.Res
-import loacell.composeapp.generated.resources.edit
-import loacell.composeapp.generated.resources.room_exit
-import loacell.composeapp.generated.resources.visible_off
-import loacell.composeapp.generated.resources.visible_on
+import loacell.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -58,7 +38,9 @@ fun SettingRoomView(
     backToHome: () -> Unit,
     showSnackBar: (String) -> Unit,
 ) {
-
+    SetBackAction(true) {
+        backToHome()
+    }
     val result by raidViewModel.tempOfFBData.collectAsState()
     val user = authViewModel.user
     val userList = raidViewModel.userList

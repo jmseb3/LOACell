@@ -192,7 +192,7 @@ fun LoaCellNavGraph(
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             RaidDetailView(
-                roomInfo!!,
+                roomInfo,
                 raidId,
                 raidViewModel.raidList,
                 raidViewModel.userList,
