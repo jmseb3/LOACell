@@ -81,26 +81,21 @@ fun LoaCellNavGraph(
         }
         composable(route = Const.NAV_SETTING) {
             SettingView(
-                authViewModel, storeViewModel
-            ) {
-                navController.navigate(Const.NAV_MAIN) {
-                    this.popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
-                }
-            }
+                authViewModel, storeViewModel,
+                navController::depth2toMain
+            )
         }
 
         composable(
             route = Const.NAV_ROOM_ENTER,
         ) { _ ->
-            RoomEnterView() {
-                navController.navigate(Const.NAV_MAIN) {
-                    this.popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
-                }
-            }
+            RoomEnterView(
+                storeViewModel.roomList,
+                initRoom = {
+
+                },
+                navController::depth2toMain
+            )
         }
 
 
@@ -109,8 +104,23 @@ fun LoaCellNavGraph(
         ) { _ ->
             RaidRoomView(
                 Modifier.fillMaxSize(),
-                navController,
-                authViewModel, storeViewModel, raidViewModel
+                authViewModel, storeViewModel, raidViewModel,
+                navigateRaidAdd = {
+                    navController.navigate(Const.NAV_RAID_ADD) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateRaidDetail = { raidId ->
+                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + raidId) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateUserDetail = { userName ->
+                    navController.navigate(Const.NAV_USER_DETAIL_MAIN + userName) {
+                        launchSingleTop = true
+                    }
+                },
+                navController::depth2toMain,
             )
         }
         composable(
@@ -118,17 +128,21 @@ fun LoaCellNavGraph(
         ) {
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             roomInfo?.let {
-                RaidAddView(it.uniqueId) {
-                    navController.popBackStack(Const.NAV_ROOM, false)
-                }
+                RaidAddView(
+                    it.uniqueId,
+                    prevData = null,
+                    navController::depth3toRoom
+                )
             }
         }
         composable<RaidInfo> { backStackEntry ->
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             val raidInfo: RaidInfo = backStackEntry.toRoute()
-            RaidAddView(roomInfo!!.uniqueId, raidInfo) {
-                navController.popBackStack()
-            }
+            RaidAddView(
+                roomInfo!!.uniqueId,
+                raidInfo,
+                navController::depth3toRoom
+            )
         }
         composable(
             route = Const.NAV_RAID_DETAIL,
@@ -146,11 +160,12 @@ fun LoaCellNavGraph(
                 raidViewModel.raidList,
                 raidViewModel.userList,
                 navigationEdit = {
-                    navController.navigate(it)
-                }
-            ) {
-                navController.popBackStack()
-            }
+                    navController.navigate(it) {
+                        launchSingleTop = true
+                    }
+                },
+                navController::depth3toRoom
+            )
         }
         composable(
             route = Const.NAV_USER_DETAIL,
@@ -162,9 +177,26 @@ fun LoaCellNavGraph(
         ) { backStackEntry ->
             val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
             val userInfo = raidViewModel.userList.find { it.name == userName }
-            UserDetailView(userInfo) {
-                navController.popBackStack()
-            }
+            UserDetailView(
+                userInfo,
+                navController::depth3toRoom
+            )
+        }
+    }
+}
+
+fun NavHostController.depth2toMain() {
+    this.navigate(Const.NAV_MAIN) {
+        this.popUpTo(this@depth2toMain.graph.id) {
+            inclusive = true
+        }
+    }
+}
+
+fun NavHostController.depth3toRoom() {
+    this.navigate(Const.NAV_ROOM) {
+        this.popUpTo(this@depth3toRoom.graph.id) {
+            inclusive = true
         }
     }
 }
