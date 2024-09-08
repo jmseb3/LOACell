@@ -106,7 +106,7 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha08")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha09")
         }
 
         commonTest.dependencies {

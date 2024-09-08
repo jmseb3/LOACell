@@ -23,4 +23,8 @@ object Const {
     const val NAV_USER_DETAIL_ARG = "userName"
     const val NAV_USER_DETAIL_MAIN = "nav_user_detail/"
     const val NAV_USER_DETAIL = "$NAV_USER_DETAIL_MAIN{$NAV_USER_DETAIL_ARG}"
+
+    //DEPTH4(in Raid Detail)
+    const val NAV_RAID_EDIT = "nav_raid_edit"
+
 }

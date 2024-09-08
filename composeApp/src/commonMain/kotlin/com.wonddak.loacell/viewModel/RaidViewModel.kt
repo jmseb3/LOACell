@@ -27,7 +27,28 @@ class RaidViewModel(
 ) : ViewModel() {
 
     private var raidListenerRegistration: CommonListenerRegistration? = null
+    private var roomListenerRegistration: CommonListenerRegistration? = null
 
+    var roomList: List<RoomInfo> by mutableStateOf(emptyList())
+        private set
+
+    fun startObserveRoom(
+        userId: String,
+    ) {
+        stopObserveRoom()
+        viewModelScope.launch {
+            roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
+                this@RaidViewModel.roomList = it
+            }
+        }
+    }
+
+    fun stopObserveRoom() {
+        if (roomListenerRegistration != null) {
+            roomListenerRegistration?.remove()
+            roomList = emptyList()
+        }
+    }
     private var _filter = MutableStateFlow(Filter())
 
     val filter: StateFlow<Filter>
@@ -41,6 +62,8 @@ class RaidViewModel(
 
     var raidList: List<RaidInfo> by mutableStateOf(emptyList())
         private set
+
+    var editItem : RaidInfo? = null
 
     private var userListenerRegistration: CommonListenerRegistration? = null
     var userList: List<UserInfo> by mutableStateOf(emptyList())

@@ -19,7 +19,6 @@ import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
-import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -27,7 +26,6 @@ fun LoaCellNavGraph(
     navController : NavHostController,
     splashViewModel : SplashViewModel = koinInject(),
     authViewModel : AuthViewModel = koinInject(),
-    storeViewModel : StoreViewModel = koinInject(),
     raidViewModel : RaidViewModel = koinInject(),
 ) {
     NavHost(
@@ -66,19 +64,19 @@ fun LoaCellNavGraph(
             LoginView(
                 Modifier.fillMaxSize(),
                 navController,
-                authViewModel, storeViewModel
+                authViewModel
             )
         }
 
         composable(route = Const.NAV_MAIN) {
             MainView(
                 navController,
-                authViewModel, storeViewModel, raidViewModel
+                authViewModel, raidViewModel
             )
         }
         composable(route = Const.NAV_SETTING) {
             SettingView(
-                authViewModel, storeViewModel,
+                authViewModel,
                 navController::depth2toMain
             )
         }
@@ -89,11 +87,12 @@ fun LoaCellNavGraph(
         ) {
             RoomEnterView(
                 "",
-                storeViewModel.roomList,
+                raidViewModel.roomList,
                 authViewModel.user!!.uid,
                 initRoom = {
                     navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
-                        launchSingleTop = true
+                        this.restoreState = true
+                        this.launchSingleTop = true
                         popUpTo(Const.NAV_MAIN) {
                             inclusive = false
                         }
@@ -126,7 +125,7 @@ fun LoaCellNavGraph(
             } else {
                 RoomEnterView(
                     backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
-                    storeViewModel.roomList,
+                    raidViewModel.roomList,
                     authViewModel.user!!.uid,
                     initRoom = { roomInfo ->
                         navController::depth2toMain
@@ -163,22 +162,25 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_RAID_ADD
         ) {
-            val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
+            val roomInfo = raidViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             roomInfo?.let {
                 RaidAddView(
-                    it.uniqueId,
+                    roomId = it.uniqueId,
                     prevData = null,
-                    navController::depth3toRoom
+                    onBack = navController::depth3toRoom
                 )
             }
         }
-        composable<RaidInfo> { backStackEntry ->
+        composable(
+            route = Const.NAV_RAID_EDIT
+        ) { backStackEntry ->
             val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
-            val raidInfo : RaidInfo = backStackEntry.toRoute()
+//            val raidInfo : RaidInfo = backStackEntry.toRoute()
+            val raidInfo : RaidInfo? = raidViewModel.editItem
             RaidAddView(
-                roomInfo!!.uniqueId,
-                raidInfo,
-                navController::depth3toRoom
+                roomId = roomInfo!!.uniqueId,
+                prevData = raidInfo,
+                onBack = navController::popBackStack
             )
         }
         composable(
@@ -197,7 +199,9 @@ fun LoaCellNavGraph(
                 raidViewModel.raidList,
                 raidViewModel.userList,
                 navigationEdit = {
-                    navController.navigate(it) {
+                    raidViewModel.editItem = it
+                    navController.navigate(Const.NAV_RAID_EDIT) {
+                        restoreState = true
                         launchSingleTop = true
                     }
                 },
@@ -237,3 +241,5 @@ fun NavHostController.depth3toRoom() {
         }
     }
 }
+
+
