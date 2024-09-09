@@ -73,12 +73,29 @@ fun SettingView(
                     LoginInfoView(
                         userInfo,
                         roomList.filter { it.owner == userInfo.uid },
-                        authViewModel::updateName,
-                        {
-                            onBack()
+                        updateName = authViewModel::updateName,
+                        outOrSignOut = {
                             authViewModel.outOrSignOut()
+                            onBack()
                         },
-                        authViewModel::deleteAccount,
+                        deleteAccount = authViewModel::deleteAccount,
+                        linkToGoogle = {
+                            authViewModel.linkToGoogleAccount(
+                                failAction = {
+                                    scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        showMenu = false
+                                        snackbarHostState.showSnackbar(
+                                            it,
+                                            actionLabel = "확인"
+                                        )
+                                    }
+                                },
+                                successAction = {
+                                    onBack()
+                                }
+                            )
+                        }
                     )
                 }
             }

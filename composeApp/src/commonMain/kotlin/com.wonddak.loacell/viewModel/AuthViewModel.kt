@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.delete
+import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.loacell.auth.signOut
 import kotlinx.coroutines.launch
 
@@ -57,5 +58,29 @@ class AuthViewModel(
 
     fun deleteAccount() {
         loginHelper.delete()
+    }
+
+    fun launchAnonymousLogin() {
+        viewModelScope.launch {
+            loginHelper.requestAnonymousLogin()
+        }
+    }
+
+    fun launchGoogleLogin() {
+        viewModelScope.launch {
+            loginHelper.requestGoogleLogin { }
+        }
+    }
+
+    fun linkToGoogleAccount(
+        failAction: (String) -> Unit,
+        successAction: () -> Unit
+    ) {
+        viewModelScope.launch {
+            loginHelper.requestAnonymousToGoogleAccount(
+                failAction = failAction,
+                successAction = successAction
+            )
+        }
     }
 }

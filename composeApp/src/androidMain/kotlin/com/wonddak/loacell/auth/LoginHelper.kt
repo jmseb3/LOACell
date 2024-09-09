@@ -20,6 +20,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.wonddak.loacell.AppContext
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,9 +67,10 @@ actual class LoginHelper {
             }
         }
     }
+    private val activity: Activity
+        get() = AppContext.get() as Activity
 
-    suspend fun requestGoogleLogin(
-        activity :Activity,
+    actual suspend fun requestGoogleLogin(
         successAction: (result: FBAuthResult) -> Unit,
     ) {
         startGoogleLogin(activity) { cred ->
@@ -78,12 +80,11 @@ actual class LoginHelper {
         }
     }
 
-    suspend fun linkToGoogle(
-        activity :Activity,
+    actual suspend fun requestAnonymousToGoogleAccount(
         failAction: (msg: String) -> Unit,
         successAction: () -> Unit
     ) {
-        startGoogleLogin(activity) { cred ->
+        startGoogleLogin(AppContext.get() as Activity) { cred ->
             registerAnonymousToGoogle(cred,failAction) {
                 successAction()
             }

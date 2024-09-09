@@ -7,10 +7,20 @@ import kotlinx.coroutines.flow.StateFlow
 expect class LoginHelper(){
     val loginIn : MutableStateFlow<Boolean>
     val auth : FBAuth
+
     fun registerTokenAction(
         result : GoogleResult,
         failAction: (msg:String) -> Unit,
         successAction: (credential : FBAuthCredential) -> Unit,
+    )
+
+    suspend fun requestGoogleLogin(
+        successAction: (result: FBAuthResult) -> Unit
+    )
+
+    suspend fun requestAnonymousToGoogleAccount(
+        failAction: (msg: String) -> Unit,
+        successAction: () -> Unit
     )
 }
 

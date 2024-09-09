@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.wonddak.loacell.Const
-import com.wonddak.loacell.auth.rememberAuthLauncher
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.viewModel.AuthViewModel
@@ -67,9 +66,6 @@ fun LoginView(
                 }
             }
         }
-    }
-    val authLauncher = rememberAuthLauncher(authViewModel.loginHelper) {
-
     }
     Box(
         modifier = modifier
@@ -115,7 +111,7 @@ fun LoginView(
                 val widthSize = Modifier.fillMaxWidth(0.8f)
                 Button(
                     onClick = {
-                        authLauncher.launchAnonymousLogin()
+                        authViewModel.launchAnonymousLogin()
                     },
                     shape = RoundedCornerShape(15.dp),
                     modifier = widthSize,
@@ -156,7 +152,7 @@ fun LoginView(
                 GoogleLoginButton(
                     modifier = widthSize
                 ) {
-                    authLauncher.launchGoogleLogin()
+                    authViewModel.launchGoogleLogin()
                 }
             }
         }

@@ -50,7 +50,8 @@ actual class LoginHelper {
             successAction(FBAuthCredential(credential))
         }
     }
-    fun requestGoogleLogin(
+
+    actual suspend fun requestGoogleLogin(
         successAction: (result:FBAuthResult) -> Unit
     ) {
         val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
@@ -69,7 +70,7 @@ actual class LoginHelper {
             }
     }
 
-    fun requestAnonymousToGoogleLogin(
+    actual suspend fun requestAnonymousToGoogleAccount(
         failAction: (msg: String) -> Unit,
         successAction: () -> Unit
     ) {
