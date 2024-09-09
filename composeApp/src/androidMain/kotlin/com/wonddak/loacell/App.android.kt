@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		WindowCompat.setDecorFitsSystemWindows(window, false)
         AppContext.set(this@MainActivity)
-		setContent {
+        network.chaintech.composeMultiplatformScreenCapture.AppContext.apply { set(this@MainActivity) }
+        setContent {
 			CompositionLocalProvider(
 				LocalActivity provides this
 			) {

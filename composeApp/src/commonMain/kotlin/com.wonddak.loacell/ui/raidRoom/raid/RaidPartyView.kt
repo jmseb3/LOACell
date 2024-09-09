@@ -1,6 +1,7 @@
 package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,10 +23,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,8 @@ import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.add
 import loacell.composeapp.generated.resources.delete
 import loacell.composeapp.generated.resources.screenshot
+import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
+import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -130,84 +133,103 @@ fun RaidPartyView(
     }
 }
 
+expect val useShare: Boolean
+expect fun shareImage(bitmap: ImageBitmap?)
+
 @Composable
 fun RaidPartySimpleView(
     raidInfo: RaidInfo,
     list: List<Character?>,
+    errorMsg: (String) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
+    val captureController = rememberScreenCaptureController()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .wrapContentSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Card(
-                border = BorderStroke(1.dp, Color.Black),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp, vertical = 3.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(5.dp)
-                ) {
-                    Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
-                    if (raidInfo.day != Day.NONE) {
-                        Text(text = raidInfo.getDayText())
-                    }
+        ScreenCaptureComposable(
+            modifier = Modifier,
+            screenCaptureController = captureController,
+            shareImage = useShare,
+            onCaptured = { img, throwable ->
+                if (throwable == null) {
+                    shareImage(img)
+                } else {
+                    errorMsg("사진 생성에 실패했습니다.")
                 }
             }
-            Card(
-                border = BorderStroke(1.dp, Color.Black),
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp, vertical = 3.dp)
+                    .wrapContentSize()
+                    .background(Color.White),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Column {
-                    arrayOf(0, 4, 8, 12).forEach { idx ->
-                        runCatching { list.subList(idx, idx + 4) }.getOrNull()?.let { party ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                                    .defaultMinSize(minHeight = 50.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    "${idx / 4 + 1}",
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                party.forEach { item ->
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        if (item != null) {
-                                            DropDownNameView(
-                                                item.name,
-                                                fontSize = 12.sp,
-                                                otherContent = {
-                                                    Text(
-                                                        text = item.className,
-                                                        fontSize = 12.sp
-                                                    )
-                                                    Text(
-                                                        text = item.getLevel().toString(),
-                                                        fontSize = 12.sp
-                                                    )
-                                                }
-                                            )
-                                        } else {
-                                            Text(text = "X")
+                Card(
+                    border = BorderStroke(1.dp, Color.Black),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp, vertical = 3.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(5.dp)
+                    ) {
+                        Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
+                        if (raidInfo.day != Day.NONE) {
+                            Text(text = raidInfo.getDayText())
+                        }
+                    }
+                }
+                Card(
+                    border = BorderStroke(1.dp, Color.Black),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp, vertical = 3.dp)
+                ) {
+                    Column {
+                        arrayOf(0, 4, 8, 12).forEach { idx ->
+                            runCatching { list.subList(idx, idx + 4) }.getOrNull()?.let { party ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .defaultMinSize(minHeight = 50.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        "${idx / 4 + 1}",
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    party.forEach { item ->
+                                        Column(
+                                            modifier = Modifier.weight(1f),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            if (item != null) {
+                                                DropDownNameView(
+                                                    item.name,
+                                                    fontSize = 12.sp,
+                                                    otherContent = {
+                                                        Text(
+                                                            text = item.className,
+                                                            fontSize = 12.sp
+                                                        )
+                                                        Text(
+                                                            text = item.getLevel().toString(),
+                                                            fontSize = 12.sp
+                                                        )
+                                                    }
+                                                )
+                                            } else {
+                                                Text(text = "X")
+                                            }
                                         }
                                     }
                                 }
+                                HorizontalDivider()
                             }
-                            HorizontalDivider()
                         }
                     }
                 }
@@ -223,7 +245,7 @@ fun RaidPartySimpleView(
         ) {
             Button(
                 onClick = {
-                    //이미지 팝업
+                    captureController.capture()
                 }
             ) {
                 Row(

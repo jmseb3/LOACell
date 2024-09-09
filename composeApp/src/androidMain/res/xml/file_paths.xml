@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <cache-path name="raid" path="/raid" />
+    <cache-path
+        name="raid"
+        path="/raid" />
 
     <cache-path
         name="assets"
@@ -9,4 +11,12 @@
     <cache-path
         name="coil3"
         path="/image_cache" />
+
+    <files-path
+        name="screen_shots"
+        path="share_images" />
+
+    <external-path
+        name="external_files"
+        path="." />
 </paths>

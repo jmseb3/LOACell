@@ -5,14 +5,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
-import com.wonddak.loacell.model.*
+import com.wonddak.loacell.model.Character
+import com.wonddak.loacell.model.Dialog
+import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.rememberPartyIndexModalStatus
 import com.wonddak.loacell.store.CommonRaidHelper
@@ -116,7 +127,15 @@ fun RaidDetailView(
                             RaidPartySimpleView(
                                 raidInfo,
                                 getCharacterList(null, raidInfo, userList)
-                            )
+                            ) { msg ->
+                                scope.launch {
+                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                    snackbarHostState.showSnackbar(
+                                        msg,
+                                        actionLabel = "확인"
+                                    )
+                                }
+                            }
                         }
 
                         1, 2, 3, 4 -> {
