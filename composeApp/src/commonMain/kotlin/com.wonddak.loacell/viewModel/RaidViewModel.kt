@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.network.firebase.FBApi
@@ -58,6 +59,7 @@ class RaidViewModel(
     //region raidInfo Method
     private var raidListenerRegistration: CommonListenerRegistration? = null
     private var userListenerRegistration: CommonListenerRegistration? = null
+    var lastTabIndex = RoomState.Raid.index
 
     var raidList: List<RaidInfo> by mutableStateOf(emptyList())
         private set
@@ -89,6 +91,7 @@ class RaidViewModel(
         raidListenerRegistration?.remove()
         userListenerRegistration?.remove()
 
+        this.lastTabIndex = RoomState.Raid.index
         this.showType = RoomType.Default
         this._filter.value = Filter()
         this.raidList = emptyList()
