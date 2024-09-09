@@ -3,10 +3,15 @@ package com.wonddak.loacell.ui.main
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.*
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
@@ -28,6 +33,9 @@ fun LoaCellNavGraph(
     authViewModel : AuthViewModel = koinInject(),
     raidViewModel : RaidViewModel = koinInject(),
 ) {
+    val roomList by raidViewModel.roomList.collectAsState()
+    val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+
     NavHost(
         navController = navController,
         startDestination = Const.NAV_SPLASH,
@@ -64,19 +72,22 @@ fun LoaCellNavGraph(
             LoginView(
                 Modifier.fillMaxSize(),
                 navController,
-                authViewModel
+                authViewModel,
+                raidViewModel
             )
         }
 
         composable(route = Const.NAV_MAIN) {
             MainView(
                 navController,
-                authViewModel, raidViewModel
+                authViewModel,
+                raidViewModel
             )
         }
         composable(route = Const.NAV_SETTING) {
             SettingView(
                 authViewModel,
+                roomList,
                 navController::depth2toMain
             )
         }
@@ -87,7 +98,7 @@ fun LoaCellNavGraph(
         ) {
             RoomEnterView(
                 "",
-                raidViewModel.roomList,
+                roomList,
                 authViewModel.user!!.uid,
                 initRoom = {
                     navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
@@ -125,7 +136,7 @@ fun LoaCellNavGraph(
             } else {
                 RoomEnterView(
                     backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
-                    raidViewModel.roomList,
+                    roomList,
                     authViewModel.user!!.uid,
                     initRoom = { roomInfo ->
                         navController::depth2toMain
@@ -140,7 +151,8 @@ fun LoaCellNavGraph(
         ) { _ ->
             RaidRoomView(
                 Modifier.fillMaxSize(),
-                authViewModel, storeViewModel, raidViewModel,
+                authViewModel,
+                raidViewModel,
                 navigateRaidAdd = {
                     navController.navigate(Const.NAV_RAID_ADD) {
                         launchSingleTop = true
@@ -162,8 +174,7 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_RAID_ADD
         ) {
-            val roomInfo = raidViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
-            roomInfo?.let {
+            selectedRoomInfo?.let {
                 RaidAddView(
                     roomId = it.uniqueId,
                     prevData = null,
@@ -174,14 +185,15 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_RAID_EDIT
         ) { backStackEntry ->
-            val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
 //            val raidInfo : RaidInfo = backStackEntry.toRoute()
             val raidInfo : RaidInfo? = raidViewModel.editItem
-            RaidAddView(
-                roomId = roomInfo!!.uniqueId,
-                prevData = raidInfo,
-                onBack = navController::popBackStack
-            )
+            selectedRoomInfo?.let {
+                RaidAddView(
+                    roomId = it.uniqueId,
+                    prevData = raidInfo,
+                    onBack = navController::popBackStack
+                )
+            }
         }
         composable(
             route = Const.NAV_RAID_DETAIL,
@@ -192,9 +204,8 @@ fun LoaCellNavGraph(
             )
         ) { backStackEntry ->
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
-            val roomInfo = storeViewModel.roomList.find { it.uniqueId == raidViewModel.roomId }
             RaidDetailView(
-                roomInfo,
+                selectedRoomInfo,
                 raidId,
                 raidViewModel.raidList,
                 raidViewModel.userList,

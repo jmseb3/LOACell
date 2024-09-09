@@ -20,17 +20,21 @@ import com.wonddak.loacell.store.CommonRoomHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class RaidViewModel(
     private val fbApi: FBApi,
 ) : ViewModel() {
 
-    private var raidListenerRegistration: CommonListenerRegistration? = null
+
+    //region roomInfo Method
     private var roomListenerRegistration: CommonListenerRegistration? = null
 
-    var roomList: List<RoomInfo> by mutableStateOf(emptyList())
-        private set
+    private var _roomList: MutableStateFlow<List<RoomInfo>> = MutableStateFlow(emptyList())
+
+    val roomList: StateFlow<List<RoomInfo>>
+        get() = _roomList
 
     fun startObserveRoom(
         userId: String,
@@ -38,7 +42,7 @@ class RaidViewModel(
         stopObserveRoom()
         viewModelScope.launch {
             roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
-                this@RaidViewModel.roomList = it
+                _roomList.value = it
             }
         }
     }
@@ -46,9 +50,55 @@ class RaidViewModel(
     fun stopObserveRoom() {
         if (roomListenerRegistration != null) {
             roomListenerRegistration?.remove()
-            roomList = emptyList()
+            _roomList.value = emptyList()
         }
     }
+    //endregion
+
+    //region raidInfo Method
+    private var raidListenerRegistration: CommonListenerRegistration? = null
+    private var userListenerRegistration: CommonListenerRegistration? = null
+
+    var raidList: List<RaidInfo> by mutableStateOf(emptyList())
+        private set
+
+    var userList: List<UserInfo> by mutableStateOf(emptyList())
+        private set
+
+    private fun startObserveRaidInfoList(
+        uid: String?,
+        roomInfo: RoomInfo,
+    ) {
+        viewModelScope.launch {
+            stopObserveRaidInfo()
+            roomInfo.let {
+                role = it.getRole(uid)
+                raidListenerRegistration =
+                    CommonRaidHelper.observe(it.uniqueId) {
+                        raidList = it
+                    }
+                userListenerRegistration =
+                    CommonUserHelper.observe(it.uniqueId) {
+                        userList = it
+                    }
+            }
+        }
+    }
+
+    fun stopObserveRaidInfo() {
+        raidListenerRegistration?.remove()
+        userListenerRegistration?.remove()
+
+        this.showType = RoomType.Default
+        this._filter.value = Filter()
+        this.raidList = emptyList()
+        this.userList = emptyList()
+        this.role = RoomInfo.RoomRole.NONE
+    }
+    //endregion
+
+
+    //region Filter
     private var _filter = MutableStateFlow(Filter())
 
     val filter: StateFlow<Filter>
@@ -57,23 +107,34 @@ class RaidViewModel(
     fun updateFilter(filter: Filter) {
         _filter.value = filter
     }
+    //endregion
 
     var showType by mutableStateOf(RoomType.Default)
 
-    var raidList: List<RaidInfo> by mutableStateOf(emptyList())
-        private set
-
     var editItem : RaidInfo? = null
 
-    private var userListenerRegistration: CommonListenerRegistration? = null
-    var userList: List<UserInfo> by mutableStateOf(emptyList())
-        private set
+    //선택된 roomId
+    private var _roomId: MutableStateFlow<String?> = MutableStateFlow(null)
+    val roomId: StateFlow<String?>
+        get() = _roomId
 
-    var roomId: String? by mutableStateOf(null)
+    val selectedRoomInfo = roomList.combine(roomId) { list, id ->
+        list.find { it.uniqueId == id }
+    }
+
+    fun setRoomId(
+        roomInfo: RoomInfo,
+        uid: String?
+    ) {
+        _roomId.value = roomInfo.uniqueId
+        startObserveRaidInfoList(uid, roomInfo)
+    }
 
     var role: RoomInfo.RoomRole by mutableStateOf(RoomInfo.RoomRole.NONE)
         private set
 
+
+    //region room setting data
     private var _tempOfFBData = MutableStateFlow(emptyList<FBDataItem>())
 
     val tempOfFBData: StateFlow<List<FBDataItem>>
@@ -112,35 +173,5 @@ class RaidViewModel(
             }
         }
     }
-
-    fun startObserveRaidInfoList(
-        uid: String?,
-        roomInfo: RoomInfo,
-    ) {
-        viewModelScope.launch {
-            stopObserveRaidInfo()
-            roomInfo.let {
-                role = it.getRole(uid)
-                raidListenerRegistration =
-                    CommonRaidHelper.observe(it.uniqueId) {
-                        raidList = it
-                    }
-                userListenerRegistration =
-                    CommonUserHelper.observe(it.uniqueId) {
-                        userList = it
-                    }
-            }
-        }
-    }
-
-    fun stopObserveRaidInfo() {
-        raidListenerRegistration?.remove()
-        userListenerRegistration?.remove()
-
-        this.showType = RoomType.Default
-        this._filter.value = Filter()
-        this.raidList = emptyList()
-        this.userList = emptyList()
-        this.role = RoomInfo.RoomRole.NONE
-    }
+    //endregion
 }

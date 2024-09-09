@@ -1,15 +1,25 @@
 package com.wonddak.loacell.ui.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +39,6 @@ import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.modal.sheet.RoomSheet
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
-import com.wonddak.loacell.viewModel.StoreViewModel
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.room_enter
@@ -39,9 +48,10 @@ import loacell.composeapp.generated.resources.room_make
 fun MainView(
 	navController : NavHostController,
 	authViewModel : AuthViewModel,
-	storeViewModel : StoreViewModel,
 	raidViewModel : RaidViewModel,
 ) {
+	val roomList by raidViewModel.roomList.collectAsState()
+
 	LaunchedEffect(authViewModel.user) {
 		//메인에서 유저 정보에 변동이 생긴 경우
 		if (authViewModel.user == null) {
@@ -56,7 +66,7 @@ fun MainView(
 		} else {
 			//로그인 된경우
 			//다시 로그인으로 보낸다.
-			storeViewModel.startObserveRoom(authViewModel.user!!.uid)
+			raidViewModel.startObserveRoom(authViewModel.user!!.uid)
 		}
 		//별개로 raidData는 메인에 오면 계속 탐색할 필요가 없다.
 		raidViewModel.stopObserveRaidInfo()
@@ -113,15 +123,11 @@ fun MainView(
 				modifier = Modifier.fillMaxWidth(),
 				contentPadding = PaddingValues(10.dp)
 			) {
-				items(storeViewModel.roomList) { roomInfo ->
+				items(roomList) { roomInfo ->
 					TextButton(
 						onClick = {
 							scope.launch {
-								raidViewModel.roomId = roomInfo.uniqueId
-								raidViewModel.startObserveRaidInfoList(
-									authViewModel.user?.uid,
-									roomInfo
-								)
+								raidViewModel.setRoomId(roomInfo, authViewModel.user?.uid)
 								navController.navigate(Const.NAV_ROOM)
 							}
 						},

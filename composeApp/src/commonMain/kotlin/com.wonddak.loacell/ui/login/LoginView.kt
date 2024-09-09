@@ -38,7 +38,7 @@ import com.wonddak.loacell.auth.rememberAuthLauncher
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.viewModel.AuthViewModel
-import com.wonddak.loacell.viewModel.StoreViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.btn_google
 import loacell.composeapp.generated.resources.login_anonymous
@@ -54,10 +54,10 @@ fun LoginView(
     modifier: Modifier,
     navController: NavHostController,
     authViewModel: AuthViewModel,
-    storeViewModel: StoreViewModel,
+    raidViewModel: RaidViewModel,
 ) {
     LaunchedEffect(true) {
-        storeViewModel.stopObserveRoom()
+        raidViewModel.stopObserveRoom()
     }
     LaunchedEffect(authViewModel.initSuccess, authViewModel.user) {
         if (authViewModel.initSuccess && authViewModel.user != null) {

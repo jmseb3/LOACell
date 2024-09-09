@@ -9,7 +9,6 @@ import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
-import com.wonddak.loacell.viewModel.StoreViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -32,7 +31,6 @@ val storageModule = module {
 val viewmodelModule = module {
     viewModelOf(::SplashViewModel)
     viewModelOf(::AuthViewModel)
-    viewModelOf(::StoreViewModel)
     viewModelOf(::RaidViewModel)
 }
 
