@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
+import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -131,21 +132,12 @@ fun LoginInfoView(
                 ) {
                     Text(
                         text = "연동하기",
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontFamily = roboto()
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     IconButton(
-                        onClick = {
-
-//                                loginHelper.linkToGoogle(
-//                                    context as Activity,
-//                                    failAction = { msg ->
-//                                        loaCellViewModel.showSnackBar(msg)
-//                                    },
-//                                ) {
-//                                    loaCellViewModel.closeSetting()
-//                                }
-                        }
+                        onClick = linkToGoogle
                     ) {
                         Icon(
                             modifier = Modifier.size(36.dp),

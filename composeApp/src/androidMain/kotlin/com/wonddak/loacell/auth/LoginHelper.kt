@@ -73,7 +73,7 @@ actual class LoginHelper {
     actual suspend fun requestGoogleLogin(
         successAction: (result: FBAuthResult) -> Unit,
     ) {
-        startGoogleLogin(activity) { cred ->
+        startGoogleLogin() { cred ->
             registerGoogleToken(cred) {
                 successAction(it)
             }
@@ -84,14 +84,13 @@ actual class LoginHelper {
         failAction: (msg: String) -> Unit,
         successAction: () -> Unit
     ) {
-        startGoogleLogin(AppContext.get() as Activity) { cred ->
+        startGoogleLogin() { cred ->
             registerAnonymousToGoogle(cred,failAction) {
                 successAction()
             }
         }
     }
     private suspend fun startGoogleLogin(
-        activity :Activity,
         successAction: (result: GoogleIdTokenCredential) -> Unit
     ) {
         val request: GetCredentialRequest = GetCredentialRequest.Builder()
