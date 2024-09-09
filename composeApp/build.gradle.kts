@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -145,6 +146,8 @@ kotlin {
     }
 }
 
+apply("../keystore/signing.gradle")
+
 android {
     namespace = "com.wonddak.loacell"
     compileSdk = 34
@@ -154,8 +157,8 @@ android {
         targetSdk = 34
 
         applicationId = "com.wonddak.loacell.android"
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 14
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -167,6 +170,22 @@ android {
                 device = "Pixel 5"
                 apiLevel = 34
                 systemImageSource = "aosp"
+            }
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
+            signingConfig = signingConfigs.getByName("LoaCellSigning")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+        getByName("debug") {
+            isDebuggable = true
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
             }
         }
     }

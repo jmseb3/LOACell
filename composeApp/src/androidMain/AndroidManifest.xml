@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -8,18 +9,20 @@
     </queries>
 
     <application
-        android:allowBackup="false"
-        android:label="LoaCell"
         android:name=".LoaCellApplication"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="LoaCell"
         android:theme="@android:style/Theme.Material.NoActionBar"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleInstance">
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,16 +46,6 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="network.chaintech.cmp.screenshot.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
