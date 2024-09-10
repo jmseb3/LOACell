@@ -1,3 +1,6 @@
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.UIKitViewController
 import androidx.compose.ui.window.ComposeUIViewController
 import com.wonddak.loacell.App
 import com.wonddak.loacell.debugBuild
@@ -8,7 +11,9 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import platform.UIKit.UIViewController
 
-fun MainViewController(): UIViewController {
+fun MainViewController(
+    createUIViewController: () -> UIViewController
+): UIViewController {
     debugBuild()
     startKoin{
         // Load modules
@@ -17,5 +22,13 @@ fun MainViewController(): UIViewController {
         })
         modules(commonModule())
     }
-    return ComposeUIViewController { App() }
+    return ComposeUIViewController {
+        App() {
+            UIKitViewController(
+                factory = createUIViewController,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }
+

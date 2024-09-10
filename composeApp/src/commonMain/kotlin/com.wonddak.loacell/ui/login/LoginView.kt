@@ -54,6 +54,7 @@ fun LoginView(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     raidViewModel: RaidViewModel,
+    appleLogin: (@Composable () -> Unit)? = null
 ) {
     LaunchedEffect(true) {
         raidViewModel.stopObserveRoom()
@@ -147,8 +148,16 @@ fun LoginView(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                appleLogin?.let { loginButton ->
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        modifier = widthSize.height(40.dp)
+                    ) {
+                        loginButton()
+                    }
+                }
 
+                Spacer(modifier = Modifier.height(10.dp))
                 GoogleLoginButton(
                     modifier = widthSize
                 ) {

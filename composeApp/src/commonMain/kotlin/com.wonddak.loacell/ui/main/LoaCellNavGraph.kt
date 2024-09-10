@@ -29,6 +29,7 @@ import org.koin.compose.koinInject
 @Composable
 fun LoaCellNavGraph(
     navController : NavHostController,
+    appleLogin: (@Composable () -> Unit)? = null,
     splashViewModel : SplashViewModel = koinInject(),
     authViewModel : AuthViewModel = koinInject(),
     raidViewModel : RaidViewModel = koinInject(),
@@ -73,7 +74,8 @@ fun LoaCellNavGraph(
                 Modifier.fillMaxSize(),
                 navController,
                 authViewModel,
-                raidViewModel
+                raidViewModel,
+                appleLogin
             )
         }
 

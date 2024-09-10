@@ -18,7 +18,8 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun App(
-	navController : NavHostController = rememberNavController(),
+    navController: NavHostController = rememberNavController(),
+    appleLogin: (@Composable () -> Unit)? = null
 ) {
     KoinContext {
         val fileHelper: FileHelper = koinInject()
@@ -29,14 +30,14 @@ fun App(
                 }
                 .diskCache {
                     DiskCache.Builder()
-                        .directory(fileHelper.getCacheImage().replace("file://","").toPath())
+                        .directory(fileHelper.getCacheImage().replace("file://", "").toPath())
                         .maxSizePercent(0.03)
                         .build()
                 }
                 .build()
         }
         AppTheme {
-            LoaCellNavGraph(navController)
+            LoaCellNavGraph(navController, appleLogin)
         }
     }
 }

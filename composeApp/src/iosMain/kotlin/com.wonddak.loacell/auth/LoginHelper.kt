@@ -19,6 +19,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.Foundation.NSError
 import platform.Foundation.NSString
@@ -97,7 +99,6 @@ actual class LoginHelper {
 fun LoginHelper.registerAppleToken(
     nonce: NSString,
     credential: ASAuthorizationAppleIDCredential,
-    successAction: (FBAuthResult) -> Unit,
 ) {
     loginIn.value = true
     val appleIDToken = credential.identityToken()
@@ -122,7 +123,6 @@ fun LoginHelper.registerAppleToken(
     )
     auth.signInWithCredential(FBAuthCredential(firebaseCredential),{ loginIn.value = false }) {
         loginIn.value = false
-        successAction(it)
     }
 }
 
@@ -243,4 +243,12 @@ actual class FBAuthResult(
     actual val user: FBUser?
         get() = result.user?.let { FBUser(it) }
 
+}
+
+class LoginHelperIn : KoinComponent {
+    private val helper: LoginHelper by inject()
+    fun registerAppleToken(
+        nonce: NSString,
+        credential: ASAuthorizationAppleIDCredential,
+    ) = helper.registerAppleToken(nonce, credential)
 }
