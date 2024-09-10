@@ -81,11 +81,7 @@ fun SettingView(
                         showSnackbar = { msg ->
                             scope.launch {
                                 snackbarHostState.currentSnackbarData?.dismiss()
-                                showMenu = false
-                                snackbarHostState.showSnackbar(
-                                    msg,
-                                    actionLabel = "확인"
-                                )
+                                snackbarHostState.showSnackbar(msg, actionLabel = "확인")
                             }
                         }
                     )

@@ -33,12 +33,16 @@ class AppleLinkCoordinator: AppleCoordinator {
             
             Auth.auth().currentUser?.link(with: credential) { (authResult, error) in
                 if (error == nil) {
+                    print("link success")
                     linkSuccessAction()
                 } else {
+                    print("link fail")
                     linkFailAction(error?.localizedDescription ?? "unknown error")
                 }
             }
         } handleFail: { controller, error in
+            print("link fail 22")
+
             if error is NSError {
                 let error = (error as NSError)
                 if error.code == 1001 {
@@ -86,7 +90,10 @@ class AppleCoordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
     var handleFail : ( ASAuthorizationController,Error) -> Void
     
     
-    init(window: UIWindow? = nil, handleSuccess: @escaping (ASAuthorizationAppleIDCredential, _: String) -> Void, handleFail: @escaping (ASAuthorizationController, Error) -> Void) {
+    init(
+        handleSuccess: @escaping (ASAuthorizationAppleIDCredential, _: String) -> Void,
+        handleFail: @escaping (ASAuthorizationController, Error) -> Void
+    ) {
         self.handleSuccess = handleSuccess
         self.handleFail = handleFail
     }

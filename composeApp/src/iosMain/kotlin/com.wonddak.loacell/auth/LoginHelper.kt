@@ -234,7 +234,6 @@ actual class FBUser(
 
     actual fun isAppleProviderExist(): Boolean {
         for (providerDatum in user.providerData()) {
-            providerDatum as FIRAdditionalUserInfo
             if (providerDatum == "apple.com") {
                 return true
             }
