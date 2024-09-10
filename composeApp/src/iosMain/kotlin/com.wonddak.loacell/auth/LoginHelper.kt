@@ -2,6 +2,7 @@
 
 package com.wonddak.loacell.auth
 
+import cocoapods.FirebaseAuth.FIRAdditionalUserInfo
 import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
@@ -230,6 +231,16 @@ actual class FBUser(
         get() = user.photoURL.toString()
     actual val isAnonymous: Boolean
         get() = user.isAnonymous()
+
+    actual fun isAppleProviderExist(): Boolean {
+        for (providerDatum in user.providerData()) {
+            providerDatum as FIRAdditionalUserInfo
+            if (providerDatum == "apple.com") {
+                return true
+            }
+        }
+        return false
+    }
 
     override fun toString(): String {
         return "FBUser(uid='$uid', displayName=$displayName, photoUrl='$photoUrl', isAnonymous=$isAnonymous)"

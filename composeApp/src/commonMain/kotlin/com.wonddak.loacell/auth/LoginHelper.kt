@@ -93,6 +93,8 @@ expect class FBUser {
     val displayName :String?
     val photoUrl : String
     val isAnonymous :Boolean
+
+    fun isAppleProviderExist(): Boolean
 }
 
 expect class FBAuthResult {

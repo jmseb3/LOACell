@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
+import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.ui.common.SectionCardView
@@ -42,6 +43,7 @@ import org.koin.compose.koinInject
 fun SettingView(
     authViewModel: AuthViewModel,
     roomList: List<RoomInfo>,
+    appleLoginGuide: AppleLoginGuide? = null,
     onBack: () -> Unit,
 ) {
     var showMenu by remember {
@@ -71,30 +73,20 @@ fun SettingView(
             authViewModel.user?.let { userInfo ->
                 SectionCardView(title = "로그인 정보") {
                     LoginInfoView(
+                        authViewModel,
                         userInfo,
                         roomList.filter { it.owner == userInfo.uid },
-                        updateName = authViewModel::updateName,
-                        outOrSignOut = {
-                            authViewModel.outOrSignOut()
-                            onBack()
-                        },
-                        deleteAccount = authViewModel::deleteAccount,
-                        linkToGoogle = {
-                            authViewModel.linkToGoogleAccount(
-                                failAction = {
-                                    scope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        showMenu = false
-                                        snackbarHostState.showSnackbar(
-                                            it,
-                                            actionLabel = "확인"
-                                        )
-                                    }
-                                },
-                                successAction = {
-                                    onBack()
-                                }
-                            )
+                        appleLoginGuide,
+                        onBack,
+                        showSnackbar = { msg ->
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                showMenu = false
+                                snackbarHostState.showSnackbar(
+                                    msg,
+                                    actionLabel = "확인"
+                                )
+                            }
                         }
                     )
                 }

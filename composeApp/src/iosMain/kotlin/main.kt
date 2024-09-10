@@ -3,6 +3,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitViewController
 import androidx.compose.ui.window.ComposeUIViewController
 import com.wonddak.loacell.App
+import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.debugBuild
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.util.FileUtil
@@ -12,7 +13,8 @@ import org.koin.dsl.module
 import platform.UIKit.UIViewController
 
 fun MainViewController(
-    createUIViewController: () -> UIViewController
+    appleSingIn: () -> UIViewController,
+    appleLoginGuide: AppleLoginGuide
 ): UIViewController {
     debugBuild()
     startKoin{
@@ -23,12 +25,15 @@ fun MainViewController(
         modules(commonModule())
     }
     return ComposeUIViewController {
-        App() {
-            UIKitViewController(
-                factory = createUIViewController,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        App(
+            appleLoginGuide = appleLoginGuide,
+            appleLogin = {
+                UIKitViewController(
+                    factory = appleSingIn,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        )
     }
 }
 

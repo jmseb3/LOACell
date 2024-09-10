@@ -83,4 +83,6 @@ class AuthViewModel(
             )
         }
     }
+
+    fun checkAppleProvider() = user?.isAppleProviderExist() ?: false
 }

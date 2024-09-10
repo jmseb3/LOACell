@@ -231,6 +231,15 @@ actual class FBUser(
     actual val photoUrl: String
         get() = user.photoUrl.toString()
 
+    actual fun isAppleProviderExist(): Boolean {
+        for (providerDatum in user.providerData) {
+            if (providerDatum.providerId == "apple.com") {
+                return true
+            }
+        }
+        return false
+    }
+
     override fun toString(): String {
         return "FBUser(uid='$uid', displayName=$displayName, isAnonymous=$isAnonymous, photoUrl='$photoUrl')"
     }

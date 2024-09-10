@@ -8,6 +8,7 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.network.ktor2.KtorNetworkFetcherFactory
+import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.theme.AppTheme
 import com.wonddak.loacell.ui.main.LoaCellNavGraph
 import com.wonddak.loacell.util.FileHelper
@@ -19,6 +20,7 @@ import org.koin.compose.koinInject
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
+    appleLoginGuide: AppleLoginGuide? = null,
     appleLogin: (@Composable () -> Unit)? = null
 ) {
     KoinContext {
@@ -37,7 +39,7 @@ fun App(
                 .build()
         }
         AppTheme {
-            LoaCellNavGraph(navController, appleLogin)
+            LoaCellNavGraph(navController, appleLoginGuide, appleLogin)
         }
     }
 }

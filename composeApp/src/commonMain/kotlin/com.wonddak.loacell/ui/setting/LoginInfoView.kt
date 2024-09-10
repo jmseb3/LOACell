@@ -26,27 +26,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
+import com.wonddak.loacell.viewModel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.btn_google
 import loacell.composeapp.generated.resources.change_person
+import loacell.composeapp.generated.resources.logo_apple
 import org.jetbrains.compose.resources.painterResource
+
+internal expect val useLinkApple: Boolean
 
 @Composable
 fun LoginInfoView(
+    authViewModel: AuthViewModel,
     userInfo: FBUser,
     roomList: List<RoomInfo>,
-    updateName: (String) -> Unit,
-    outOrSignOut: () -> Unit,
-    deleteAccount: () -> Unit,
-    linkToGoogle: () -> Unit,
+    appleLoginGuide: AppleLoginGuide? = null,
+    onBack: () -> Unit,
+    showSnackbar: (String) -> Unit,
 ) {
+    val isAppleProvider = authViewModel.checkAppleProvider()
     val scope = rememberCoroutineScope()
     val editNameStatus = rememberModalStatus()
     Column(
@@ -97,7 +103,10 @@ fun LoginInfoView(
                 val buttonWeight = Modifier.weight(1f)
                 OutlinedButton(
                     modifier = buttonWeight,
-                    onClick = outOrSignOut
+                    onClick = {
+                        authViewModel.outOrSignOut()
+                        onBack()
+                    }
                 ) {
                     Text(text = if (userInfo.isAnonymous) "나가기(탈퇴)" else "로그아웃")
                 }
@@ -107,7 +116,18 @@ fun LoginInfoView(
                         modifier = buttonWeight,
                         onClick = {
                             if (roomList.isEmpty()) {
-                                deleteAccount()
+                                if (isAppleProvider) {
+                                    appleLoginGuide?.revokeToken(
+                                        fail = {
+
+                                        },
+                                        success = {
+                                            authViewModel.deleteAccount()
+                                        }
+                                    )
+                                } else {
+                                    authViewModel.deleteAccount()
+                                }
                             } else {
                                 showDeleteError = true
                                 scope.launch {
@@ -124,7 +144,10 @@ fun LoginInfoView(
                 }
             }
             if (showDeleteError) {
-                Text(text = "소유자인 방의 정보를 모두 삭제해 주세요")
+                Text(
+                    text = "소유자인 방의 정보를 모두 삭제해 주세요",
+                    fontFamily = roboto()
+                )
             }
             if (userInfo.isAnonymous) {
                 Row(
@@ -137,14 +160,44 @@ fun LoginInfoView(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     IconButton(
-                        onClick = linkToGoogle
+                        onClick = {
+                            authViewModel.linkToGoogleAccount(
+                                failAction = {
+                                    showSnackbar(it)
+                                },
+                                successAction = {
+                                    onBack()
+                                }
+                            )
+                        }
                     ) {
                         Icon(
                             modifier = Modifier.size(36.dp),
                             painter = painterResource(Res.drawable.btn_google),
-                            contentDescription = "SignInButton",
+                            contentDescription = "Google Link Button",
                             tint = Color.Unspecified
                         )
+                    }
+                    if (useLinkApple) {
+                        IconButton(
+                            onClick = {
+                                appleLoginGuide?.linkToApple(
+                                    fail = {
+                                        showSnackbar(it)
+                                    },
+                                    success = {
+                                        onBack()
+                                    }
+                                )
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(36.dp),
+                                painter = painterResource(Res.drawable.logo_apple),
+                                contentDescription = "Apple Link Button",
+                                tint = Color.Unspecified
+                            )
+                        }
                     }
                 }
             }
@@ -153,6 +206,6 @@ fun LoginInfoView(
     ProfileNameDialog(
         editNameStatus,
         userInfo.displayName ?: "",
-        updateName
+        authViewModel::updateName
     )
 }
