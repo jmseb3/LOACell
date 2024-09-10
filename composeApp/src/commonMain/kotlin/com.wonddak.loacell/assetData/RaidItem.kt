@@ -32,7 +32,7 @@ object RaidItem {
                 FireStorageReferenceHelper
                     .getAssetRaidImage(type)
                     .getDownloadUrl { url ->
-                        Napier.d(tag = TAG) { "getAssetRaidImage : $url" }
+//                        Napier.d(tag = TAG) { "getAssetRaidImage : $url" }
                         imageCacheMap[type] = url
                     }
             }

@@ -55,6 +55,9 @@ fun LoginInfoView(
     val isAppleProvider = authViewModel.checkAppleProvider()
     val scope = rememberCoroutineScope()
     val editNameStatus = rememberModalStatus()
+    val appleLoginGuideImpl by remember {
+        mutableStateOf(appleLoginGuide)
+    }
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -117,7 +120,7 @@ fun LoginInfoView(
                         onClick = {
                             if (roomList.isEmpty()) {
                                 if (isAppleProvider) {
-                                    appleLoginGuide?.revokeToken(
+                                    appleLoginGuideImpl?.revokeToken(
                                         fail = {
 
                                         },
@@ -183,14 +186,16 @@ fun LoginInfoView(
                     if (useLinkApple) {
                         IconButton(
                             onClick = {
-                                appleLoginGuide?.linkToApple(
-                                    fail = {
-                                        showSnackbar(it)
-                                    },
-                                    success = {
-                                        onBack()
-                                    }
-                                )
+                                scope.launch {
+                                    appleLoginGuideImpl?.linkToApple(
+                                        fail = {
+                                            showSnackbar(it)
+                                        },
+                                        success = {
+                                            onBack()
+                                        }
+                                    )
+                                }
                             }
                         ) {
                             Icon(

@@ -10,7 +10,7 @@ object Synergy {
     private const val TAG = "Synergy"
     private var data: Map<String, String> = emptyMap()
     fun addData(data: Map<String, String>) {
-        Napier.d(tag = TAG) { "synergyData Add : $data" }
+//        Napier.d(tag = TAG) { "synergyData Add : $data" }
         Synergy.data = data
     }
 

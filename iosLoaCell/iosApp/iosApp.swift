@@ -29,10 +29,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 class AppleGuide : AppleLoginGuide {
     func linkToApple(fail: @escaping (String) -> Void, success: @escaping () -> Void) {
+        print("link To Apple!!!")
         AppleLinkCoordinator(linkFailAction: fail, linkSuccessAction: success).startLogin()
     }
     
     func revokeToken(fail: @escaping (String) -> Void, success: @escaping () -> Void) {
+        print("revoke To Apple!!!")
         AppleTokenRevokeCoordinator(failAction: fail, revokeSuccessAction: success).startLogin()
     }
 }

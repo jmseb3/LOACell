@@ -16,8 +16,9 @@ actual class FileUtil {
     private fun providePath(path: String): String {
         val dirPaths = fileManager.URLsForDirectory(
             directory = NSCachesDirectory,
-            inDomains = NSUserDomainMask
+            inDomains = NSUserDomainMask,
         ) as List<NSURL>
+
         val filePath = dirPaths[0].URLByAppendingPathComponent(path)
         fileManager.createDirectoryAtPath(
             path = filePath.toString(),
@@ -25,7 +26,7 @@ actual class FileUtil {
             null,
             null
         )
-        return filePath.toString() + "/"
+        return filePath.toString()
     }
 
     actual fun getCachePath(path: String): String = providePath(path)
@@ -38,11 +39,11 @@ actual class FileUtil {
             null,
             null
         )
-        return assetPath + "/"
+        return assetPath
     }
 
     actual fun isExist(path: String): Boolean {
-        return fileManager.fileExistsAtPath(path = path)
+        return fileManager.fileExistsAtPath(path = path.replace("file://", ""))
     }
 
     actual fun readFile(path: String): String {

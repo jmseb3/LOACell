@@ -12,7 +12,7 @@ object Translate {
     private var data: List<JsonElement> = emptyList()
 
     fun addData(data: List<JsonElement>) {
-        Napier.d(tag = TAG) { "Translate Data Add : $data" }
+//        Napier.d(tag = TAG) { "Translate Data Add : $data" }
         this.data = data
     }
 

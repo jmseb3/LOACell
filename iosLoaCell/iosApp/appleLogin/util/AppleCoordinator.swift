@@ -63,11 +63,13 @@ class AppleTokenRevokeCoordinator: AppleCoordinator {
         super.init { appleIDCredential, nonce in
             guard let appleAuthCode = appleIDCredential.authorizationCode else {
                 failAction("Unable to fetch authorization code")
+                print("Unable to fetch authorization code")
                 return
             }
             
             guard let authCodeString = String(data: appleAuthCode, encoding: .utf8) else {
                 failAction("Unable to serialize auth code string from data: \(appleAuthCode.debugDescription)")
+                print("Unable to serialize auth code string from data: \(appleAuthCode.debugDescription)")
                 return
             }
             Task {
@@ -99,6 +101,7 @@ class AppleCoordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
     }
     
     func startLogin() {
+        print("start Login...")
         let nonce = AppleLoginHelper().randomNonceString()
         currentNonce = nonce
         
@@ -114,7 +117,9 @@ class AppleCoordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        print("123")
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            print("456")
             guard let nonce = currentNonce else {
                 fatalError("Invalid state: A login callback was received, but no login request was sent.")
             }
@@ -124,11 +129,14 @@ class AppleCoordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
     
     // Apple ID 연동 실패 시
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("error >> ")
         // Handle error.
         handleFail(controller,error)
     }
     
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return UIApplication.shared.keyWindow!
+        return UIApplication.shared.windows.filter { $0.isKeyWindow }.first!
     }
+    
+   
 }

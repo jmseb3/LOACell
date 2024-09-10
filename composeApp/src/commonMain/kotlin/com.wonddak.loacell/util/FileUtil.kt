@@ -1,5 +1,7 @@
 package com.wonddak.loacell.util
 
+import io.github.aakira.napier.Napier
+
 internal const val ASSETS_PATH = "assets"
 
 expect class FileUtil {
@@ -13,9 +15,14 @@ expect class FileUtil {
 class FileHelper(
     private val util: FileUtil,
 ) {
-    fun getAssetFilePath(fileName: String): String = (util.getAssetPath() + fileName)
+    fun getAssetFilePath(fileName: String): String = (util.getAssetPath() + fileName).also {
+        Napier.d(tag= "FILE") { "file : $fileName path : $it" }
 
-    fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName))
+    }
+
+    fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName)).also {
+        Napier.d(tag= "FILE") { "file : $fileName is exist : $it" }
+    }
 
     fun readFile(path: String): String = util.readFile(path)
 
