@@ -123,10 +123,12 @@ fun LoginInfoView(
                                         },
                                         success = {
                                             authViewModel.deleteAccount()
+                                            onBack()
                                         }
                                     )
                                 } else {
                                     authViewModel.deleteAccount()
+                                    onBack()
                                 }
                             } else {
                                 showDeleteError = true

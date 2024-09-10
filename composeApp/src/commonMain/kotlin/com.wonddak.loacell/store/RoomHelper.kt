@@ -191,9 +191,9 @@ object CommonRoomHelper {
         getFireStore().runBatch(
             write = {
                 val roomDoc = RefHelper.getRoomRef(roomId)
-                it.update(roomDoc, "enterUser", CommonFieldValue.arrayUnion(preOwner))
-                it.update(roomDoc, "owner", newOwnerUid)
-                it.update(roomDoc, "enterUser", CommonFieldValue.arrayRemove(newOwnerUid))
+                it.update(roomDoc, RoomInfoField.ENTER_USER, CommonFieldValue.arrayUnion(preOwner))
+                it.update(roomDoc, RoomInfoField.OWNER, newOwnerUid)
+                it.update(roomDoc, RoomInfoField.ENTER_USER, CommonFieldValue.arrayRemove(newOwnerUid))
             },
             successAction = {
                 commonAction()

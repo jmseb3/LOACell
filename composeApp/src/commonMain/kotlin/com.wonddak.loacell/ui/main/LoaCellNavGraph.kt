@@ -1,11 +1,13 @@
 package com.wonddak.loacell.ui.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -44,6 +46,7 @@ fun LoaCellNavGraph(
         startDestination = Const.NAV_SPLASH,
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .imePadding()
     ) {
         composable(
