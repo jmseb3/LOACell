@@ -139,8 +139,9 @@ fun RaidDetailView(
                         }
 
                         1, 2, 3, 4 -> {
+                            val partyIndex = page - 1
                             RaidPartyView(
-                                getCharacterList(page - 1, raidInfo, userList),
+                                getCharacterList(partyIndex, raidInfo, userList),
                                 openAction = { subIndex ->
                                     val charMap = getUserMap(raidInfo, raidList, userList)
                                     if (charMap.isEmpty()) {
@@ -161,19 +162,19 @@ fun RaidDetailView(
                                             }
                                         }
                                     } else {
-                                        raidUserAddSheetStatus.partyIndex = page - 1
+                                        raidUserAddSheetStatus.partyIndex = partyIndex
                                         raidUserAddSheetStatus.subIndex = subIndex
                                         raidUserAddSheetStatus.subItem = raidInfo
-                                            .getPartyByIndex(raidUserDeleteDialogStatus.partyIndex)
+                                            .getPartyByIndex(partyIndex)
                                             .toMutableList()
                                         raidUserAddSheetStatus.show()
                                     }
                                 },
                                 deleteAction = { subIndex ->
-                                    raidUserDeleteDialogStatus.partyIndex = page - 1
+                                    raidUserDeleteDialogStatus.partyIndex = partyIndex
                                     raidUserDeleteDialogStatus.subIndex = subIndex
                                     raidUserDeleteDialogStatus.subItem = raidInfo
-                                        .getPartyByIndex(raidUserDeleteDialogStatus.partyIndex)
+                                        .getPartyByIndex(partyIndex)
                                         .toMutableList().also {
                                             it[subIndex] = ""
                                         }
