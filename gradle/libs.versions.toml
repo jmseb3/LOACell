@@ -3,7 +3,7 @@ agp = "8.3.2"
 kotlin = "2.1.0-Beta1"
 ktor = "2.3.12"
 sqldelight = "2.0.1"
-moko = "0.24.0"
+moko = "0.24.2"
 datastore = "1.1.1"
 koin = "4.0.0"
 

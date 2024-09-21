@@ -74,6 +74,9 @@ fun RaidInfo.getImg(): ImageResource? {
         RaidType.EGIR -> {
             SharedRes.images.raid_egir
         }
+        RaidType.ABRELSHUD2 -> {
+            SharedRes.images.raid_abrelshud_2
+        }
         else -> {
             null
         }
