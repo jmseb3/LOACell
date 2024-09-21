@@ -38,7 +38,7 @@ fun ShareSheet(
     dialogAction: DialogAction,
 ) {
     val roomInfo = dialogAction.getRoomInfo()
-    val context = LocalContext.current.applicationContext
+    val context = LocalContext.current
     val uniqueId: String = roomInfo.uniqueId
 
     BaseSheet(
