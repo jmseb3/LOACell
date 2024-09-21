@@ -42,23 +42,25 @@ kotlin {
             export("dev.icerock.moko:resources:${libs.moko.resources.get().version}")
         }
         pod("FirebaseCore") {
-            version = "10.27.0"
+            version = "11.2"
         }
         // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
         // Adding it manually seems to resolve the issue
         pod("FirebaseFirestoreInternal") {
-            version = "10.27.0"
+            version = "11.2"
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("FirebaseFirestore") {
-            version = "10.27.0"
+            version = "11.2"
             extraOpts += listOf("-compiler-option", "-fmodules")
             useInteropBindingFrom("FirebaseFirestoreInternal")
         }
         pod("FirebaseAuth") {
-            version = "10.27.0"
+            version = "11.2"
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("FirebaseStorage") {
-            version = "10.27.0"
+            version = "11.2"
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("GoogleSignIn") {

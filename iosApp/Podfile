@@ -2,8 +2,8 @@ target 'iosApp' do
   use_frameworks!
   platform :ios, '16.0'
   pod 'shared', :path => '../shared'
-  pod 'FirebaseAnalytics', '~> 10.23.0'
-  pod 'FirebaseCrashlytics', '~> 10.23.0'
+  pod 'FirebaseAnalytics', '~> 11.2'
+  pod 'FirebaseCrashlytics', '~> 11.2'
   pod 'GoogleSignIn', '~> 7.1'
   pod 'GoogleSignInSwiftSupport', '~> 7.1'
 end
