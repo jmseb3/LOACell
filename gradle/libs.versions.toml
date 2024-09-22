@@ -1,12 +1,11 @@
 [versions]
 agp = "8.6.0"
-kotlin = "2.0.20"
+kotlin = "2.1.0-Beta1"
 compose = "1.7.0-beta02"
 ktor = "2.3.12"
 datastore = "1.1.1"
-koin = "4.0.0-RC1"
-koin2 = "1.2.0-Beta4"
-androidx-uiTest = "1.6.8"
+koin = "4.0.0"
+androidx-uiTest = "1.7.2"
 coil = "3.0.0-alpha10"
 
 [libraries]
@@ -20,7 +19,7 @@ androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmode
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.2.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.3.0" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
@@ -44,8 +43,8 @@ napier = { module = "io.github.aakira:napier", version = "2.7.1" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin2" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin2" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
 coil-core = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }

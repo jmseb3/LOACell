@@ -2,7 +2,6 @@
 
 package com.wonddak.loacell.auth
 
-import cocoapods.FirebaseAuth.FIRAdditionalUserInfo
 import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
@@ -47,7 +46,7 @@ actual class LoginHelper {
             loginIn.value = false
         } else {
             val credential = FIRGoogleAuthProvider.credentialWithIDToken(
-                IDToken = token,
+                idToken = token,
                 accessToken = user.accessToken.tokenString
             )
             successAction(FBAuthCredential(credential))
@@ -118,7 +117,7 @@ fun LoginHelper.registerAppleToken(
     }
 
     val firebaseCredential = FIROAuthProvider.appleCredentialWithIDToken(
-        IDToken = idTokenString.toString(),
+        idToken = idTokenString.toString(),
         rawNonce = nonce.toString(),
         fullName = credential.fullName()
     )
@@ -170,11 +169,11 @@ actual class FBAuth(
         failAction: (msg: String) -> Unit,
         successAction: () -> Unit
     ) {
-        auth.currentUser!!.linkWithCredential(credential.credential){ result, error ->
+        auth.currentUser()?.linkWithCredential(credential.credential){ result, error ->
             if (error == null) {
                 successAction()
             } else {
-                failAction(error?.localizedDescription() ?: "unknown Error")
+                failAction(error.localizedDescription())
             }
         }
     }
@@ -190,7 +189,7 @@ actual class FBAuth(
     }
 
     actual fun delete() {
-        auth.currentUser!!.deleteWithCompletion { error ->
+        auth.currentUser()?.deleteWithCompletion { error ->
             if (error == null) {
                 signOut()
             } else {
@@ -211,8 +210,8 @@ actual class FBAuth(
     }
 
     actual fun updateDisplayName(name: String) {
-        val cr = auth.currentUser?.profileChangeRequest()
-        cr?.displayName = name
+        val cr = auth.currentUser()?.profileChangeRequest()
+        cr?.setDisplayName(name)
         cr?.commitChangesWithCompletion {
 
         }
@@ -224,11 +223,11 @@ actual class FBUser(
     val user: FIRUser
 ) {
     actual val uid: String
-        get() = user.uid
+        get() = user.uid()
     actual val displayName: String?
-        get() = user.displayName
+        get() = user.displayName()
     actual val photoUrl: String
-        get() = user.photoURL.toString()
+        get() = user.photoURL().toString()
     actual val isAnonymous: Boolean
         get() = user.isAnonymous()
 
@@ -251,7 +250,7 @@ actual class FBAuthResult(
     val result : FIRAuthDataResult
 ) {
     actual val user: FBUser?
-        get() = result.user?.let { FBUser(it) }
+        get() = FBUser(result.user())
 
 }
 

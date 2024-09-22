@@ -48,6 +48,7 @@ kotlin {
         }
     }
 
+    val iosFirebase = "11.2"
     cocoapods {
         summary = "shared Module"
         homepage = "Link to the Shared Module homepage"
@@ -60,23 +61,24 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
         pod("FirebaseCore") {
-            version = "10.27.0"
+            version = iosFirebase
         }
         // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
         // Adding it manually seems to resolve the issue
         pod("FirebaseFirestoreInternal") {
-            version = "10.27.0"
+            version = iosFirebase
         }
         pod("FirebaseFirestore") {
-            version = "10.27.0"
+            version = iosFirebase
             extraOpts += listOf("-compiler-option", "-fmodules")
             useInteropBindingFrom("FirebaseFirestoreInternal")
         }
         pod("FirebaseAuth") {
-            version = "10.27.0"
+            version = iosFirebase
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("FirebaseStorage") {
-            version = "10.27.0"
+            version = iosFirebase
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("GoogleSignIn") {
@@ -125,10 +127,7 @@ kotlin {
             implementation(libs.ktor.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.firebase.firestore)
-            implementation(libs.firebase.storage)
-            implementation(libs.firebase.auth)
-            implementation(libs.gms.auth)
+            implementation(libs.bundles.firebase)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.kakao.share)
 
