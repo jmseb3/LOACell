@@ -117,7 +117,7 @@ struct RoomEnterDialog :View {
     }
     
     var enabled : Bool {
-        password.isEmpty ? roomId.count == 20 : false
+        password.isEmpty ? roomId.count == 20 : true
     }
     var body: some View {
         BaseDialog(
