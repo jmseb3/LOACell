@@ -1,7 +1,7 @@
 [versions]
-agp = "8.6.0"
-kotlin = "2.1.0-Beta1"
-compose = "1.7.0-beta02"
+agp = "8.6.1"
+kotlin = "2.0.21-RC"
+compose = "1.7.0-rc01"
 ktor = "2.3.12"
 datastore = "1.1.1"
 koin = "4.0.0"
@@ -63,7 +63,7 @@ firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
-firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth"]
+firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-firestore", "firebase-auth", "gms-auth", "firebase-storage"]
 ktor = ["ktor-core", "ktor-resources", "ktor-logging", "ktor-content-negotiation", "ktor-serialization"]
 koin-android = ["koin-core", "koin-android"]
 koin-shared = ["koin-compose", "koin-compose-viewmodel"]

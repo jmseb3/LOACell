@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
-import com.wonddak.loacell.viewModel.RaidViewModel
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.person
 import loacell.composeapp.generated.resources.room

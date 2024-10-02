@@ -87,6 +87,13 @@ class RaidViewModel(
         }
     }
 
+    fun refreshRole(
+        uid: String?,
+        roomInfo: RoomInfo
+    ) {
+        role = roomInfo.getRole(uid)
+    }
+
     fun stopObserveRaidInfo() {
         raidListenerRegistration?.remove()
         userListenerRegistration?.remove()

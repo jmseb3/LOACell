@@ -109,12 +109,10 @@ fun LoaCellNavGraph(
                 roomList,
                 authViewModel.user!!.uid,
                 initRoom = {
-                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + it.uniqueId) {
-                        this.restoreState = true
-                        this.launchSingleTop = true
-                        popUpTo(Const.NAV_MAIN) {
-                            inclusive = false
-                        }
+                    raidViewModel.setRoomId(it, authViewModel.user?.uid)
+                    navController.navigate(Const.NAV_ROOM) {
+                        launchSingleTop = true
+                        this.popUpTo(Const.NAV_MAIN)
                     }
                 },
                 navController::depth2toMain

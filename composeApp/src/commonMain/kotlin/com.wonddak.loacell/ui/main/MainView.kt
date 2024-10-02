@@ -128,7 +128,9 @@ fun MainView(
 						onClick = {
 							scope.launch {
 								raidViewModel.setRoomId(roomInfo, authViewModel.user?.uid)
-								navController.navigate(Const.NAV_ROOM)
+								navController.navigate(Const.NAV_ROOM) {
+									launchSingleTop = true
+								}
 							}
 						},
 						Modifier

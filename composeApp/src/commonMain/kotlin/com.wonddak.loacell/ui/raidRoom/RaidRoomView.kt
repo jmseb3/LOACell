@@ -90,6 +90,15 @@ fun RaidRoomView(
         }
     }
     val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+
+    LaunchedEffect(selectedRoomInfo) {
+        if (raidViewModel.role == RoomInfo.RoomRole.NONE) {
+            selectedRoomInfo?.let {
+                raidViewModel.refreshRole(authViewModel.user?.uid, it)
+            }
+        }
+
+    }
     val scope = rememberCoroutineScope()
 
     fun showSnackBarMsg(msg: String) {
@@ -204,7 +213,8 @@ private fun TitleView(
 ) {
     val shareStatus = rememberModalStatus()
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 10.dp),
     ) {
         Column(
             modifier = Modifier.align(Alignment.CenterStart)
