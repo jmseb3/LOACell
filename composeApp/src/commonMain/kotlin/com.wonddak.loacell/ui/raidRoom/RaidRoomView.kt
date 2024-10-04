@@ -212,64 +212,69 @@ private fun TitleView(
     onBack: () -> Unit,
 ) {
     val shareStatus = rememberModalStatus()
-    Box(
+    Column(
         modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 10.dp),
     ) {
-        Column(
-            modifier = Modifier.align(Alignment.CenterStart)
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 10.dp),
         ) {
-            Text(
-                text = roomInfo.description,
-                modifier = Modifier
-            )
-            Text(
-                text = roomInfo.uniqueId,
-                modifier = Modifier.noRippleClickable {
-                    shareStatus.show()
-                },
-            )
-            HorizontalDivider()
-        }
-
-        when (role) {
-            RoomInfo.RoomRole.OWNER -> {
-
+            Column(
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Text(
+                    text = roomInfo.description,
+                    modifier = Modifier
+                )
+                Text(
+                    text = roomInfo.uniqueId,
+                    modifier = Modifier.noRippleClickable {
+                        shareStatus.show()
+                    },
+                )
             }
 
-            RoomInfo.RoomRole.NONE -> {
+            when (role) {
+                RoomInfo.RoomRole.OWNER -> {
 
-            }
-
-            else -> {
-                val exitRoomStatus = rememberModalStatus()
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterEnd).size(20.dp),
-                    onClick = {
-                        exitRoomStatus.show()
-                    }
-                ) {
-                    Icon(painterResource(Res.drawable.room_exit), null)
                 }
-                RoomExitDialog(
-                    exitRoomStatus
-                ) {
-                    CommonRoomHelper.exitRoom(
-                        roomInfo.uniqueId,
-                        uid,
-                        role,
-                        {
-                            exitRoomStatus.hide()
-                            onBack()
-                        },
-                        {
-                            exitRoomStatus.hide()
+
+                RoomInfo.RoomRole.NONE -> {
+
+                }
+
+                else -> {
+                    val exitRoomStatus = rememberModalStatus()
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterEnd).size(20.dp),
+                        onClick = {
+                            exitRoomStatus.show()
                         }
-                    )
+                    ) {
+                        Icon(painterResource(Res.drawable.room_exit), null)
+                    }
+                    RoomExitDialog(
+                        exitRoomStatus
+                    ) {
+                        CommonRoomHelper.exitRoom(
+                            roomInfo.uniqueId,
+                            uid,
+                            role,
+                            {
+                                exitRoomStatus.hide()
+                                onBack()
+                            },
+                            {
+                                exitRoomStatus.hide()
+                            }
+                        )
+                    }
                 }
             }
         }
+        HorizontalDivider()
     }
+
     ShareSheet(
         shareStatus,
         roomInfo,
