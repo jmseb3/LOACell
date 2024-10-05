@@ -1,53 +1,40 @@
+import UIKit
 import SwiftUI
+import ComposeApp
 import FirebaseCore
-import FirebaseAuth
-import shared
-import GoogleSignIn
-import SwiftUI_Snackbar
-import KakaoSDKCommon
 
-
-class AppDelegate: NSObject, UIApplicationDelegate {
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-
-    func application(_ application: UIApplication,didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        KakaoSDK.initSDK(appKey: SharedRes.strings().kakaoKey.desc().localized())
-        NapierProxyKt.debugBuild()
-        window = UIWindow()
-        FirebaseApp.configure()
-        return true
-    }
     
     func application(
-        _ app: UIApplication,
-        open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        var handled: Bool
-        
-        handled = GIDSignIn.sharedInstance.handle(url)
-        if handled {
-            return true
+        FirebaseApp.configure()
+        window = UIWindow(frame: UIScreen.main.bounds)
+        if let window = window {
+            window.rootViewController = MainKt.MainViewController(
+                appleSingIn: { () -> UIViewController in
+                    let appleLoginButton = AppleSignInButton()
+                    return UIHostingController(rootView: appleLoginButton)
+                },
+                appleLoginGuide: AppleGuide()
+            )
+            window.makeKeyAndVisible()
         }
-        
-        // Handle other custom URL types.
-        
-        // If not handled by this app, return false.
-        return false
+        return true
     }
 }
 
-@main
-struct iOSApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
-    init() {
-        KoinProxyKt.doInitKoin()
+class AppleGuide : AppleLoginGuide {
+    func linkToApple(fail: @escaping (String) -> Void, success: @escaping () -> Void) {
+        print("link To Apple!!!")
+        AppleLinkCoordinator(linkFailAction: fail, linkSuccessAction: success).startLogin()
     }
     
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environment(\.window,delegate.window)
-        }
+    func revokeToken(fail: @escaping (String) -> Void, success: @escaping () -> Void) {
+        print("revoke To Apple!!!")
+        AppleTokenRevokeCoordinator(failAction: fail, revokeSuccessAction: success).startLogin()
     }
 }
