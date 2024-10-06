@@ -12,6 +12,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
+        NapierProxyKt.debugBuild()
+        HelperKt.doInitKoin()
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
             window.rootViewController = MainKt.MainViewController(
