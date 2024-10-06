@@ -9,19 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.util.FileHelper
-import com.wonddak.loacell.util.FileUtil
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
+import com.wonddak.loacell.viewModel.SplashViewModel
 import org.koin.compose.koinInject
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun AssetFileView(
-    totalFileName : List<String>
+    splashViewModel: SplashViewModel
 ) {
+    val totalFileName = splashViewModel.totalFileName
+    println(">>>[2] = SP $splashViewModel")
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -34,21 +33,9 @@ fun AssetFileView(
             Row(
                 modifier = Modifier.padding(3.dp)
             ) {
-                val (name,ext) = file.split(".")
+                val (name, ext) = file.split(".")
                 Text(name)
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun AssetFilePreview() {
-    AssetFileView(
-        listOf(
-            "raid_1.json",
-            "translate_1.json",
-            "synergy_1.json"
-        )
-    )
 }

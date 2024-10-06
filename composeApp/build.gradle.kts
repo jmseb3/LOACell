@@ -123,7 +123,7 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.androidx.activity.compose)
 
-            implementation(libs.koin.android)
+//            implementation(libs.koin.android)
             implementation(libs.ktor.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))

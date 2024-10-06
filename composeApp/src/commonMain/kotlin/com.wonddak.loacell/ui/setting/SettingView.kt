@@ -36,11 +36,13 @@ import com.wonddak.loacell.ui.rememberWebLauncher
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.UrlList
 import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.SplashViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
 fun SettingView(
+    splashViewModel: SplashViewModel,
     authViewModel: AuthViewModel,
     roomList: List<RoomInfo>,
     appleLoginGuide: AppleLoginGuide? = null,
@@ -119,6 +121,7 @@ fun SettingView(
                 webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
             }
             SectionText(title = "앱 버전 : ${getAppVersion()}")
+            AssetFileView(splashViewModel)
         }
     }
 }
