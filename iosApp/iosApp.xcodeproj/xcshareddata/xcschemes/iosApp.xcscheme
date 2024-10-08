@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7555FF7A242A565900829871"
-               BuildableName = "iosApp.app"
+               BlueprintIdentifier = "A93A953629CC810C00F8E227"
+               BuildableName = "Multiplatform App.app"
                BlueprintName = "iosApp"
                ReferencedContainer = "container:iosApp.xcodeproj">
             </BuildableReference>
@@ -36,7 +36,7 @@
       enableAddressSanitizer = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      customWorkingDirectory = "/Users/wonheejung/Developer/myGit/LOACell"
+      customWorkingDirectory = "/Users/jungwonhee/Developer/AndroidStudioProjects/loaCell/iosLoaCell"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -45,8 +45,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "iosApp.app"
+            BlueprintIdentifier = "A93A953629CC810C00F8E227"
+            BuildableName = "Multiplatform App.app"
             BlueprintName = "iosApp"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
@@ -62,8 +62,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "iosApp.app"
+            BlueprintIdentifier = "A93A953629CC810C00F8E227"
+            BuildableName = "Multiplatform App.app"
             BlueprintName = "iosApp"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>

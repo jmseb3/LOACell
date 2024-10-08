@@ -48,13 +48,13 @@ kotlin {
         }
     }
 
-    val iosFirebase = "11.2"
+    val iosFirebase = "11.3"
     cocoapods {
         summary = "shared Module"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
         ios.deploymentTarget = "16.0"
-        podfile = project.file("../iosLoaCell/Podfile")
+        podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "ComposeApp"
             isStatic = true
@@ -123,7 +123,7 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.androidx.activity.compose)
 
-            implementation(libs.koin.android)
+//            implementation(libs.koin.android)
             implementation(libs.ktor.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))

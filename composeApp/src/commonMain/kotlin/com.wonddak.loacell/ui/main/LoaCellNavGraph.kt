@@ -28,19 +28,19 @@ import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoaCellNavGraph(
     navController : NavHostController,
     appleLoginGuide: AppleLoginGuide? = null,
     appleLogin: (@Composable () -> Unit)? = null,
-    splashViewModel : SplashViewModel = koinInject(),
-    authViewModel : AuthViewModel = koinInject(),
-    raidViewModel : RaidViewModel = koinInject(),
+    splashViewModel : SplashViewModel = koinViewModel(),
+    authViewModel : AuthViewModel = koinViewModel(),
+    raidViewModel : RaidViewModel = koinViewModel(),
 ) {
     val roomList by raidViewModel.roomList.collectAsState()
     val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
-
     NavHost(
         navController = navController,
         startDestination = Const.NAV_SPLASH,
@@ -93,6 +93,7 @@ fun LoaCellNavGraph(
         }
         composable(route = Const.NAV_SETTING) {
             SettingView(
+                splashViewModel,
                 authViewModel,
                 roomList,
                 appleLoginGuide,

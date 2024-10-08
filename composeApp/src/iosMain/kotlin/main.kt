@@ -16,14 +16,6 @@ fun MainViewController(
     appleSingIn: () -> UIViewController,
     appleLoginGuide: AppleLoginGuide
 ): UIViewController {
-    debugBuild()
-    startKoin{
-        // Load modules
-        modules(module {
-            singleOf(::FileUtil)
-        })
-        modules(commonModule())
-    }
     return ComposeUIViewController {
         App(
             appleLoginGuide = appleLoginGuide,
