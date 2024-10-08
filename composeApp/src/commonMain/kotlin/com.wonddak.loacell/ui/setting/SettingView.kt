@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
-import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.ui.common.SectionCardView
@@ -45,7 +44,6 @@ fun SettingView(
     splashViewModel: SplashViewModel,
     authViewModel: AuthViewModel,
     roomList: List<RoomInfo>,
-    appleLoginGuide: AppleLoginGuide? = null,
     onBack: () -> Unit,
 ) {
     var showMenu by remember {
@@ -78,7 +76,6 @@ fun SettingView(
                         authViewModel,
                         userInfo,
                         roomList.filter { it.owner == userInfo.uid },
-                        appleLoginGuide,
                         onBack,
                         showSnackbar = { msg ->
                             scope.launch {

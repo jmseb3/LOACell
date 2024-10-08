@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		073525A52C8EF622001CC0FA /* AppleLoginHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073525A42C8EF622001CC0FA /* AppleLoginHelper.swift */; };
-		07739F992C8FD10400270E3C /* AppleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07739F982C8FD10400270E3C /* AppleSignInButton.swift */; };
-		07739F9B2C8FDC7E00270E3C /* AppleCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07739F9A2C8FDC7E00270E3C /* AppleCoordinator.swift */; };
 		3EFD5FCD2C74DDB6000F48A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3EFD5FCC2C74DDB6000F48A2 /* GoogleService-Info.plist */; };
 		514056AD613C6A353AEC2C95 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914D820BD4BC917AE35DAFE7 /* Pods_iosApp.framework */; };
 		A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A953A29CC810C00F8E227 /* iosApp.swift */; };
@@ -19,9 +16,6 @@
 
 /* Begin PBXFileReference section */
 		073525A22C8EF146001CC0FA /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
-		073525A42C8EF622001CC0FA /* AppleLoginHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLoginHelper.swift; sourceTree = "<group>"; };
-		07739F982C8FD10400270E3C /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
-		07739F9A2C8FDC7E00270E3C /* AppleCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleCoordinator.swift; sourceTree = "<group>"; };
 		3EFD5FCC2C74DDB6000F48A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4DD245361E4DF6E9301A0AA9 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		914D820BD4BC917AE35DAFE7 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,24 +38,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		073525A32C8EF615001CC0FA /* appleLogin */ = {
-			isa = PBXGroup;
-			children = (
-				07739F982C8FD10400270E3C /* AppleSignInButton.swift */,
-				07739F9C2C8FDCA600270E3C /* util */,
-			);
-			path = appleLogin;
-			sourceTree = "<group>";
-		};
-		07739F9C2C8FDCA600270E3C /* util */ = {
-			isa = PBXGroup;
-			children = (
-				073525A42C8EF622001CC0FA /* AppleLoginHelper.swift */,
-				07739F9A2C8FDC7E00270E3C /* AppleCoordinator.swift */,
-			);
-			path = util;
-			sourceTree = "<group>";
-		};
 		2D3C27335DC03A10379A945D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -91,7 +67,6 @@
 		A93A953929CC810C00F8E227 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				073525A32C8EF615001CC0FA /* appleLogin */,
 				073525A22C8EF146001CC0FA /* iosApp.entitlements */,
 				3EFD5FCC2C74DDB6000F48A2 /* GoogleService-Info.plist */,
 				A93A953A29CC810C00F8E227 /* iosApp.swift */,
@@ -250,10 +225,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				073525A52C8EF622001CC0FA /* AppleLoginHelper.swift in Sources */,
-				07739F992C8FD10400270E3C /* AppleSignInButton.swift in Sources */,
 				A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */,
-				07739F9B2C8FDC7E00270E3C /* AppleCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

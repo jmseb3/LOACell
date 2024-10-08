@@ -15,7 +15,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
-import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
 import com.wonddak.loacell.ui.login.SplashView
@@ -27,14 +26,11 @@ import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoaCellNavGraph(
     navController : NavHostController,
-    appleLoginGuide: AppleLoginGuide? = null,
-    appleLogin: (@Composable () -> Unit)? = null,
     splashViewModel : SplashViewModel = koinViewModel(),
     authViewModel : AuthViewModel = koinViewModel(),
     raidViewModel : RaidViewModel = koinViewModel(),
@@ -80,7 +76,6 @@ fun LoaCellNavGraph(
                 navController,
                 authViewModel,
                 raidViewModel,
-                appleLogin
             )
         }
 
@@ -96,7 +91,6 @@ fun LoaCellNavGraph(
                 splashViewModel,
                 authViewModel,
                 roomList,
-                appleLoginGuide,
                 navController::depth2toMain
             )
         }

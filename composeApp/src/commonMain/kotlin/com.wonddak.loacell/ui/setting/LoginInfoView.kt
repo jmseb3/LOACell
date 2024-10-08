@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.loacell.auth.AppleLoginGuide
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
@@ -48,16 +47,12 @@ fun LoginInfoView(
     authViewModel: AuthViewModel,
     userInfo: FBUser,
     roomList: List<RoomInfo>,
-    appleLoginGuide: AppleLoginGuide? = null,
     onBack: () -> Unit,
     showSnackbar: (String) -> Unit,
 ) {
     val isAppleProvider = authViewModel.checkAppleProvider()
     val scope = rememberCoroutineScope()
     val editNameStatus = rememberModalStatus()
-    val appleLoginGuideImpl by remember {
-        mutableStateOf(appleLoginGuide)
-    }
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -120,15 +115,15 @@ fun LoginInfoView(
                         onClick = {
                             if (roomList.isEmpty()) {
                                 if (isAppleProvider) {
-                                    appleLoginGuideImpl?.revokeToken(
-                                        fail = {
-
-                                        },
-                                        success = {
-                                            authViewModel.deleteAccount()
-                                            onBack()
-                                        }
-                                    )
+//                                    appleLoginGuideImpl?.revokeToken(
+//                                        fail = {
+//
+//                                        },
+//                                        success = {
+//                                            authViewModel.deleteAccount()
+//                                            onBack()
+//                                        }
+//                                    )
                                 } else {
                                     authViewModel.deleteAccount()
                                     onBack()
@@ -187,14 +182,7 @@ fun LoginInfoView(
                         IconButton(
                             onClick = {
                                 scope.launch {
-                                    appleLoginGuideImpl?.linkToApple(
-                                        fail = {
-                                            showSnackbar(it)
-                                        },
-                                        success = {
-                                            onBack()
-                                        }
-                                    )
+
                                 }
                             }
                         ) {
