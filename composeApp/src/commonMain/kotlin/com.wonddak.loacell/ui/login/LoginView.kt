@@ -33,9 +33,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.wonddak.hellogin.apple.AppleLoginButton
+import com.wonddak.hellogin.apple.AppleResult
+import com.wonddak.hellogin.core.Error
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleLoginButton
+import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
+import com.wonddak.loacell.ui.setting.useLinkApple
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import loacell.composeapp.generated.resources.Res
@@ -54,7 +61,6 @@ fun LoginView(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     raidViewModel: RaidViewModel,
-    appleLogin: (@Composable () -> Unit)? = null
 ) {
     LaunchedEffect(true) {
         raidViewModel.stopObserveRoom()
@@ -148,21 +154,33 @@ fun LoginView(
                     )
                 }
 
-                appleLogin?.let { loginButton ->
+                if (useLinkApple) {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Column(
-                        modifier = widthSize.height(40.dp)
-                    ) {
-                        loginButton()
-                    }
+                    AppleLoginButton(
+                        tokenResultHandler = object : TokenResultHandler<AppleResult> {
+                            override fun onFail(error: Error?) {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun onSuccess(token: AppleResult) {
+                                TODO("Not yet implemented")
+                            }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
                 GoogleLoginButton(
-                    modifier = widthSize
-                ) {
-                    authViewModel.launchGoogleLogin()
-                }
+                    tokenResultHandler = object : TokenResultHandler<GoogleResult> {
+                        override fun onFail(error: Error?) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onSuccess(token: GoogleResult) {
+                            TODO("Not yet implemented")
+                        }
+                    }
+                )
             }
         }
 
@@ -171,50 +189,6 @@ fun LoginView(
                 info = stringResource(Res.string.login_progress),
                 color = Color.Gray.copy(0.5f)
             )
-        }
-    }
-}
-
-@Composable
-fun GoogleLoginButton(
-    modifier: Modifier = Modifier,
-    action: () -> Unit = {},
-) {
-    Card(
-        modifier = modifier
-            .height(40.dp)
-            .clickable {
-                action()
-            },
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        shape = RoundedCornerShape(5.dp),
-        colors = CardDefaults.cardColors(
-            contentColor = Color.Black,
-            containerColor = Color.White
-        )
-    ) {
-        Row(
-            modifier = Modifier.wrapContentWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(Res.drawable.btn_google),
-                contentDescription = "SignInButton",
-                tint = Color.Unspecified
-            )
-            Text(
-                text = "Sign in with Google",
-                fontSize = 14.sp,
-                color = Color.Black.copy(alpha = 0.54f),
-                fontFamily = roboto(),
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
