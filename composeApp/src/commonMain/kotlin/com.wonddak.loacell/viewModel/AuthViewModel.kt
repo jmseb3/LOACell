@@ -5,9 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wonddak.hellogin.core.Error
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.delete
+import com.wonddak.loacell.auth.registerAnonymousToGoogle
+import com.wonddak.loacell.auth.registerGoogleToken
 import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.loacell.auth.signOut
 import kotlinx.coroutines.launch
@@ -66,9 +71,13 @@ class AuthViewModel(
         }
     }
 
-    fun launchGoogleLogin() {
-        viewModelScope.launch {
-            loginHelper.requestGoogleLogin { }
+    val googleLoginHandler = object : TokenResultHandler<GoogleResult> {
+        override fun onFail(error: Error?) {
+
+        }
+
+        override fun onSuccess(token: GoogleResult) {
+            loginHelper.registerGoogleToken(token) {}
         }
     }
 
@@ -76,11 +85,21 @@ class AuthViewModel(
         failAction: (String) -> Unit,
         successAction: () -> Unit
     ) {
+        val googleLinkHandler = object : TokenResultHandler<GoogleResult> {
+            override fun onFail(error: Error?) {
+                failAction(error?.toString() ?: "unknown error")
+            }
+
+            override fun onSuccess(token: GoogleResult) {
+                loginHelper.registerAnonymousToGoogle(
+                    token,
+                    failAction,
+                    successAction
+                )
+            }
+        }
         viewModelScope.launch {
-            loginHelper.requestAnonymousToGoogleAccount(
-                failAction = failAction,
-                successAction = successAction
-            )
+            loginHelper.requestGoogleLogin(googleLinkHandler)
         }
     }
 

@@ -11,7 +11,7 @@ import cocoapods.FirebaseAuth.FIRUser
 import cocoapods.FirebaseCore.FIRApp
 import cocoapods.GoogleSignIn.GIDConfiguration
 import cocoapods.GoogleSignIn.GIDSignIn
-import cocoapods.GoogleSignIn.GIDSignInResult
+import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
@@ -134,7 +134,6 @@ fun LoginHelper.linkToApple() {
 actual class FBAuthCredential(
     val credential: FIRAuthCredential
 )
-actual typealias GoogleResult = GIDSignInResult
 
 actual class FBAuth(
     val auth: FIRAuth

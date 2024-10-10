@@ -1,6 +1,8 @@
 package com.wonddak.loacell.auth
 
 
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,12 +17,7 @@ expect class LoginHelper(){
     )
 
     suspend fun requestGoogleLogin(
-        successAction: (result: FBAuthResult) -> Unit
-    )
-
-    suspend fun requestAnonymousToGoogleAccount(
-        failAction: (msg: String) -> Unit,
-        successAction: () -> Unit
+        tokenResultHandler: TokenResultHandler<GoogleResult>
     )
 }
 
@@ -65,7 +62,6 @@ fun LoginHelper.requestAnonymousLogin() {
 }
 
 expect class FBAuthCredential
-expect class GoogleResult
 
 expect class FBAuth {
     val user: StateFlow<FBUser?>

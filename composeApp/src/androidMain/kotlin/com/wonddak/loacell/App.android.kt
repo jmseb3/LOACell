@@ -14,6 +14,7 @@ import androidx.core.util.Consumer
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.kakao.sdk.common.KakaoSdk
+import com.wonddak.hellogin.core.HelloginContainerProvider
 import com.wonddak.loacell.di.commonModule
 import com.wonddak.loacell.util.FileUtil
 import io.github.aakira.napier.DebugAntilog
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
 		enableEdgeToEdge()
 		super.onCreate(savedInstanceState)
 		WindowCompat.setDecorFitsSystemWindows(window, false)
+        HelloginContainerProvider.setContainer(this)
         AppContext.set(this@MainActivity)
         network.chaintech.composeMultiplatformScreenCapture.AppContext.apply { set(this@MainActivity) }
         setContent {

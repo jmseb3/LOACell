@@ -1,16 +1,9 @@
 @file:JvmName("LoginHelperJvm")
 package com.wonddak.loacell.auth
 
-import android.app.Activity
-import android.content.Context
-import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -20,27 +13,32 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
-import com.wonddak.loacell.AppContext
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleLoginHelper
+import com.wonddak.hellogin.google.GoogleOptionProviderAndroid
+import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.util.NameHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.java.KoinJavaComponent
 
-actual class LoginHelper {
-    private val context : Context = KoinJavaComponent.getKoin().get()
+actual class LoginHelper : GoogleOptionProviderAndroid {
+
+    init {
+        GoogleLoginHelper.setOptionProvider(this)
+    }
 
     private val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setServerClientId("631976126032-ujmhp8dm1gfndulkebm994lgqhgbrq7a.apps.googleusercontent.com")
         .build()
 
-    private val credentialManager  by lazy {
-        CredentialManager.create(context)
+    override fun provideGoogleIdOption(): GetGoogleIdOption {
+        return googleIdOption
     }
 
     actual val loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
     actual val auth: FBAuth = FBAuth(Firebase.auth)
+
     actual fun registerTokenAction(
         result: GoogleResult,
         failAction: (msg: String) -> Unit,
@@ -67,71 +65,10 @@ actual class LoginHelper {
             }
         }
     }
-    private val activity: Activity
-        get() = AppContext.get() as Activity
-
     actual suspend fun requestGoogleLogin(
-        successAction: (result: FBAuthResult) -> Unit,
+        tokenResultHandler: TokenResultHandler<GoogleResult>
     ) {
-        startGoogleLogin() { cred ->
-            registerGoogleToken(cred) {
-                successAction(it)
-            }
-        }
-    }
-
-    actual suspend fun requestAnonymousToGoogleAccount(
-        failAction: (msg: String) -> Unit,
-        successAction: () -> Unit
-    ) {
-        startGoogleLogin() { cred ->
-            registerAnonymousToGoogle(cred,failAction) {
-                successAction()
-            }
-        }
-    }
-    private suspend fun startGoogleLogin(
-        successAction: (result: GoogleIdTokenCredential) -> Unit
-    ) {
-        val request: GetCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-
-        runCatching {
-            val result = credentialManager.getCredential(
-                request = request,
-                context = activity
-            )
-            val credential = result.credential
-
-            when (credential) {
-                is CustomCredential -> {
-                    if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                        try {
-                            // Use googleIdTokenCredential and extract id to validate and
-                            // authenticate on your server.
-                            val googleIdTokenCredential = GoogleIdTokenCredential
-                                .createFrom(credential.data)
-                            successAction(googleIdTokenCredential)
-                        } catch (e: GoogleIdTokenParsingException) {
-//                            Log.e(TAG, "Received an invalid google id token response", e)
-                        }
-                    } else {
-                        // Catch any unrecognized custom credential type here.
-//                        Log.e(TAG, "Unexpected type of credential")
-                    }
-                }
-
-                else -> {
-                    // Catch any unrecognized credential type here.
-//                    Log.e(TAG, "Unexpected type of credential")
-                }
-            }
-        }.onFailure { e ->
-            e.printStackTrace()
-        }.onSuccess {
-            println("Login2 Success")
-        }
+        GoogleLoginHelper.requestLogin(tokenResultHandler)
     }
 }
 
@@ -139,7 +76,6 @@ actual class LoginHelper {
 actual class FBAuthCredential(
     val credential: AuthCredential
 )
-actual typealias GoogleResult = GoogleIdTokenCredential
 
 actual class FBAuth(
     private val auth: FirebaseAuth
@@ -220,7 +156,7 @@ actual class FBAuth(
 }
 
 actual class FBUser(
-    val user: FirebaseUser
+    private val user: FirebaseUser
 ) {
     actual val uid: String
         get() = user.uid
@@ -246,7 +182,7 @@ actual class FBUser(
 }
 
 actual class FBAuthResult(
-    val result: AuthResult
+    private val result: AuthResult
 ) {
     actual val user: FBUser?
         get() = result.user?.let { FBUser(it) }
