@@ -26,7 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wonddak.hellogin.core.ButtonType
+import com.wonddak.hellogin.core.Error
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleLoginButton
+import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.auth.FBUser
+import com.wonddak.loacell.auth.registerAnonymousToGoogle
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
@@ -35,7 +41,6 @@ import com.wonddak.loacell.viewModel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
-import loacell.composeapp.generated.resources.btn_google
 import loacell.composeapp.generated.resources.change_person
 import loacell.composeapp.generated.resources.logo_apple
 import org.jetbrains.compose.resources.painterResource
@@ -159,25 +164,29 @@ fun LoginInfoView(
                         fontFamily = roboto()
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    IconButton(
-                        onClick = {
-                            authViewModel.linkToGoogleAccount(
-                                failAction = {
-                                    showSnackbar(it)
-                                },
-                                successAction = {
-                                    onBack()
-                                }
-                            )
+                    val googleLinkHandler = remember {
+                        object : TokenResultHandler<GoogleResult> {
+                            override fun onFail(error: Error?) {
+                                showSnackbar(error.toString())
+                            }
+
+                            override fun onSuccess(token: GoogleResult) {
+                                authViewModel.loginHelper.registerAnonymousToGoogle(
+                                    token,
+                                    {
+                                        showSnackbar(it)
+                                    },
+                                    {
+                                        onBack()
+                                    }
+                                )
+                            }
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(36.dp),
-                            painter = painterResource(Res.drawable.btn_google),
-                            contentDescription = "Google Link Button",
-                            tint = Color.Unspecified
-                        )
                     }
+                    GoogleLoginButton(
+                        googleLinkHandler,
+                        type = ButtonType.IconOnly
+                    )
                     if (useLinkApple) {
                         IconButton(
                             onClick = {
