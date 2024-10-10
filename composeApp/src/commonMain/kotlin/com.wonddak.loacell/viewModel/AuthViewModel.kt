@@ -79,7 +79,9 @@ class AuthViewModel(
 
         override fun onSuccess(token: GoogleResult) {
             Napier.d(tag = "auth") { "success with $token" }
-            loginHelper.registerGoogleToken(token)
+            viewModelScope.launch {
+                loginHelper.registerGoogleToken(token)
+            }
         }
     }
 

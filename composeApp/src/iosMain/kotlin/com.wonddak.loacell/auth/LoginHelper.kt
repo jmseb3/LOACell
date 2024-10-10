@@ -5,8 +5,10 @@ package com.wonddak.loacell.auth
 import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
+import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
 import cocoapods.FirebaseAuth.FIROAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
+import cocoapods.GoogleSignIn.GIDGoogleUser
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleLoginHelper
 import com.wonddak.hellogin.google.GoogleResult
@@ -34,22 +36,22 @@ actual class LoginHelper {
 
     actual val auth: FBAuth = FBAuth(FIRAuth.auth())
 
-    actual fun registerTokenAction(
+    actual fun  registerTokenAction(
         result: GoogleResult,
         failAction: (msg:String) -> Unit,
         successAction: (credential: FBAuthCredential) -> Unit,
     ) {
-//        val user : GIDGoogleUser = result.user()
-//        val token = user.idToken?.tokenString
-//        if (token == null) {
-//            loginIn.value = false
-//        } else {
-//            val credential = FIRGoogleAuthProvider.credentialWithIDToken(
-//                idToken = token,
-//                accessToken = user.accessToken.tokenString
-//            )
-//            successAction(FBAuthCredential(credential))
-//        }
+        val user : GIDGoogleUser = result.user()
+        val token = user.idToken?.tokenString
+        if (token == null) {
+            loginIn.value = false
+        } else {
+            val credential = FIRGoogleAuthProvider.credentialWithIDToken(
+                idToken = token,
+                accessToken = user.accessToken.tokenString
+            )
+            successAction(FBAuthCredential(credential))
+        }
     }
 
     actual suspend fun requestGoogleLogin(
@@ -159,6 +161,7 @@ actual class FBAuth(
         failAction: () -> Unit,
         successAction: (result:FBAuthResult) -> Unit
     ) {
+        Napier.d(tag = "auth") { "[2] signInWithCredential" }
         auth.signInWithCredential(credential = credential.credential) {  FIRAuthDataResult, error ->
             Napier.d(tag = "auth") { "[$FIRAuthDataResult] /$error]" }
             if (error == null) {
