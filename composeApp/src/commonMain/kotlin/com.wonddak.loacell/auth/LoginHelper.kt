@@ -22,14 +22,12 @@ expect class LoginHelper(){
 }
 
 fun LoginHelper.registerGoogleToken(
-    result : GoogleResult,
-    successAction: (FBAuthResult) -> Unit,
+    result: GoogleResult
 ) {
     loginIn.value = true
     registerTokenAction(result, {}) { credential ->
         auth.signInWithCredential(credential, { loginIn.value = false }) {
             loginIn.value = false
-            successAction(it)
         }
     }
 }

@@ -1,9 +1,7 @@
 package com.wonddak.loacell.storage
 
-import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.storage
 import java.io.File
 
 actual typealias CommonFireStorage = FirebaseStorage
@@ -11,7 +9,7 @@ actual typealias CommonStorageReference = StorageReference
 actual typealias FSError = java.lang.Exception
 
 actual fun getFireStorage(): CommonFireStorage {
-    return Firebase.storage
+    return FirebaseStorage.getInstance()
 }
 
 actual fun CommonFireStorage.getCommonReference(): CommonStorageReference {

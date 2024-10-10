@@ -15,6 +15,7 @@ import com.wonddak.loacell.auth.registerAnonymousToGoogle
 import com.wonddak.loacell.auth.registerGoogleToken
 import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.loacell.auth.signOut
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
@@ -73,11 +74,12 @@ class AuthViewModel(
 
     val googleLoginHandler = object : TokenResultHandler<GoogleResult> {
         override fun onFail(error: Error?) {
-
+            Napier.d(tag = "auth") { "fail with $error" }
         }
 
         override fun onSuccess(token: GoogleResult) {
-            loginHelper.registerGoogleToken(token) {}
+            Napier.d(tag = "auth") { "success with $token" }
+            loginHelper.registerGoogleToken(token)
         }
     }
 

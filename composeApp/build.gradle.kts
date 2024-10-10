@@ -62,11 +62,13 @@ kotlin {
         }
         pod("FirebaseCore") {
             version = iosFirebase
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
         // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
         // Adding it manually seems to resolve the issue
         pod("FirebaseFirestoreInternal") {
             version = iosFirebase
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("FirebaseFirestore") {
             version = iosFirebase
@@ -82,7 +84,8 @@ kotlin {
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
         pod("GoogleSignIn") {
-            version = "7.1"
+            version = "8.0"
+            linkOnly = true
         }
     }
 
@@ -136,10 +139,8 @@ kotlin {
             implementation(libs.kakao.share)
 
 
-            implementation("androidx.credentials:credentials:1.3.0-rc01")
-            // optional - needed for credentials support from play services, for devices running
-            // Android 13 and below.
-            implementation("androidx.credentials:credentials-play-services-auth:1.3.0-rc01")
+            implementation("androidx.credentials:credentials:1.3.0")
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
         }
 

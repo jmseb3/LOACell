@@ -11,8 +11,6 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.WriteBatch
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +19,7 @@ actual class Error(error: Exception?) {
     actual val errorMsg: String = error?.localizedMessage ?: "unknown error"
 }
 
-actual fun getFireStore(): CommonFireStore = CommonFireStore(Firebase.firestore)
+actual fun getFireStore(): CommonFireStore = CommonFireStore(FirebaseFirestore.getInstance())
 
 actual class CommonFireStore(
     private val ref: FirebaseFirestore

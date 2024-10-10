@@ -5,32 +5,31 @@ package com.wonddak.loacell.auth
 import cocoapods.FirebaseAuth.FIRAuth
 import cocoapods.FirebaseAuth.FIRAuthCredential
 import cocoapods.FirebaseAuth.FIRAuthDataResult
-import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
 import cocoapods.FirebaseAuth.FIROAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
-import cocoapods.FirebaseCore.FIRApp
-import cocoapods.GoogleSignIn.GIDConfiguration
-import cocoapods.GoogleSignIn.GIDSignIn
+import com.wonddak.hellogin.core.TokenResultHandler
+import com.wonddak.hellogin.google.GoogleLoginHelper
 import com.wonddak.hellogin.google.GoogleResult
+import com.wonddak.hellogin.google.setEmptyOption
 import com.wonddak.loacell.util.NameHelper
+import io.github.aakira.napier.Napier
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
-import platform.UIKit.UIApplication
-import platform.UIKit.UIWindow
-import platform.UIKit.UIWindowScene
 
 actual class LoginHelper {
+
+    init {
+        GoogleLoginHelper.setEmptyOption()
+    }
     actual val loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     actual val auth: FBAuth = FBAuth(FIRAuth.auth())
@@ -40,59 +39,64 @@ actual class LoginHelper {
         failAction: (msg:String) -> Unit,
         successAction: (credential: FBAuthCredential) -> Unit,
     ) {
-        val user = result.user()
-        val token = user.idToken?.tokenString
-        if (token == null) {
-            loginIn.value = false
-        } else {
-            val credential = FIRGoogleAuthProvider.credentialWithIDToken(
-                idToken = token,
-                accessToken = user.accessToken.tokenString
-            )
-            successAction(FBAuthCredential(credential))
-        }
+//        val user : GIDGoogleUser = result.user()
+//        val token = user.idToken?.tokenString
+//        if (token == null) {
+//            loginIn.value = false
+//        } else {
+//            val credential = FIRGoogleAuthProvider.credentialWithIDToken(
+//                idToken = token,
+//                accessToken = user.accessToken.tokenString
+//            )
+//            successAction(FBAuthCredential(credential))
+//        }
     }
 
     actual suspend fun requestGoogleLogin(
-        successAction: (result:FBAuthResult) -> Unit
+        tokenResultHandler: TokenResultHandler<GoogleResult>
     ) {
-        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
-            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
-            ?: return
-        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
-        val config = GIDConfiguration(clientID = clientID)
-        GIDSignIn.sharedInstance().configuration = config
-        GIDSignIn.sharedInstance()
-            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
-                if (result == null || error != null) {
-                    return@signInWithPresentingViewController
-                }
-
-                registerGoogleToken(result,successAction = successAction)
-            }
+        GoogleLoginHelper.requestLogin(tokenResultHandler)
     }
-
-    actual suspend fun requestAnonymousToGoogleAccount(
-        failAction: (msg: String) -> Unit,
-        successAction: () -> Unit
-    ) {
-        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
-            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
-            ?: return
-        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
-        val config = GIDConfiguration(clientID = clientID)
-        GIDSignIn.sharedInstance().configuration = config
-        GIDSignIn.sharedInstance()
-            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
-                if (result == null || error != null) {
-                    return@signInWithPresentingViewController
-                }
-
-                registerAnonymousToGoogle(result,failAction) {
-                    successAction()
-                }
-            }
-    }
+//    actual suspend fun requestGoogleLogin(
+//        successAction: (result:FBAuthResult) -> Unit
+//    ) {
+//        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
+//            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
+//            ?: return
+//        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
+//        val config = GIDConfiguration(clientID = clientID)
+//        GIDSignIn.sharedInstance().configuration = config
+//        GIDSignIn.sharedInstance()
+//            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
+//                if (result == null || error != null) {
+//                    return@signInWithPresentingViewController
+//                }
+//
+//                registerGoogleToken(result,successAction = successAction)
+//            }
+//    }
+//
+//    actual suspend fun requestAnonymousToGoogleAccount(
+//        failAction: (msg: String) -> Unit,
+//        successAction: () -> Unit
+//    ) {
+//        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
+//            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
+//            ?: return
+//        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
+//        val config = GIDConfiguration(clientID = clientID)
+//        GIDSignIn.sharedInstance().configuration = config
+//        GIDSignIn.sharedInstance()
+//            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
+//                if (result == null || error != null) {
+//                    return@signInWithPresentingViewController
+//                }
+//
+//                registerAnonymousToGoogle(result,failAction) {
+//                    successAction()
+//                }
+//            }
+//    }
 }
 
 @OptIn(BetaInteropApi::class)
@@ -156,6 +160,7 @@ actual class FBAuth(
         successAction: (result:FBAuthResult) -> Unit
     ) {
         auth.signInWithCredential(credential = credential.credential) {  FIRAuthDataResult, error ->
+            Napier.d(tag = "auth") { "[$FIRAuthDataResult] /$error]" }
             if (error == null) {
                 successAction(FBAuthResult(FIRAuthDataResult!!))
             } else {
@@ -191,8 +196,6 @@ actual class FBAuth(
         auth.currentUser()?.deleteWithCompletion { error ->
             if (error == null) {
                 signOut()
-            } else {
-
             }
         }
     }
@@ -219,7 +222,7 @@ actual class FBAuth(
 }
 
 actual class FBUser(
-    val user: FIRUser
+    private val user: FIRUser
 ) {
     actual val uid: String
         get() = user.uid()
@@ -246,17 +249,8 @@ actual class FBUser(
 
 
 actual class FBAuthResult(
-    val result : FIRAuthDataResult
+    private val result: FIRAuthDataResult
 ) {
     actual val user: FBUser?
         get() = FBUser(result.user())
-
-}
-
-class LoginHelperIn : KoinComponent {
-    private val helper: LoginHelper by inject()
-    fun registerAppleToken(
-        nonce: NSString,
-        credential: ASAuthorizationAppleIDCredential,
-    ) = helper.registerAppleToken(nonce, credential)
 }
