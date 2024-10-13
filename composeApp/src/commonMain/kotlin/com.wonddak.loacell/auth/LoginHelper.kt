@@ -1,10 +1,8 @@
 package com.wonddak.loacell.auth
 
 
-import androidx.annotation.MainThread
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleResult
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

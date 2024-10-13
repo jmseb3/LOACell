@@ -27,12 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.wonddak.hellogin.apple.AppleLoginButton
 import com.wonddak.hellogin.apple.AppleResult
+import com.wonddak.hellogin.core.ButtonTheme
 import com.wonddak.hellogin.core.Error
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleLoginButton
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
+import com.wonddak.loacell.ui.setting.AppleLoginView
 import com.wonddak.loacell.ui.setting.useLinkApple
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -145,22 +147,13 @@ fun LoginView(
                 }
 
                 if (useLinkApple) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    AppleLoginButton(
-                        tokenResultHandler = object : TokenResultHandler<AppleResult> {
-                            override fun onFail(error: Error?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onSuccess(token: AppleResult) {
-                                TODO("Not yet implemented")
-                            }
-                        }
-                    )
+                   AppleLoginView(authViewModel.loginHelper)
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 GoogleLoginButton(
-                    tokenResultHandler = authViewModel.googleLoginHandler
+                    tokenResultHandler = authViewModel.googleLoginHandler,
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    mode = ButtonTheme.Dark
                 )
             }
         }

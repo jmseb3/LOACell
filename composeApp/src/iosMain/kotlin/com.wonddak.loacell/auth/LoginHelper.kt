@@ -9,6 +9,9 @@ import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
 import cocoapods.FirebaseAuth.FIROAuthProvider
 import cocoapods.FirebaseAuth.FIRUser
 import cocoapods.GoogleSignIn.GIDGoogleUser
+import com.wonddak.hellogin.apple.AppleLoginHelper
+import com.wonddak.hellogin.apple.AppleOptionProvider
+import com.wonddak.hellogin.apple.AppleSignInRequestScope
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleLoginHelper
 import com.wonddak.hellogin.google.GoogleResult
@@ -27,10 +30,11 @@ import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 
-actual class LoginHelper {
+actual class LoginHelper : AppleOptionProvider{
 
     init {
         GoogleLoginHelper.setEmptyOption()
+        AppleLoginHelper.setOptionProvider(this)
     }
     actual val loginIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -59,51 +63,14 @@ actual class LoginHelper {
     ) {
         GoogleLoginHelper.requestLogin(tokenResultHandler)
     }
-//    actual suspend fun requestGoogleLogin(
-//        successAction: (result:FBAuthResult) -> Unit
-//    ) {
-//        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
-//            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
-//            ?: return
-//        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
-//        val config = GIDConfiguration(clientID = clientID)
-//        GIDSignIn.sharedInstance().configuration = config
-//        GIDSignIn.sharedInstance()
-//            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
-//                if (result == null || error != null) {
-//                    return@signInWithPresentingViewController
-//                }
-//
-//                registerGoogleToken(result,successAction = successAction)
-//            }
-//    }
-//
-//    actual suspend fun requestAnonymousToGoogleAccount(
-//        failAction: (msg: String) -> Unit,
-//        successAction: () -> Unit
-//    ) {
-//        val presentingViewController = ((UIApplication.sharedApplication().connectedScenes()
-//            .first() as? UIWindowScene)?.windows() as List<UIWindow?>).first()?.rootViewController()
-//            ?: return
-//        val clientID = FIRApp.defaultApp()?.options?.clientID() ?: return
-//        val config = GIDConfiguration(clientID = clientID)
-//        GIDSignIn.sharedInstance().configuration = config
-//        GIDSignIn.sharedInstance()
-//            .signInWithPresentingViewController(presentingViewController = presentingViewController) { result, error ->
-//                if (result == null || error != null) {
-//                    return@signInWithPresentingViewController
-//                }
-//
-//                registerAnonymousToGoogle(result,failAction) {
-//                    successAction()
-//                }
-//            }
-//    }
+
+    override val requestScope: AppleSignInRequestScope
+        get() = AppleSignInRequestScope.FullNameAndEmail
 }
 
 @OptIn(BetaInteropApi::class)
 fun LoginHelper.registerAppleToken(
-    nonce: NSString,
+    nonce: String?,
     credential: ASAuthorizationAppleIDCredential,
 ) {
     loginIn.value = true

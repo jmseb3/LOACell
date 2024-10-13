@@ -32,6 +32,7 @@ import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleLoginButton
 import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.auth.FBUser
+import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.registerAnonymousToGoogle
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
@@ -46,6 +47,8 @@ import loacell.composeapp.generated.resources.logo_apple
 import org.jetbrains.compose.resources.painterResource
 
 internal expect val useLinkApple: Boolean
+@Composable
+expect fun AppleLoginView(loginHelper: LoginHelper)
 
 @Composable
 fun LoginInfoView(
