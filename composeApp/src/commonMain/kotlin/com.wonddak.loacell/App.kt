@@ -15,7 +15,6 @@ import okio.Path.Companion.toPath
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),

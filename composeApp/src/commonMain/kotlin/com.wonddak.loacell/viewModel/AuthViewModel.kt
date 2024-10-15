@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wonddak.hellogin.apple.AppleResult
 import com.wonddak.hellogin.core.Error
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.hellogin.google.GoogleResult
