@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,13 @@ fun AssetFileView(
                 val (name, ext) = file.split(".")
                 Text(name)
                 Text(fileHelper.isExistAsset(file).toString())
+                TextButton(
+                    onClick = {
+                        fileHelper.deleteAssetFile(file)
+                    }
+                ){
+                    Text("Delete")
+                }
             }
         }
     }
