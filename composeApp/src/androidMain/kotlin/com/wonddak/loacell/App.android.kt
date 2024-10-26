@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
 		WindowCompat.setDecorFitsSystemWindows(window, false)
         HelloginContainerProvider.setContainer(this)
         AppContext.set(this@MainActivity)
-        network.chaintech.composeMultiplatformScreenCapture.AppContext.apply { set(this@MainActivity) }
         setContent {
 			CompositionLocalProvider(
 				LocalActivity provides this

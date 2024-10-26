@@ -23,7 +23,7 @@ fun AssetFileView(
 ) {
     val totalFileName = splashViewModel.totalFileName
     println(">>>[2] = SP $splashViewModel")
-    val fileHelper : FileHelper = koinInject()
+    val fileHelper: FileHelper = koinInject()
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -39,12 +39,12 @@ fun AssetFileView(
             ) {
                 val (name, ext) = file.split(".")
                 Text(name)
-                Text(fileHelper.isExistAsset(file).toString())
                 TextButton(
                     onClick = {
                         fileHelper.deleteAssetFile(file)
-                    }
-                ){
+                    },
+                    enabled = fileHelper.isExistAsset(file)
+                ) {
                     Text("Delete")
                 }
             }

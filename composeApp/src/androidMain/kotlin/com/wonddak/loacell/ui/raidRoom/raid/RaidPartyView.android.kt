@@ -16,9 +16,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-actual val useShare: Boolean
-    get() = false
-
 actual fun shareImage(bitmap: ImageBitmap?) {
     bitmap?.let { share(bitmap) }
 }
