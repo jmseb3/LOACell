@@ -15,14 +15,32 @@ import platform.posix.memcpy
 
 actual fun shareImage(bitmap: ImageBitmap?) {
     bitmap?.let {
-        val image = it.toUIImage()
+        val uiImage = it.toUIImage() ?: return
+        // Convert UIImage to NSData (e.g., PNG format)
+        val pngData = UIImagePNGRepresentation(uiImage) ?: return
+
+        // Create a temporary file URL
+        val tempDir = platform.Foundation.NSTemporaryDirectory()
+        val tempUrl = NSURL.fileURLWithPath("$tempDir/shared_image.png")
+
+        // Write the PNG data to the temporary file
+        pngData.writeToURL(tempUrl, true)
+
+
         val metadata = LPLinkMetadata()
         metadata.apply {
             title = "이미지 공유"
+            originalURL = tempUrl
         }
-        val shareVC: UIActivityViewController = UIActivityViewController(
-            activityItems = listOf(image),
+        // Set up the share sheet using UIActivityViewController
+        val shareVC = UIActivityViewController(
+            activityItems = listOf(tempUrl), // Share the temporary image URL
             applicationActivities = null
+        )
+
+        shareVC.excludedActivityTypes = listOf(
+            UIActivityTypeAirDrop,
+            UIActivityTypeMail
         )
 
         UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
