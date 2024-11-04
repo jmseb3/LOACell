@@ -42,4 +42,9 @@ actual class FileUtil(
         return data.toString()
     }
 
+    actual fun delete(path: String) : Boolean {
+        val file = File(path)
+        return file.delete()
+    }
+
 }

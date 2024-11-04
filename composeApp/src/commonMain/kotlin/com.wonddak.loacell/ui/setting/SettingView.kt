@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +45,7 @@ fun SettingView(
     splashViewModel: SplashViewModel,
     authViewModel: AuthViewModel,
     roomList: List<RoomInfo>,
+    navigateAsset :() -> Unit,
     onBack: () -> Unit,
 ) {
     var showMenu by remember {
@@ -118,7 +120,12 @@ fun SettingView(
                 webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
             }
             SectionText(title = "앱 버전 : ${getAppVersion()}")
-            AssetFileView(splashViewModel)
+
+            Button(
+                onClick = { navigateAsset.invoke() }
+            ) {
+                Text("1")
+            }
         }
     }
 }

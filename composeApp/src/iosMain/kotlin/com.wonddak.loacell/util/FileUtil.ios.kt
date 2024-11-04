@@ -57,4 +57,8 @@ actual class FileUtil {
             Napier.e(tag = "readFile", throwable = it) { "error to read file from $path" }
         }.getOrDefault("{}")
     }
+
+    actual fun delete(path: String) : Boolean {
+        return fileManager.removeItemAtPath(path = path.replace("file://", ""),error = null)
+    }
 }

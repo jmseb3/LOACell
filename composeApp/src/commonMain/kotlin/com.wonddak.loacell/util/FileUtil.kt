@@ -10,6 +10,7 @@ expect class FileUtil {
     fun getAssetPath(): String
     fun isExist(path: String): Boolean
     fun readFile(path: String): String
+    fun delete(path: String) : Boolean
 }
 
 class FileHelper(
@@ -22,6 +23,10 @@ class FileHelper(
 
     fun isExistAsset(fileName: String) = util.isExist(getAssetFilePath(fileName)).also {
         Napier.d(tag= "FILE") { "file : $fileName is exist : $it" }
+    }
+
+    fun deleteAssetFile(fileName: String) = util.delete(getAssetFilePath(fileName)).also {
+        Napier.d(tag= "FILE") { "file : $fileName is delete : $it" }
     }
 
     fun readFile(path: String): String = util.readFile(path)

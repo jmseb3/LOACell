@@ -23,7 +23,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -36,12 +38,13 @@ import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Day
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.common.DropDownNameView
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.add
 import loacell.composeapp.generated.resources.delete
 import loacell.composeapp.generated.resources.screenshot
-import network.chaintech.composeMultiplatformScreenCapture.ScreenCaptureComposable
-import network.chaintech.composeMultiplatformScreenCapture.rememberScreenCaptureController
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -133,33 +136,24 @@ fun RaidPartyView(
     }
 }
 
-expect val useShare: Boolean
 expect fun shareImage(bitmap: ImageBitmap?)
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RaidPartySimpleView(
     raidInfo: RaidInfo,
     list: List<Character?>,
     errorMsg: (String) -> Unit
 ) {
-    val captureController = rememberScreenCaptureController()
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        ScreenCaptureComposable(
-            modifier = Modifier,
-            screenCaptureController = captureController,
-            shareImage = useShare,
-            onCaptured = { img, throwable ->
-                if (throwable == null) {
-                    shareImage(img)
-                } else {
-                    errorMsg("사진 생성에 실패했습니다.")
-                }
-            }
-        ) {
+        Column(modifier = Modifier.capturable(captureController)) {
+
             Column(
                 modifier = Modifier
                     .wrapContentSize()
@@ -245,7 +239,15 @@ fun RaidPartySimpleView(
         ) {
             Button(
                 onClick = {
-                    captureController.capture()
+                    scope.launch {
+                        val bitmapAsync = captureController.captureAsync()
+                        try {
+                            val bitmap = bitmapAsync.await()
+                            shareImage(bitmap)
+                        } catch (error: Throwable) {
+                            errorMsg(error.message ?: "error")
+                        }
+                    }
                 }
             ) {
                 Row(

@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
@@ -22,6 +23,7 @@ import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.ui.raidRoom.raid.RaidAddView
 import com.wonddak.loacell.ui.raidRoom.raid.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.user.UserDetailView
+import com.wonddak.loacell.ui.setting.AssetFileView
 import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -91,8 +93,14 @@ fun LoaCellNavGraph(
                 splashViewModel,
                 authViewModel,
                 roomList,
+                navigateAsset = {
+                    navController.navigate("ddd")
+                },
                 navController::depth2toMain
             )
+        }
+        dialog("ddd") {
+            AssetFileView(splashViewModel)
         }
 
         // 그냥 입장하기 한 경우
