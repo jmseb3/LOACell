@@ -160,13 +160,12 @@ fun SettingMainView(
         SectionText(title = "버그 제보 및 건의하기") {
             webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
         }
-        SectionText(title = "앱 버전 : ${getAppVersion()}")
 
-        Button(
-            onClick = navigationAsset
-        ) {
-            Text("Asset")
+        SectionText("Asset 파일 관리") {
+            navigationAsset()
         }
+
+        SectionText(title = "앱 버전 : ${getAppVersion()}")
     }
 }
 
@@ -183,7 +182,7 @@ internal fun SectionText(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp)
+                .padding(vertical = 10.dp, horizontal = 5.dp)
                 .noRippleClickable {
                     action?.invoke()
                 },
