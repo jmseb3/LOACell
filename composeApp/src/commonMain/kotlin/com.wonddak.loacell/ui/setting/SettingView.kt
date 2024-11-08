@@ -27,6 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.noRippleClickable
@@ -45,87 +48,124 @@ fun SettingView(
     splashViewModel: SplashViewModel,
     authViewModel: AuthViewModel,
     roomList: List<RoomInfo>,
-    navigateAsset :() -> Unit,
     onBack: () -> Unit,
 ) {
-    var showMenu by remember {
-        mutableStateOf(false)
-    }
-    val config: Config = koinInject()
-    val scope = rememberCoroutineScope()
-    val webLauncher = rememberWebLauncher()
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-
+    val navController = rememberNavController()
     SetBackAction(true) {
         onBack()
     }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             LoaCellTopAppBar("설정") {
-                onBack()
+                if (!navController.popBackStack()) {
+                    onBack()
+                }
             }
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 10.dp)
+        NavHost(
+            navController = navController,
+            startDestination = "settingMain",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            authViewModel.user?.let { userInfo ->
-                SectionCardView(title = "로그인 정보") {
-                    LoginInfoView(
-                        authViewModel,
-                        userInfo,
-                        roomList.filter { it.owner == userInfo.uid },
-                        onBack,
-                        showSnackbar = { msg ->
+            composable("settingMain") {
+                SettingMainView(
+                    authViewModel,
+                    roomList,
+                    onBack,
+                    showSnackBar = { msg ->
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(msg, actionLabel = "확인")
+                        }
+                    },
+                    navigationAsset = {
+                        navController.navigate("settingAsset") {
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+            composable("settingAsset") {
+                AssetFileView(
+                    splashViewModel
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingMainView(
+    authViewModel: AuthViewModel,
+    roomList: List<RoomInfo>,
+    onBack: () -> Unit,
+    showSnackBar: (msg: String) -> Unit,
+    navigationAsset : () -> Unit
+) {
+    var showMenu by remember {
+        mutableStateOf(false)
+    }
+
+    val config: Config = koinInject()
+    val scope = rememberCoroutineScope()
+    val webLauncher = rememberWebLauncher()
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp)
+    ) {
+        authViewModel.user?.let { userInfo ->
+            SectionCardView(title = "로그인 정보") {
+                LoginInfoView(
+                    authViewModel,
+                    userInfo,
+                    roomList.filter { it.owner == userInfo.uid },
+                    onBack,
+                    showSnackbar = showSnackBar
+                )
+            }
+        }
+
+        Box {
+            SectionText(
+                title = "검색 사이트 변경"
+            ) {
+                showMenu = true
+            }
+            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                UrlList.forEach { (name, url) ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = name)
+                        },
+                        onClick = {
                             scope.launch {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(msg, actionLabel = "확인")
+                                config.updateDefaultUrl(url)
+                                showMenu = false
+                                showSnackBar("$name 사이트로 변경 되었습니다.")
                             }
                         }
                     )
                 }
             }
+        }
+        SectionText(title = "버그 제보 및 건의하기") {
+            webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
+        }
+        SectionText(title = "앱 버전 : ${getAppVersion()}")
 
-            Box {
-                SectionText(
-                    title = "검색 사이트 변경"
-                ) {
-                    showMenu = true
-                }
-                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                    UrlList.forEach { (name, url) ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = name)
-                            },
-                            onClick = {
-                                scope.launch {
-                                    config.updateDefaultUrl(url)
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    showMenu = false
-                                    snackbarHostState.showSnackbar(
-                                        "$name 사이트로 변경 되었습니다.",
-                                        actionLabel = "확인"
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-            SectionText(title = "버그 제보 및 건의하기") {
-                webLauncher.launchWeb("https://discord.gg/acD6rQ9Tja")
-            }
-            SectionText(title = "앱 버전 : ${getAppVersion()}")
-
-            Button(
-                onClick = { navigateAsset.invoke() }
-            ) {
-                Text("1")
-            }
+        Button(
+            onClick = navigationAsset
+        ) {
+            Text("Asset")
         }
     }
 }

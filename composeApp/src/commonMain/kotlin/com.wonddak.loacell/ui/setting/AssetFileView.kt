@@ -1,5 +1,6 @@
 package com.wonddak.loacell.ui.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.util.FileHelper
@@ -26,6 +28,7 @@ fun AssetFileView(
     val fileHelper: FileHelper = koinInject()
     Column(
         modifier = Modifier.fillMaxWidth()
+            .background(Color.White)
     ) {
         Text(
             text = "Asset File Info",

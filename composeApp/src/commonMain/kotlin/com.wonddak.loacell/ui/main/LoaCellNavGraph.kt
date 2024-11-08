@@ -93,16 +93,9 @@ fun LoaCellNavGraph(
                 splashViewModel,
                 authViewModel,
                 roomList,
-                navigateAsset = {
-                    navController.navigate("ddd")
-                },
                 navController::depth2toMain
             )
         }
-        dialog("ddd") {
-            AssetFileView(splashViewModel)
-        }
-
         // 그냥 입장하기 한 경우
         composable(
             route = Const.NAV_ROOM_ENTER_MAIN,
