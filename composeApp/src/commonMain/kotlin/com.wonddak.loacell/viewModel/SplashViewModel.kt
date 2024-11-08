@@ -12,6 +12,7 @@ import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.network.firebase.FBApi
 import com.wonddak.loacell.storage.FireStorageReferenceHelper
 import com.wonddak.loacell.storage.downloadToFile
+import com.wonddak.loacell.util.FBStorageUtil
 import com.wonddak.loacell.util.FileHelper
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
@@ -63,21 +64,18 @@ class SplashViewModel(
 
     var maxCnt by mutableStateOf(0)
     var successCnt by mutableStateOf(0)
+
     fun startDownload() {
         maxCnt = downloadFileSet.size
         successCnt = 0
         downloadFileSet.forEach { fileName ->
-            val savePath = fileHelper.getAssetFilePath(fileName)
-            FireStorageReferenceHelper.getAssetReference(fileName)
-                .downloadToFile(
-                    savePath,
-                    successCompletion = {
-                        successCnt += 1
-                    },
-                    failCompletion = {
-
-                    }
-                )
+            FBStorageUtil.downloadFile(
+                fileName = fileName,
+                fileHelper = fileHelper,
+                successAction = {
+                    successCnt +=1
+                }
+            )
         }
     }
 

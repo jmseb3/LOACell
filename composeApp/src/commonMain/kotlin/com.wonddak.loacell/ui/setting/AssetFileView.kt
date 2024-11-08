@@ -24,7 +24,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AssetFileView(
-    splashViewModel: SplashViewModel
+    splashViewModel: SplashViewModel,
+    showProgressWithReDownload : (file:String) -> Unit
 ) {
     val totalFileName = splashViewModel.totalFileName
     val fileHelper: FileHelper = koinInject()
@@ -74,7 +75,7 @@ fun AssetFileView(
                 )
                 TextButton(
                     onClick = {
-                        fileHelper.deleteAssetFile(file)
+                        showProgressWithReDownload(file)
                     },
                     enabled = fileHelper.isExistAsset(file),
                     modifier = Modifier.weight(1f)
