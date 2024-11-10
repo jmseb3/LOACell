@@ -161,6 +161,7 @@ fun SettingView(
                                 fileHelper = fileHelper,
                                 successAction = {
                                     title = "다운로드 성공"
+                                    splashViewModel.readAssetsFile()
                                 },
                                 failAction = {
                                     title = "다운로드 실패"
