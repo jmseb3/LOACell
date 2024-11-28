@@ -9,12 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
@@ -23,7 +24,6 @@ import com.wonddak.loacell.ui.raidRoom.RaidRoomView
 import com.wonddak.loacell.ui.raidRoom.raid.RaidAddView
 import com.wonddak.loacell.ui.raidRoom.raid.RaidDetailView
 import com.wonddak.loacell.ui.raidRoom.user.UserDetailView
-import com.wonddak.loacell.ui.setting.AssetFileView
 import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
@@ -38,7 +38,6 @@ fun LoaCellNavGraph(
     raidViewModel : RaidViewModel = koinViewModel(),
 ) {
     val roomList by raidViewModel.roomList.collectAsState()
-    val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
     NavHost(
         navController = navController,
         startDestination = Const.NAV_SPLASH,
@@ -141,13 +140,38 @@ fun LoaCellNavGraph(
                     roomList,
                     authViewModel.user!!.uid,
                     initRoom = { roomInfo ->
-                        navController::depth2toMain
+                        navController.depth2toMain()
                     },
                     navController::depth2toMain
                 )
             }
         }
+        roomGraph(navController, authViewModel, raidViewModel)
+    }
+}
 
+fun NavHostController.depth2toMain() {
+    this.navigate(Const.NAV_MAIN) {
+        this.popUpTo(this@depth2toMain.graph.id) {
+            inclusive = true
+        }
+    }
+}
+
+fun NavHostController.depth3toRoom() {
+    this.navigate(Const.NAV_ROOM) {
+        this.popUpTo(this@depth3toRoom.graph.id) {
+            inclusive = true
+        }
+    }
+}
+
+fun NavGraphBuilder.roomGraph(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    raidViewModel: RaidViewModel
+) {
+    navigation(startDestination = Const.NAV_ROOM, route = "room_graph") {
         composable(
             route = Const.NAV_ROOM,
         ) { _ ->
@@ -176,6 +200,7 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_RAID_ADD
         ) {
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
             selectedRoomInfo?.let {
                 RaidAddView(
                     roomId = it.uniqueId,
@@ -187,8 +212,8 @@ fun LoaCellNavGraph(
         composable(
             route = Const.NAV_RAID_EDIT
         ) { backStackEntry ->
-//            val raidInfo : RaidInfo = backStackEntry.toRoute()
-            val raidInfo : RaidInfo? = raidViewModel.editItem
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+            val raidInfo: RaidInfo? = raidViewModel.editItem
             selectedRoomInfo?.let {
                 RaidAddView(
                     roomId = it.uniqueId,
@@ -205,6 +230,8 @@ fun LoaCellNavGraph(
                 }
             )
         ) { backStackEntry ->
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
             RaidDetailView(
                 selectedRoomInfo,
@@ -235,22 +262,6 @@ fun LoaCellNavGraph(
                 userInfo,
                 navController::depth3toRoom
             )
-        }
-    }
-}
-
-fun NavHostController.depth2toMain() {
-    this.navigate(Const.NAV_MAIN) {
-        this.popUpTo(this@depth2toMain.graph.id) {
-            inclusive = true
-        }
-    }
-}
-
-fun NavHostController.depth3toRoom() {
-    this.navigate(Const.NAV_ROOM) {
-        this.popUpTo(this@depth3toRoom.graph.id) {
-            inclusive = true
         }
     }
 }
