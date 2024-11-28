@@ -1,9 +1,12 @@
 package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -16,14 +19,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Day
@@ -138,7 +151,7 @@ fun RaidPartyView(
 
 expect fun shareImage(bitmap: ImageBitmap?)
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RaidPartySimpleView(
     raidInfo: RaidInfo,
@@ -148,117 +161,169 @@ fun RaidPartySimpleView(
     val captureController = rememberCaptureController()
     val scope = rememberCoroutineScope()
 
-    Column(
+    var captureBitmap: ImageBitmap? by remember {
+        mutableStateOf(null)
+    }
+    Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Column(modifier = Modifier.capturable(captureController)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column(modifier = Modifier.capturable(captureController)) {
 
-            Column(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .background(Color.White),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Card(
-                    border = BorderStroke(1.dp, Color.Black),
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 5.dp, vertical = 3.dp)
+                        .wrapContentSize()
+                        .background(Color.White),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(5.dp)
+                    Card(
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp, vertical = 3.dp)
                     ) {
-                        Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
-                        if (raidInfo.day != Day.NONE) {
-                            Text(text = raidInfo.getDayText())
+                        Column(
+                            modifier = Modifier.padding(5.dp)
+                        ) {
+                            Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
+                            if (raidInfo.day != Day.NONE) {
+                                Text(text = raidInfo.getDayText())
+                            }
                         }
                     }
-                }
-                Card(
-                    border = BorderStroke(1.dp, Color.Black),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 5.dp, vertical = 3.dp)
-                ) {
-                    Column {
-                        arrayOf(0, 4, 8, 12).forEach { idx ->
-                            runCatching { list.subList(idx, idx + 4) }.getOrNull()?.let { party ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .defaultMinSize(minHeight = 50.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        "${idx / 4 + 1}",
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    party.forEach { item ->
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
+                    Card(
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp, vertical = 3.dp)
+                    ) {
+                        Column {
+                            arrayOf(0, 4, 8, 12).forEach { idx ->
+                                runCatching { list.subList(idx, idx + 4) }.getOrNull()
+                                    ?.let { party ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .defaultMinSize(minHeight = 50.dp),
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            if (item != null) {
-                                                DropDownNameView(
-                                                    item.name,
-                                                    fontSize = 12.sp,
-                                                    otherContent = {
-                                                        Text(
-                                                            text = item.className,
-                                                            fontSize = 12.sp
+                                            Text(
+                                                "${idx / 4 + 1}",
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            party.forEach { item ->
+                                                Column(
+                                                    modifier = Modifier.weight(1f),
+                                                    verticalArrangement = Arrangement.Center,
+                                                    horizontalAlignment = Alignment.CenterHorizontally
+                                                ) {
+                                                    if (item != null) {
+                                                        DropDownNameView(
+                                                            item.name,
+                                                            fontSize = 12.sp,
+                                                            otherContent = {
+                                                                Text(
+                                                                    text = item.className,
+                                                                    fontSize = 12.sp
+                                                                )
+                                                                Text(
+                                                                    text = item.getLevel()
+                                                                        .toString(),
+                                                                    fontSize = 12.sp
+                                                                )
+                                                            }
                                                         )
-                                                        Text(
-                                                            text = item.getLevel().toString(),
-                                                            fontSize = 12.sp
-                                                        )
+                                                    } else {
+                                                        Text(text = "X")
                                                     }
-                                                )
-                                            } else {
-                                                Text(text = "X")
+                                                }
                                             }
                                         }
+                                        HorizontalDivider()
                                     }
-                                }
-                                HorizontalDivider()
                             }
                         }
                     }
                 }
             }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 50.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    scope.launch {
-                        val bitmapAsync = captureController.captureAsync()
-                        try {
-                            val bitmap = bitmapAsync.await()
-                            shareImage(bitmap)
-                        } catch (error: Throwable) {
-                            errorMsg(error.message ?: "error")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 50.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            val bitmapAsync = captureController.captureAsync()
+                            try {
+                                captureBitmap = bitmapAsync.await()
+                            } catch (error: Throwable) {
+                                errorMsg(error.message ?: "error")
+                            }
                         }
                     }
-                }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.screenshot),
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = "공격대 공유")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.screenshot),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(text = "공격대 공유")
+                    }
+                }
+            }
+        }
+
+        captureBitmap?.let { bitmap ->
+            BasicAlertDialog(
+                onDismissRequest = {
+                    captureBitmap = null
+                },
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min),
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    tonalElevation = 6.dp,
+                ) {
+                    Column(
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Image(
+                            modifier = Modifier,
+                            bitmap = bitmap,
+                            contentDescription = null
+                        )
+                        Row {
+                            TextButton(
+                                onClick = {
+                                    shareImage(bitmap)
+                                }
+                            ) {
+                                Text("공유하기")
+                            }
+//                                TextButton(
+//                                    onClick = {
+//
+//                                    }
+//                                ) {
+//                                    Text("저장하기")
+//                                }
+                        }
+                    }
                 }
             }
         }

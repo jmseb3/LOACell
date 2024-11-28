@@ -34,7 +34,7 @@ suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatchers.IO) {
 
     FileProvider.getUriForFile(
         context,
-        "com.wonddak.loacell.android.fileprovider",
+        context.packageName + ".fileprovider",
         tempFileToShare
     )
 }
@@ -43,7 +43,7 @@ fun share(imageBitmap: ImageBitmap) {
     CoroutineScope(Dispatchers.Main).launch {
         val context = AppContext.get()
         val intentShareFile = Intent(Intent.ACTION_SEND)
-        val mimeType = "image/*"
+        val mimeType = "image/png"
         val mimeTypeArray = arrayOf(mimeType)
         intentShareFile.setType(mimeType)
         val uri = imageBitmap.asAndroidBitmap().getUri(context)
@@ -53,7 +53,8 @@ fun share(imageBitmap: ImageBitmap) {
             ClipData.Item(uri)
         )
         intentShareFile.putExtra(Intent.EXTRA_STREAM, uri)
+        intentShareFile.putExtra(Intent.EXTRA_TITLE, "공격대 이미지 입니다.")
         intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        context.startActivity(intentShareFile)
+        context.startActivity(Intent.createChooser(intentShareFile, null))
     }
 }
