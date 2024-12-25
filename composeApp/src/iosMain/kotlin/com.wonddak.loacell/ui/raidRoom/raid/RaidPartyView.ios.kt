@@ -2,6 +2,7 @@ package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
+import io.ktor.http.Url
 import platform.Foundation.NSData
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
@@ -10,7 +11,10 @@ import kotlinx.cinterop.*
 import platform.CoreGraphics.*
 import platform.Foundation.*
 import platform.LinkPresentation.LPLinkMetadata
+import platform.Photos.PHAuthorizationStatusAuthorized
+import platform.Photos.PHPhotoLibrary
 import platform.UIKit.*
+import platform.darwin.NSObject
 import platform.posix.memcpy
 
 actual fun shareImage(bitmap: ImageBitmap?) {
@@ -32,11 +36,13 @@ actual fun shareImage(bitmap: ImageBitmap?) {
             title = "이미지 공유"
             originalURL = tempUrl
         }
+
         // Set up the share sheet using UIActivityViewController
         val shareVC = UIActivityViewController(
             activityItems = listOf(tempUrl), // Share the temporary image URL
             applicationActivities = null
         )
+
 
         shareVC.excludedActivityTypes = listOf(
             UIActivityTypeAirDrop,
@@ -56,7 +62,7 @@ private fun UIImage.toNSData(): NSData? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun ImageBitmap.toUIImage(): UIImage? {
+internal fun ImageBitmap.toUIImage(): UIImage? {
     val width = this.width
     val height = this.height
     val buffer = IntArray(width * height)
@@ -76,4 +82,16 @@ fun ImageBitmap.toUIImage(): UIImage? {
 
     val cgImage = CGBitmapContextCreateImage(context)
     return cgImage?.let { UIImage.imageWithCGImage(it) }
+}
+
+actual fun saveImageBitmap(bitmap: ImageBitmap?,complete : () -> Unit) {
+    val uiImage = bitmap?.toUIImage() ?: return
+
+    PHPhotoLibrary.requestAuthorization { status ->
+        if (status == PHAuthorizationStatusAuthorized) {
+            UIImageWriteToSavedPhotosAlbum(uiImage,{
+                complete()
+            },null,null)
+        }
+    }
 }

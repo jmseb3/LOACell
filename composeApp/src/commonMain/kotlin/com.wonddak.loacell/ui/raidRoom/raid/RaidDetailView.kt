@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.Character
@@ -40,7 +41,7 @@ import loacell.composeapp.generated.resources.room_setting
 
 @Composable
 fun RaidDetailView(
-    roomInfo : RoomInfo?,
+    roomInfo: RoomInfo?,
     raidId: String,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
@@ -125,23 +126,25 @@ fun RaidDetailView(
                     when (page) {
                         0 -> {
                             RaidPartySimpleView(
-                                raidInfo,
-                                getCharacterList(null, raidInfo, userList)
-                            ) { msg ->
-                                scope.launch {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(
-                                        msg,
-                                        actionLabel = "확인"
-                                    )
+                                raidInfo = raidInfo,
+                                list = getCharacterList(null, raidInfo, userList),
+                                errorMsg = { msg ->
+                                    scope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            msg,
+                                            actionLabel = "확인"
+                                        )
+                                    }
                                 }
-                            }
+                            )
                         }
+
 
                         1, 2, 3, 4 -> {
                             val partyIndex = page - 1
                             RaidPartyView(
-                                getCharacterList(partyIndex, raidInfo, userList),
+                                list = getCharacterList(partyIndex, raidInfo, userList),
                                 openAction = { subIndex ->
                                     val charMap = getUserMap(raidInfo, raidList, userList)
                                     if (charMap.isEmpty()) {

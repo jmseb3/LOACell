@@ -3,11 +3,13 @@ package com.wonddak.loacell.ui.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -207,10 +209,10 @@ fun LoaCellNavGraph(
         ) { backStackEntry ->
             val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
             RaidDetailView(
-                selectedRoomInfo,
-                raidId,
-                raidViewModel.raidList,
-                raidViewModel.userList,
+                roomInfo = selectedRoomInfo,
+                raidId = raidId,
+                raidList = raidViewModel.raidList,
+                userList = raidViewModel.userList,
                 navigationEdit = {
                     raidViewModel.editItem = it
                     navController.navigate(Const.NAV_RAID_EDIT) {
@@ -218,7 +220,7 @@ fun LoaCellNavGraph(
                         launchSingleTop = true
                     }
                 },
-                navController::depth3toRoom
+                onBack = navController::depth3toRoom,
             )
         }
         composable(

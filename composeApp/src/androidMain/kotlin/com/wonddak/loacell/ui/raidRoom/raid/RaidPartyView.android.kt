@@ -20,7 +20,7 @@ actual fun shareImage(bitmap: ImageBitmap?) {
     bitmap?.let { share(bitmap) }
 }
 
-suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatchers.IO) {
+internal suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatchers.IO) {
     val sharedImagesDir = File(context.filesDir, "share_images")
 
     if (!sharedImagesDir.exists()) {
@@ -34,12 +34,12 @@ suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatchers.IO) {
 
     FileProvider.getUriForFile(
         context,
-        "com.wonddak.loacell.android.fileprovider",
+        context.packageName + ".fileprovider",
         tempFileToShare
     )
 }
 
-fun share(imageBitmap: ImageBitmap) {
+internal fun share(imageBitmap: ImageBitmap) {
     CoroutineScope(Dispatchers.Main).launch {
         val context = AppContext.get()
         val intentShareFile = Intent(Intent.ACTION_SEND)

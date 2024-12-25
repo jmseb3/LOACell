@@ -152,10 +152,9 @@ fun RaidRoomView(
                         when (page) {
                             RoomState.Raid.index -> {
                                 RaidListView(
-                                    raidViewModel
-                                ) {
-                                    navigateRaidDetail(it.raidId)
-                                }
+                                    raidViewModel = raidViewModel,
+                                    navigation = { navigateRaidDetail(it.raidId) }
+                                )
                             }
 
                             RoomState.User.index -> {
