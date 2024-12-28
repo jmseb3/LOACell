@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -35,15 +34,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.network.lostark.LostArkApi
+import com.wonddak.loacell.network.onFailMsg
+import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.ui.common.SectionCardView
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
@@ -56,7 +56,25 @@ import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
+
+sealed class SettingNav {
+    @Serializable
+    data object Main : SettingNav()
+
+    @Serializable
+    data object Asset : SettingNav()
+
+    @Serializable
+    data object Token : SettingNav()
+
+    @Serializable
+    data class AssetProgress(val name: String) : SettingNav()
+
+    @Serializable
+    data class TokenProgress(val token: String) : SettingNav()
+}
 
 @Composable
 fun SettingView(
@@ -88,12 +106,12 @@ fun SettingView(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "settingMain",
+            startDestination = SettingNav.Main,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            composable("settingMain") {
+            composable<SettingNav.Main> {
                 SettingMainView(
                     authViewModel,
                     roomList,
@@ -105,36 +123,35 @@ fun SettingView(
                         }
                     },
                     navigationAsset = {
-                        navController.navigate("settingAsset") {
+                        navController.navigate(SettingNav.Asset) {
+                            launchSingleTop = true
+                        }
+                    },
+                    navigationToken = {
+                        navController.navigate(SettingNav.Token) {
                             launchSingleTop = true
                         }
                     }
                 )
             }
-            composable("settingAsset") {
+            composable<SettingNav.Asset> {
                 AssetFileView(
                     splashViewModel,
                     showProgressWithReDownload = { name ->
                         navController.navigate(
-                            "settingProgress/$name"
+                            SettingNav.AssetProgress(name)
                         )
                     }
                 )
             }
-            dialog(
-                route = "settingProgress/{name}",
+            dialog<SettingNav.AssetProgress>(
                 dialogProperties = DialogProperties(
                     dismissOnBackPress = false,
                     dismissOnClickOutside = false
-                ),
-                arguments = listOf(
-                    navArgument("name") {
-                        // Make argument type safe
-                        type = NavType.StringType
-                    }
                 )
             ) { entry -> // NavBackStackEntry
-                val fileName = entry.arguments?.getString("name")!!
+                val progress = entry.toRoute<SettingNav.AssetProgress>()
+                val fileName = progress.name
                 Column(
                     modifier = Modifier
                         .size(180.dp)
@@ -143,7 +160,6 @@ fun SettingView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     var title by remember {
                         mutableStateOf("")
                     }
@@ -186,6 +202,53 @@ fun SettingView(
 
                 }
             }
+            composable<SettingNav.Token> {
+                TokenEditView(
+                    navigationToken = { token ->
+                        navController.navigate(SettingNav.TokenProgress(token))
+                    }
+                )
+            }
+            dialog<SettingNav.TokenProgress>(
+                dialogProperties = DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+            ) { entry ->
+                val progress = entry.toRoute<SettingNav.TokenProgress>()
+                val token = progress.token
+                Column(
+                    modifier = Modifier
+                        .size(240.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color.White),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    var title by remember {
+                        mutableStateOf("정상 토큰 확인중")
+                    }
+                    val config = koinInject<Config>()
+                    LaunchedEffect(true) {
+                        delay(1000L)
+                        LostArkApi(token).getCharacterInfo("아이오에스티떡상가즈아")
+                            .onSuccess {
+                                title = "정상 확인 되었습니다."
+                                delay(1000)
+                                config.updateTokenKey(token)
+                                navController.popBackStack()
+                            }
+                            .onFailMsg {
+                                title = "정상 적인 토큰이 아닙니다."
+                                delay(1000)
+                                navController.popBackStack()
+                            }
+                    }
+                    CircularProgressIndicator()
+                    Text(title)
+
+                }
+            }
         }
     }
 }
@@ -196,7 +259,8 @@ fun SettingMainView(
     roomList: List<RoomInfo>,
     onBack: () -> Unit,
     showSnackBar: (msg: String) -> Unit,
-    navigationAsset: () -> Unit
+    navigationAsset: () -> Unit,
+    navigationToken: () -> Unit
 ) {
     var showMenu by remember {
         mutableStateOf(false)
@@ -250,6 +314,10 @@ fun SettingMainView(
 
         SectionText("Asset 파일 관리") {
             navigationAsset()
+        }
+
+        SectionText("API Token 관리") {
+            navigationToken()
         }
 
         SectionText(title = "앱 버전 : ${getAppVersion()}")

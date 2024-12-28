@@ -53,10 +53,22 @@ class Config(provider: DataStoreProvider) {
             it[stringPreferencesKey(ConfigKeys.DefaultUrl)] = url
         }
     }
+
+    val tokenKey : Flow<String?>
+        get() = dataStore.data.map {
+            it[stringPreferencesKey(ConfigKeys.TOKEN_KEY)]
+        }
+
+    suspend fun updateTokenKey(token:String) {
+        dataStore.edit {
+            it[stringPreferencesKey(ConfigKeys.TOKEN_KEY)] = token
+        }
+    }
 }
 
 object ConfigKeys {
     const val DefaultUrl = "default_url"
+    const val TOKEN_KEY = "tokenKey"
 }
 
 const val ILOA = "https://iloa.gg/character/"
