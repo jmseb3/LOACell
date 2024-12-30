@@ -155,11 +155,11 @@ apply("../keystore/signing.gradle")
 
 android {
     namespace = "com.wonddak.loacell"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
 
         applicationId = "com.wonddak.loacell.android"
         versionCode = 14
