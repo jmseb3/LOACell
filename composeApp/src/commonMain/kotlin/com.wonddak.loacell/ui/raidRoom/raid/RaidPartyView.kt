@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -188,12 +187,12 @@ fun RaidPartySimpleView(
                                         .defaultMinSize(minHeight = 50.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        "${idx / 4 + 1}",
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.weight(1f)
-                                    )
+//                                    Text(
+//                                        "${idx / 4 + 1}",
+//                                        textAlign = TextAlign.Center,
+//                                        fontWeight = FontWeight.Bold,
+//                                        modifier = Modifier.weight(1f)
+//                                    )
                                     party.forEach { item ->
                                         Column(
                                             modifier = Modifier.weight(1f),
