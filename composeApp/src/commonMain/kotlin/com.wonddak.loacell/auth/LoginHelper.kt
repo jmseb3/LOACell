@@ -58,7 +58,6 @@ fun LoginHelper.requestAnonymousLogin() {
         loginIn.value = false
     }
 }
-
 expect class FBAuthCredential
 
 expect class FBAuth {

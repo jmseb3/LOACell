@@ -21,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,16 +38,31 @@ import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
 import com.wonddak.loacell.viewModel.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loacell.composeapp.generated.resources.Res
 import loacell.composeapp.generated.resources.change_person
-import loacell.composeapp.generated.resources.logo_apple
 import org.jetbrains.compose.resources.painterResource
 
 internal expect val useLinkApple: Boolean
 @Composable
-expect fun AppleLoginView(loginHelper: LoginHelper)
+expect fun AppleLoginView(
+    loginHelper: LoginHelper,
+)
+
+@Composable
+expect fun AppleLoginBtn(
+    loginHelper: LoginHelper,
+    onSuccess: () -> Unit,
+    onFail: (msg: String) -> Unit
+)
+
+expect fun revokeApple(
+    loginHelper: LoginHelper,
+    scope: CoroutineScope,
+    onSuccess: () -> Unit
+)
 
 @Composable
 fun LoginInfoView(
@@ -121,17 +135,15 @@ fun LoginInfoView(
                     OutlinedButton(
                         modifier = buttonWeight,
                         onClick = {
+                            //탈퇴하기
                             if (roomList.isEmpty()) {
                                 if (isAppleProvider) {
-//                                    appleLoginGuideImpl?.revokeToken(
-//                                        fail = {
-//
-//                                        },
-//                                        success = {
-//                                            authViewModel.deleteAccount()
-//                                            onBack()
-//                                        }
-//                                    )
+                                    revokeApple(
+                                        loginHelper = authViewModel.loginHelper,
+                                        scope = scope
+                                    ) {
+                                        onBack()
+                                    }
                                 } else {
                                     authViewModel.deleteAccount()
                                     onBack()
@@ -175,11 +187,11 @@ fun LoginInfoView(
 
                             override fun onSuccess(token: GoogleResult) {
                                 authViewModel.loginHelper.registerAnonymousToGoogle(
-                                    token,
-                                    {
+                                    result = token,
+                                    failAction = {
                                         showSnackbar(it)
                                     },
-                                    {
+                                    successAction = {
                                         onBack()
                                     }
                                 )
@@ -191,20 +203,15 @@ fun LoginInfoView(
                         type = ButtonType.IconOnly
                     )
                     if (useLinkApple) {
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-
-                                }
+                        AppleLoginBtn(
+                            loginHelper = authViewModel.loginHelper,
+                            onSuccess = {
+                                onBack()
+                            },
+                            onFail = {
+                                showSnackbar(it)
                             }
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(36.dp),
-                                painter = painterResource(Res.drawable.logo_apple),
-                                contentDescription = "Apple Link Button",
-                                tint = Color.Unspecified
-                            )
-                        }
+                        )
                     }
                 }
             }

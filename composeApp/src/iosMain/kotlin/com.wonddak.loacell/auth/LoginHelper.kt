@@ -99,8 +99,46 @@ fun LoginHelper.registerAppleToken(
     }
 }
 
-fun LoginHelper.linkToApple() {
+@OptIn(BetaInteropApi::class)
+fun LoginHelper.registerAnonymousToApple(
+    nonce: String?,
+    credential: ASAuthorizationAppleIDCredential,
+    onSuccess: () -> Unit,
+    onFail: (msg: String) -> Unit
+) {
+    val appleIDToken = credential.identityToken()
+    if (appleIDToken == null) {
+        onFail("error with firebase")
+        return
+    }
 
+    val idTokenString = NSString.create(appleIDToken, NSUTF8StringEncoding)
+
+    if (idTokenString == null) {
+        onFail("error with token")
+        return
+    }
+
+    val firebaseCredential = FIROAuthProvider.appleCredentialWithIDToken(
+        idToken = idTokenString.toString(),
+        rawNonce = nonce.toString(),
+        fullName = credential.fullName()
+    )
+    auth.linkWithCredential(FBAuthCredential(firebaseCredential), onFail, onSuccess)
+}
+
+fun LoginHelper.revokeAppleUser(
+    credential: ASAuthorizationAppleIDCredential,
+    onSuccess: () -> Unit
+) {
+    credential.authorizationCode?.let { data ->
+        NSString.create(data, NSUTF8StringEncoding)?.let { codeString ->
+            auth.revokeToken(codeString) {
+                this.delete()
+                onSuccess()
+            }
+        }
+    }
 }
 
 
@@ -187,6 +225,13 @@ actual class FBAuth(
         cr?.commitChangesWithCompletion {
 
         }
+    }
+
+    fun revokeToken(
+        authCode: NSString,
+        complete: (NSError?) -> Unit
+    ) {
+        auth.revokeTokenWithAuthorizationCode(authCode as String, complete)
     }
 
 }

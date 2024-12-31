@@ -49,7 +49,6 @@ import com.wonddak.loacell.ui.common.SectionCardView
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.rememberWebLauncher
 import com.wonddak.loacell.util.Config
-import com.wonddak.loacell.util.FBStorageUtil
 import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.util.UrlList
 import com.wonddak.loacell.viewModel.AuthViewModel
@@ -152,55 +151,12 @@ fun SettingView(
             ) { entry -> // NavBackStackEntry
                 val progress = entry.toRoute<SettingNav.AssetProgress>()
                 val fileName = progress.name
-                Column(
-                    modifier = Modifier
-                        .size(180.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    var title by remember {
-                        mutableStateOf("")
-                    }
-                    LaunchedEffect(true) {
-                        title = "파일 삭제 요청"
-                        delay(1000)
-                        title = "파일 삭제중"
-                        val result = fileHelper.deleteAssetFile(fileName)
-                        delay(1000)
-                        if (result) {
-                            title = "다운로드 요청중"
-                            delay(1000L)
-                            FBStorageUtil.downloadFile(
-                                fileName = fileName,
-                                fileHelper = fileHelper,
-                                successAction = {
-                                    title = "다운로드 성공"
-                                    splashViewModel.readAssetsFile()
-                                },
-                                failAction = {
-                                    title = "다운로드 실패"
-                                }
-                            )
-                        } else {
-                            title = "파일 삭제에 실패 했습니다."
-                            delay(1000)
-                            navController.popBackStack()
-                        }
-                    }
-
-                    LaunchedEffect(title) {
-                        if (title == "다운로드 성공") {
-                            delay(1000L)
-                            navController.popBackStack()
-                        }
-                    }
-
-                    CircularProgressIndicator()
-                    Text(title)
-
-                }
+                AssetProgressView(
+                    name = fileName,
+                    fileHelper = fileHelper,
+                    onSuccess = splashViewModel::readAssetsFile,
+                    onBack = navController::popBackStack
+                )
             }
             composable<SettingNav.Token> {
                 TokenEditView(
