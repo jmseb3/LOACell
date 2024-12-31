@@ -41,7 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.network.lostark.LostArkApi
+import com.wonddak.loacell.network.lostark.LostArkApiModule
 import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.noRippleClickable
@@ -231,22 +231,23 @@ fun SettingView(
                     val config = koinInject<Config>()
                     LaunchedEffect(true) {
                         delay(1000L)
-                        LostArkApi(token).getCharacterInfo("아이오에스티떡상가즈아")
+                        LostArkApiModule(token).getCharacterInfo("아이오에스티떡상가즈아")
                             .onSuccess {
                                 title = "정상 확인 되었습니다."
                                 delay(1000)
                                 config.updateTokenKey(token)
                                 navController.popBackStack()
                             }
-                            .onFailMsg {
-                                title = "정상 적인 토큰이 아닙니다."
+                            .onFailMsg { message ->
+                                title = message
                                 delay(1000)
                                 navController.popBackStack()
                             }
                     }
                     CircularProgressIndicator()
-                    Text(title)
-
+                    Text(
+                        text = title
+                    )
                 }
             }
         }

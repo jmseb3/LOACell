@@ -3,7 +3,6 @@ package com.wonddak.loacell.ui.raidRoom.raid
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,7 +46,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.model.Character
@@ -142,7 +139,7 @@ fun RaidPartyView(
 }
 
 expect fun shareImage(bitmap: ImageBitmap?)
-expect fun saveImageBitmap(bitmap: ImageBitmap?,complete : () -> Unit)
+expect fun saveImageBitmap(bitmap: ImageBitmap?, complete: () -> Unit)
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -259,9 +256,11 @@ fun RaidPartySimpleView(
         }
     }
     saveImage?.let { bitmap ->
-        BasicAlertDialog(onDismissRequest = {
-            saveImage = null
-        }) {
+        BasicAlertDialog(
+            onDismissRequest = {
+                saveImage = null
+            }
+        ) {
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
@@ -270,7 +269,7 @@ fun RaidPartySimpleView(
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .heightIn(min = 0.dp, max=250.dp)
+                        .heightIn(min = 0.dp, max = 250.dp)
                         .padding(10.dp)
                 ) {
                     Image(
@@ -284,7 +283,8 @@ fun RaidPartySimpleView(
                     TextButton(
                         onClick = {
                             shareImage(bitmap)
-                        }, modifier = Modifier.weight(1f)
+                        },
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text("Share")
                     }
@@ -293,7 +293,8 @@ fun RaidPartySimpleView(
                             saveImageBitmap(bitmap) {
                                 saveImage = null
                             }
-                        }, modifier = Modifier.weight(1f)
+                        },
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text("Save")
                     }

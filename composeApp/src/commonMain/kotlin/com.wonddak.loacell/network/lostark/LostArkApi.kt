@@ -2,9 +2,11 @@ package com.wonddak.loacell.network.lostark
 
 import com.wonddak.loacell.network.ApiResult
 import com.wonddak.loacell.network.LostArkResult
+import com.wonddak.loacell.network.lostark.LostArkApi.Companion.API_BASE
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
+import com.wonddak.loacell.util.Config
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -19,10 +21,14 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.encodeURLPath
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class LostArkApi(
-    private val token: String? = null
+    private val config: Config
 ) {
     companion object {
         const val API_KEY =
@@ -30,6 +36,24 @@ class LostArkApi(
         const val API_BASE = "developer-lostark.game.onstove.com"
     }
 
+    private lateinit var token: String
+    private lateinit var module: LostArkApiModule
+
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            token = config.tokenKey.first() ?: API_KEY
+            module = LostArkApiModule(token)
+        }
+    }
+
+
+    suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> =
+        module.getCharacterInfo(characterName)
+}
+
+class LostArkApiModule(
+    token: String
+) {
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -52,7 +76,7 @@ class LostArkApi(
             headers {
                 append(HttpHeaders.Accept, "application/json")
                 append(HttpHeaders.ContentType, "application/json")
-                append("authorization", "bearer ${token ?: API_KEY}")
+                append("authorization", "bearer $token")
             }
         }
     }
@@ -67,6 +91,10 @@ class LostArkApi(
             is ApiResult.ErrorOnlyMsg -> LostArkResult.FailOnlyMsg(result.message)
             is ApiResult.Error -> {
                 when (val code = result.response.status.value) {
+                    401 -> {
+                        LostArkResult.Fail(code, "정상적인 토큰이 아닙니다.")
+                    }
+
                     503 -> {
                         LostArkResult.Fail(code, "로스트아크 서버가 점검중 입니다.")
                     }
@@ -81,5 +109,4 @@ class LostArkApi(
             is ApiResult.Loading -> LostArkResult.Fail(0, "")
         }
     }
-
 }

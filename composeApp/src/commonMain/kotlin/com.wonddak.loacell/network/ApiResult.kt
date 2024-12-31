@@ -28,9 +28,11 @@ inline fun <reified T : Any> LostArkResult<T>.onFailOnlyMsg(action: (message: St
 }
 
 inline fun <reified T : Any> LostArkResult<T>.onFailMsg(action: (message: String) -> Unit): LostArkResult<T> {
-    if (this is LostArkResult.FailOnlyMsg) action(message) else if (this is LostArkResult.Fail) action(
-        "$message($code)"
-    )
+    if (this is LostArkResult.FailOnlyMsg) {
+        action(message)
+    } else if (this is LostArkResult.Fail) {
+        action("$message($code)")
+    }
     return this
 }
 
