@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wonddak.hellogin.apple.AppleLoginButton
@@ -29,7 +30,7 @@ internal actual val useLinkApple: Boolean = true
 actual fun AppleLoginView(
     loginHelper: LoginHelper
 ) {
-    val appleLoginHandler = remember {
+    val appleLoginHandler = rememberSaveable {
         object : TokenResultHandler<AppleResult> {
             override fun onSuccess(token: AppleResult) {
                 Napier.d(tag = "auth") { "success with $token" }
@@ -78,13 +79,10 @@ actual fun AppleLoginBtn(
             }
         }
     }
-    Column {
-        Spacer(modifier = Modifier.height(10.dp))
-        AppleLoginButton(
-            tokenResultHandler = appleLoginHandler,
-            type = ButtonType.IconOnly
-        )
-    }
+    AppleLoginButton(
+        tokenResultHandler = appleLoginHandler,
+        type = ButtonType.IconOnly
+    )
 }
 
 actual fun revokeApple(
