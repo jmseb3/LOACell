@@ -38,6 +38,7 @@ import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
 import com.wonddak.loacell.viewModel.AuthViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,7 +73,6 @@ fun LoginInfoView(
     onBack: () -> Unit,
     showSnackbar: (String) -> Unit,
 ) {
-    val isAppleProvider = authViewModel.checkAppleProvider()
     val scope = rememberCoroutineScope()
     val editNameStatus = rememberModalStatus()
     Column(
@@ -137,7 +137,8 @@ fun LoginInfoView(
                         onClick = {
                             //탈퇴하기
                             if (roomList.isEmpty()) {
-                                if (isAppleProvider) {
+                                if (authViewModel.checkAppleProvider()) {
+                                    Napier.d { "This is Apple Acc" }
                                     revokeApple(
                                         loginHelper = authViewModel.loginHelper,
                                         scope = scope
@@ -145,6 +146,7 @@ fun LoginInfoView(
                                         onBack()
                                     }
                                 } else {
+                                    Napier.d { "This is not Apple Acc" }
                                     authViewModel.deleteAccount()
                                     onBack()
                                 }
