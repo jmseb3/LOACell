@@ -12,12 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io")
         maven("https://devrepo.kakao.com/nexus/content/groups/public/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
 rootProject.name = "LoaCell"
-include(":androidApp")
-include(":shared")
-include(":sharedApi")
-include(":sharedResources")
-include(":sharedDatabase")
+include(":composeApp")

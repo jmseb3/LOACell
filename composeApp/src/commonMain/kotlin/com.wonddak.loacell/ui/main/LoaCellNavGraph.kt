@@ -1,0 +1,271 @@
+package com.wonddak.loacell.ui.main
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.navigation
+import com.wonddak.loacell.Const
+import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.ui.login.LoginView
+import com.wonddak.loacell.ui.login.SplashView
+import com.wonddak.loacell.ui.raidRoom.RaidRoomView
+import com.wonddak.loacell.ui.raidRoom.raid.RaidAddView
+import com.wonddak.loacell.ui.raidRoom.raid.RaidDetailView
+import com.wonddak.loacell.ui.raidRoom.user.UserDetailView
+import com.wonddak.loacell.ui.setting.SettingView
+import com.wonddak.loacell.viewModel.AuthViewModel
+import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.viewModel.SplashViewModel
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+fun LoaCellNavGraph(
+    navController : NavHostController,
+    splashViewModel : SplashViewModel = koinViewModel(),
+    authViewModel : AuthViewModel = koinViewModel(),
+    raidViewModel : RaidViewModel = koinViewModel(),
+) {
+    val roomList by raidViewModel.roomList.collectAsState()
+    NavHost(
+        navController = navController,
+        startDestination = Const.NAV_SPLASH,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .imePadding()
+    ) {
+        composable(
+            route = Const.NAV_SPLASH,
+        ) {
+            SplashView(
+                splashViewModel,
+                authViewModel,
+                goToMain = {
+                    navController.navigate(Const.NAV_MAIN) {
+                        popUpTo(Const.NAV_SPLASH) {
+                            inclusive = true
+                        }
+                    }
+                },
+                goToLogin = {
+                    navController.navigate(Const.NAV_LOGIN) {
+                        popUpTo(Const.NAV_SPLASH) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Const.NAV_LOGIN
+        ) {
+            LoginView(
+                Modifier.fillMaxSize(),
+                navController,
+                authViewModel,
+                raidViewModel,
+            )
+        }
+
+        composable(route = Const.NAV_MAIN) {
+            MainView(
+                navController,
+                authViewModel,
+                raidViewModel
+            )
+        }
+        composable(route = Const.NAV_SETTING) {
+            SettingView(
+                splashViewModel,
+                authViewModel,
+                roomList,
+                navController::depth2toMain
+            )
+        }
+        // 그냥 입장하기 한 경우
+        composable(
+            route = Const.NAV_ROOM_ENTER_MAIN,
+        ) {
+            RoomEnterView(
+                "",
+                roomList,
+                authViewModel.user!!.uid,
+                initRoom = {
+                    raidViewModel.setRoomId(it, authViewModel.user?.uid)
+                    navController.navigate(Const.NAV_ROOM) {
+                        launchSingleTop = true
+                        this.popUpTo(Const.NAV_MAIN)
+                    }
+                },
+                navController::depth2toMain
+            )
+        }
+
+        //카카오 공유하기를 눌러 실행한 경우
+        composable(
+            route = Const.NAV_ROOM_ENTER,
+            arguments = listOf(
+                navArgument(Const.NAV_ROOM_ENTER_ARG) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            ),
+            deepLinks = listOf(
+                NavDeepLink("kakaoeaad613c8a32160c49991040e94170f9://kakaolink?uniqueId={${Const.NAV_ROOM_ENTER_ARG}}")
+            )
+        ) { backStackEntry ->
+            if (authViewModel.user == null) {
+                navController.navigate(Const.NAV_LOGIN) {
+                    launchSingleTop = true
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                RoomEnterView(
+                    backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
+                    roomList,
+                    authViewModel.user!!.uid,
+                    initRoom = { roomInfo ->
+                        navController.depth2toMain()
+                    },
+                    navController::depth2toMain
+                )
+            }
+        }
+        roomGraph(navController, authViewModel, raidViewModel)
+    }
+}
+
+fun NavHostController.depth2toMain() {
+    this.navigate(Const.NAV_MAIN) {
+        this.popUpTo(this@depth2toMain.graph.id) {
+            inclusive = true
+        }
+    }
+}
+
+fun NavHostController.depth3toRoom() {
+    this.navigate(Const.NAV_ROOM) {
+        this.popUpTo(this@depth3toRoom.graph.id) {
+            inclusive = true
+        }
+    }
+}
+
+fun NavGraphBuilder.roomGraph(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    raidViewModel: RaidViewModel
+) {
+    navigation(startDestination = Const.NAV_ROOM, route = "room_graph") {
+        composable(
+            route = Const.NAV_ROOM,
+        ) { _ ->
+            RaidRoomView(
+                Modifier.fillMaxSize(),
+                authViewModel,
+                raidViewModel,
+                navigateRaidAdd = {
+                    navController.navigate(Const.NAV_RAID_ADD) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateRaidDetail = { raidId ->
+                    navController.navigate(Const.NAV_RAID_DETAIL_MAIN + raidId) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateUserDetail = { userName ->
+                    navController.navigate(Const.NAV_USER_DETAIL_MAIN + userName) {
+                        launchSingleTop = true
+                    }
+                },
+                navController::depth2toMain,
+            )
+        }
+        composable(
+            route = Const.NAV_RAID_ADD
+        ) {
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+            selectedRoomInfo?.let {
+                RaidAddView(
+                    roomId = it.uniqueId,
+                    prevData = null,
+                    onBack = navController::depth3toRoom
+                )
+            }
+        }
+        composable(
+            route = Const.NAV_RAID_EDIT
+        ) { backStackEntry ->
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+            val raidInfo: RaidInfo? = raidViewModel.editItem
+            selectedRoomInfo?.let {
+                RaidAddView(
+                    roomId = it.uniqueId,
+                    prevData = raidInfo,
+                    onBack = navController::popBackStack
+                )
+            }
+        }
+        composable(
+            route = Const.NAV_RAID_DETAIL,
+            arguments = listOf(
+                navArgument(Const.NAV_RAID_DETAIL_ARG) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
+
+            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
+            RaidDetailView(
+                roomInfo = selectedRoomInfo,
+                raidId = raidId,
+                raidList = raidViewModel.raidList,
+                userList = raidViewModel.userList,
+                navigationEdit = {
+                    raidViewModel.editItem = it
+                    navController.navigate(Const.NAV_RAID_EDIT) {
+                        restoreState = true
+                        launchSingleTop = true
+                    }
+                },
+                onBack = navController::depth3toRoom,
+            )
+        }
+        composable(
+            route = Const.NAV_USER_DETAIL,
+            arguments = listOf(
+                navArgument(Const.NAV_USER_DETAIL_ARG) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
+            val userInfo = raidViewModel.userList.find { it.name == userName }
+            UserDetailView(
+                userInfo,
+                navController::depth3toRoom
+            )
+        }
+    }
+}
+
+

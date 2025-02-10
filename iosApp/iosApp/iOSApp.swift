@@ -1,53 +1,26 @@
+import UIKit
 import SwiftUI
+import ComposeApp
 import FirebaseCore
-import FirebaseAuth
-import shared
-import GoogleSignIn
-import SwiftUI_Snackbar
-import KakaoSDKCommon
-
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    var window: UIWindow?
-
-    func application(_ application: UIApplication,didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        KakaoSDK.initSDK(appKey: SharedRes.strings().kakaoKey.desc().localized())
-        NapierProxyKt.debugBuild()
-        window = UIWindow()
-        FirebaseApp.configure()
-        return true
-    }
-    
-    func application(
-        _ app: UIApplication,
-        open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
-    ) -> Bool {
-        var handled: Bool
-        
-        handled = GIDSignIn.sharedInstance.handle(url)
-        if handled {
-            return true
-        }
-        
-        // Handle other custom URL types.
-        
-        // If not handled by this app, return false.
-        return false
-    }
-}
 
 @main
-struct iOSApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
     
-    init() {
-        KoinProxyKt.doInitKoin()
-    }
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environment(\.window,delegate.window)
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        
+        FirebaseApp.configure()
+        NapierProxyKt.debugBuild()
+        HelperKt.doInitKoin()
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        if let window = window {
+            window.rootViewController = MainKt.MainViewController()
+            window.makeKeyAndVisible()
         }
+        return true
     }
 }
