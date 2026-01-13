@@ -1,16 +1,16 @@
 [versions]
-agp = "8.7.3"
-kotlin = "2.1.0"
-compose = "1.7.3"
-ktor = "3.0.2"
-datastore = "1.1.1"
-koin = "4.0.0"
+agp = "8.13.2"
+kotlin = "2.3.0"
+compose = "1.10.0"
+ktor = "3.3.3"
+datastore = "1.2.0"
+koin = "4.1.1"
 androidx-uiTest = "1.7.2"
-coil = "3.0.2"
+coil = "3.3.0"
 hellogin = "1.1.0"
 
 [libraries]
-kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.14.0" }
+kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.21.6" }
 
 androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
@@ -20,7 +20,7 @@ androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmode
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.4.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "34.7.0" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
