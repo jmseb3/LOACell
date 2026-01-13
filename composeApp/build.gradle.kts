@@ -21,9 +21,9 @@ kotlin {
         compilations.all {
             compileTaskProvider {
                 compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
+                    jvmTarget.set(JvmTarget.JVM_17)
                     //https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/#what-do-i-do
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_1_8}")
+                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
                 }
             }
         }
@@ -123,7 +123,6 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
 
@@ -155,11 +154,11 @@ apply("../keystore/signing.gradle")
 
 android {
     namespace = "com.wonddak.loacell"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
 
         applicationId = "com.wonddak.loacell.android"
         versionCode = 14
@@ -195,8 +194,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

@@ -1486,7 +1486,7 @@ SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   AppCheckCore: 85a8346f8b5d2f50ee1b9f55d8bcaaeafe904adb
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  composeApp: 3e7e599de64369ad61a674f19f891bb2f25011ed
+  composeApp: 9da72de043dde4e7178aa8141c67fc31c2f36843
   FirebaseAnalytics: ce1593872635a5ebd715d0d3937fab195991ecc9
   FirebaseAppCheckInterop: 7789a8adfb09e905ce02a76540b94b059029ea81
   FirebaseAuth: c7b82c8f3942c22629145c3f2972c33d1dc3ee6c
