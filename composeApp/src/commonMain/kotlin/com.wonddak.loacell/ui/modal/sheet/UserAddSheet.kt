@@ -175,7 +175,7 @@ fun AddUserSheet(
                 searchResult.find { it.characterName.lowercase() == searchCharacterName.lowercase() }
                     ?.let { find ->
                         Column() {
-                            Text("${find.characterName}(${find.characterClassName}) - ${find.itemMaxLevel}")
+                            Text("${find.characterName}(${find.characterClassName}) - ${find.itemAvgLevel}")
                             Text(text = "외 ${searchResult.size - 1}개의 캐릭터를 찾았습니다.")
                         }
                     }

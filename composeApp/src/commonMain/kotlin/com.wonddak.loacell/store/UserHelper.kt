@@ -24,7 +24,7 @@ object CommonUserHelper {
                     UserInfoField.NAME to character.characterName,
                     UserInfoField.SERVER to character.serverName,
                     UserInfoField.CLASS_NAME to character.characterClassName,
-                    UserInfoField.LEVEL to character.itemMaxLevel,
+                    UserInfoField.LEVEL to character.itemAvgLevel,
                 )
             },
             UserInfoField.TIME_STAMP to Clock.System.now().toEpochMilliseconds()

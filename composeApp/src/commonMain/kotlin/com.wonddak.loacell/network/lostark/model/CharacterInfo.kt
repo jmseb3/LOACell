@@ -14,8 +14,6 @@ data class CharacterInfo(
     val characterName: String,
     @SerialName("ItemAvgLevel")
     val itemAvgLevel: String,
-    @SerialName("ItemMaxLevel")
-    val itemMaxLevel: String,
     @SerialName("ServerName")
     val serverName: String,
 )
