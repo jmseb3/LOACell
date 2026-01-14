@@ -1,3 +1,5 @@
+package com.wonddak.loacell
+
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
 import com.wonddak.loacell.di.commonModule

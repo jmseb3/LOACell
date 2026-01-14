@@ -9,7 +9,7 @@
     </queries>
 
     <application
-        android:name=".LoaCellApplication"
+        android:name="LoaCellApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
         <activity
-            android:name=".MainActivity"
+            android:name="MainActivity"
             android:exported="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
