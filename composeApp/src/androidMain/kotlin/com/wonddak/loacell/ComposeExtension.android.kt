@@ -2,6 +2,7 @@ package com.wonddak.loacell
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat.finishAffinity
 
@@ -22,7 +23,7 @@ actual fun SetTwiceClose() {
             backPressedTime = System.currentTimeMillis()
             Toast.makeText(activity, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
         } else {
-            finishAffinity(activity)
+            activity?.let { finishAffinity(it) }
         }
     }
 }
