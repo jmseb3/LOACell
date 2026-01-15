@@ -121,9 +121,9 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
 
 
-            implementation("androidx.credentials:credentials:1.5.0")
-            implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
-            implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+            api("androidx.credentials:credentials:1.5.0")
+            api("androidx.credentials:credentials-play-services-auth:1.5.0")
+            api("com.google.android.libraries.identity.googleid:googleid:1.1.1")
         }
 
         iosMain.dependencies {

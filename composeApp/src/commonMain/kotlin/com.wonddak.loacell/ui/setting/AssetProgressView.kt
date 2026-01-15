@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.util.FBStorageUtil
+import com.wonddak.loacell.storage.FBStorageUtil
 import com.wonddak.loacell.util.FileHelper
 import kotlinx.coroutines.delay
 
