@@ -10,9 +10,7 @@ import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.network.firebase.FBApi
-import com.wonddak.loacell.storage.FireStorageReferenceHelper
-import com.wonddak.loacell.storage.downloadToFile
-import com.wonddak.loacell.util.FBStorageUtil
+import com.wonddak.loacell.storage.FBStorageUtil
 import com.wonddak.loacell.util.FileHelper
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay

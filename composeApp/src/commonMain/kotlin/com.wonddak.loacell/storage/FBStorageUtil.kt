@@ -1,8 +1,6 @@
-package com.wonddak.loacell.util
+package com.wonddak.loacell.storage
 
-import com.wonddak.loacell.storage.FSError
-import com.wonddak.loacell.storage.FireStorageReferenceHelper
-import com.wonddak.loacell.storage.downloadToFile
+import com.wonddak.loacell.util.FileHelper
 
 object FBStorageUtil {
 
@@ -10,14 +8,14 @@ object FBStorageUtil {
         fileName :String,
         fileHelper : FileHelper,
         successAction : () -> Unit = {},
-        failAction : (FSError) -> Unit = {}
+        failAction : (Error) -> Unit = {}
     ) {
         val savePath = fileHelper.getAssetFilePath(fileName)
         FireStorageReferenceHelper.getAssetReference(fileName)
             .downloadToFile(
-                savePath,
-                successCompletion = successAction,
-                failCompletion = failAction
+                path = savePath,
+                success = successAction,
+                fail = failAction
             )
     }
 
@@ -25,13 +23,13 @@ object FBStorageUtil {
         fileName :String,
         savePath :String,
         successAction : () -> Unit = {},
-        failAction : (FSError) -> Unit = {}
+        failAction : (Error) -> Unit = {}
     ) {
         FireStorageReferenceHelper.getAssetReference(fileName)
             .downloadToFile(
-                savePath,
-                successCompletion = successAction,
-                failCompletion = failAction
+                path = savePath,
+                success = successAction,
+                fail = failAction
             )
     }
 }

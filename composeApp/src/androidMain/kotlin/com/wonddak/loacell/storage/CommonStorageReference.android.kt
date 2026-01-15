@@ -1,20 +1,10 @@
 package com.wonddak.loacell.storage
 
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
-actual typealias CommonFireStorage = FirebaseStorage
 actual typealias CommonStorageReference = StorageReference
-actual typealias FSError = java.lang.Exception
 
-actual fun getFireStorage(): CommonFireStorage {
-    return FirebaseStorage.getInstance()
-}
-
-actual fun CommonFireStorage.getCommonReference(): CommonStorageReference {
-    return this.reference
-}
 
 actual fun CommonStorageReference.getChildPath(path: String): CommonStorageReference {
     return this.child(path)
@@ -22,16 +12,17 @@ actual fun CommonStorageReference.getChildPath(path: String): CommonStorageRefer
 
 actual fun CommonStorageReference.downloadToFile(
     path: String,
-    successCompletion: () -> Unit,
-    failCompletion: (error: FSError) -> Unit,
-) {
+    success: () -> Unit,
+    fail: (Error) -> Unit
+): CommonStorageReference {
     this.getFile(File(path))
         .addOnSuccessListener {
-            successCompletion()
+            success()
         }
         .addOnFailureListener {
-            failCompletion(it)
+            fail(Error(it))
         }
+    return this
 }
 
 actual fun CommonStorageReference.getDownloadUrl(success: (String) -> Unit) {
