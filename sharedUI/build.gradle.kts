@@ -78,12 +78,13 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
         commonMain.dependencies {
-            api(compose.runtime)
-            api(compose.foundation)
-            api(compose.material3)
-            api(compose.components.resources)
-            api(compose.materialIconsExtended)
-            api(compose.components.uiToolingPreview)
+            api(libs.compose.runtime)
+            api(libs.compose.ui)
+            api(libs.compose.foundation)
+            api(libs.compose.resources)
+            api(libs.compose.ui.tooling.preview)
+            api(libs.compose.material3)
+            api("org.jetbrains.compose.material:material-icons-extended:1.7.3")
 
             implementation(libs.bundles.koin.shared)
 
@@ -107,12 +108,10 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
+            implementation(libs.compose.ui.test)
         }
 
         androidMain.dependencies {
-            implementation(compose.uiTooling)
             api(libs.ktor.android)
             implementation(libs.kakao.share)
 
@@ -123,11 +122,14 @@ kotlin {
 
             api("androidx.credentials:credentials:1.5.0")
             api("androidx.credentials:credentials-play-services-auth:1.5.0")
-            api("com.google.android.libraries.identity.googleid:googleid:1.1.1")
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.ios)
         }
     }
+}
+
+dependencies {
+    androidRuntimeClasspath(libs.compose.ui.tooling)
 }
