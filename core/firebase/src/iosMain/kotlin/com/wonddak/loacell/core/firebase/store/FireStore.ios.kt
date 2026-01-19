@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalForeignApi::class)
-
-package com.wonddak.loacell.store
+package com.wonddak.loacell.core.firebase.store
 
 import cocoapods.FirebaseFirestoreInternal.FIRCollectionReference
 import cocoapods.FirebaseFirestoreInternal.FIRDocumentReference
@@ -14,17 +12,7 @@ import cocoapods.FirebaseFirestoreInternal.FIRQuery
 import cocoapods.FirebaseFirestoreInternal.FIRQuerySnapshot
 import cocoapods.FirebaseFirestoreInternal.FIRWriteBatch
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import platform.Foundation.NSError
 
-actual class Error(error: NSError?) {
-    actual val errorMsg: String = error?.localizedDescription ?: "unknown error"
-
-}
 
 actual fun getFireStore(): CommonFireStore = CommonFireStore(FIRFirestore.firestore())
 
@@ -119,15 +107,13 @@ actual class CommonCollection(
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (error != null) {
-                        failAction(Error(error))
-                    }
-                    if (value != null) {
-                        successAction(CommonQuerySnapshot(value))
-                    } else {
-                        failAction(null)
-                    }
+                if (error != null) {
+                    failAction(Error(error))
+                }
+                if (value != null) {
+                    successAction(CommonQuerySnapshot(value))
+                } else {
+                    failAction(null)
                 }
             }
         )
@@ -284,14 +270,12 @@ actual class CommonDocument(
         successAction: () -> Unit,
         failAction: (error: Error) -> Unit,
     ) {
-        runBlocking {
-            runCatching {
-                delete()
-            }.onSuccess {
-                successAction()
-            }.onFailure {
-                failAction(Error(null))
-            }
+        runCatching {
+            delete()
+        }.onSuccess {
+            successAction()
+        }.onFailure {
+            failAction(Error(it))
         }
     }
 
@@ -304,10 +288,10 @@ actual class CommonDocument(
                 if (firDocumentSnapshot != null) {
                     successAction(CommonDocumentSnapshot(firDocumentSnapshot))
                 } else {
-                    failAction(Error(null))
+                    failAction(Error(message = null))
                 }
             } else {
-                failAction(Error(nsError))
+                failAction(Error(nsError.localizedDescription))
             }
         }
     }
@@ -349,10 +333,10 @@ actual class CommonQuery(
                 if (firQuerySnapshot != null) {
                     successAction(CommonQuerySnapshot(firQuerySnapshot))
                 } else {
-                    failAction(Error(null))
+                    failAction(Error(message = null))
                 }
             } else {
-                failAction(Error(nsError))
+                failAction(Error(nsError.localizedDescription()))
             }
         }
     }
@@ -364,7 +348,7 @@ actual class CommonQuery(
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
                 if (error != null) {
-                    failAction(Error(error))
+                    failAction(Error(error.localizedDescription()))
                     return@addSnapshotListener
                 }
                 if (value != null) {

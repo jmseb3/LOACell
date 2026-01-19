@@ -1,8 +1,4 @@
-package com.wonddak.loacell.store
-
-expect class Error {
-    val errorMsg :String
-}
+package com.wonddak.loacell.core.firebase.store
 
 expect fun getFireStore(): CommonFireStore
 

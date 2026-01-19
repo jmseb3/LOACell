@@ -1,4 +1,4 @@
-package com.wonddak.loacell.store
+package com.wonddak.loacell.core.firebase.store
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -15,9 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-actual class Error(error: Exception?) {
-    actual val errorMsg: String = error?.localizedMessage ?: "unknown error"
-}
 
 actual fun getFireStore(): CommonFireStore = CommonFireStore(FirebaseFirestore.getInstance())
 
@@ -45,7 +42,7 @@ actual class CommonFireStore(
     }
 
     actual fun runBatch(
-        write: (batch :CommonBatch) -> Unit
+        write: (batch: CommonBatch) -> Unit
     ) {
         val batch = ref.batch()
         write(CommonBatch(batch))
@@ -68,22 +65,22 @@ actual class CommonFireStore(
 }
 
 actual class CommonBatch(
-    val ref :WriteBatch
+    val ref: WriteBatch
 ) {
     actual fun update(
-        doc :CommonDocument,
+        doc: CommonDocument,
         field: String,
-        value :Any
+        value: Any
     ) {
-        ref.update(doc.ref,field,value)
+        ref.update(doc.ref, field, value)
     }
 
     actual fun update(
-        doc :CommonDocument,
+        doc: CommonDocument,
         field: String,
-        value :CommonFieldValue
+        value: CommonFieldValue
     ) {
-        ref.update(doc.ref,field,value.ref)
+        ref.update(doc.ref, field, value.ref)
     }
 }
 
@@ -99,7 +96,7 @@ actual class CommonCollection(
         CommonDocument(ref.document(documentPath))
 
     actual fun getListenerRegistration(
-        successAction: (a:CommonQuerySnapshot) -> Unit,
+        successAction: (a: CommonQuerySnapshot) -> Unit,
         failAction: (error: Error?) -> Unit
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
@@ -118,19 +115,19 @@ actual class CommonCollection(
         )
     }
 
-    actual fun where(filter: CommonFilter) :CommonQuery{
+    actual fun where(filter: CommonFilter): CommonQuery {
         return CommonQuery(ref.where(filter.ref))
     }
 
-    actual fun whereIn(filed: String,list:List<Any>): CommonQuery {
-        return CommonQuery(ref.whereIn(filed,list))
+    actual fun whereIn(filed: String, list: List<Any>): CommonQuery {
+        return CommonQuery(ref.whereIn(filed, list))
     }
 
     actual fun whereIn(
         filed: CommonFieldPath,
         list: List<Any>
     ): CommonQuery {
-        return CommonQuery(ref.whereIn(filed.ref,list))
+        return CommonQuery(ref.whereIn(filed.ref, list))
     }
 }
 
@@ -169,7 +166,7 @@ actual class CommonDocument(
         CommonCollection(ref.collection(collectionPath))
 
     actual fun getListenerRegistration(
-        successAction: (a:CommonDocumentSnapshot) -> Unit,
+        successAction: (a: CommonDocumentSnapshot) -> Unit,
         failAction: (error: Error?) -> Unit
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
@@ -284,7 +281,7 @@ actual class CommonDocument(
                 successAction(CommonDocumentSnapshot(it))
             }
             .addOnFailureListener {
-                failAction(com.wonddak.loacell.store.Error(it))
+                failAction(Error(it))
             }
     }
 
@@ -308,11 +305,12 @@ actual class CommonDocumentSnapshot(
 actual class CommonQuerySnapshot(
     val ref: QuerySnapshot
 ) {
-    actual val documents: List<CommonDocumentSnapshot> = ref.documents.map { CommonDocumentSnapshot(it) }
+    actual val documents: List<CommonDocumentSnapshot> =
+        ref.documents.map { CommonDocumentSnapshot(it) }
 }
 
 actual class CommonQuery(
-    val ref : Query
+    val ref: Query
 ) {
 
     actual fun get(
@@ -351,10 +349,10 @@ actual class CommonQuery(
 }
 
 actual class CommonFieldValue(
-    val ref : FieldValue
+    val ref: FieldValue
 ) {
     actual companion object {
-        actual fun arrayUnion(value: Any) :CommonFieldValue {
+        actual fun arrayUnion(value: Any): CommonFieldValue {
             return CommonFieldValue(FieldValue.arrayUnion(value))
         }
 
@@ -365,7 +363,7 @@ actual class CommonFieldValue(
 }
 
 actual class CommonFieldPath(
-    val ref : FieldPath
+    val ref: FieldPath
 ) {
     actual companion object {
         actual fun documentId(): CommonFieldPath = CommonFieldPath(FieldPath.documentId())
@@ -373,7 +371,7 @@ actual class CommonFieldPath(
 }
 
 actual class CommonListenerRegistration(
-    val ref : ListenerRegistration
-){
+    val ref: ListenerRegistration
+) {
     actual fun remove() = ref.remove()
 }

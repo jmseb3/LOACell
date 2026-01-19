@@ -1,5 +1,9 @@
 package com.wonddak.loacell.store
 
+import com.wonddak.loacell.core.firebase.store.CommonCollection
+import com.wonddak.loacell.core.firebase.store.CommonDocument
+import com.wonddak.loacell.core.firebase.store.getFireStore
+
 object RefHelper {
     fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms")
 //    fun getRoomsRef(): CommonCollection = getFireStore().collection("rooms-dev")

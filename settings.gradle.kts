@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 rootProject.name = "LoaCell"
 include(":androidApp")
 include(":sharedUI")
+include(":core:firebase")

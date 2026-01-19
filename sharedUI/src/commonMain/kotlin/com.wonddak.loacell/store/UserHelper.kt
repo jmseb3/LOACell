@@ -1,8 +1,8 @@
+import com.wonddak.loacell.core.firebase.store.CommonListenerRegistration
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.model.UserInfoField
 import com.wonddak.loacell.model.toUserInfo
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
-import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.RefHelper
 import io.github.aakira.napier.Napier
 
@@ -13,7 +13,7 @@ object CommonUserHelper {
         name: String,
         representativeCharacter: String,
         characterList: List<CharacterInfo>,
-        failAction: (e: String) -> Unit = {},
+        failAction: (e: String?) -> Unit = {},
         successAction: () -> Unit = {},
     ) {
         val data = mapOf(
@@ -37,7 +37,7 @@ object CommonUserHelper {
                         data = data,
                         successAction = successAction,
                         failAction = { err ->
-                            failAction(err.errorMsg)
+                            failAction(err.message)
                         }
                     )
                 } else {
@@ -46,7 +46,7 @@ object CommonUserHelper {
                             data = data,
                             successAction = successAction,
                             failAction = { err ->
-                                failAction(err.errorMsg)
+                                failAction(err.message)
                             }
                         )
                     }.onFailure { e ->
@@ -55,7 +55,7 @@ object CommonUserHelper {
                 }
             },
             failAction = {
-                failAction(it.errorMsg)
+                failAction(it.message)
             }
         )
 
@@ -81,14 +81,14 @@ object CommonUserHelper {
     fun delete(
         roomId: String,
         name: String,
-        failAction: (e: String) -> Unit,
+        failAction: (e: String?) -> Unit,
         successAction: () -> Unit,
     ) {
         Napier.d(tag = "CommonUserHelper") { "delete" }
         RefHelper.getUserDocRef(roomId, name)
             .delete(
                 successAction = successAction,
-                failAction = { failAction(it.errorMsg) }
+                failAction = { failAction(it.message) }
             )
     }
 

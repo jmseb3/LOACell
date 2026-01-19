@@ -41,36 +41,11 @@ kotlin {
         ios.deploymentTarget = "16.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "ComposeApp"
-            isStatic = true
-            linkerOpts.add("-lsqlite3")
-        }
-        pod("FirebaseCore") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
-        // Adding it manually seems to resolve the issue
-        pod("FirebaseFirestoreInternal") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("FirebaseFirestore") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-            useInteropBindingFrom("FirebaseFirestoreInternal")
-        }
-        pod("FirebaseAuth") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("FirebaseStorage") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("GoogleSignIn") {
-            version = "8.0"
-            linkOnly = true
+            baseName = "SharedUI"
+            export(project(":core:firebase"))
+
+//            isStatic = true
+//            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -105,6 +80,7 @@ kotlin {
             implementation(libs.hellogin.apple.ui)
 
             implementation("io.github.jmseb3:capturable:1.0.0")
+            api(project(":core:firebase"))
         }
 
         commonTest.dependencies {

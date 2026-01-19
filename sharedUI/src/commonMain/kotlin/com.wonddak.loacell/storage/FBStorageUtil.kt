@@ -1,5 +1,6 @@
 package com.wonddak.loacell.storage
 
+import com.wonddak.loacell.core.firebase.storage.downloadToFile
 import com.wonddak.loacell.util.FileHelper
 
 object FBStorageUtil {
