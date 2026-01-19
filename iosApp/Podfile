@@ -5,7 +5,7 @@ target 'iosApp' do
   pod 'FirebaseAnalytics', '~> 11.3'
   pod 'FirebaseCrashlytics', '~> 11.3'
   pod 'KakaoSDKShare'
-  pod 'composeApp', :path => '../composeApp'
+  pod 'sharedUI', :path => '../sharedUI'
 end
 
 post_install do |installer|

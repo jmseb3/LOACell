@@ -56,7 +56,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":composeApp"))
+    implementation(project(":sharedUI"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.kakao.share)
