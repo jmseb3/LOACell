@@ -1,4 +1,4 @@
-package com.wonddak.loacell.storage
+package com.wonddak.loacell.core.firebase.storage
 
 import cocoapods.FirebaseStorage.FIRStorage
 

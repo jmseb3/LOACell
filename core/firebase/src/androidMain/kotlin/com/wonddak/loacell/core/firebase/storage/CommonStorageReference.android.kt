@@ -1,10 +1,9 @@
-package com.wonddak.loacell.storage
+package com.wonddak.loacell.core.firebase.storage
 
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
 actual typealias CommonStorageReference = StorageReference
-
 
 actual fun CommonStorageReference.getChildPath(path: String): CommonStorageReference {
     return this.child(path)
