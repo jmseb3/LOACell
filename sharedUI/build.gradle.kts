@@ -120,8 +120,8 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
 
 
-            api("androidx.credentials:credentials:1.5.0")
-            api("androidx.credentials:credentials-play-services-auth:1.5.0")
+            api("androidx.credentials:credentials:1.6.0-rc01")
+            api("androidx.credentials:credentials-play-services-auth:1.6.0-rc01")
         }
 
         iosMain.dependencies {

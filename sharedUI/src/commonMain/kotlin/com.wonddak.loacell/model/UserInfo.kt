@@ -1,7 +1,6 @@
 package com.wonddak.loacell.model
 
 import com.wonddak.loacell.store.CommonDocumentSnapshot
-import kotlinx.datetime.Clock
 
 object UserInfoField {
     internal const val REPRESENTATIVE_CHARACTER = "representativeCharacter"
@@ -21,7 +20,7 @@ data class UserInfo(
     val characterList: List<Character>,
 ) {
     fun checkTimeOver(): Boolean {
-        val nowTime = Clock.System.now().toEpochMilliseconds()
+        val nowTime = kotlin.time.Clock.System.now().toEpochMilliseconds()
         return (nowTime - this.timeStamp) / 1000 >= 3_600
     }
 

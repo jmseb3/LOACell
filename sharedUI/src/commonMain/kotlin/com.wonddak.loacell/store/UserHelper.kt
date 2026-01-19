@@ -5,7 +5,6 @@ import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.RefHelper
 import io.github.aakira.napier.Napier
-import kotlinx.datetime.Clock
 
 object CommonUserHelper {
     // 방에 유저정보를 추가한다.
@@ -27,7 +26,7 @@ object CommonUserHelper {
                     UserInfoField.LEVEL to character.itemAvgLevel,
                 )
             },
-            UserInfoField.TIME_STAMP to Clock.System.now().toEpochMilliseconds()
+            UserInfoField.TIME_STAMP to kotlin.time.Clock.System.now().toEpochMilliseconds()
         )
         val userRoom = RefHelper.getUserDocRef(roomId, name)
 
