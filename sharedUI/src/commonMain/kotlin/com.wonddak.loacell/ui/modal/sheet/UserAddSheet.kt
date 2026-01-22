@@ -92,7 +92,7 @@ fun AddUserSheet(
                 user,
                 searchCharacterName,
                 searchResult,
-                { error -> errorMsg = error },
+                { error -> errorMsg = error ?: "unknown error" },
                 { modalStatus.hide() }
             )
         }

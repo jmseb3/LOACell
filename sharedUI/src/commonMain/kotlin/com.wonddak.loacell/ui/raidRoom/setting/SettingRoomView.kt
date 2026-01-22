@@ -19,7 +19,6 @@ import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.Error
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.ui.common.SectionCardView
 import com.wonddak.loacell.ui.modal.dialog.ConfirmDialog
@@ -81,7 +80,7 @@ fun SettingRoomView(
                 backToHome()
             }
         ) { err ->
-            showSnackBar("변경에 실패했습니다.${err.errorMsg}")
+            showSnackBar("변경에 실패했습니다.${err.message}")
         }
     }
 }
@@ -163,7 +162,7 @@ fun SettingRoomInfo(
                 },
                 failAction = {
                     showExitAlert.hide()
-                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
+                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.message}")
                 }
             )
         }

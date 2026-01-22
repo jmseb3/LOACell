@@ -42,7 +42,7 @@ actual class CommonFireStore(
                 if (error == null) {
                     successAction()
                 } else {
-                    failAction(Error(error))
+                    failAction(Error(error.localizedDescription))
                 }
             }
         )
@@ -62,10 +62,10 @@ actual class CommonFireStore(
         val batch = ref.batch()
         write(CommonBatch(batch))
         batch.commitWithCompletion { error ->
-            if (error != null) {
+            if (error == null) {
                 successAction()
             } else {
-                failAction(Error(error))
+                failAction(Error(error.localizedDescription))
             }
         }
     }
@@ -108,7 +108,7 @@ actual class CommonCollection(
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
                 if (error != null) {
-                    failAction(Error(error))
+                    failAction(Error(error.localizedDescription))
                 }
                 if (value != null) {
                     successAction(CommonQuerySnapshot(value))
@@ -179,7 +179,7 @@ actual class CommonDocument(
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
                 if (error != null) {
-                    failAction(Error(error))
+                    failAction(Error(error.localizedDescription))
                     return@addSnapshotListener
                 }
                 if (value != null) {
@@ -206,7 +206,7 @@ actual class CommonDocument(
         }.onSuccess {
             successAction()
         }.onFailure {
-            failAction(Error(null))
+            failAction(Error(it))
         }
     }
 
@@ -228,7 +228,7 @@ actual class CommonDocument(
         }.onSuccess {
             successAction()
         }.onFailure {
-            failAction(Error(null))
+            failAction(Error(it))
         }
     }
 
@@ -241,7 +241,7 @@ actual class CommonDocument(
         }.onSuccess {
             successAction()
         }.onFailure {
-            failAction(Error(null))
+            failAction(Error(it))
         }
     }
 
@@ -257,7 +257,7 @@ actual class CommonDocument(
             successAction()
         }.onFailure {
             println("ROOM Store 3")
-            failAction(Error(null))
+            failAction(Error(it))
         }
     }
 

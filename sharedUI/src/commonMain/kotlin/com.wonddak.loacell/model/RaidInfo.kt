@@ -2,7 +2,7 @@ package com.wonddak.loacell.model
 
 import com.wonddak.loacell.assetData.RaidItem
 import com.wonddak.loacell.assetData.Translate
-import com.wonddak.loacell.store.CommonDocumentSnapshot
+import com.wonddak.loacell.core.firebase.store.CommonDocumentSnapshot
 import com.wonddak.loacell.util.TimeHelper
 import kotlinx.serialization.Serializable
 

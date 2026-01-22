@@ -138,13 +138,13 @@ fun LoaCellNavGraph(
                 }
             } else {
                 RoomEnterView(
-                    backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
-                    roomList,
-                    authViewModel.user!!.uid,
+                    prevId = backStackEntry.savedStateHandle[Const.NAV_ROOM_ENTER_ARG] ?: "",
+                    nowEnterRoomList = roomList,
+                    uid = authViewModel.user!!.uid,
                     initRoom = { roomInfo ->
                         navController.depth2toMain()
                     },
-                    navController::depth2toMain
+                    onBack = navController::depth2toMain
                 )
             }
         }
@@ -234,7 +234,7 @@ fun NavGraphBuilder.roomGraph(
         ) { backStackEntry ->
             val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
 
-            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
+            val raidId = backStackEntry.savedStateHandle[Const.NAV_RAID_DETAIL_ARG] ?: ""
             RaidDetailView(
                 roomInfo = selectedRoomInfo,
                 raidId = raidId,
@@ -258,7 +258,7 @@ fun NavGraphBuilder.roomGraph(
                 }
             )
         ) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
+            val userName = backStackEntry.savedStateHandle[Const.NAV_USER_DETAIL_ARG] ?: ""
             val userInfo = raidViewModel.userList.find { it.name == userName }
             UserDetailView(
                 userInfo,

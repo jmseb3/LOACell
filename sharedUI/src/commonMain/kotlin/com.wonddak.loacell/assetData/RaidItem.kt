@@ -1,10 +1,9 @@
 package com.wonddak.loacell.assetData
 
+import com.wonddak.loacell.core.firebase.storage.getDownloadUrl
 import com.wonddak.loacell.model.RaidData
 import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.storage.FireStorageReferenceHelper
-import com.wonddak.loacell.storage.getDownloadUrl
-import io.github.aakira.napier.Napier
 import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal

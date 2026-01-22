@@ -1,6 +1,6 @@
 package com.wonddak.loacell.model
 
-import com.wonddak.loacell.store.CommonDocumentSnapshot
+import com.wonddak.loacell.core.firebase.store.CommonDocumentSnapshot
 
 object UserInfoField {
     internal const val REPRESENTATIVE_CHARACTER = "representativeCharacter"

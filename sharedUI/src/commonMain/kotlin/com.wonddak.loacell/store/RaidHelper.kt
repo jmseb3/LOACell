@@ -1,6 +1,7 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.loacell.PartIndexModalStatus
+import com.wonddak.loacell.core.firebase.store.CommonListenerRegistration
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RaidInfoField
