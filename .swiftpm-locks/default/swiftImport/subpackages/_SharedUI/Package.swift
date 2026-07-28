@@ -1,15 +1,15 @@
 // swift-tools-version: 5.9
 import PackageDescription
 let package = Package(
-  name: "KotlinMultiplatformLinkedPackage",
+  name: "_SharedUI",
   platforms: [
     .iOS("16.0")
   ],
   products: [
     .library(
-      name: "KotlinMultiplatformLinkedPackage",
+      name: "_SharedUI",
       type: .none,
-      targets: ["KotlinMultiplatformLinkedPackage"]
+      targets: ["_SharedUI"]
     )
   ],
   dependencies: [
@@ -24,7 +24,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "KotlinMultiplatformLinkedPackage",
+      name: "_SharedUI",
       dependencies: [
         .product(
           name: "FirebaseAuth",

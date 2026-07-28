@@ -17,5 +17,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LoaCell"
-include(":composeApp")
+include(":SharedUI")
 include(":androidApp")

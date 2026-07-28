@@ -2,35 +2,67 @@
 agp = "9.3.1"
 kotlin = "2.4.0"
 compose = "1.11.1"
-ktor = "3.3.3"
-datastore = "1.2.0"
-koin = "4.1.1"
+compose-material3 = "1.9.0"
+compose-material = "1.7.3"
+ktor = "3.5.0"
+datastore = "1.2.1"
+koin = "4.2.1"
 androidx-uiTest = "1.7.2"
 coil = "3.5.0"
 hellogin = "1.1.0"
+kakao = "2.21.6"
+activity = "1.13.0"
+lifecycle = "2.11.0"
+firebase-bom = "34.16.0"
+gms-auth = "21.6.0"
+datetime = "0.8.0"
+coroutines = "1.11.0"
+serialization = "1.11.0"
+napier = "2.7.1"
+navigation = "2.9.2"
+capturable = "1.0.0"
+credentials = "1.6.0"
+googleid = "1.2.0"
+google-services = "4.5.0"
+firebase-crashlytics-plugin = "3.0.7"
+firebase-ios-sdk = "12.16.0"
+google-signin-ios = "9.2.0"
 
 [libraries]
-kakao-share = { module = "com.kakao.sdk:v2-share", version = "2.21.6" }
+kakao-share = { module = "com.kakao.sdk:v2-share", version.ref = "kakao" }
+
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
+compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-material" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose" }
 
 androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
 androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
 
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.2" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.8.6" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "34.7.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
-gms-auth = { module = "com.google.android.gms:play-services-auth", version = "21.2.0" }
+gms-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "gms-auth" }
 
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0" }
-kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.8.1" }
-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.2" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-resources = { module = "io.ktor:ktor-client-resources", version.ref = "ktor" }
@@ -40,7 +72,10 @@ ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", versi
 ktor-android = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-ios = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
-napier = { module = "io.github.aakira:napier", version = "2.7.1" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
+capturable = { module = "io.github.jmseb3:capturable", version.ref = "capturable" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -61,8 +96,8 @@ androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library",
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-googleGmsService = { id = "com.google.gms.google-services", version = "4.4.2" }
-firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
+googleGmsService = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]

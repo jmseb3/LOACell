@@ -43,15 +43,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":composeApp"))
+    implementation(project(":SharedUI"))
     implementation(libs.androidx.activity.compose)
-    debugImplementation("org.jetbrains.compose.ui:ui-tooling:${libs.versions.compose.get()}")
+    debugImplementation(libs.compose.ui.tooling)
     implementation(libs.koin.android)
     implementation(libs.kakao.share)
     implementation(libs.napier)
     implementation(project.dependencies.platform(libs.hellogin.bom))
     implementation(libs.hellogin.google.ui)
-    implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
+    implementation(libs.navigation.compose)
 
     implementation(project.dependencies.platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
