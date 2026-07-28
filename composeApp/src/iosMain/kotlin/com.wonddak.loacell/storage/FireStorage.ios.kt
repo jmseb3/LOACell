@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package com.wonddak.loacell.storage
 
 import swiftPMImport.LoaCell.composeApp.FIRStorage

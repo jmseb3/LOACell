@@ -301,7 +301,8 @@ actual class CommonDocumentSnapshot(
     actual val reference: CommonDocument
         get() = CommonDocument(ref.reference)
 
-    actual val data = ref.data as Map<String, Any>?
+    actual val data: Map<String, Any>?
+        get() = ref.data
 
 }
 

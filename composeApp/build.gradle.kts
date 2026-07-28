@@ -1,39 +1,28 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.firebaseCrashlytics)
-    alias(libs.plugins.googleGmsService)
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            compileTaskProvider {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_17)
-                    //https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/#what-do-i-do
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
-                }
-            }
+    android {
+        namespace = "com.wonddak.loacell.shared"
+        compileSdk = 37
+        minSdk = 26
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
         }
-        //https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
 
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
@@ -84,16 +73,13 @@ kotlin {
     }
 
     sourceSets {
-        all {
-            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
-        }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.components.resources)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.uiToolingPreview)
+            implementation("org.jetbrains.compose.runtime:runtime:1.11.1")
+            implementation("org.jetbrains.compose.foundation:foundation:1.11.1")
+            implementation("org.jetbrains.compose.material3:material3:1.9.0")
+            implementation("org.jetbrains.compose.components:components-resources:1.11.1")
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation("org.jetbrains.compose.components:components-ui-tooling-preview:1.11.1")
 
             implementation(libs.bundles.koin.shared)
 
@@ -115,14 +101,12 @@ kotlin {
             implementation("io.github.jmseb3:capturable:1.0.0")
         }
 
-        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation(compose.uiTest)
+            implementation("org.jetbrains.compose.ui:ui-test:1.11.1")
         }
 
         androidMain.dependencies {
-            implementation(compose.uiTooling)
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.koin.android)
@@ -139,67 +123,20 @@ kotlin {
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
         }
 
-        iosMain.dependencies {
-            implementation(libs.ktor.ios)
-        }
-    }
-}
+        iosMain {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
 
-//apply("../keystore/signing.gradle")
-
-android {
-    namespace = "com.wonddak.loacell"
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 26
-        targetSdk = 36
-
-        applicationId = "com.wonddak.loacell.android"
-        versionCode = 14
-        versionName = "2.0.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    //https://developer.android.com/studio/test/gradle-managed-devices
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        managedDevices.devices {
-            maybeCreate<ManagedVirtualDevice>("pixel5").apply {
-                device = "Pixel 5"
-                apiLevel = 34
-                systemImageSource = "aosp"
+            dependencies {
+                implementation(libs.ktor.ios)
             }
         }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            configure<CrashlyticsExtension> {
-                mappingFileUploadEnabled = true
-            }
-            //signingConfig = signingConfigs.getByName("LoaCellSigning")
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
-        getByName("debug") {
-            isDebuggable = true
-            configure<CrashlyticsExtension> {
-                mappingFileUploadEnabled = false
-            }
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
 
-//https://developer.android.com/develop/ui/compose/testing#setup
-dependencies {
-    androidTestImplementation(libs.androidx.uitest.junit4)
-    debugImplementation(libs.androidx.uitest.testManifest)
-    //temporary fix: https://youtrack.jetbrains.com/issue/CMP-5864
-    androidTestImplementation("androidx.test:monitor") {
-        version { strictly("1.6.1") }
+        iosArm64Main {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+
+        iosSimulatorArm64Main {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
     }
 }

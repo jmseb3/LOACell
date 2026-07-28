@@ -207,7 +207,7 @@ actual class CommonDocument(
     }
 
     actual fun set(data: Map<String, Any>) {
-        ref.setData(data as Map<Any?, *>)
+        ref.setData(data.mapKeys { it.key as Any? })
     }
 
     actual fun set(
@@ -225,7 +225,7 @@ actual class CommonDocument(
     }
 
     actual fun update(data: Map<String, Any>) {
-        ref.updateData(data as Map<Any?, *>)
+        ref.updateData(data.mapKeys { it.key as Any? })
     }
 
     actual fun update(field: String, value: Any) {
@@ -325,9 +325,17 @@ actual class CommonDocumentSnapshot(
     actual val reference: CommonDocument
         get() = CommonDocument(ref.reference)
     actual val data: Map<String, Any>?
-        get() = ref.data() as Map<String, Any>?
+        get() = ref.data().asStringKeyedMap()
 
 }
+
+private fun Any?.asStringKeyedMap(): Map<String, Any>? =
+    (this as? Map<*, *>)
+        ?.mapNotNull { (key, value) ->
+            val stringKey = key as? String
+            if (stringKey != null && value != null) stringKey to value else null
+        }
+        ?.toMap()
 
 actual class CommonQuerySnapshot(
     val ref: FIRQuerySnapshot,

@@ -127,6 +127,7 @@ fun LoginHelper.registerAnonymousToApple(
     auth.linkWithCredential(FBAuthCredential(firebaseCredential), onFail, onSuccess)
 }
 
+@OptIn(BetaInteropApi::class)
 fun LoginHelper.revokeAppleUser(
     credential: ASAuthorizationAppleIDCredential,
     onSuccess: () -> Unit
@@ -227,11 +228,12 @@ actual class FBAuth(
         }
     }
 
+    @OptIn(BetaInteropApi::class)
     fun revokeToken(
         authCode: NSString,
         complete: (NSError?) -> Unit
     ) {
-        auth.revokeTokenWithAuthorizationCode(authCode as String, complete)
+        auth.revokeTokenWithAuthorizationCode(authCode.toString(), complete)
     }
 
 }

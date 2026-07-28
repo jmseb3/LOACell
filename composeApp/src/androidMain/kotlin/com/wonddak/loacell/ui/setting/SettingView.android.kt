@@ -3,6 +3,7 @@ package com.wonddak.loacell.ui.setting
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.content.pm.PackageInfoCompat
 import com.wonddak.loacell.AppContext
 
 actual fun getAppVersion(): String {
@@ -14,10 +15,6 @@ actual fun getAppVersion(): String {
         pm.getPackageInfo(context.packageName, 0)
     }
     val name = pi.versionName
-    val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        pi.longVersionCode
-    } else {
-        pi.versionCode
-    }
+    val code = PackageInfoCompat.getLongVersionCode(pi)
     return "$name($code)"
 }

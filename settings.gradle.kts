@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "LoaCell"
 include(":composeApp")
+include(":androidApp")

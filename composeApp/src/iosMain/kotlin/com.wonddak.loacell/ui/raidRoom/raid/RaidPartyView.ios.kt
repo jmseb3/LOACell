@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.ui.graphics.ImageBitmap

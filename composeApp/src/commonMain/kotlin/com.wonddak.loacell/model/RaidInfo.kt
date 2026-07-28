@@ -204,14 +204,10 @@ fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
             (this[RaidInfoField.START_GATE_NUMBER] as Long).toInt(),
             (this[RaidInfoField.END_GATE_NUMBER] as Long).toInt(),
             this[RaidInfoField.FINISH] as Boolean,
-            this[RaidInfoField.PARTY_1] as List<String>,
-            this[RaidInfoField.PARTY_2] as List<String>,
-            runCatching {
-                this[RaidInfoField.PARTY_3] as List<String>
-            }.getOrDefault(List(4) { "" }),
-            runCatching {
-                this[RaidInfoField.PARTY_4] as List<String>
-            }.getOrDefault(List(4) { "" }),
+            this[RaidInfoField.PARTY_1].asStringList(),
+            this[RaidInfoField.PARTY_2].asStringList(),
+            this[RaidInfoField.PARTY_3].asStringList(List(4) { "" }),
+            this[RaidInfoField.PARTY_4].asStringList(List(4) { "" }),
             runCatching {
                 (this[RaidInfoField.DAY] as Long)
             }.getOrDefault(-1),
@@ -225,6 +221,9 @@ fun CommonDocumentSnapshot.toRaidInfo(roomId: String): RaidInfo {
     }
 }
 
+private fun Any?.asStringList(default: List<String> = emptyList()): List<String> =
+    (this as? List<*>)?.filterIsInstance<String>() ?: default
+
 fun Long.convertToDay(): Day {
     Day.entries.forEach {
         if (it.index == this.toInt()) {
@@ -233,4 +232,3 @@ fun Long.convertToDay(): Day {
     }
     return Day.NONE
 }
-

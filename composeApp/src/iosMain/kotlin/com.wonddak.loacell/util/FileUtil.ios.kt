@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package com.wonddak.loacell.util
 
 import io.github.aakira.napier.Napier
@@ -14,12 +16,12 @@ actual class FileUtil {
     private val fileManager = NSFileManager.defaultManager
 
     private fun providePath(path: String): String {
-        val dirPaths = fileManager.URLsForDirectory(
+        val directory = fileManager.URLsForDirectory(
             directory = NSCachesDirectory,
             inDomains = NSUserDomainMask,
-        ) as List<NSURL>
+        ).filterIsInstance<NSURL>().first()
 
-        val filePath = dirPaths[0].URLByAppendingPathComponent(path)
+        val filePath = directory.URLByAppendingPathComponent(path)
         fileManager.createDirectoryAtPath(
             path = filePath.toString(),
             withIntermediateDirectories = true,

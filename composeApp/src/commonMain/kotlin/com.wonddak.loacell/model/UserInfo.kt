@@ -47,14 +47,21 @@ fun CommonDocumentSnapshot.toUserInfo(roomId: String): UserInfo {
             roomId,
             this[UserInfoField.REPRESENTATIVE_CHARACTER] as String,
             this[UserInfoField.TIME_STAMP] as Long,
-            (this[UserInfoField.CHARACTER_LIST] as List<Map<String, Any>>).map {
-                Character(
-                    it[UserInfoField.NAME] as String,
-                    it[UserInfoField.SERVER] as String,
-                    it[UserInfoField.CLASS_NAME] as String,
-                    it[UserInfoField.LEVEL] as String
-                )
-            }.sortedBy { -it.getLevel() }
+            this[UserInfoField.CHARACTER_LIST]
+                .asCharacterList()
+                .sortedByDescending { it.getLevel() },
         )
     }
 }
+
+private fun Any?.asCharacterList(): List<Character> =
+    (this as? List<*>)
+        ?.mapNotNull { it as? Map<*, *> }
+        ?.mapNotNull { character ->
+            val name = character[UserInfoField.NAME] as? String ?: return@mapNotNull null
+            val server = character[UserInfoField.SERVER] as? String ?: return@mapNotNull null
+            val className = character[UserInfoField.CLASS_NAME] as? String ?: return@mapNotNull null
+            val level = character[UserInfoField.LEVEL] as? String ?: return@mapNotNull null
+            Character(name, server, className, level)
+        }
+        ?: emptyList()
