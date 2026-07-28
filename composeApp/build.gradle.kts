@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.firebaseCrashlytics)
     alias(libs.plugins.googleGmsService)
@@ -33,11 +32,47 @@ kotlin {
     }
 
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+            linkerOpts.add("-lsqlite3")
+        }
+    }
 
+    swiftPMDependencies {
+        iosMinimumDeploymentTarget.set("16.0")
+        discoverClangModulesImplicitly = false
 
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = exact("11.3.0"),
+            products = listOf(
+                product("FirebaseAuth"),
+                product("FirebaseCore"),
+                product("FirebaseFirestore"),
+                product("FirebaseStorage"),
+            ),
+            importedClangModules = listOf(
+                "FirebaseAuth",
+                "FirebaseCore",
+                "FirebaseFirestoreInternal",
+                "FirebaseStorage",
+            ),
+        )
+        swiftPackage(
+            url = url("https://github.com/google/GoogleSignIn-iOS.git"),
+            version = exact("8.0.0"),
+            products = listOf(product("GoogleSignIn")),
+            importedClangModules = listOf("GoogleSignIn"),
+        )
+    }
+
+    
     targets.configureEach {
         compilations.configureEach {
             compileTaskProvider.configure {
@@ -45,47 +80,6 @@ kotlin {
                     freeCompilerArgs.addAll("-Xexpect-actual-classes")
                 }
             }
-        }
-    }
-
-    val iosFirebase = "11.3"
-    cocoapods {
-        summary = "shared Module"
-        homepage = "Link to the Shared Module homepage"
-        version = "1.0"
-        ios.deploymentTarget = "16.0"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
-            baseName = "ComposeApp"
-            isStatic = true
-            linkerOpts.add("-lsqlite3")
-        }
-        pod("FirebaseCore") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
-        // Adding it manually seems to resolve the issue
-        pod("FirebaseFirestoreInternal") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("FirebaseFirestore") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-            useInteropBindingFrom("FirebaseFirestoreInternal")
-        }
-        pod("FirebaseAuth") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("FirebaseStorage") {
-            version = iosFirebase
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-        pod("GoogleSignIn") {
-            version = "8.0"
-            linkOnly = true
         }
     }
 
@@ -113,7 +107,7 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
             implementation(project.dependencies.platform(libs.hellogin.bom))
             implementation(libs.hellogin.google.ui)
             implementation(libs.hellogin.apple.ui)
@@ -121,6 +115,7 @@ kotlin {
             implementation("io.github.jmseb3:capturable:1.0.0")
         }
 
+        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(compose.uiTest)
@@ -150,7 +145,7 @@ kotlin {
     }
 }
 
-apply("../keystore/signing.gradle")
+//apply("../keystore/signing.gradle")
 
 android {
     namespace = "com.wonddak.loacell"
@@ -183,7 +178,7 @@ android {
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = true
             }
-            signingConfig = signingConfigs.getByName("LoaCellSigning")
+            //signingConfig = signingConfigs.getByName("LoaCellSigning")
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName("debug") {

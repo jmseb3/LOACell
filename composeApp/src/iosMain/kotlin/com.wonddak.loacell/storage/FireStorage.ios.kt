@@ -1,7 +1,7 @@
 package com.wonddak.loacell.storage
 
-import cocoapods.FirebaseStorage.FIRStorage
-import cocoapods.FirebaseStorage.FIRStorageReference
+import swiftPMImport.LoaCell.composeApp.FIRStorage
+import swiftPMImport.LoaCell.composeApp.FIRStorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

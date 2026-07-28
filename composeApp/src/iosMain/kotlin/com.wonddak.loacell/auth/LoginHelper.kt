@@ -2,12 +2,12 @@
 
 package com.wonddak.loacell.auth
 
-import cocoapods.FirebaseAuth.FIRAuth
-import cocoapods.FirebaseAuth.FIRAuthCredential
-import cocoapods.FirebaseAuth.FIRAuthDataResult
-import cocoapods.FirebaseAuth.FIRGoogleAuthProvider
-import cocoapods.FirebaseAuth.FIROAuthProvider
-import cocoapods.FirebaseAuth.FIRUser
+import swiftPMImport.LoaCell.composeApp.FIRAuth
+import swiftPMImport.LoaCell.composeApp.FIRAuthCredential
+import swiftPMImport.LoaCell.composeApp.FIRAuthDataResult
+import swiftPMImport.LoaCell.composeApp.FIRGoogleAuthProvider
+import swiftPMImport.LoaCell.composeApp.FIROAuthProvider
+import swiftPMImport.LoaCell.composeApp.FIRUser
 import cocoapods.GoogleSignIn.GIDGoogleUser
 import com.wonddak.hellogin.apple.AppleLoginHelper
 import com.wonddak.hellogin.apple.AppleOptionProvider

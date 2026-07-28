@@ -1,7 +1,7 @@
 package com.wonddak.loacell.model
 
 import com.wonddak.loacell.store.CommonDocumentSnapshot
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 object UserInfoField {
     internal const val REPRESENTATIVE_CHARACTER = "representativeCharacter"

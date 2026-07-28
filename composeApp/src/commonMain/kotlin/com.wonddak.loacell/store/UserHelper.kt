@@ -5,7 +5,7 @@ import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.RefHelper
 import io.github.aakira.napier.Napier
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 object CommonUserHelper {
     // 방에 유저정보를 추가한다.

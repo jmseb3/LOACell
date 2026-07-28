@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import androidx.savedstate.read
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.ui.login.LoginView
@@ -138,7 +139,7 @@ fun LoaCellNavGraph(
                 }
             } else {
                 RoomEnterView(
-                    backStackEntry.arguments?.getString(Const.NAV_ROOM_ENTER_ARG) ?: "",
+                    backStackEntry.arguments?.read { getStringOrNull(Const.NAV_ROOM_ENTER_ARG) } ?: "",
                     roomList,
                     authViewModel.user!!.uid,
                     initRoom = { roomInfo ->
@@ -234,7 +235,7 @@ fun NavGraphBuilder.roomGraph(
         ) { backStackEntry ->
             val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
 
-            val raidId = backStackEntry.arguments?.getString(Const.NAV_RAID_DETAIL_ARG) ?: ""
+            val raidId = backStackEntry.arguments?.read { getStringOrNull(Const.NAV_RAID_DETAIL_ARG) } ?: ""
             RaidDetailView(
                 roomInfo = selectedRoomInfo,
                 raidId = raidId,
@@ -258,7 +259,7 @@ fun NavGraphBuilder.roomGraph(
                 }
             )
         ) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString(Const.NAV_USER_DETAIL_ARG) ?: ""
+            val userName = backStackEntry.arguments?.read { getStringOrNull(Const.NAV_USER_DETAIL_ARG) } ?: ""
             val userInfo = raidViewModel.userList.find { it.name == userName }
             UserDetailView(
                 userInfo,
@@ -267,5 +268,3 @@ fun NavGraphBuilder.roomGraph(
         }
     }
 }
-
-

@@ -2,17 +2,17 @@
 
 package com.wonddak.loacell.store
 
-import cocoapods.FirebaseFirestoreInternal.FIRCollectionReference
-import cocoapods.FirebaseFirestoreInternal.FIRDocumentReference
-import cocoapods.FirebaseFirestoreInternal.FIRDocumentSnapshot
-import cocoapods.FirebaseFirestoreInternal.FIRFieldPath
-import cocoapods.FirebaseFirestoreInternal.FIRFieldValue
-import cocoapods.FirebaseFirestoreInternal.FIRFilter
-import cocoapods.FirebaseFirestoreInternal.FIRFirestore
-import cocoapods.FirebaseFirestoreInternal.FIRListenerRegistrationProtocol
-import cocoapods.FirebaseFirestoreInternal.FIRQuery
-import cocoapods.FirebaseFirestoreInternal.FIRQuerySnapshot
-import cocoapods.FirebaseFirestoreInternal.FIRWriteBatch
+import swiftPMImport.LoaCell.composeApp.FIRCollectionReference
+import swiftPMImport.LoaCell.composeApp.FIRDocumentReference
+import swiftPMImport.LoaCell.composeApp.FIRDocumentSnapshot
+import swiftPMImport.LoaCell.composeApp.FIRFieldPath
+import swiftPMImport.LoaCell.composeApp.FIRFieldValue
+import swiftPMImport.LoaCell.composeApp.FIRFilter
+import swiftPMImport.LoaCell.composeApp.FIRFirestore
+import swiftPMImport.LoaCell.composeApp.FIRListenerRegistrationProtocol
+import swiftPMImport.LoaCell.composeApp.FIRQuery
+import swiftPMImport.LoaCell.composeApp.FIRQuerySnapshot
+import swiftPMImport.LoaCell.composeApp.FIRWriteBatch
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
