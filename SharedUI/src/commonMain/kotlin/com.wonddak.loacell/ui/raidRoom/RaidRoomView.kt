@@ -245,12 +245,16 @@ private fun TitleView(
                 else -> {
                     val exitRoomStatus = rememberModalStatus()
                     IconButton(
-                        modifier = Modifier.align(Alignment.CenterEnd).size(20.dp),
+                        modifier = Modifier.align(Alignment.CenterEnd),
                         onClick = {
                             exitRoomStatus.show()
                         }
                     ) {
-                        Icon(painterResource(Res.drawable.room_exit), null)
+                        Icon(
+                            painter = painterResource(Res.drawable.room_exit),
+                            contentDescription = "방 나가기",
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                     RoomExitDialog(
                         exitRoomStatus
