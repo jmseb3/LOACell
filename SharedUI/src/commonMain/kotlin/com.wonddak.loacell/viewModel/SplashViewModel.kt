@@ -10,9 +10,7 @@ import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.assetData.Translate
 import com.wonddak.loacell.model.RaidTypeItem
 import com.wonddak.loacell.network.firebase.FBApi
-import com.wonddak.loacell.storage.FireStorageReferenceHelper
-import com.wonddak.loacell.storage.downloadToFile
-import com.wonddak.loacell.util.FBStorageUtil
+import com.wonddak.loacell.storage.AssetStorage
 import com.wonddak.loacell.util.FileHelper
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -30,6 +28,7 @@ import kotlinx.serialization.json.JsonElement
 class SplashViewModel(
     private val fbApi: FBApi,
     private val fileHelper: FileHelper,
+    private val assetStorage: AssetStorage,
 ) : ViewModel() {
 
     var timeCheck by mutableStateOf(false)
@@ -76,7 +75,7 @@ class SplashViewModel(
         maxCnt = downloadFileSet.size
         successCnt = 0
         downloadFileSet.forEach { fileName ->
-            FBStorageUtil.downloadFile(
+            assetStorage.downloadAssetFile(
                 fileName = fileName,
                 fileHelper = fileHelper,
                 successAction = {
@@ -94,7 +93,7 @@ class SplashViewModel(
                     val jsonString = fileHelper.readFile(savePath)
                     if (fileName.startsWith("raid_")) {
                         val data: List<RaidTypeItem> = Json.decodeFromString(jsonString)
-                        RaidItem.addData(data)
+                        RaidItem.addData(data, assetStorage::getRaidImageUrl)
                     } else if (fileName.startsWith("synergy_")) {
                         val data: Map<String, String> = Json.decodeFromString(jsonString)
                         Synergy.addData(data)

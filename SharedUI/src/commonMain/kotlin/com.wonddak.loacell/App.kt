@@ -14,9 +14,11 @@ import com.wonddak.loacell.ui.main.LoaCellNavGraph
 import com.wonddak.loacell.di.LocalConfig
 import com.wonddak.loacell.di.LocalFileHelper
 import com.wonddak.loacell.di.LocalLostArkApi
+import com.wonddak.loacell.di.LocalAssetStorage
 import com.wonddak.loacell.network.lostark.LostArkApi
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.FileHelper
+import com.wonddak.loacell.storage.AssetStorage
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import dev.zacsweers.metrox.viewmodel.MetroViewModelFactory
 import okio.FileSystem
@@ -28,6 +30,7 @@ fun App(
     config: Config,
     fileHelper: FileHelper,
     lostArkApi: LostArkApi,
+    assetStorage: AssetStorage,
 ) {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
@@ -52,6 +55,7 @@ fun App(
             LocalConfig provides config,
             LocalFileHelper provides fileHelper,
             LocalLostArkApi provides lostArkApi,
+            LocalAssetStorage provides assetStorage,
         ) {
             LoaCellNavGraph(
                 navController = navController,

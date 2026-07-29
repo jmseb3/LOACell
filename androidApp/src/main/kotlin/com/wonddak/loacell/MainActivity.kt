@@ -55,6 +55,7 @@ class MainActivity(
                     config = (application as LoaCellApplication).appGraph.config,
                     fileHelper = (application as LoaCellApplication).appGraph.fileHelper,
                     lostArkApi = (application as LoaCellApplication).appGraph.lostArkApi,
+                    assetStorage = (application as LoaCellApplication).appGraph.assetStorage,
                 )
             }
         }

@@ -16,7 +16,7 @@ actual fun getFireStorage(): CommonFireStorage {
 }
 
 actual fun CommonFireStorage.getCommonReference(): CommonStorageReference {
-    return getFireStorage().reference()
+    return this.reference()
 }
 
 actual fun CommonStorageReference.getChildPath(path: String): CommonStorageReference {

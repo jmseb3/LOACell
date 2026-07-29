@@ -2,6 +2,7 @@ package com.wonddak.loacell.di
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.wonddak.loacell.network.lostark.LostArkApi
+import com.wonddak.loacell.storage.AssetStorage
 import com.wonddak.loacell.util.Config
 import com.wonddak.loacell.util.FileHelper
 
@@ -15,4 +16,8 @@ val LocalFileHelper = staticCompositionLocalOf<FileHelper> {
 
 val LocalLostArkApi = staticCompositionLocalOf<LostArkApi> {
     error("LostArkApi is not provided")
+}
+
+val LocalAssetStorage = staticCompositionLocalOf<AssetStorage> {
+    error("AssetStorage is not provided")
 }

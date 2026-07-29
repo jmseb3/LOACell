@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.util.FBStorageUtil
+import com.wonddak.loacell.di.LocalAssetStorage
 import com.wonddak.loacell.util.FileHelper
 import kotlinx.coroutines.delay
 
@@ -29,6 +29,7 @@ fun AssetProgressView(
     onSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
+    val assetStorage = LocalAssetStorage.current
     Column(
         modifier = Modifier
             .size(180.dp)
@@ -49,7 +50,7 @@ fun AssetProgressView(
             if (result) {
                 title = "다운로드 요청중"
                 delay(1000L)
-                FBStorageUtil.downloadFile(
+                assetStorage.downloadAssetFile(
                     fileName = name,
                     fileHelper = fileHelper,
                     successAction = {

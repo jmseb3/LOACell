@@ -1,7 +1,5 @@
 package com.wonddak.loacell.storage
 
-import kotlin.native.concurrent.ThreadLocal
-
 expect class CommonFireStorage
 expect class CommonStorageReference
 expect class FSError
@@ -24,15 +22,3 @@ expect fun CommonStorageReference.downloadToFile(
 expect fun CommonStorageReference.getDownloadUrl(
     success: (String) -> Unit,
 )
-
-@ThreadLocal
-object FireStorageReferenceHelper {
-    private val storage : CommonFireStorage = getFireStorage()
-
-    fun getAssetReference(fileName: String): CommonStorageReference {
-        return storage.getCommonReference().getChildPath("dataFiles/$fileName")
-    }
-    fun getAssetRaidImage(type: String): CommonStorageReference {
-        return storage.getCommonReference().getChildPath("dataFiles/raid/raid_$type.png")
-    }
-}

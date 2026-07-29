@@ -13,6 +13,7 @@ fun MainViewController(): UIViewController {
             config = appGraph.config,
             fileHelper = appGraph.fileHelper,
             lostArkApi = appGraph.lostArkApi,
+            assetStorage = appGraph.assetStorage,
         )
     }.also {
         HelloginContainerProvider.setContainer(it)
