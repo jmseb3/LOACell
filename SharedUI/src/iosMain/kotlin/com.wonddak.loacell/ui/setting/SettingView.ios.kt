@@ -2,11 +2,15 @@ package com.wonddak.loacell.ui.setting
 
 import platform.Foundation.NSBundle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 
 
 @Composable
 actual fun getAppVersion(): String {
-    val name = NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString").toString()
-    val code = NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion").toString()
-    return "$name($code)"
+    return remember {
+        val info = NSBundle.mainBundle.infoDictionary
+        val name = info?.get("CFBundleShortVersionString") as? String ?: ""
+        val code = info?.get("CFBundleVersion") as? String ?: ""
+        "$name($code)"
+    }
 }
