@@ -93,7 +93,7 @@ fun MainView(
 							}
 						},
 					) {
-						Icon(Icons.Filled.Settings, contentDescription = null)
+						Icon(Icons.Filled.Settings, contentDescription = "설정")
 					}
 				}
 			)

@@ -62,7 +62,7 @@ fun FabMenuItem(
             ) {
                 Icon(
                     painter = painterResource(info.img),
-                    null,
+                    contentDescription = (info as? FABInfo.Label)?.title ?: "메뉴 항목",
                     modifier = Modifier.size(20.dp)
                 )
             }

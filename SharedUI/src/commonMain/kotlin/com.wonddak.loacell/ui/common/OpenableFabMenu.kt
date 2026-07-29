@@ -52,7 +52,8 @@ fun OpenableFabMenu(
                     Icons.Filled.Clear
                 } else {
                     Icons.Filled.Add
-                }, null
+                },
+                contentDescription = if (modalStatus.status) "메뉴 닫기" else "메뉴 열기"
             )
         }
     }

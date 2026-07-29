@@ -36,7 +36,7 @@ fun LoaCellBottomAppBar(
                 AnimatedVisibility(true) {
                     SmallFloatingActionButton(
                         content = {
-                            Icon(iconImage ?: Icons.Filled.Add, null)
+                            Icon(iconImage ?: Icons.Filled.Add, contentDescription = "추가")
                         },
                         onClick = onClick,
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
@@ -64,7 +64,7 @@ fun RaidRoomActions(
         ) {
             Icon(
                 painter = painterResource(Res.drawable.room),
-                null,
+                contentDescription = "레이드 목록",
                 modifier = Modifier.size(30.dp)
             )
         }
@@ -75,7 +75,7 @@ fun RaidRoomActions(
         ) {
             Icon(
                 painter = painterResource(Res.drawable.person),
-                null,
+                contentDescription = "참여자 목록",
                 modifier = Modifier.size(30.dp)
             )
         }
@@ -87,7 +87,7 @@ fun RaidRoomActions(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.room_setting),
-                    null,
+                contentDescription = "방 설정",
                     modifier = Modifier.size(30.dp)
                 )
             }
