@@ -120,7 +120,7 @@ fun RaidRoomView(
                 LoaCellBottomAppBar(
                     onAction = action
                 ) {
-                    RaidRoomActions(raidViewModel.role) {
+                    RaidRoomActions(raidViewModel.role, pagerState.currentPage) {
                         scope.launch {
                             pagerState.scrollToPage(it)
                         }

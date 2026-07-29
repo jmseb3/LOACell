@@ -10,6 +10,7 @@ import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -54,6 +55,7 @@ fun LoaCellBottomAppBar(
 @Composable
 fun RaidRoomActions(
     role: RoomInfo.RoomRole,
+    selectedPage: Int,
     changePage: (Int) -> Unit
 ) {
     Row() {
@@ -65,7 +67,8 @@ fun RaidRoomActions(
             Icon(
                 painter = painterResource(Res.drawable.room),
                 contentDescription = "레이드 목록",
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
+                tint = if (selectedPage == RoomState.Raid.index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         IconButton(
@@ -76,7 +79,8 @@ fun RaidRoomActions(
             Icon(
                 painter = painterResource(Res.drawable.person),
                 contentDescription = "참여자 목록",
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
+                tint = if (selectedPage == RoomState.User.index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (role == RoomInfo.RoomRole.OWNER || role == RoomInfo.RoomRole.MANAGER) {
@@ -87,8 +91,9 @@ fun RaidRoomActions(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.room_setting),
-                contentDescription = "방 설정",
-                    modifier = Modifier.size(30.dp)
+                    contentDescription = "방 설정",
+                    modifier = Modifier.size(30.dp),
+                    tint = if (selectedPage == RoomState.Setting.index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
