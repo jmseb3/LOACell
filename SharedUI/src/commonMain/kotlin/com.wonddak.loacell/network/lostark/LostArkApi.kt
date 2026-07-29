@@ -21,10 +21,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.encodeURLPath
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class LostArkApi(
@@ -36,19 +33,14 @@ class LostArkApi(
         const val API_BASE = "developer-lostark.game.onstove.com"
     }
 
-    private lateinit var token: String
-    private lateinit var module: LostArkApiModule
-
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            token = config.tokenKey.first() ?: API_KEY
-            module = LostArkApiModule(token)
+    suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
+        val module = LostArkApiModule(config.tokenKey.first() ?: API_KEY)
+        return try {
+            module.getCharacterInfo(characterName)
+        } finally {
+            module.close()
         }
     }
-
-
-    suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> =
-        module.getCharacterInfo(characterName)
 }
 
 class LostArkApiModule(
@@ -79,6 +71,10 @@ class LostArkApiModule(
                 append("authorization", "bearer $token")
             }
         }
+    }
+
+    fun close() {
+        httpClient.close()
     }
 
     @Throws(Throwable::class)

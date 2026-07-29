@@ -187,18 +187,23 @@ fun SettingView(
                     val config = koinInject<Config>()
                     LaunchedEffect(true) {
                         delay(1000L)
-                        LostArkApiModule(token).getCharacterInfo("아이오에스티떡상가즈아")
-                            .onSuccess {
-                                title = "정상 확인 되었습니다."
-                                delay(1000)
-                                config.updateTokenKey(token)
-                                navController.popBackStack()
-                            }
-                            .onFailMsg { message ->
-                                title = message
-                                delay(1000)
-                                navController.popBackStack()
-                            }
+                        val api = LostArkApiModule(token)
+                        try {
+                            api.getCharacterInfo("아이오에스티떡상가즈아")
+                                .onSuccess {
+                                    title = "정상 확인 되었습니다."
+                                    delay(1000)
+                                    config.updateTokenKey(token)
+                                    navController.popBackStack()
+                                }
+                                .onFailMsg { message ->
+                                    title = message
+                                    delay(1000)
+                                    navController.popBackStack()
+                                }
+                        } finally {
+                            api.close()
+                        }
                     }
                     CircularProgressIndicator()
                     Text(
