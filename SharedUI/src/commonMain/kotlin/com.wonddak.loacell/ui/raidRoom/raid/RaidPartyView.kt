@@ -137,7 +137,7 @@ fun RaidPartyView(
     }
 }
 
-expect fun shareImage(bitmap: ImageBitmap?)
+expect suspend fun shareImage(bitmap: ImageBitmap?)
 expect fun saveImageBitmap(bitmap: ImageBitmap?, complete: () -> Unit)
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -281,7 +281,9 @@ fun RaidPartySimpleView(
                 ) {
                     TextButton(
                         onClick = {
-                            shareImage(bitmap)
+                            scope.launch {
+                                shareImage(bitmap)
+                            }
                         },
                         modifier = Modifier.weight(1f)
                     ) {

@@ -19,7 +19,7 @@ import platform.UIKit.*
 import platform.darwin.NSObject
 import platform.posix.memcpy
 
-actual fun shareImage(bitmap: ImageBitmap?) {
+actual suspend fun shareImage(bitmap: ImageBitmap?) {
     bitmap?.let {
         val uiImage = it.toUIImage() ?: return
         // Convert UIImage to NSData (e.g., PNG format)
