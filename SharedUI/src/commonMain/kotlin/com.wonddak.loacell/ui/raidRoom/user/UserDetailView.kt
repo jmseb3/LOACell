@@ -32,7 +32,7 @@ import loacell.sharedui.generated.resources.Res
 import loacell.sharedui.generated.resources.change_person
 import loacell.sharedui.generated.resources.delete
 import loacell.sharedui.generated.resources.refresh
-import org.koin.compose.koinInject
+import com.wonddak.loacell.di.LocalLostArkApi
 
 @Composable
 fun UserDetailView(
@@ -47,7 +47,7 @@ fun UserDetailView(
             Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
         }
     } else {
-        val lostArkApi: LostArkApi = koinInject()
+        val lostArkApi = LocalLostArkApi.current
         val scope = rememberCoroutineScope()
         val fabStatus = rememberModalStatus()
         var sync by remember {

@@ -14,12 +14,19 @@ import com.wonddak.loacell.storage.FireStorageReferenceHelper
 import com.wonddak.loacell.storage.downloadToFile
 import com.wonddak.loacell.util.FBStorageUtil
 import com.wonddak.loacell.util.FileHelper
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
+@ContributesIntoMap(AppScope::class)
+@ViewModelKey
+@Inject
 class SplashViewModel(
     private val fbApi: FBApi,
     private val fileHelper: FileHelper,

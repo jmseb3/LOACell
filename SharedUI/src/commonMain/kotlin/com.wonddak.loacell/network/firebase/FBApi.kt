@@ -2,6 +2,7 @@ package com.wonddak.loacell.network.firebase
 
 import com.wonddak.loacell.network.firebase.model.FBData
 import com.wonddak.loacell.network.firebase.model.FBRequest
+import dev.zacsweers.metro.Inject
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,6 +21,7 @@ import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+@Inject
 class FBApi {
 
     private val json = Json {

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
     alias(libs.plugins.kotlinSerialization).apply(false)
+    alias(libs.plugins.metro).apply(false)
 
     alias(libs.plugins.firebaseCrashlytics).apply(false)
     alias(libs.plugins.googleGmsService).apply(false)

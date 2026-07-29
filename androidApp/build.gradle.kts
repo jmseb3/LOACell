@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.firebaseCrashlytics)
     alias(libs.plugins.googleGmsService)
+    alias(libs.plugins.metro)
 }
 
 android {
@@ -46,7 +47,9 @@ dependencies {
     implementation(project(":SharedUI"))
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.koin.android)
+    implementation(libs.metro.android)
+    implementation(libs.metro.viewmodel)
+    implementation(libs.metro.viewmodel.compose)
     implementation(libs.kakao.share)
     implementation(libs.napier)
     implementation(project.dependencies.platform(libs.hellogin.bom))

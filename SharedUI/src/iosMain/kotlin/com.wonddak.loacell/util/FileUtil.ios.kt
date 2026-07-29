@@ -10,7 +10,9 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.stringWithContentsOfFile
+import dev.zacsweers.metro.Inject
 
+@Inject
 actual class FileUtil {
 
     private val fileManager = NSFileManager.defaultManager

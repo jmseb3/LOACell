@@ -5,17 +5,22 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.wonddak.loacell.util.LOA_CELL_PREFERENCES
 import com.wonddak.loacell.util.createDataStoreWithDefaults
-import org.koin.java.KoinJavaComponent
+import dev.zacsweers.metro.Inject
 
 
 actual class DataStoreProvider actual constructor() {
-    private val context: Context = KoinJavaComponent.getKoin().get()
+    private lateinit var context: Context
 
-    private val dataStore = createDataStoreWithDefaults() {
-        context.filesDir.resolve(LOA_CELL_PREFERENCES).absolutePath
+    @Inject
+    constructor(context: Context) : this() {
+        this.context = context.applicationContext
     }
 
+    private val preferencesDataStore by lazy { createDataStoreWithDefaults() {
+        context.filesDir.resolve(LOA_CELL_PREFERENCES).absolutePath
+    } }
+
     actual fun getDataStore(): DataStore<Preferences> {
-        return dataStore
+        return preferencesDataStore
     }
 }

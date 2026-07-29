@@ -31,14 +31,14 @@ import com.wonddak.loacell.ui.setting.SettingView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.viewModel.SplashViewModel
-import org.koin.compose.viewmodel.koinViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun LoaCellNavGraph(
     navController : NavHostController,
-    splashViewModel : SplashViewModel = koinViewModel(),
-    authViewModel : AuthViewModel = koinViewModel(),
-    raidViewModel : RaidViewModel = koinViewModel(),
+    splashViewModel : SplashViewModel = metroViewModel(),
+    authViewModel : AuthViewModel = metroViewModel(),
+    raidViewModel : RaidViewModel = metroViewModel(),
 ) {
     val roomList by raidViewModel.roomList.collectAsState()
     NavHost(

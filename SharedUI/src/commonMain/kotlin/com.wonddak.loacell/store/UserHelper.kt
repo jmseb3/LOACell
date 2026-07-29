@@ -1,11 +1,35 @@
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.model.UserInfoField
-import com.wonddak.loacell.model.toUserInfo
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
+import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.store.RefHelper
 import io.github.aakira.napier.Napier
 import kotlin.time.Clock
+
+private fun CommonDocumentSnapshot.toUserInfo(roomId: String): UserInfo = with(requireNotNull(data)) {
+    UserInfo(
+        name = this@toUserInfo.id,
+        roomId = roomId,
+        representativeCharacter = this[UserInfoField.REPRESENTATIVE_CHARACTER] as String,
+        timeStamp = this[UserInfoField.TIME_STAMP] as Long,
+        characterList = this[UserInfoField.CHARACTER_LIST]
+            .asCharacterList()
+            .sortedByDescending { it.getLevel() },
+    )
+}
+
+private fun Any?.asCharacterList(): List<com.wonddak.loacell.model.Character> =
+    (this as? List<*>)
+        ?.mapNotNull { it as? Map<*, *> }
+        ?.mapNotNull { character ->
+            val name = character[UserInfoField.NAME] as? String ?: return@mapNotNull null
+            val server = character[UserInfoField.SERVER] as? String ?: return@mapNotNull null
+            val className = character[UserInfoField.CLASS_NAME] as? String ?: return@mapNotNull null
+            val level = character[UserInfoField.LEVEL] as? String ?: return@mapNotNull null
+            com.wonddak.loacell.model.Character(name, server, className, level)
+        }
+        ?: emptyList()
 
 object CommonUserHelper {
     // 방에 유저정보를 추가한다.

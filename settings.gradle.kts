@@ -19,3 +19,6 @@ dependencyResolutionManagement {
 rootProject.name = "LoaCell"
 include(":SharedUI")
 include(":androidApp")
+include(":core:model")
+include(":core:di")
+include(":core:navigation")

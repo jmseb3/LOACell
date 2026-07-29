@@ -27,13 +27,13 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.util.Config
-import org.koin.compose.koinInject
+import com.wonddak.loacell.di.LocalConfig
 
 @Composable
 fun TokenEditView(
     navigationToken:(token:String) ->Unit
 ) {
-    val config: Config = koinInject()
+    val config = LocalConfig.current
     val token by config.tokenKey.collectAsState(null)
     Column(
         modifier = Modifier.fillMaxSize().padding(5.dp)

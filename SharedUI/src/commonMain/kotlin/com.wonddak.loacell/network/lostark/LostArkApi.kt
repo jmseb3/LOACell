@@ -7,6 +7,7 @@ import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
 import com.wonddak.loacell.util.Config
+import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -24,6 +25,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
+@Inject
 class LostArkApi(
     private val config: Config
 ) {

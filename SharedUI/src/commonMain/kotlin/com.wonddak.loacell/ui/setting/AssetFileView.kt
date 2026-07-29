@@ -18,8 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.viewModel.SplashViewModel
-import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
+import com.wonddak.loacell.di.LocalFileHelper
 
 
 @Composable
@@ -28,7 +27,7 @@ fun AssetFileView(
     showProgressWithReDownload : (file:String) -> Unit
 ) {
     val totalFileName = splashViewModel.totalFileName
-    val fileHelper: FileHelper = koinInject()
+    val fileHelper = LocalFileHelper.current
     Column(
         modifier = Modifier.fillMaxWidth()
             .background(Color.White)

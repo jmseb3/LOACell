@@ -18,9 +18,11 @@ import com.wonddak.hellogin.google.GoogleLoginHelper
 import com.wonddak.hellogin.google.GoogleOptionProviderAndroid
 import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.util.NameHelper
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@Inject
 actual class LoginHelper : GoogleOptionProviderAndroid {
 
     init {

@@ -18,6 +18,7 @@ import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.hellogin.google.setEmptyOption
 import com.wonddak.loacell.util.NameHelper
 import io.github.aakira.napier.Napier
+import dev.zacsweers.metro.Inject
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -30,6 +31,7 @@ import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 
+@Inject
 actual class LoginHelper : AppleOptionProvider{
 
     init {

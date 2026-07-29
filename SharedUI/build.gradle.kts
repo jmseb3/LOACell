@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -75,6 +76,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:model"))
+            api(project(":core:di"))
+            implementation(project(":core:navigation"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -82,7 +86,8 @@ kotlin {
             implementation(libs.compose.material.icons.extended)
             implementation(libs.compose.ui.tooling.preview)
 
-            implementation(libs.bundles.koin.shared)
+            implementation(libs.metro.viewmodel)
+            implementation(libs.metro.viewmodel.compose)
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutine)
@@ -110,7 +115,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
 
-            implementation(libs.koin.android)
+            implementation(libs.metro.android)
             implementation(libs.ktor.android)
 
             implementation(project.dependencies.platform(libs.firebase.bom))

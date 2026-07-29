@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
@@ -28,6 +29,7 @@ expect class DataStoreProvider() {
     fun getDataStore(): DataStore<Preferences>
 }
 
+@Inject
 class Config(provider: DataStoreProvider) {
     private val dataStore = provider.getDataStore()
 

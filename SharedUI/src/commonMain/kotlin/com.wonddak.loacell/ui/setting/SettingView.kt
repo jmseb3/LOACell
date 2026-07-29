@@ -41,6 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.di.LocalConfig
+import com.wonddak.loacell.di.LocalFileHelper
 import com.wonddak.loacell.network.lostark.LostArkApiModule
 import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
@@ -56,7 +58,6 @@ import com.wonddak.loacell.viewModel.SplashViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import org.koin.compose.koinInject
 
 sealed class SettingNav {
     @Serializable
@@ -85,7 +86,7 @@ fun SettingView(
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
 
-    val fileHelper: FileHelper = koinInject()
+    val fileHelper = LocalFileHelper.current
     SetBackAction(true) {
         onBack()
     }
@@ -184,7 +185,7 @@ fun SettingView(
                     var title by remember {
                         mutableStateOf("정상 토큰 확인중")
                     }
-                    val config = koinInject<Config>()
+                    val config = LocalConfig.current
                     LaunchedEffect(true) {
                         delay(1000L)
                         val api = LostArkApiModule(token)
@@ -228,7 +229,7 @@ fun SettingMainView(
         mutableStateOf(false)
     }
 
-    val config: Config = koinInject()
+    val config = LocalConfig.current
     val scope = rememberCoroutineScope()
     val webLauncher = rememberWebLauncher()
 

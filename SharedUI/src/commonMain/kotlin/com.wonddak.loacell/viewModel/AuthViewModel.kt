@@ -15,9 +15,16 @@ import com.wonddak.loacell.auth.registerAnonymousToGoogle
 import com.wonddak.loacell.auth.registerGoogleToken
 import com.wonddak.loacell.auth.requestAnonymousLogin
 import com.wonddak.loacell.auth.signOut
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
+@ContributesIntoMap(AppScope::class)
+@ViewModelKey
+@Inject
 class AuthViewModel(
     val loginHelper: LoginHelper,
 ) : ViewModel() {

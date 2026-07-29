@@ -18,7 +18,9 @@ import platform.Foundation.NSLibraryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
+import dev.zacsweers.metro.Inject
 
+@Inject
 actual class DataStoreProvider actual constructor() {
     private val dataStore = createDataStoreWithDefaults(
         listOf(

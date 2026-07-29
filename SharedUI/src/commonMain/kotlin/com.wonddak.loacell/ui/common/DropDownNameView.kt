@@ -24,12 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.noRippleClickable
+import com.wonddak.loacell.di.LocalConfig
 import com.wonddak.loacell.ui.rememberWebLauncher
 import com.wonddak.loacell.util.Config
 import loacell.sharedui.generated.resources.Res
 import loacell.sharedui.generated.resources.search
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
 
 
 @Composable
@@ -42,7 +42,7 @@ fun DropDownNameView(
     otherContent: (@Composable () -> Unit)? = null,
 ) {
     val webLauncher = rememberWebLauncher()
-    val config: Config = koinInject()
+    val config = LocalConfig.current
     val base by config.defaultUrl.collectAsState("")
     var openMenu by remember {
         mutableStateOf(false)

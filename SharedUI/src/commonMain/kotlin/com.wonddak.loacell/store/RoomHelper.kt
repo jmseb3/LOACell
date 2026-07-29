@@ -2,8 +2,22 @@ package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomInfoField
-import com.wonddak.loacell.model.toRoomInfo
 import io.github.aakira.napier.Napier
+
+private fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo = with(requireNotNull(data)) {
+    RoomInfo(
+        uniqueId = this@toRoomInfo.id,
+        title = this[RoomInfoField.TITLE] as String,
+        description = this[RoomInfoField.DESCRIPTION] as String,
+        owner = this[RoomInfoField.OWNER] as String,
+        enterPassword = this[RoomInfoField.PASSWORD] as String,
+        enterUser = this[RoomInfoField.ENTER_USER].asStringList(),
+        editableUser = this[RoomInfoField.EDITABLE_USER].asStringList(),
+    )
+}
+
+private fun Any?.asStringList(): List<String> =
+    (this as? List<*>)?.filterIsInstance<String>() ?: emptyList()
 
 object CommonRoomHelper {
     // 방 입장요청시 실제 존재하는 방인지 체크

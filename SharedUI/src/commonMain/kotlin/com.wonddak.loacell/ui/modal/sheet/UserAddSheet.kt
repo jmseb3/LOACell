@@ -33,7 +33,7 @@ import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
+import com.wonddak.loacell.di.LocalLostArkApi
 
 @Composable
 fun AddUserSheet(
@@ -41,7 +41,7 @@ fun AddUserSheet(
     modifier: Modifier = Modifier,
     roomInfo: RoomInfo,
 ) {
-    val lostArkApi: LostArkApi = koinInject()
+    val lostArkApi = LocalLostArkApi.current
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val textFieldModifier = Modifier.fillMaxWidth()

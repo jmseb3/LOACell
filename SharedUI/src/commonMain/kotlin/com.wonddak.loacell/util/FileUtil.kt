@@ -1,6 +1,7 @@
 package com.wonddak.loacell.util
 
 import io.github.aakira.napier.Napier
+import dev.zacsweers.metro.Inject
 
 internal const val ASSETS_PATH = "assets"
 
@@ -13,6 +14,7 @@ expect class FileUtil {
     fun delete(path: String) : Boolean
 }
 
+@Inject
 class FileHelper(
     private val util: FileUtil,
 ) {
