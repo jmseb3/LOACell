@@ -88,6 +88,7 @@ coil-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coi
 hellogin-bom = { module = "io.github.jmseb3:hellogin-bom", version.ref = "hellogin" }
 hellogin-google = { module = "io.github.jmseb3:hellogin-google" }
 hellogin-google-ui = { module = "io.github.jmseb3:hellogin-google-ui" }
+hellogin-apple = { module = "io.github.jmseb3:hellogin-apple" }
 hellogin-apple-ui = { module = "io.github.jmseb3:hellogin-apple-ui" }
 
 [plugins]

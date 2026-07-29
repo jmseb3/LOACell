@@ -103,7 +103,7 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(project.dependencies.platform(libs.hellogin.bom))
             implementation(libs.hellogin.google)
-            implementation(libs.hellogin.apple.ui)
+            implementation(libs.hellogin.apple)
 
             implementation(libs.capturable)
         }

@@ -25,11 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.wonddak.hellogin.apple.AppleLoginButton
-import com.wonddak.hellogin.apple.AppleResult
-import com.wonddak.hellogin.core.ButtonTheme
-import com.wonddak.hellogin.core.Error
-import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView

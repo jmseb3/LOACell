@@ -4,16 +4,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.wonddak.hellogin.apple.AppleLoginButton
 import com.wonddak.hellogin.apple.AppleLoginHelper
 import com.wonddak.hellogin.apple.AppleResult
-import com.wonddak.hellogin.core.ButtonTheme
-import com.wonddak.hellogin.core.ButtonType
 import com.wonddak.hellogin.core.Error
 import com.wonddak.hellogin.core.TokenResultHandler
 import com.wonddak.loacell.auth.LoginHelper
@@ -30,7 +30,8 @@ internal actual val useLinkApple: Boolean = true
 actual fun AppleLoginView(
     loginHelper: LoginHelper
 ) {
-    val appleLoginHandler = rememberSaveable {
+    val scope = rememberCoroutineScope()
+    val appleLoginHandler = remember {
         object : TokenResultHandler<AppleResult> {
             override fun onSuccess(token: AppleResult) {
                 Napier.d(tag = "auth") { "success with $token" }
@@ -47,11 +48,13 @@ actual fun AppleLoginView(
     }
     Column {
         Spacer(modifier = Modifier.height(10.dp))
-        AppleLoginButton(
-            tokenResultHandler = appleLoginHandler,
+        Button(
+            onClick = {
+                scope.launch { AppleLoginHelper.requestLogin(appleLoginHandler) }
+                Unit
+            },
             modifier = Modifier.fillMaxWidth(0.8f),
-            mode = ButtonTheme.Dark
-        )
+        ) { Text("Apple로 로그인") }
     }
 }
 
@@ -61,6 +64,7 @@ actual fun AppleLoginBtn(
     onSuccess: () -> Unit,
     onFail: (msg: String) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val appleLoginHandler = remember {
         object : TokenResultHandler<AppleResult> {
             override fun onSuccess(token: AppleResult) {
@@ -79,10 +83,12 @@ actual fun AppleLoginBtn(
             }
         }
     }
-    AppleLoginButton(
-        tokenResultHandler = appleLoginHandler,
-        type = ButtonType.IconOnly
-    )
+    IconButton(
+        onClick = {
+            scope.launch { AppleLoginHelper.requestLogin(appleLoginHandler) }
+            Unit
+        }
+    ) { Text("") }
 }
 
 actual fun revokeApple(
