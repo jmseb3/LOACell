@@ -22,11 +22,15 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
-import kotlinx.coroutines.delay
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
 
 @ContributesIntoMap(AppScope::class)
 @ViewModelKey
@@ -180,22 +184,38 @@ class RaidViewModel(
                 val editableUser = roomInfo.editableUser.filter { failUser.contains(it) }
                 val enterUser = roomInfo.enterUser.filter { failUser.contains(it) }
 
-                var result1 = false
-                var result2 = false
                 val roomId = roomInfo.uniqueId
-                CommonRoomHelper.exitEditableUserFromRoom(roomId, editableUser) {
-                    result1 = true
+                val removals = buildList {
+                    if (editableUser.isNotEmpty()) {
+                        add(async { removeFailedEditableUsers(roomId, editableUser) })
+                    }
+                    if (enterUser.isNotEmpty()) {
+                        add(async { removeFailedEnterUsers(roomId, enterUser) })
+                    }
                 }
-                CommonRoomHelper.exitEnterUserFromRoom(roomId, enterUser) {
-                    result2 = true
-                }
-
-                while (!result1 || !result2) {
-                    delay(1_000L)
+                val completed = withTimeoutOrNull(15_000L) {
+                    removals.forEach { it.await() }
+                } != null
+                if (!completed) {
+                    Napier.w { "Timed out while removing unavailable room users: $roomId" }
                 }
                 initFBData(fbData.data)
             }
         }
     }
+
+    private suspend fun removeFailedEditableUsers(roomId: String, users: List<String>) =
+        suspendCancellableCoroutine { continuation ->
+            CommonRoomHelper.exitEditableUserFromRoom(roomId, users) {
+                if (continuation.isActive) continuation.resume(Unit)
+            }
+        }
+
+    private suspend fun removeFailedEnterUsers(roomId: String, users: List<String>) =
+        suspendCancellableCoroutine { continuation ->
+            CommonRoomHelper.exitEnterUserFromRoom(roomId, users) {
+                if (continuation.isActive) continuation.resume(Unit)
+            }
+        }
     //endregion
 }
