@@ -49,10 +49,9 @@ class RaidViewModel(
     }
 
     fun stopObserveRoom() {
-        if (roomListenerRegistration != null) {
-            roomListenerRegistration?.remove()
-            _roomList.value = emptyList()
-        }
+        roomListenerRegistration?.remove()
+        roomListenerRegistration = null
+        _roomList.value = emptyList()
     }
     //endregion
 
@@ -97,6 +96,8 @@ class RaidViewModel(
     fun stopObserveRaidInfo() {
         raidListenerRegistration?.remove()
         userListenerRegistration?.remove()
+        raidListenerRegistration = null
+        userListenerRegistration = null
 
         this.lastTabIndex = RoomState.Raid.index
         this.showType = RoomType.Default
@@ -142,6 +143,12 @@ class RaidViewModel(
 
     var role: RoomInfo.RoomRole by mutableStateOf(RoomInfo.RoomRole.NONE)
         private set
+
+    override fun onCleared() {
+        stopObserveRoom()
+        stopObserveRaidInfo()
+        super.onCleared()
+    }
 
 
     //region room setting data

@@ -14,10 +14,6 @@ import swiftPMImport.LoaCell.SharedUI.FIRQuery
 import swiftPMImport.LoaCell.SharedUI.FIRQuerySnapshot
 import swiftPMImport.LoaCell.SharedUI.FIRWriteBatch
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSError
 
@@ -119,15 +115,13 @@ actual class CommonCollection(
     ): CommonListenerRegistration {
         return CommonListenerRegistration(
             ref.addSnapshotListener { value, error ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (error != null) {
-                        failAction(Error(error))
-                    }
-                    if (value != null) {
-                        successAction(CommonQuerySnapshot(value))
-                    } else {
-                        failAction(null)
-                    }
+                if (error != null) {
+                    failAction(Error(error))
+                }
+                if (value != null) {
+                    successAction(CommonQuerySnapshot(value))
+                } else {
+                    failAction(null)
                 }
             }
         )
