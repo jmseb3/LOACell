@@ -39,7 +39,6 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         HelloginContainerProvider.setContainer(this)
-        AppContext.set(this)
         setContent {
             CompositionLocalProvider(LocalActivity provides this) {
                 val activity = LocalActivity.current
@@ -70,7 +69,6 @@ class LoaCellApplication : Application(), MetroApplication {
 
     override fun onCreate() {
         super.onCreate()
-        AppContext.set(this)
         KakaoSdk.init(this, "eaad613c8a32160c49991040e94170f9")
         Napier.base(DebugAntilog())
     }

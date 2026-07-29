@@ -79,6 +79,7 @@ kotlin {
             implementation(project(":core:model"))
             api(project(":core:di"))
             implementation(project(":core:navigation"))
+            implementation(project(":core:common"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)

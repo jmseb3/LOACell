@@ -30,6 +30,8 @@ fun ShareSheet(
     showSnackBar: (String) -> Unit,
 ) {
     val uniqueId: String = roomInfo.uniqueId
+    val copyToClipboard = rememberCopyToClipboard()
+    val shareToKakao = rememberShareToKakao()
 
     BaseSheet(
         modalStatus = modalStatus,
@@ -52,7 +54,7 @@ fun ShareSheet(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable {
-                            if (copyToClipboard(data = uniqueId)) {
+                            if (copyToClipboard(uniqueId)) {
                                 showSnackBar("클립보드에 복사되었습니다.")
                             }
                             modalStatus.hide()
@@ -75,6 +77,5 @@ fun ShareSheet(
     }
 }
 
-expect fun copyToClipboard(data: String): Boolean
-
-expect fun shareToKakao(data: RoomInfo)
+@Composable expect fun rememberCopyToClipboard(): (String) -> Boolean
+@Composable expect fun rememberShareToKakao(): (RoomInfo) -> Unit

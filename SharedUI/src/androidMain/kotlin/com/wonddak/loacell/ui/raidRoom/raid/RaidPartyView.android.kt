@@ -8,18 +8,22 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.content.FileProvider
-import com.wonddak.loacell.AppContext
+import com.wonddak.loacell.LocalActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-actual suspend fun shareImage(bitmap: ImageBitmap?) {
-    bitmap?.let { share(bitmap) }
+@Composable
+actual fun rememberShareImage(): suspend (ImageBitmap?) -> Unit {
+    val context = LocalActivity.current
+    return remember(context) { { bitmap -> bitmap?.let { share(context, it) } } }
 }
 
 internal suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatchers.IO) {
@@ -41,8 +45,7 @@ internal suspend fun Bitmap.getUri(context: Context): Uri = withContext(Dispatch
     )
 }
 
-internal suspend fun share(imageBitmap: ImageBitmap) {
-    val context = AppContext.get()
+internal suspend fun share(context: Context, imageBitmap: ImageBitmap) {
     val intentShareFile = Intent(Intent.ACTION_SEND)
     val mimeType = "image/png"
     val mimeTypeArray = arrayOf(mimeType)
@@ -55,15 +58,18 @@ internal suspend fun share(imageBitmap: ImageBitmap) {
     )
     intentShareFile.putExtra(Intent.EXTRA_STREAM, uri)
     intentShareFile.putExtra(Intent.EXTRA_TITLE, "공격대 이미지 입니다.")
-    intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     context.startActivity(Intent.createChooser(intentShareFile, null))
 }
 
-actual fun saveImageBitmap(bitmap: ImageBitmap?, complete: () -> Unit) {
-    if (bitmap == null) {
-        return
-    }
-    val context = AppContext.get()
+@Composable
+actual fun rememberSaveImageBitmap(): (ImageBitmap?, () -> Unit) -> Unit {
+    val context = LocalActivity.current
+    return remember(context) { { bitmap, complete -> saveImageBitmap(context, bitmap, complete) } }
+}
+
+private fun saveImageBitmap(context: Context, bitmap: ImageBitmap?, complete: () -> Unit) {
+    if (bitmap == null) return
 
     // Android Bitmap으로 변환
     val androidBitmap = bitmap.asAndroidBitmap()

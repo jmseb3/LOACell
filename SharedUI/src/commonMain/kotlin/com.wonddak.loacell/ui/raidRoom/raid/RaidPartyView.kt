@@ -137,8 +137,11 @@ fun RaidPartyView(
     }
 }
 
-expect suspend fun shareImage(bitmap: ImageBitmap?)
-expect fun saveImageBitmap(bitmap: ImageBitmap?, complete: () -> Unit)
+@Composable
+expect fun rememberShareImage(): suspend (ImageBitmap?) -> Unit
+
+@Composable
+expect fun rememberSaveImageBitmap(): (ImageBitmap?, () -> Unit) -> Unit
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -149,6 +152,8 @@ fun RaidPartySimpleView(
 ) {
     val captureController = rememberCaptureController()
     val scope = rememberCoroutineScope()
+    val shareImage = rememberShareImage()
+    val saveImageBitmap = rememberSaveImageBitmap()
 
     var saveImage: ImageBitmap? by remember {
         mutableStateOf(null)

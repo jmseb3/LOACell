@@ -1,13 +1,16 @@
 package com.wonddak.loacell.ui.modal.sheet
 
 import com.wonddak.loacell.model.RoomInfo
+import androidx.compose.runtime.Composable
 import platform.UIKit.UIPasteboard
 
-actual fun copyToClipboard(data: String): Boolean {
+private fun copyToClipboard(data: String): Boolean {
     UIPasteboard.generalPasteboard().string = data
     return true
 }
 
-actual fun shareToKakao(data: RoomInfo) {
+private fun shareToKakao(data: RoomInfo) {
 
 }
+@Composable actual fun rememberCopyToClipboard(): (String) -> Boolean = { copyToClipboard(it) }
+@Composable actual fun rememberShareToKakao(): (RoomInfo) -> Unit = { shareToKakao(it) }

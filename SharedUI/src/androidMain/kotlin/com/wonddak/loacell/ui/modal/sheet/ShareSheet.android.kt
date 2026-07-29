@@ -3,16 +3,18 @@ package com.wonddak.loacell.ui.modal.sheet
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
 import com.kakao.sdk.template.model.Link
 import com.kakao.sdk.template.model.TextTemplate
-import com.wonddak.loacell.AppContext
+import com.wonddak.loacell.LocalActivity
 import com.wonddak.loacell.model.RoomInfo
 import io.github.aakira.napier.Napier
 
-actual fun copyToClipboard(data: String): Boolean {
+private fun copyToClipboard(context: Context, data: String): Boolean {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, data)
@@ -21,13 +23,12 @@ actual fun copyToClipboard(data: String): Boolean {
     val shareIntent = Intent.createChooser(sendIntent, null).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-    AppContext.get().startActivity(shareIntent)
+    context.startActivity(shareIntent)
     return false
 }
 
-actual fun shareToKakao(data: RoomInfo) {
-    shareToKakao(AppContext.get(), roomInfo = data)
-}
+@Composable actual fun rememberCopyToClipboard(): (String) -> Boolean { val context = LocalActivity.current; return remember(context) { { data -> copyToClipboard(context, data) } } }
+@Composable actual fun rememberShareToKakao(): (RoomInfo) -> Unit { val context = LocalActivity.current; return remember(context) { { data -> shareToKakao(context, data) } } }
 
 internal fun shareToKakao(context: Context, roomInfo: RoomInfo) {
     val TAG = "KAKAO"

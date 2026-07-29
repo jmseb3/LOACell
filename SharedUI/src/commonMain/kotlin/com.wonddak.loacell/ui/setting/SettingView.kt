@@ -321,4 +321,5 @@ internal fun SectionText(
     }
 }
 
+@Composable
 expect fun getAppVersion(): String

@@ -4,6 +4,7 @@ package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
+import androidx.compose.runtime.Composable
 import io.ktor.http.Url
 import platform.Foundation.NSData
 import platform.UIKit.UIActivityViewController
@@ -19,7 +20,12 @@ import platform.UIKit.*
 import platform.darwin.NSObject
 import platform.posix.memcpy
 
-actual suspend fun shareImage(bitmap: ImageBitmap?) {
+@Composable
+actual fun rememberShareImage(): suspend (ImageBitmap?) -> Unit = { bitmap ->
+    shareImage(bitmap)
+}
+
+private suspend fun shareImage(bitmap: ImageBitmap?) {
     bitmap?.let {
         val uiImage = it.toUIImage() ?: return
         // Convert UIImage to NSData (e.g., PNG format)
@@ -86,7 +92,12 @@ internal fun ImageBitmap.toUIImage(): UIImage? {
     return cgImage?.let { UIImage.imageWithCGImage(it) }
 }
 
-actual fun saveImageBitmap(bitmap: ImageBitmap?,complete : () -> Unit) {
+@Composable
+actual fun rememberSaveImageBitmap(): (ImageBitmap?, () -> Unit) -> Unit = { bitmap, complete ->
+    saveImageBitmap(bitmap, complete)
+}
+
+private fun saveImageBitmap(bitmap: ImageBitmap?,complete : () -> Unit) {
     val uiImage = bitmap?.toUIImage() ?: return
 
     PHPhotoLibrary.requestAuthorization { status ->
