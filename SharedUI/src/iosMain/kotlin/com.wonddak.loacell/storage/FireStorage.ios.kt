@@ -4,9 +4,6 @@ package com.wonddak.loacell.storage
 
 import swiftPMImport.LoaCell.SharedUI.FIRStorage
 import swiftPMImport.LoaCell.SharedUI.FIRStorageReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
 
@@ -41,9 +38,7 @@ actual fun CommonStorageReference.downloadToFile(
 }
 
 actual fun CommonStorageReference.getDownloadUrl(success: (String) -> Unit) {
-    CoroutineScope(Dispatchers.Main).launch {
-        this@getDownloadUrl.downloadURLWithCompletion { nsurl, nsError ->
-            success(nsurl.toString())
-        }
+    this@getDownloadUrl.downloadURLWithCompletion { nsurl, nsError ->
+        success(nsurl.toString())
     }
 }
