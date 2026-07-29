@@ -69,7 +69,7 @@ fun AssetProgressView(
         }
 
         LaunchedEffect(title) {
-            if (title == "다운로드 성공") {
+            if (title == "다운로드 성공" || title == "다운로드 실패") {
                 delay(1000L)
                 onBack()
             }
