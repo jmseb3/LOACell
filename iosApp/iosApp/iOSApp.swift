@@ -14,8 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         NapierProxyKt.debugBuild()
-        HelperKt.doInitKoin()
-        
+
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
             window.rootViewController = MainKt.MainViewController()
