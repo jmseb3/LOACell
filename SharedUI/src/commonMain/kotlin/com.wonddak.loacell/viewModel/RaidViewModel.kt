@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.model.RoomInfoField
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.model.UserInfo
@@ -17,7 +18,7 @@ import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.network.firebase.model.FBRequest
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
-import com.wonddak.loacell.store.CommonRoomHelper
+import com.wonddak.loacell.store.RoomRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -37,6 +38,7 @@ import kotlin.coroutines.resume
 @Inject
 class RaidViewModel(
     private val fbApi: FBApi,
+    private val roomRepository: RoomRepository,
 ) : ViewModel() {
 
 
@@ -53,7 +55,7 @@ class RaidViewModel(
     ) {
         stopObserveRoom()
         viewModelScope.launch {
-            roomListenerRegistration = CommonRoomHelper.observeAllRoom(userId) {
+            roomListenerRegistration = roomRepository.observeAll(userId) {
                 _roomList.value = it
             }
         }
@@ -64,6 +66,49 @@ class RaidViewModel(
         roomListenerRegistration = null
         _roomList.value = emptyList()
     }
+
+    fun createRoom(
+        title: String,
+        description: String,
+        password: String,
+        owner: String,
+        onCreated: () -> Unit,
+    ) = roomRepository.create(title, description, password, owner, onCreated)
+
+    fun enterRoom(
+        roomId: String,
+        password: String,
+        alreadyEnteredRoomIds: Set<String>,
+        userId: String,
+        onEntered: (RoomInfo) -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        if (roomId in alreadyEnteredRoomIds) {
+            onError("이미 입장한 방입니다.")
+            return
+        }
+        roomRepository.get(roomId) { roomInfo ->
+            when {
+                roomInfo == null -> onError("방이 존재 하지 않습니다.")
+                roomInfo.enterPassword.isNotEmpty() && password != roomInfo.enterPassword ->
+                    onError("방이 존재 하지 않거나 비밀번호가 맞지 않습니다.")
+                else -> roomRepository.enter(
+                    roomId = roomInfo.uniqueId,
+                    userId = userId,
+                    successAction = { onEntered(roomInfo) },
+                    failAction = { onError("방 입장에 실패 했습니다.") },
+                )
+            }
+        }
+    }
+
+    fun exitRoom(
+        roomId: String,
+        userId: String,
+        role: RoomInfo.RoomRole,
+        onExited: () -> Unit,
+        onFailure: () -> Unit,
+    ) = roomRepository.exit(roomId, userId, role, onExited, onFailure)
     //endregion
 
     //region raidInfo Method
@@ -206,14 +251,14 @@ class RaidViewModel(
 
     private suspend fun removeFailedEditableUsers(roomId: String, users: List<String>) =
         suspendCancellableCoroutine { continuation ->
-            CommonRoomHelper.exitEditableUserFromRoom(roomId, users) {
+            roomRepository.removeUsers(roomId, users, RoomInfoField.EDITABLE_USER) {
                 if (continuation.isActive) continuation.resume(Unit)
             }
         }
 
     private suspend fun removeFailedEnterUsers(roomId: String, users: List<String>) =
         suspendCancellableCoroutine { continuation ->
-            CommonRoomHelper.exitEnterUserFromRoom(roomId, users) {
+            roomRepository.removeUsers(roomId, users, RoomInfoField.ENTER_USER) {
                 if (continuation.isActive) continuation.resume(Unit)
             }
         }

@@ -106,6 +106,7 @@ fun LoaCellNavGraph(
                 "",
                 roomList,
                 authViewModel.user!!.uid,
+				raidViewModel,
                 initRoom = {
                     raidViewModel.setRoomId(it, authViewModel.user?.uid)
                     navController.navigate(Const.NAV_ROOM) {
@@ -142,6 +143,7 @@ fun LoaCellNavGraph(
                     backStackEntry.arguments?.read { getStringOrNull(Const.NAV_ROOM_ENTER_ARG) } ?: "",
                     roomList,
                     authViewModel.user!!.uid,
+					raidViewModel,
                     initRoom = { roomInfo ->
                         navController.depth2toMain()
                     },

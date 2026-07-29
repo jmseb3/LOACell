@@ -16,8 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.common.LengthLimitTextField
+import com.wonddak.loacell.viewModel.RaidViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -25,10 +25,10 @@ fun RoomEnterView(
 	prevId : String,
 	nowEnterRoomList : List<RoomInfo>,
 	uid : String,
+	raidViewModel: RaidViewModel,
 	initRoom : (RoomInfo) -> Unit,
 	onBack : () -> Unit,
 ) {
-	val uniqueIdRoomList = nowEnterRoomList.map { it.uniqueId }.toSet()
 	val regex = Regex("[a-zA-Z0-9]+")
 	SetBackAction(true) {
 		onBack()
@@ -98,35 +98,20 @@ fun RoomEnterView(
 			OutlinedButton(
 				modifier = Modifier.fillMaxWidth(),
 				onClick = {
-					if (uniqueIdRoomList.contains(roomId)) {
-						errorMsg = "이미 입장한 방입니다."
-						roomId = ""
-						enterPassword = ""
-					} else {
-						CommonRoomHelper.checkExist(
-							roomId,
-							successAction = { roomInfo ->
-								if (roomInfo.enterPassword.isEmpty() || enterPassword == roomInfo.enterPassword) {
-									//init
-									CommonRoomHelper.enterRoom(
-										roomInfo.uniqueId,
-										uid,
-										successAction = {
-											initRoom(roomInfo)
-										},
-										failAction = {
-											errorMsg = "방 입장에 실패 했습니다."
-										}
-									)
-								} else {
-									errorMsg = "방이 존재 하지 않거나 비밀번호가 맞지 않습니다."
-								}
-							},
-							failAction = {
-								errorMsg = "방이 존재 하지 않습니다."
+					raidViewModel.enterRoom(
+						roomId = roomId,
+						password = enterPassword,
+						alreadyEnteredRoomIds = nowEnterRoomList.map { it.uniqueId }.toSet(),
+						userId = uid,
+						onEntered = initRoom,
+						onError = { message ->
+							errorMsg = message
+							if (message == "이미 입장한 방입니다.") {
+								roomId = ""
+								enterPassword = ""
 							}
-						)
-					}
+						},
+					)
 				},
 				enabled = roomId.length == 20
 			) {

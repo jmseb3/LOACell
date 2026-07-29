@@ -32,7 +32,6 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.main.LoaCellBottomAppBar
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.main.RaidRoomActions
@@ -141,6 +140,7 @@ fun RaidRoomView(
                             roomInfo,
                             authViewModel.user!!.uid,
                             role,
+							raidViewModel,
                             ::showSnackBarMsg,
                             onBack
                         )
@@ -207,6 +207,7 @@ private fun TitleView(
     roomInfo: RoomInfo,
     uid: String,
     role: RoomInfo.RoomRole,
+	raidViewModel: RaidViewModel,
     showSnackBar: (String) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -259,7 +260,7 @@ private fun TitleView(
                     RoomExitDialog(
                         exitRoomStatus
                     ) {
-                        CommonRoomHelper.exitRoom(
+                        raidViewModel.exitRoom(
                             roomInfo.uniqueId,
                             uid,
                             role,

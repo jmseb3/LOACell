@@ -6,6 +6,8 @@ import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.storage.AssetStorage
 import com.wonddak.loacell.storage.CommonFireStorage
 import com.wonddak.loacell.storage.getFireStorage
+import com.wonddak.loacell.store.CommonFireStore
+import com.wonddak.loacell.store.getFireStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -20,6 +22,9 @@ interface IosAppGraph : ViewModelGraph {
 
     @Provides
     fun provideFireStorage(): CommonFireStorage = getFireStorage()
+
+    @Provides
+    fun provideFireStore(): CommonFireStore = getFireStore()
 
     @DependencyGraph.Factory
     fun interface Factory {

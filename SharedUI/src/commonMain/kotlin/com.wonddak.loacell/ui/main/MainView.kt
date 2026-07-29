@@ -36,7 +36,6 @@ import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.SetTwiceClose
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.store.CommonRoomHelper
 import com.wonddak.loacell.ui.common.FABInfo
 import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.modal.sheet.RoomSheet
@@ -163,7 +162,7 @@ fun MainView(
 			roomAddSheet,
 			null
 		) { title, description, password ->
-			CommonRoomHelper.makeInfo(title, description, password, authViewModel.user!!.uid) {
+			raidViewModel.createRoom(title, description, password, authViewModel.user!!.uid) {
 				roomAddSheet.hide()
 			}
 		}
