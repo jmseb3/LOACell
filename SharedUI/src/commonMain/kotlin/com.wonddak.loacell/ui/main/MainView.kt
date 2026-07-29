@@ -1,6 +1,7 @@
 package com.wonddak.loacell.ui.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,8 +23,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,27 +122,39 @@ fun MainView(
 		Column(
 			modifier = Modifier.fillMaxSize().padding(innerPadding)
 		) {
-			LazyColumn(
-				modifier = Modifier.fillMaxWidth(),
-				contentPadding = PaddingValues(10.dp)
-			) {
-				items(roomList) { roomInfo ->
-					TextButton(
-						onClick = {
-							scope.launch {
-								raidViewModel.setRoomId(roomInfo, authViewModel.user?.uid)
-								navController.navigate(Const.NAV_ROOM) {
-									launchSingleTop = true
+			if (roomList.isEmpty()) {
+				Box(
+					modifier = Modifier.fillMaxSize().padding(24.dp),
+					contentAlignment = Alignment.Center,
+				) {
+					Text(
+						text = "참여 중인 방이 없습니다.\n오른쪽 아래의 + 버튼을 눌러 방에 입장해 보세요.",
+						textAlign = TextAlign.Center,
+					)
+				}
+			} else {
+				LazyColumn(
+					modifier = Modifier.fillMaxWidth(),
+					contentPadding = PaddingValues(10.dp)
+				) {
+					items(roomList) { roomInfo ->
+						TextButton(
+							onClick = {
+								scope.launch {
+									raidViewModel.setRoomId(roomInfo, authViewModel.user?.uid)
+									navController.navigate(Const.NAV_ROOM) {
+										launchSingleTop = true
+									}
 								}
-							}
-						},
-						Modifier
-							.padding(5.dp)
-							.fillMaxWidth()
-							.clip(RoundedCornerShape(10))
-							.background(Color.Gray)
-					) {
-						RoomInfoRow(roomInfo)
+							},
+							Modifier
+								.padding(5.dp)
+								.fillMaxWidth()
+								.clip(RoundedCornerShape(10))
+								.background(Color.Gray)
+						) {
+							RoomInfoRow(roomInfo)
+						}
 					}
 				}
 			}
