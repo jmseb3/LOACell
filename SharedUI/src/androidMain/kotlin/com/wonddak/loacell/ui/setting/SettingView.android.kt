@@ -4,19 +4,22 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.core.content.pm.PackageInfoCompat
-import com.wonddak.loacell.LocalActivity
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 actual fun getAppVersion(): String {
-    val context = LocalActivity.current
-    val pm = context.packageManager
-    val pi: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        pm.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
-    } else {
-        pm.getPackageInfo(context.packageName, 0)
+    val context = LocalContext.current
+    return remember(context) {
+        runCatching {
+            val pm = context.packageManager
+            val pi: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pm.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
+            } else {
+                pm.getPackageInfo(context.packageName, 0)
+            }
+            "${pi.versionName.orEmpty()}(${PackageInfoCompat.getLongVersionCode(pi)})"
+        }.getOrDefault("")
     }
-    val name = pi.versionName
-    val code = PackageInfoCompat.getLongVersionCode(pi)
-    return "$name($code)"
 }
