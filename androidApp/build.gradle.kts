@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.kakao.share)
     implementation(libs.napier)
     implementation(project.dependencies.platform(libs.hellogin.bom))
-    implementation(libs.hellogin.google.ui)
+    implementation(libs.hellogin.google)
     implementation(libs.navigation.compose)
 
     implementation(project.dependencies.platform(libs.firebase.bom))

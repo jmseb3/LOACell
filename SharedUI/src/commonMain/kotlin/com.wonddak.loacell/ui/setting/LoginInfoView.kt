@@ -25,10 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.hellogin.core.ButtonType
 import com.wonddak.hellogin.core.Error
 import com.wonddak.hellogin.core.TokenResultHandler
-import com.wonddak.hellogin.google.GoogleLoginButton
 import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
@@ -37,6 +35,7 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.modal.dialog.ProfileNameDialog
+import com.wonddak.loacell.ui.login.GoogleSignInButton
 import com.wonddak.loacell.viewModel.AuthViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -200,9 +199,10 @@ fun LoginInfoView(
                             }
                         }
                     }
-                    GoogleLoginButton(
-                        googleLinkHandler,
-                        type = ButtonType.IconOnly
+                    GoogleSignInButton(
+                        loginHelper = authViewModel.loginHelper,
+                        tokenResultHandler = googleLinkHandler,
+                        iconOnly = true,
                     )
                     if (useLinkApple) {
                         AppleLoginBtn(

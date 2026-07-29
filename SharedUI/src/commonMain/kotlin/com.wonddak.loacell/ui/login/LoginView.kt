@@ -30,7 +30,6 @@ import com.wonddak.hellogin.apple.AppleResult
 import com.wonddak.hellogin.core.ButtonTheme
 import com.wonddak.hellogin.core.Error
 import com.wonddak.hellogin.core.TokenResultHandler
-import com.wonddak.hellogin.google.GoogleLoginButton
 import com.wonddak.loacell.Const
 import com.wonddak.loacell.theme.roboto
 import com.wonddak.loacell.ui.common.LoadingView
@@ -150,10 +149,10 @@ fun LoginView(
                    AppleLoginView(authViewModel.loginHelper)
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                GoogleLoginButton(
+                GoogleSignInButton(
+                    loginHelper = authViewModel.loginHelper,
                     tokenResultHandler = authViewModel.googleLoginHandler,
                     modifier = Modifier.fillMaxWidth(0.8f),
-                    mode = ButtonTheme.Dark
                 )
             }
         }
