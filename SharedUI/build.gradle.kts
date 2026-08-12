@@ -77,7 +77,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:model"))
-            api(project(":core:di"))
+            implementation(project(":core:di"))
             implementation(project(":core:navigation"))
             implementation(project(":core:common"))
             implementation(libs.compose.runtime)
