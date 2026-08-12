@@ -15,9 +15,10 @@ import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.network.firebase.FBApi
 import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.network.firebase.model.FBRequest
+import com.wonddak.loacell.repository.Observation
+import com.wonddak.loacell.repository.RoomRepository
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
-import com.wonddak.loacell.store.RoomRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -42,7 +43,7 @@ class RaidViewModel(
 
 
     //region roomInfo Method
-    private var roomListenerRegistration: CommonListenerRegistration? = null
+    private var roomObservation: Observation? = null
 
     private var _roomList: MutableStateFlow<List<RoomInfo>> = MutableStateFlow(emptyList())
 
@@ -54,15 +55,15 @@ class RaidViewModel(
     ) {
         stopObserveRoom()
         viewModelScope.launch {
-            roomListenerRegistration = roomRepository.observeAll(userId) {
+            roomObservation = roomRepository.observeAll(userId) {
                 _roomList.value = it
             }
         }
     }
 
     fun stopObserveRoom() {
-        roomListenerRegistration?.remove()
-        roomListenerRegistration = null
+        roomObservation?.stop()
+        roomObservation = null
         _roomList.value = emptyList()
     }
 
@@ -94,8 +95,8 @@ class RaidViewModel(
                 else -> roomRepository.enter(
                     roomId = roomInfo.uniqueId,
                     userId = userId,
-                    successAction = { onEntered(roomInfo) },
-                    failAction = { onError("방 입장에 실패 했습니다.") },
+                    onEntered = { onEntered(roomInfo) },
+                    onFailure = { onError("방 입장에 실패 했습니다.") },
                 )
             }
         }

@@ -1,17 +1,23 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.repository.Observation
+import com.wonddak.loacell.repository.RoomRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
 /** Firestore 방 문서 접근을 한곳에 모은 데이터 계층 구현체. */
+@ContributesBinding(AppScope::class)
 @Inject
-class RoomRepository(
+class FirestoreRoomRepository(
     private val fireStore: CommonFireStore,
-) {
-    fun observeAll(
+) : RoomRepository {
+    override fun observeAll(
         userId: String,
-        successAction: (List<RoomInfo>) -> Unit,
-    ): CommonListenerRegistration = rooms()
+        onChanged: (List<RoomInfo>) -> Unit,
+    ): Observation {
+        val registration = rooms()
         .where(
             CommonFilter.or(
                 CommonFilter.equalTo(RoomDocumentField.OWNER, userId),
@@ -20,16 +26,18 @@ class RoomRepository(
             )
         )
         .getListenerRegistration(
-            successAction = { documents -> successAction(documents.map { it.toRoomInfo() }) },
+            successAction = { documents -> onChanged(documents.map { it.toRoomInfo() }) },
             failAction = {},
         )
+        return Observation(registration::remove)
+    }
 
-    fun create(
+    override fun create(
         title: String,
         description: String,
         password: String,
         owner: String,
-        successAction: () -> Unit,
+        onCreated: () -> Unit,
     ) {
         rooms().document().let { room ->
             room.set(
@@ -39,37 +47,37 @@ class RoomRepository(
                     RoomDocumentField.OWNER to owner,
                     RoomDocumentField.PASSWORD to password,
                 ),
-                successAction = successAction,
+                successAction = onCreated,
                 failAction = {},
             )
         }
     }
 
-    fun get(roomId: String, onResult: (RoomInfo?) -> Unit) {
+    override fun get(roomId: String, onResult: (RoomInfo?) -> Unit) {
         room(roomId).get(
             successAction = { snapshot -> onResult(snapshot.takeIf { it.exist }?.toRoomInfo()) },
             failAction = { onResult(null) },
         )
     }
 
-    fun enter(
+    override fun enter(
         roomId: String,
         userId: String,
-        successAction: () -> Unit,
-        failAction: () -> Unit,
+        onEntered: () -> Unit,
+        onFailure: () -> Unit,
     ) = room(roomId).update(
         field = RoomDocumentField.ENTER_USER,
         value = CommonFieldValue.arrayUnion(userId),
-        successAction = successAction,
-        failAction = { failAction() },
+        successAction = onEntered,
+        failAction = { onFailure() },
     )
 
-    fun exit(
+    override fun exit(
         roomId: String,
         userId: String,
         role: RoomInfo.RoomRole,
-        successAction: () -> Unit,
-        failAction: () -> Unit,
+        onExited: () -> Unit,
+        onFailure: () -> Unit,
     ) {
         val field = when (role) {
             RoomInfo.RoomRole.MANAGER -> RoomDocumentField.EDITABLE_USER
@@ -79,8 +87,8 @@ class RoomRepository(
         room(roomId).update(
             field = field,
             value = CommonFieldValue.arrayRemove(userId),
-            successAction = successAction,
-            failAction = { failAction() },
+            successAction = onExited,
+            failAction = { onFailure() },
         )
     }
 
@@ -100,10 +108,10 @@ class RoomRepository(
         failAction = { completed() },
     )
 
-    fun removeEditableUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
+    override fun removeEditableUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
         removeUsers(roomId, userIds, RoomDocumentField.EDITABLE_USER, completed)
 
-    fun removeEnteredUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
+    override fun removeEnteredUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
         removeUsers(roomId, userIds, RoomDocumentField.ENTER_USER, completed)
 
     private fun rooms(): CommonCollection = fireStore.collection("rooms")
