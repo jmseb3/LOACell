@@ -3,7 +3,6 @@
  */
 package com.wonddak.loacell.ui.raidRoom.raid
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,11 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Day
@@ -248,79 +245,64 @@ fun RaidPartySimpleView(
         mutableStateOf(null)
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(LoaCellSpace.sm),
     ) {
-        Column(modifier = Modifier.capturable(captureController)) {
-
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .capturable(captureController)
+                .background(MaterialTheme.colorScheme.surface),
+        ) {
             Column(
-                modifier = Modifier.wrapContentSize().background(Color.White),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.padding(LoaCellSpace.md),
+                verticalArrangement = Arrangement.spacedBy(LoaCellSpace.sm),
             ) {
-                Card(
-                    border = BorderStroke(1.dp, Color.Black),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(5.dp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "공격대 파티 정보",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "${raidInfo.getRaidText()} · ${raidInfo.makeGateText()}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(LoaCellRadius.image),
+                        color = MaterialTheme.colorScheme.secondaryContainer,
                     ) {
-                        Text(text = "${raidInfo.getRaidText()} ${raidInfo.makeGateText()}")
-                        if (raidInfo.day != Day.NONE) {
-                            Text(text = raidInfo.getDayText())
-                        }
+                        Text(
+                            text = "${list.count { it != null }}/${list.size}",
+                            modifier = Modifier.padding(
+                                horizontal = LoaCellSpace.xs,
+                                vertical = LoaCellSpace.xxs,
+                            ),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
                     }
                 }
-                Card(
-                    border = BorderStroke(1.dp, Color.Black),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp)
-                ) {
-                    Column {
-                        arrayOf(0, 4, 8, 12).forEach { idx ->
-                            runCatching { list.subList(idx, idx + 4) }.getOrNull()?.let { party ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .defaultMinSize(minHeight = 50.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-//                                    Text(
-//                                        "${idx / 4 + 1}",
-//                                        textAlign = TextAlign.Center,
-//                                        fontWeight = FontWeight.Bold,
-//                                        modifier = Modifier.weight(1f)
-//                                    )
-                                    party.forEach { item ->
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            if (item != null) {
-                                                DropDownNameView(item.name,
-                                                    fontSize = 12.sp,
-                                                    otherContent = {
-                                                        Text(
-                                                            text = item.className, fontSize = 12.sp
-                                                        )
-                                                        Text(
-                                                            text = item.getLevel().toString(),
-                                                            fontSize = 12.sp
-                                                        )
-                                                    })
-                                            } else {
-                                                Text(text = "X")
-                                            }
-                                        }
-                                    }
-                                }
-                                HorizontalDivider()
-                            }
-                        }
-                    }
+                if (raidInfo.day != Day.NONE) {
+                    Text(
+                        text = raidInfo.getDayText(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                list.chunked(4).forEachIndexed { partyIndex, party ->
+                    RaidPartySummary(
+                        partyIndex = partyIndex,
+                        party = party,
+                    )
                 }
             }
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 50.dp),
+            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 48.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -342,7 +324,7 @@ fun RaidPartySimpleView(
                         painter = painterResource(Res.drawable.screenshot),
                         contentDescription = null
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
+                    Spacer(modifier = Modifier.width(LoaCellSpace.xs))
                     Text(text = "공격대 공유")
                 }
             }
@@ -363,7 +345,7 @@ fun RaidPartySimpleView(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .heightIn(min = 0.dp, max = 250.dp)
-                        .padding(10.dp)
+                        .padding(LoaCellSpace.sm)
                 ) {
                     Image(
                         bitmap = bitmap,
@@ -381,7 +363,7 @@ fun RaidPartySimpleView(
                         },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Share")
+                        Text("공유")
                     }
                     TextButton(
                         onClick = {
@@ -391,10 +373,83 @@ fun RaidPartySimpleView(
                         },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Save")
+                        Text("저장")
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RaidPartySummary(
+    partyIndex: Int,
+    party: List<Character?>,
+) {
+    val memberRows = party.chunked(2)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(LoaCellRadius.card),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(LoaCellSpace.sm)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "파티 ${partyIndex + 1}",
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    text = "${party.count { it != null }}/4",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(modifier = Modifier.height(LoaCellSpace.xs))
+            memberRows.forEachIndexed { rowIndex, memberRow ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(LoaCellSpace.xs),
+                ) {
+                    memberRow.forEach { member ->
+                        RaidPartySummaryMember(
+                            member = member,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+                if (rowIndex < memberRows.lastIndex) {
+                    Spacer(modifier = Modifier.height(LoaCellSpace.xs))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RaidPartySummaryMember(
+    member: Character?,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        if (member == null) {
+            Text(
+                text = "빈 자리",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            return
+        }
+        Text(
+            text = member.name,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = "${member.className} · Lv. ${member.level}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
