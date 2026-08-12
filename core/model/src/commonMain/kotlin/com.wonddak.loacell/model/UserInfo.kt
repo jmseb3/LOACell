@@ -2,16 +2,6 @@ package com.wonddak.loacell.model
 
 import kotlin.time.Clock
 
-object UserInfoField {
-    const val REPRESENTATIVE_CHARACTER = "representativeCharacter"
-    const val TIME_STAMP = "timeStamp"
-    const val CHARACTER_LIST = "characterList"
-    const val NAME = "name"
-    const val SERVER = "server"
-    const val CLASS_NAME = "className"
-    const val LEVEL = "level"
-}
-
 data class UserInfo(
     val name: String,
     val roomId: String,

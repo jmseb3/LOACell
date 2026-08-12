@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.model.RoomInfoField
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.model.UserInfo
@@ -251,14 +250,14 @@ class RaidViewModel(
 
     private suspend fun removeFailedEditableUsers(roomId: String, users: List<String>) =
         suspendCancellableCoroutine { continuation ->
-            roomRepository.removeUsers(roomId, users, RoomInfoField.EDITABLE_USER) {
+            roomRepository.removeEditableUsers(roomId, users) {
                 if (continuation.isActive) continuation.resume(Unit)
             }
         }
 
     private suspend fun removeFailedEnterUsers(roomId: String, users: List<String>) =
         suspendCancellableCoroutine { continuation ->
-            roomRepository.removeUsers(roomId, users, RoomInfoField.ENTER_USER) {
+            roomRepository.removeEnteredUsers(roomId, users) {
                 if (continuation.isActive) continuation.resume(Unit)
             }
         }

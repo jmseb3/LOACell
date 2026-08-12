@@ -1,14 +1,5 @@
 package com.wonddak.loacell.model
 
-object RoomInfoField {
-    const val TITLE = "title"
-    const val DESCRIPTION = "description"
-    const val OWNER = "owner"
-    const val PASSWORD = "password"
-    const val EDITABLE_USER = "editableUser"
-    const val ENTER_USER = "enterUser"
-}
-
 data class RoomInfo(
     val uniqueId: String,
     val title: String,

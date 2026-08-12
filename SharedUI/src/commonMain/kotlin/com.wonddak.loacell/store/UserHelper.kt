@@ -1,11 +1,13 @@
 import com.wonddak.loacell.model.UserInfo
-import com.wonddak.loacell.model.UserInfoField
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonDocumentSnapshot
 import com.wonddak.loacell.store.RefHelper
+import com.wonddak.loacell.store.UserDocumentField
 import io.github.aakira.napier.Napier
 import kotlin.time.Clock
+
+private val UserInfoField = UserDocumentField
 
 private fun CommonDocumentSnapshot.toUserInfo(roomId: String): UserInfo = with(requireNotNull(data)) {
     UserInfo(

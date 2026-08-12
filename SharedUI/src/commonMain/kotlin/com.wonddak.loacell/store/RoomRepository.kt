@@ -1,7 +1,6 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.model.RoomInfoField
 import dev.zacsweers.metro.Inject
 
 /** Firestore 방 문서 접근을 한곳에 모은 데이터 계층 구현체. */
@@ -15,9 +14,9 @@ class RoomRepository(
     ): CommonListenerRegistration = rooms()
         .where(
             CommonFilter.or(
-                CommonFilter.equalTo(RoomInfoField.OWNER, userId),
-                CommonFilter.arrayContains(RoomInfoField.EDITABLE_USER, userId),
-                CommonFilter.arrayContains(RoomInfoField.ENTER_USER, userId),
+                CommonFilter.equalTo(RoomDocumentField.OWNER, userId),
+                CommonFilter.arrayContains(RoomDocumentField.EDITABLE_USER, userId),
+                CommonFilter.arrayContains(RoomDocumentField.ENTER_USER, userId),
             )
         )
         .getListenerRegistration(
@@ -35,10 +34,10 @@ class RoomRepository(
         rooms().document().let { room ->
             room.set(
                 data = mapOf(
-                    RoomInfoField.TITLE to title,
-                    RoomInfoField.DESCRIPTION to description,
-                    RoomInfoField.OWNER to owner,
-                    RoomInfoField.PASSWORD to password,
+                    RoomDocumentField.TITLE to title,
+                    RoomDocumentField.DESCRIPTION to description,
+                    RoomDocumentField.OWNER to owner,
+                    RoomDocumentField.PASSWORD to password,
                 ),
                 successAction = successAction,
                 failAction = {},
@@ -59,7 +58,7 @@ class RoomRepository(
         successAction: () -> Unit,
         failAction: () -> Unit,
     ) = room(roomId).update(
-        field = RoomInfoField.ENTER_USER,
+        field = RoomDocumentField.ENTER_USER,
         value = CommonFieldValue.arrayUnion(userId),
         successAction = successAction,
         failAction = { failAction() },
@@ -73,8 +72,8 @@ class RoomRepository(
         failAction: () -> Unit,
     ) {
         val field = when (role) {
-            RoomInfo.RoomRole.MANAGER -> RoomInfoField.EDITABLE_USER
-            RoomInfo.RoomRole.USER -> RoomInfoField.ENTER_USER
+            RoomInfo.RoomRole.MANAGER -> RoomDocumentField.EDITABLE_USER
+            RoomInfo.RoomRole.USER -> RoomDocumentField.ENTER_USER
             RoomInfo.RoomRole.OWNER, RoomInfo.RoomRole.NONE -> return
         }
         room(roomId).update(
@@ -85,7 +84,7 @@ class RoomRepository(
         )
     }
 
-    fun removeUsers(
+    private fun removeUsers(
         roomId: String,
         userIds: List<String>,
         field: String,
@@ -101,6 +100,12 @@ class RoomRepository(
         failAction = { completed() },
     )
 
+    fun removeEditableUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
+        removeUsers(roomId, userIds, RoomDocumentField.EDITABLE_USER, completed)
+
+    fun removeEnteredUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
+        removeUsers(roomId, userIds, RoomDocumentField.ENTER_USER, completed)
+
     private fun rooms(): CommonCollection = fireStore.collection("rooms")
 
     private fun room(roomId: String): CommonDocument = rooms().document(roomId)
@@ -109,11 +114,11 @@ class RoomRepository(
 private fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo = with(requireNotNull(data)) {
     RoomInfo(
         uniqueId = this@toRoomInfo.id,
-        title = this[RoomInfoField.TITLE] as String,
-        description = this[RoomInfoField.DESCRIPTION] as String,
-        owner = this[RoomInfoField.OWNER] as String,
-        enterPassword = this[RoomInfoField.PASSWORD] as String,
-        enterUser = (this[RoomInfoField.ENTER_USER] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
-        editableUser = (this[RoomInfoField.EDITABLE_USER] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+        title = this[RoomDocumentField.TITLE] as String,
+        description = this[RoomDocumentField.DESCRIPTION] as String,
+        owner = this[RoomDocumentField.OWNER] as String,
+        enterPassword = this[RoomDocumentField.PASSWORD] as String,
+        enterUser = (this[RoomDocumentField.ENTER_USER] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+        editableUser = (this[RoomDocumentField.EDITABLE_USER] as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
     )
 }

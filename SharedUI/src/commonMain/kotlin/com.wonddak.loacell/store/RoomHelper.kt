@@ -1,8 +1,9 @@
 package com.wonddak.loacell.store
 
 import com.wonddak.loacell.model.RoomInfo
-import com.wonddak.loacell.model.RoomInfoField
 import io.github.aakira.napier.Napier
+
+private val RoomInfoField = RoomDocumentField
 
 private fun CommonDocumentSnapshot.toRoomInfo(): RoomInfo = with(requireNotNull(data)) {
     RoomInfo(
