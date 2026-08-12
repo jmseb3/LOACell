@@ -45,6 +45,7 @@ kotlin {
             products = listOf(
                 product("FirebaseAuth"),
                 product("FirebaseCore"),
+                product("FirebaseCrashlytics"),
                 product("FirebaseFirestore"),
                 product("FirebaseStorage"),
             ),
