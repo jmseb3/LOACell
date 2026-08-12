@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomInfo
+import com.wonddak.loacell.model.RoomMember
 import com.wonddak.loacell.model.UserInfo
-import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.ui.common.SectionCardView
@@ -39,7 +39,7 @@ fun SettingRoomView(
     SetBackAction(true) {
         backToHome()
     }
-    val result by raidViewModel.tempOfFBData.collectAsState()
+    val result by raidViewModel.roomMembers.collectAsState()
     val user = authViewModel.user
     val userList = raidViewModel.userList
     val raidList = raidViewModel.raidList
@@ -47,9 +47,9 @@ fun SettingRoomView(
         //유저 정보랑 owner랑 같은 경우 바로 가져오기 가능
         user?.let { userInfo ->
             if (roomInfo.getAllUidList().size == 1 && roomInfo.owner == userInfo.uid) {
-                raidViewModel.initFBData(
+                raidViewModel.initRoomMembers(
                     listOf(
-                        FBDataItem(
+                        RoomMember(
                             userInfo.uid,
                             userInfo.displayName,
                             userInfo.photoUrl
@@ -63,7 +63,7 @@ fun SettingRoomView(
             raidViewModel.fetch = true
         }
         if (!raidViewModel.fetch) {
-            raidViewModel.fetchFBData(roomInfo)
+            raidViewModel.fetchRoomMembers(roomInfo)
         }
     }
     Column(
@@ -188,7 +188,7 @@ fun UserUidList(
     raidViewModel: RaidViewModel,
     fetch: Boolean,
     roomInfo: RoomInfo,
-    result: List<FBDataItem>,
+    result: List<RoomMember>,
     ownerChangeSuccess: () -> Unit,
     ownerChangeFail: (error: String) -> Unit,
 ) {
@@ -244,7 +244,7 @@ fun UserUidItem(
     roomId: String,
     name: String,
     uid: String,
-    fbData: List<FBDataItem>,
+    fbData: List<RoomMember>,
     changeOwner: () -> Unit,
 ) {
     val find = fbData.find { it.uid == uid }
@@ -254,7 +254,7 @@ fun UserUidItem(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = find?.getName() ?: uid)
+        Text(text = find?.displayNameOrFallback() ?: uid)
         Spacer(modifier = Modifier.weight(1f))
         if ((name != RoomInfo.RoomRole.OWNER.toName)) {
             TextButton(

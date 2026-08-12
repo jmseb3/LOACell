@@ -7,17 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.RoomMember
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.model.UserInfo
-import com.wonddak.loacell.network.firebase.FBApi
-import com.wonddak.loacell.network.firebase.model.FBDataItem
-import com.wonddak.loacell.network.firebase.model.FBRequest
 import com.wonddak.loacell.repository.Observation
+import com.wonddak.loacell.repository.RaidRepository
+import com.wonddak.loacell.repository.RoomMemberRepository
 import com.wonddak.loacell.repository.RoomRepository
 import com.wonddak.loacell.repository.UserRepository
-import com.wonddak.loacell.repository.RaidRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -36,8 +35,8 @@ import kotlin.coroutines.resume
 @ViewModelKey
 @Inject
 class RaidViewModel(
-    private val fbApi: FBApi,
     private val roomRepository: RoomRepository,
+    private val roomMemberRepository: RoomMemberRepository,
     private val userRepository: UserRepository,
     private val raidRepository: RaidRepository,
 ) : ViewModel() {
@@ -209,23 +208,23 @@ class RaidViewModel(
 
 
     //region room setting data
-    private var _tempOfFBData = MutableStateFlow(emptyList<FBDataItem>())
+    private var _roomMembers = MutableStateFlow(emptyList<RoomMember>())
 
-    val tempOfFBData: StateFlow<List<FBDataItem>>
-        get() = _tempOfFBData
+    val roomMembers: StateFlow<List<RoomMember>>
+        get() = _roomMembers
 
-    fun initFBData(data: List<FBDataItem>) {
+    fun initRoomMembers(data: List<RoomMember>) {
         fetch = true
-        this._tempOfFBData.value = data
+        _roomMembers.value = data
     }
 
     var fetch by mutableStateOf(false)
-    fun fetchFBData(roomInfo: RoomInfo) {
+    fun fetchRoomMembers(roomInfo: RoomInfo) {
         viewModelScope.launch {
             fetch = false
-            fbApi.getData(FBRequest(roomInfo.getAllUidList())).let { fbData ->
+            roomMemberRepository.findByIds(roomInfo.getAllUidList()).let { result ->
                 //실패한 유저 정보 모음을 가져옴
-                val failUser = fbData.failUidList
+                val failUser = result.unavailableUserIds
                 //실패한 유저가 있는 경우 체크
                 val editableUser = roomInfo.editableUser.filter { failUser.contains(it) }
                 val enterUser = roomInfo.enterUser.filter { failUser.contains(it) }
@@ -245,7 +244,7 @@ class RaidViewModel(
                 if (!completed) {
                     Napier.w { "Timed out while removing unavailable room users: $roomId" }
                 }
-                initFBData(fbData.data)
+                initRoomMembers(result.members)
             }
         }
     }
