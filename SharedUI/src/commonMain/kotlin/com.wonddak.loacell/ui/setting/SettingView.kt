@@ -43,7 +43,7 @@ import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.di.LocalConfig
 import com.wonddak.loacell.di.LocalFileHelper
-import com.wonddak.loacell.network.lostark.LostArkApiModule
+import com.wonddak.loacell.di.LocalLostArkApi
 import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.noRippleClickable
@@ -186,25 +186,21 @@ fun SettingView(
                         mutableStateOf("정상 토큰 확인중")
                     }
                     val config = LocalConfig.current
+                    val lostArkApi = LocalLostArkApi.current
                     LaunchedEffect(true) {
                         delay(1000L)
-                        val api = LostArkApiModule()
-                        try {
-                            api.getCharacterInfo("아이오에스티떡상가즈아", token)
-                                .onSuccess {
-                                    title = "정상 확인 되었습니다."
-                                    delay(1000)
-                                    config.updateTokenKey(token)
-                                    navController.popBackStack()
-                                }
-                                .onFailMsg { message ->
-                                    title = message
-                                    delay(1000)
-                                    navController.popBackStack()
-                                }
-                        } finally {
-                            api.close()
-                        }
+                        lostArkApi.validateToken(token)
+                            .onSuccess {
+                                title = "정상 확인 되었습니다."
+                                delay(1000)
+                                config.updateTokenKey(token)
+                                navController.popBackStack()
+                            }
+                            .onFailMsg { message ->
+                                title = message
+                                delay(1000)
+                                navController.popBackStack()
+                            }
                     }
                     CircularProgressIndicator()
                     Text(

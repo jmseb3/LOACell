@@ -42,6 +42,12 @@ class LostArkApi(
             token = config.tokenKey.first() ?: API_KEY,
         )
     }
+
+    suspend fun validateToken(token: String): LostArkResult<List<CharacterInfo>> =
+        module.getCharacterInfo(
+            characterName = "아이오에스티떡상가즈아",
+            token = token,
+        )
 }
 
 class LostArkApiModule {
