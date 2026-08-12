@@ -50,10 +50,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":SharedUI"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:di"))
-    implementation(project(":data:firebaseData"))
+    implementation(projects.sharedUI)
+    implementation(projects.core.ui)
+    implementation(projects.core.di)
+    implementation(projects.data.firebaseData)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.metro.android)

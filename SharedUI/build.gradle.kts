@@ -76,11 +76,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:model"))
-            implementation(project(":core:di"))
-            implementation(project(":core:navigation"))
-            implementation(project(":core:ui"))
-            implementation(project(":data:firebaseData"))
+            implementation(projects.core.model)
+            implementation(projects.core.di)
+            implementation(projects.core.navigation)
+            implementation(projects.core.ui)
+            implementation(projects.data.firebaseData)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
