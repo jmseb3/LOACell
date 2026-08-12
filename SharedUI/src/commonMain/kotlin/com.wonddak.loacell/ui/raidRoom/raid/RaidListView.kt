@@ -282,6 +282,7 @@ fun FinishButton(
         Icon(
             painter = painterResource(icon),
             contentDescription = if (raidInfo.isFinish) "완료 취소" else "완료로 표시",
+            modifier = Modifier.size(24.dp),
             tint = if (raidInfo.isFinish) {
                 MaterialTheme.colorScheme.primary
             } else {
