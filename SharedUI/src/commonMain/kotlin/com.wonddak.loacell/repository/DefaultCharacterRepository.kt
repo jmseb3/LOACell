@@ -22,7 +22,6 @@ class DefaultCharacterRepository(
                         server = it.serverName,
                         className = it.characterClassName,
                         level = it.itemAvgLevel,
-                        combatPower = lostArkApi.getCharacterCombatPower(it.characterName),
                     )
                 },
             )

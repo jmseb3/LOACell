@@ -17,9 +17,3 @@ data class CharacterInfo(
     @SerialName("ServerName")
     val serverName: String,
 )
-
-@Serializable
-data class CharacterProfile(
-    @SerialName("CombatPower")
-    val combatPower: Long? = null,
-)

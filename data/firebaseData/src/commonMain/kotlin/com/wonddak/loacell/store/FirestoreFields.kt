@@ -17,7 +17,6 @@ internal object UserDocumentField {
     const val SERVER = "server"
     const val CLASS_NAME = "className"
     const val LEVEL = "level"
-    const val COMBAT_POWER = "combatPower"
 }
 
 internal object RaidDocumentField {

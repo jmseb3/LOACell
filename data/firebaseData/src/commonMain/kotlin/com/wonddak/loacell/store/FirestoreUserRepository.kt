@@ -38,7 +38,6 @@ class FirestoreUserRepository(
                     UserDocumentField.SERVER to character.server,
                     UserDocumentField.CLASS_NAME to character.className,
                     UserDocumentField.LEVEL to character.level,
-                    UserDocumentField.COMBAT_POWER to character.combatPower,
                 )
             },
             UserDocumentField.TIME_STAMP to Clock.System.now().toEpochMilliseconds(),
@@ -98,6 +97,5 @@ private fun Any?.asCharacterList(): List<Character> =
             server = character[UserDocumentField.SERVER] as? String ?: return@mapNotNull null,
             className = character[UserDocumentField.CLASS_NAME] as? String ?: return@mapNotNull null,
             level = character[UserDocumentField.LEVEL] as? String ?: return@mapNotNull null,
-            combatPower = character[UserDocumentField.COMBAT_POWER] as? Long,
         )
     }.orEmpty()

@@ -21,7 +21,6 @@ data class Character(
     val server: String,
     val className: String,
     val level: String,
-    val combatPower: Long? = null,
 ) {
     fun getLevel(): Float = level.replace(",", "").toFloat()
 }

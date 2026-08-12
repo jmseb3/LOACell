@@ -111,11 +111,6 @@ fun RaidPartyView(
                         )
                     }
                 }
-                Text(
-                    text = list.combatPowerAverageText(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
                 Spacer(modifier = Modifier.height(LoaCellSpace.sm))
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     itemsIndexed(list) { index, item ->
@@ -406,18 +401,11 @@ private fun RaidPartySummary(
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleSmall,
                 )
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "${party.count { it != null }}/4",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = party.combatPowerAverageText(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                Text(
+                    text = "${party.count { it != null }}/4",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             Spacer(modifier = Modifier.height(LoaCellSpace.xs))
             memberRows.forEachIndexed { rowIndex, memberRow ->
@@ -465,15 +453,3 @@ private fun RaidPartySummaryMember(
         )
     }
 }
-
-private fun List<Character?>.combatPowerAverageText(): String {
-    val combatPowers = mapNotNull { it?.combatPower }
-    if (combatPowers.isEmpty()) return "평균 전투력 · 갱신필요"
-
-    val average = combatPowers.sum() / combatPowers.size
-    val memberCount = count { it != null }
-    return "평균 전투력 ${average.formatWithComma()} · ${combatPowers.size}/${memberCount}명"
-}
-
-private fun Long.formatWithComma(): String =
-    toString().reversed().chunked(3).joinToString(",").reversed()
