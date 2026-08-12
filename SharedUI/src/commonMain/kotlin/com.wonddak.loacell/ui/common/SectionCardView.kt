@@ -9,12 +9,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.wonddak.loacell.theme.LoaCellSpace
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -28,12 +29,12 @@ fun SectionCardView(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(LoaCellSpace.xs)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = LoaCellSpace.sm)
         ) {
             Box() {
                 title?.let {
@@ -42,7 +43,7 @@ fun SectionCardView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.CenterStart),
-                        fontSize = 20.sp
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 }
                 icon?.let {
@@ -50,7 +51,11 @@ fun SectionCardView(
                         onClick = iconAction,
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
-                        Icon(painter = painterResource(it), null, modifier = Modifier.size(18.dp))
+                        Icon(
+                            painter = painterResource(it),
+                            contentDescription = "섹션 동작",
+                            modifier = Modifier.size(18.dp),
+                        )
                     }
                 }
             }

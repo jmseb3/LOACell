@@ -54,7 +54,7 @@ fun LengthLimitTextField(
                     IconButton(onClick = {
                         textChange("")
                     }) {
-                        Icon(Icons.Filled.Clear, null)
+                        Icon(Icons.Filled.Clear, contentDescription = "입력 지우기")
                     }
                 }
             },
@@ -90,11 +90,6 @@ fun LengthLimitTextField(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "${textFieldValue.text.length}/$maxLength",
-            textAlign = TextAlign.End
-        )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = textFieldValue,
@@ -113,6 +108,12 @@ fun LengthLimitTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             enabled = enabled
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "${textFieldValue.text.length}/$maxLength",
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.labelSmall,
         )
     }
 }

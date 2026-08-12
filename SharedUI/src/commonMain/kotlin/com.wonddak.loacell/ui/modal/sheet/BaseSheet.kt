@@ -1,6 +1,5 @@
 package com.wonddak.loacell.ui.modal.sheet
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,15 +19,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wonddak.loacell.ModalStatus
 import com.wonddak.loacell.SetBackAction
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +91,7 @@ fun BaseSheet(
                         ) {
                             Icon(
                                 Icons.Filled.Close,
-                                null
+                                contentDescription = "닫기",
                             )
                         }
                     }
@@ -125,21 +122,15 @@ fun BaseSheet(
         Column() {
             content()
             Spacer(modifier = Modifier.height(10.dp))
-            AnimatedVisibility(visible = errorMsg.isNotEmpty()) {
-                LaunchedEffect(errorMsg) {
-                    if (errorMsg.isNotEmpty()) {
-                        delay(2_000L)
-                        updateErrorMsg("")
-                    }
-                }
+            if (errorMsg.isNotEmpty()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = errorMsg,
                     textAlign = TextAlign.Center,
-                    color = Color.Red
+                    color = MaterialTheme.colorScheme.error,
                 )
             }
-            OutlinedButton(
+            Button(
                 onClick = {
                     buttonClickAction()
                 },
