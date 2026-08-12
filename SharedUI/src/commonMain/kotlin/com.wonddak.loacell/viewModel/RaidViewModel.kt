@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wonddak.loacell.model.Filter
+import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomMember
 import com.wonddak.loacell.model.RoomInfo
@@ -13,6 +14,8 @@ import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.repository.Observation
+import com.wonddak.loacell.repository.CharacterLookupResult
+import com.wonddak.loacell.repository.CharacterRepository
 import com.wonddak.loacell.repository.RaidRepository
 import com.wonddak.loacell.repository.RoomMemberRepository
 import com.wonddak.loacell.repository.RoomRepository
@@ -35,6 +38,7 @@ import kotlin.coroutines.resume
 @ViewModelKey
 @Inject
 class RaidViewModel(
+    private val characterRepository: CharacterRepository,
     private val roomRepository: RoomRepository,
     private val roomMemberRepository: RoomMemberRepository,
     private val userRepository: UserRepository,
@@ -267,27 +271,33 @@ class RaidViewModel(
         roomId: String,
         name: String,
         representativeCharacter: String,
-        characters: List<com.wonddak.loacell.network.lostark.model.CharacterInfo>,
+        characters: List<Character>,
         onFailure: (String) -> Unit = {},
         onSuccess: () -> Unit = {},
     ) = userRepository.save(
         roomId = roomId,
         name = name,
         representativeCharacter = representativeCharacter,
-        characters = characters.map { character ->
-            com.wonddak.loacell.model.Character(
-                name = character.characterName,
-                server = character.serverName,
-                className = character.characterClassName,
-                level = character.itemAvgLevel,
-            )
-        },
+        characters = characters,
         onFailure = onFailure,
         onSuccess = onSuccess,
     )
 
-    fun refreshUser(userInfo: UserInfo, characters: List<com.wonddak.loacell.network.lostark.model.CharacterInfo>) =
+    fun refreshUser(userInfo: UserInfo, characters: List<Character>) =
         saveUser(userInfo.roomId, userInfo.name, userInfo.representativeCharacter, characters)
+
+    fun findCharacters(
+        characterName: String,
+        onSuccess: (List<Character>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        viewModelScope.launch {
+            when (val result = characterRepository.findByName(characterName)) {
+                is CharacterLookupResult.Success -> onSuccess(result.characters)
+                is CharacterLookupResult.Failure -> onFailure(result.message)
+            }
+        }
+    }
 
     fun updateRepresentativeCharacter(userInfo: UserInfo, representativeCharacter: String) =
         userRepository.updateRepresentativeCharacter(userInfo, representativeCharacter)

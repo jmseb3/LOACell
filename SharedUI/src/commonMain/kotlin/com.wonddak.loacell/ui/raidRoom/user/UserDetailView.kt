@@ -14,9 +14,6 @@ import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Dialog
 import com.wonddak.loacell.model.UserInfo
-import com.wonddak.loacell.network.lostark.LostArkApi
-import com.wonddak.loacell.network.onFailMsg
-import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.ui.common.DropDownNameView
 import com.wonddak.loacell.ui.common.FABInfo
@@ -26,12 +23,10 @@ import com.wonddak.loacell.ui.main.LoaCellTopAppBar
 import com.wonddak.loacell.ui.modal.dialog.DeleteDialog
 import com.wonddak.loacell.ui.modal.dialog.EditCharacterDialog
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.launch
 import loacell.sharedui.generated.resources.Res
 import loacell.sharedui.generated.resources.change_person
 import loacell.sharedui.generated.resources.delete
 import loacell.sharedui.generated.resources.refresh
-import com.wonddak.loacell.di.LocalLostArkApi
 import com.wonddak.loacell.viewModel.RaidViewModel
 
 @Composable
@@ -48,8 +43,6 @@ fun UserDetailView(
             Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
         }
     } else {
-        val lostArkApi = LocalLostArkApi.current
-        val scope = rememberCoroutineScope()
         val fabStatus = rememberModalStatus()
         var sync by remember {
             mutableStateOf(false)
@@ -81,19 +74,15 @@ fun UserDetailView(
                             Napier.d { "갱신: ${userInfo.timeStamp}" }
                             Napier.d { "갱신: ${userInfo.checkTimeOver()}" }
                             if (userInfo.checkTimeOver()) {
-                                scope.launch {
-                                    sync = true
-                                    lostArkApi.getCharacterInfo(userInfo.representativeCharacter)
-                                        .onSuccess {
-                                            sync = false
-                                            raidViewModel.refreshUser(
-                                                userInfo, it
-                                            )
-                                        }
-                                        .onFailMsg {
-                                            sync = false
-                                        }
-                                }
+                                sync = true
+                                raidViewModel.findCharacters(
+                                    characterName = userInfo.representativeCharacter,
+                                    onSuccess = {
+                                        sync = false
+                                        raidViewModel.refreshUser(userInfo, it)
+                                    },
+                                    onFailure = { sync = false },
+                                )
                             } else {
                                 Napier.d { "갱신 ㄴㄴ" }
                             }

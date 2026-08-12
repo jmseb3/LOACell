@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,15 +23,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.ModalStatus
+import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.Sheet
-import com.wonddak.loacell.network.lostark.LostArkApi
-import com.wonddak.loacell.network.lostark.model.CharacterInfo
-import com.wonddak.loacell.network.onFailMsg
-import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.ui.common.LengthLimitTextField
-import kotlinx.coroutines.launch
-import com.wonddak.loacell.di.LocalLostArkApi
 import com.wonddak.loacell.viewModel.RaidViewModel
 
 @Composable
@@ -42,8 +36,6 @@ fun AddUserSheet(
     roomInfo: RoomInfo,
     raidViewModel: RaidViewModel,
 ) {
-    val lostArkApi = LocalLostArkApi.current
-    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val textFieldModifier = Modifier.fillMaxWidth()
 
@@ -60,7 +52,7 @@ fun AddUserSheet(
         mutableStateOf(false)
     }
     var searchResult by remember {
-        mutableStateOf(emptyList<CharacterInfo>())
+        mutableStateOf(emptyList<Character>())
     }
 
     LaunchedEffect(modalStatus.status) {
@@ -72,18 +64,18 @@ fun AddUserSheet(
     }
 
     val searchAction = {
-        scope.launch {
-            showProgress = true
-            lostArkApi.getCharacterInfo(searchCharacterName)
-                .onSuccess {
-                    showProgress = false
-                    searchResult = it
-                }
-                .onFailMsg {
-                    showProgress = false
-                    errorMsg = it
-                }
-        }
+        showProgress = true
+        raidViewModel.findCharacters(
+            characterName = searchCharacterName,
+            onSuccess = {
+                showProgress = false
+                searchResult = it
+            },
+            onFailure = {
+                showProgress = false
+                errorMsg = it
+            },
+        )
     }
 
     val initAction = {
@@ -173,10 +165,10 @@ fun AddUserSheet(
                 }
             }
             if (searchResult.isNotEmpty()) {
-                searchResult.find { it.characterName.lowercase() == searchCharacterName.lowercase() }
+                searchResult.find { it.name.lowercase() == searchCharacterName.lowercase() }
                     ?.let { find ->
                         Column() {
-                            Text("${find.characterName}(${find.characterClassName}) - ${find.itemAvgLevel}")
+                            Text("${find.name}(${find.className}) - ${find.level}")
                             Text(text = "외 ${searchResult.size - 1}개의 캐릭터를 찾았습니다.")
                         }
                     }
