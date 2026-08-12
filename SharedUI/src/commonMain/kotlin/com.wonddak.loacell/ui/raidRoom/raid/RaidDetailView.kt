@@ -41,6 +41,7 @@ import loacell.sharedui.generated.resources.room_setting
 
 @Composable
 fun RaidDetailView(
+    raidViewModel: com.wonddak.loacell.viewModel.RaidViewModel,
     roomInfo: RoomInfo?,
     raidId: String,
     raidList: List<RaidInfo>,
@@ -234,7 +235,8 @@ fun RaidDetailView(
             AddUserSheet(
                 showUserAddSheet,
                 Modifier,
-                it
+                it,
+                raidViewModel,
             )
         }
     }

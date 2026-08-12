@@ -184,7 +184,8 @@ fun RaidRoomView(
         AddUserSheet(
             showUserAddSheet,
             Modifier,
-            roomInfo
+            roomInfo,
+            raidViewModel,
         )
     } ?: Column {
         var show by remember { mutableStateOf(false) }

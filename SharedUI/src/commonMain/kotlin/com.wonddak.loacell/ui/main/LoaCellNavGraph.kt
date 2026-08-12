@@ -239,6 +239,7 @@ fun NavGraphBuilder.roomGraph(
 
             val raidId = backStackEntry.arguments?.read { getStringOrNull(Const.NAV_RAID_DETAIL_ARG) } ?: ""
             RaidDetailView(
+                raidViewModel = raidViewModel,
                 roomInfo = selectedRoomInfo,
                 raidId = raidId,
                 raidList = raidViewModel.raidList,
@@ -265,6 +266,7 @@ fun NavGraphBuilder.roomGraph(
             val userInfo = raidViewModel.userList.find { it.name == userName }
             UserDetailView(
                 userInfo,
+                raidViewModel,
                 navController::depth3toRoom
             )
         }

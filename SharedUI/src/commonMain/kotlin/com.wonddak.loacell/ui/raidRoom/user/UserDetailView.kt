@@ -1,6 +1,5 @@
 package com.wonddak.loacell.ui.raidRoom.user
 
-import CommonUserHelper
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,10 +32,12 @@ import loacell.sharedui.generated.resources.change_person
 import loacell.sharedui.generated.resources.delete
 import loacell.sharedui.generated.resources.refresh
 import com.wonddak.loacell.di.LocalLostArkApi
+import com.wonddak.loacell.viewModel.RaidViewModel
 
 @Composable
 fun UserDetailView(
     userInfo: UserInfo?,
+    raidViewModel: RaidViewModel,
     onBack: () -> Unit,
 ) {
     SetBackAction(true) {
@@ -85,7 +86,7 @@ fun UserDetailView(
                                     lostArkApi.getCharacterInfo(userInfo.representativeCharacter)
                                         .onSuccess {
                                             sync = false
-                                            CommonUserHelper.updateUserInfo(
+                                            raidViewModel.refreshUser(
                                                 userInfo, it
                                             )
                                         }
@@ -132,7 +133,7 @@ fun UserDetailView(
             changeCharacterStatus,
             userInfo,
         ) {
-            CommonUserHelper.updateRepresentativeCharacter(userInfo, it)
+            raidViewModel.updateRepresentativeCharacter(userInfo, it)
         }
 
         DeleteDialog(
@@ -140,16 +141,7 @@ fun UserDetailView(
             title = Dialog.CHARACTER_DELETE.title,
             confirm = {
                 onBack()
-                CommonUserHelper.delete(
-                    userInfo.roomId,
-                    userInfo.name,
-                    failAction = {
-
-                    },
-                    successAction = {
-
-                    }
-                )
+                raidViewModel.deleteUser(userInfo)
             },
         ) {
             Text(text = "${userInfo.name}님 의 정보를 삭제 하시겠습니까?")

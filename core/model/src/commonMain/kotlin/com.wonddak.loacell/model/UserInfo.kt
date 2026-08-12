@@ -20,7 +20,7 @@ data class Character(
     val name: String,
     val server: String,
     val className: String,
-    private val level: String,
+    val level: String,
 ) {
     fun getLevel(): Float = level.replace(",", "").toFloat()
 }

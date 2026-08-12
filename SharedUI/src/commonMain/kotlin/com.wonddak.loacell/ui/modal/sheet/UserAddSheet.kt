@@ -1,6 +1,5 @@
 package com.wonddak.loacell.ui.modal.sheet
 
-import CommonUserHelper
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,12 +33,14 @@ import com.wonddak.loacell.network.onSuccess
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import kotlinx.coroutines.launch
 import com.wonddak.loacell.di.LocalLostArkApi
+import com.wonddak.loacell.viewModel.RaidViewModel
 
 @Composable
 fun AddUserSheet(
     modalStatus: ModalStatus,
     modifier: Modifier = Modifier,
     roomInfo: RoomInfo,
+    raidViewModel: RaidViewModel,
 ) {
     val lostArkApi = LocalLostArkApi.current
     val scope = rememberCoroutineScope()
@@ -87,7 +88,7 @@ fun AddUserSheet(
 
     val initAction = {
         if (searchResult.isNotEmpty()) {
-            CommonUserHelper.addUserInfo(
+            raidViewModel.saveUser(
                 roomInfo.uniqueId,
                 user,
                 searchCharacterName,

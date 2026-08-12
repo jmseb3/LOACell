@@ -1,6 +1,5 @@
 package com.wonddak.loacell.viewModel
 
-import CommonUserHelper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +16,7 @@ import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.network.firebase.model.FBRequest
 import com.wonddak.loacell.repository.Observation
 import com.wonddak.loacell.repository.RoomRepository
+import com.wonddak.loacell.repository.UserRepository
 import com.wonddak.loacell.store.CommonListenerRegistration
 import com.wonddak.loacell.store.CommonRaidHelper
 import dev.zacsweers.metro.AppScope
@@ -39,6 +39,7 @@ import kotlin.coroutines.resume
 class RaidViewModel(
     private val fbApi: FBApi,
     private val roomRepository: RoomRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
 
@@ -113,7 +114,7 @@ class RaidViewModel(
 
     //region raidInfo Method
     private var raidListenerRegistration: CommonListenerRegistration? = null
-    private var userListenerRegistration: CommonListenerRegistration? = null
+    private var userObservation: Observation? = null
     var lastTabIndex = RoomState.Raid.index
 
     var raidList: List<RaidInfo> by mutableStateOf(emptyList())
@@ -134,8 +135,8 @@ class RaidViewModel(
                     CommonRaidHelper.observe(it.uniqueId) {
                         raidList = it
                     }
-                userListenerRegistration =
-                    CommonUserHelper.observe(it.uniqueId) {
+                userObservation =
+                    userRepository.observe(it.uniqueId) {
                         userList = it
                     }
             }
@@ -151,9 +152,9 @@ class RaidViewModel(
 
     fun stopObserveRaidInfo() {
         raidListenerRegistration?.remove()
-        userListenerRegistration?.remove()
+        userObservation?.stop()
         raidListenerRegistration = null
-        userListenerRegistration = null
+        userObservation = null
 
         this.lastTabIndex = RoomState.Raid.index
         this.showType = RoomType.Default
@@ -262,5 +263,37 @@ class RaidViewModel(
                 if (continuation.isActive) continuation.resume(Unit)
             }
         }
+
+    fun saveUser(
+        roomId: String,
+        name: String,
+        representativeCharacter: String,
+        characters: List<com.wonddak.loacell.network.lostark.model.CharacterInfo>,
+        onFailure: (String) -> Unit = {},
+        onSuccess: () -> Unit = {},
+    ) = userRepository.save(
+        roomId = roomId,
+        name = name,
+        representativeCharacter = representativeCharacter,
+        characters = characters.map { character ->
+            com.wonddak.loacell.model.Character(
+                name = character.characterName,
+                server = character.serverName,
+                className = character.characterClassName,
+                level = character.itemAvgLevel,
+            )
+        },
+        onFailure = onFailure,
+        onSuccess = onSuccess,
+    )
+
+    fun refreshUser(userInfo: UserInfo, characters: List<com.wonddak.loacell.network.lostark.model.CharacterInfo>) =
+        saveUser(userInfo.roomId, userInfo.name, userInfo.representativeCharacter, characters)
+
+    fun updateRepresentativeCharacter(userInfo: UserInfo, representativeCharacter: String) =
+        userRepository.updateRepresentativeCharacter(userInfo, representativeCharacter)
+
+    fun deleteUser(userInfo: UserInfo) =
+        userRepository.delete(userInfo.roomId, userInfo.name, onFailure = {}, onSuccess = {})
     //endregion
 }
