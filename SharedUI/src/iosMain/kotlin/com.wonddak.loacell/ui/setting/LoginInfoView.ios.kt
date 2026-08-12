@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,6 +17,7 @@ import com.wonddak.loacell.auth.LoginHelper
 import com.wonddak.loacell.auth.registerAnonymousToApple
 import com.wonddak.loacell.auth.registerAppleToken
 import com.wonddak.loacell.auth.revokeAppleUser
+import com.wonddak.loacell.ui.login.AppleSignInButton
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,13 +46,12 @@ actual fun AppleLoginView(
     }
     Column {
         Spacer(modifier = Modifier.height(10.dp))
-        Button(
+        AppleSignInButton(
             onClick = {
                 scope.launch { AppleLoginHelper.requestLogin(appleLoginHandler) }
-                Unit
             },
             modifier = Modifier.fillMaxWidth(0.8f),
-        ) { Text("Apple로 로그인") }
+        )
     }
 }
 
@@ -83,12 +80,12 @@ actual fun AppleLoginBtn(
             }
         }
     }
-    IconButton(
+    AppleSignInButton(
         onClick = {
             scope.launch { AppleLoginHelper.requestLogin(appleLoginHandler) }
-            Unit
-        }
-    ) { Text("") }
+        },
+        iconOnly = true,
+    )
 }
 
 actual fun revokeApple(
