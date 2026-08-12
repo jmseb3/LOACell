@@ -1,7 +1,6 @@
 package com.wonddak.loacell.repository
 
 import com.wonddak.loacell.model.RaidInfo
-import com.wonddak.loacell.repository.Observation
 
 interface RaidRepository {
     fun observe(roomId: String, onChanged: (List<RaidInfo>) -> Unit): Observation

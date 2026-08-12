@@ -13,13 +13,15 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(path: "subpackages/_SharedUI")
+    .package(path: "subpackages/_SharedUI"),
+    .package(path: "subpackages/_data_firebaseData")
   ],
   targets: [
     .target(
       name: "KotlinMultiplatformLinkedPackage",
       dependencies: [
-        .product(name: "_SharedUI", package: "_SharedUI")
+        .product(name: "_SharedUI", package: "_SharedUI"),
+        .product(name: "_data_firebaseData", package: "_data_firebaseData")
       ]
     )
   ]

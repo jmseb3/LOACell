@@ -7,7 +7,6 @@ import com.wonddak.loacell.repository.UserRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
-import io.github.aakira.napier.Napier
 import kotlin.time.Clock
 
 @ContributesBinding(AppScope::class)
@@ -70,7 +69,6 @@ class FirestoreUserRepository(
     }
 
     override fun delete(roomId: String, name: String, onFailure: (String) -> Unit, onSuccess: () -> Unit) {
-        Napier.d(tag = "FirestoreUserRepository") { "delete" }
         users(roomId).document(name).delete(
             successAction = onSuccess,
             failAction = { onFailure(it.errorMsg) },

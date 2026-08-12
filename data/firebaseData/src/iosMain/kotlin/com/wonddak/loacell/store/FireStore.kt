@@ -2,17 +2,17 @@
 
 package com.wonddak.loacell.store
 
-import swiftPMImport.LoaCell.SharedUI.FIRCollectionReference
-import swiftPMImport.LoaCell.SharedUI.FIRDocumentReference
-import swiftPMImport.LoaCell.SharedUI.FIRDocumentSnapshot
-import swiftPMImport.LoaCell.SharedUI.FIRFieldPath
-import swiftPMImport.LoaCell.SharedUI.FIRFieldValue
-import swiftPMImport.LoaCell.SharedUI.FIRFilter
-import swiftPMImport.LoaCell.SharedUI.FIRFirestore
-import swiftPMImport.LoaCell.SharedUI.FIRListenerRegistrationProtocol
-import swiftPMImport.LoaCell.SharedUI.FIRQuery
-import swiftPMImport.LoaCell.SharedUI.FIRQuerySnapshot
-import swiftPMImport.LoaCell.SharedUI.FIRWriteBatch
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRCollectionReference
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRDocumentReference
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRDocumentSnapshot
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRFieldPath
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRFieldValue
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRFilter
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRFirestore
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRListenerRegistrationProtocol
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRQuery
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRQuerySnapshot
+import swiftPMImport.LoaCell.data.data.firebaseData.FIRWriteBatch
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSError

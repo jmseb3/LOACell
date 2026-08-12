@@ -80,6 +80,7 @@ kotlin {
             implementation(project(":core:di"))
             implementation(project(":core:navigation"))
             implementation(project(":core:ui"))
+            implementation(project(":data:firebaseData"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
