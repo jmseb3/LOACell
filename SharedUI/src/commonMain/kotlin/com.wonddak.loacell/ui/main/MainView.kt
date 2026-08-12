@@ -253,6 +253,7 @@ private fun HomeRoomActions(
 	) {
 		HomeRoomActionCard(
 			title = "입장",
+			description = "파티에 참여하세요.",
 			icon = Icons.Filled.People,
 			onClick = onEnterClick,
 			modifier = Modifier.weight(1f),
@@ -260,6 +261,7 @@ private fun HomeRoomActions(
 		if (canCreateRoom) {
 			HomeRoomActionCard(
 				title = "만들기",
+				description = "새 파티를 만드세요.",
 				icon = Icons.Filled.Add,
 				onClick = onCreateClick,
 				modifier = Modifier.weight(1f),
@@ -271,6 +273,7 @@ private fun HomeRoomActions(
 @Composable
 private fun HomeRoomActionCard(
 	title: String,
+	description: String,
 	icon: androidx.compose.ui.graphics.vector.ImageVector,
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
@@ -283,16 +286,34 @@ private fun HomeRoomActionCard(
 	) {
 		Row(
 			modifier = Modifier.fillMaxWidth().padding(LoaCellSpace.md),
-			horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
 			verticalAlignment = Alignment.CenterVertically,
 		) {
+			Surface(
+				shape = RoundedCornerShape(LoaCellRadius.image),
+				color = MaterialTheme.colorScheme.primary,
+			) {
+				Icon(
+					imageVector = icon,
+					contentDescription = null,
+					modifier = Modifier.padding(LoaCellSpace.xs).size(20.dp),
+					tint = MaterialTheme.colorScheme.onPrimary,
+				)
+			}
+			Column(modifier = Modifier.weight(1f).padding(start = LoaCellSpace.xs)) {
+				Text(title, style = MaterialTheme.typography.titleMedium)
+				Text(
+					text = description,
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onPrimaryContainer,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis,
+				)
+			}
 			Icon(
-				imageVector = icon,
-				contentDescription = null,
+				imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+				contentDescription = title,
 				tint = MaterialTheme.colorScheme.onPrimaryContainer,
 			)
-			Spacer(Modifier.width(LoaCellSpace.xs))
-			Text(title, style = MaterialTheme.typography.titleMedium)
 		}
 	}
 }
