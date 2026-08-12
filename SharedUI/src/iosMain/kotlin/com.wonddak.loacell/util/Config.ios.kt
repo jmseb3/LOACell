@@ -18,8 +18,11 @@ import platform.Foundation.NSLibraryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
+@SingleIn(AppScope::class)
 @Inject
 actual class DataStoreProvider actual constructor() {
     private val dataStore = createDataStoreWithDefaults(

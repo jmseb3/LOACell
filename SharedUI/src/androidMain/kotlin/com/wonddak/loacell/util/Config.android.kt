@@ -5,9 +5,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.wonddak.loacell.util.LOA_CELL_PREFERENCES
 import com.wonddak.loacell.util.createDataStoreWithDefaults
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 
+@SingleIn(AppScope::class)
 actual class DataStoreProvider actual constructor() {
     private lateinit var context: Context
 
