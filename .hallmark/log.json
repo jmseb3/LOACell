@@ -2,6 +2,22 @@
   {
     "date": "2026-08-12",
     "scope": "app",
+    "macrostructure": "Catalogue",
+    "theme": "existing Material 3 blue",
+    "enrichment": "official event thumbnails",
+    "brief": "LoaCell home party preview with explicit event empty and failure states"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "app",
+    "macrostructure": "Index-First",
+    "theme": "existing Material 3 blue",
+    "enrichment": "official event thumbnails",
+    "brief": "LoaCell home hub with party entry and current Lost Ark events"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "app",
     "macrostructure": "Workbench",
     "theme": "existing Material 3 blue",
     "enrichment": "none",
