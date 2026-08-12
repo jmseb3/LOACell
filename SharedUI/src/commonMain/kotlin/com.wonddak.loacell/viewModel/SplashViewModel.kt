@@ -5,30 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wonddak.loacell.assetData.RaidItem
-import com.wonddak.loacell.assetData.Synergy
-import com.wonddak.loacell.assetData.Translate
-import com.wonddak.loacell.model.RaidTypeItem
-import com.wonddak.loacell.network.firebase.FBApi
-import com.wonddak.loacell.storage.AssetStorage
-import com.wonddak.loacell.util.FileHelper
+import com.wonddak.loacell.repository.AssetRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 
 @ContributesIntoMap(AppScope::class)
 @ViewModelKey
 @Inject
 class SplashViewModel(
-    private val fbApi: FBApi,
-    private val fileHelper: FileHelper,
-    private val assetStorage: AssetStorage,
+    private val assetRepository: AssetRepository,
 ) : ViewModel() {
 
     var timeCheck by mutableStateOf(false)
@@ -57,14 +46,9 @@ class SplashViewModel(
     }
 
     private suspend fun checkFileExist() {
-        val data = fbApi.getAssetData()
-        data.entries.forEach { (key, value) ->
-            val fileName = "${key}_${value}.json"
-            totalFileName.add(fileName)
-            if (!fileHelper.isExistAsset(fileName)) {
-                downloadFileSet.add(fileName)
-            }
-        }
+        val plan = assetRepository.createFilePlan()
+        totalFileName.addAll(plan.allFileNames)
+        downloadFileSet.addAll(plan.downloadFileNames)
         downloadCheck = true
     }
 
@@ -74,38 +58,14 @@ class SplashViewModel(
     fun startDownload() {
         maxCnt = downloadFileSet.size
         successCnt = 0
-        downloadFileSet.forEach { fileName ->
-            assetStorage.downloadAssetFile(
-                fileName = fileName,
-                fileHelper = fileHelper,
-                successAction = {
-                    successCnt +=1
-                }
-            )
+        assetRepository.download(downloadFileSet) {
+            successCnt += 1
         }
     }
 
     fun readAssetsFile() {
         viewModelScope.launch {
-            totalFileName.forEach { fileName ->
-                val savePath = fileHelper.getAssetFilePath(fileName)
-                runCatching {
-                    val jsonString = fileHelper.readFile(savePath)
-                    if (fileName.startsWith("raid_")) {
-                        val data: List<RaidTypeItem> = Json.decodeFromString(jsonString)
-                        RaidItem.addData(data, assetStorage::getRaidImageUrl)
-                    } else if (fileName.startsWith("synergy_")) {
-                        val data: Map<String, String> = Json.decodeFromString(jsonString)
-                        Synergy.addData(data)
-                    } else if (fileName.startsWith("translate_")) {
-                        val data: List<JsonElement> = Json.decodeFromString(jsonString)
-                        Translate.addData(data)
-                    }
-                }.onFailure {
-                    Napier.e(throwable = it) { "error" }
-                }
-
-            }
+            assetRepository.load(totalFileName)
         }
     }
 }
