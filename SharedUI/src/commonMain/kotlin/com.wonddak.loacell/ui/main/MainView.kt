@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
@@ -57,15 +58,12 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.wonddak.loacell.Const
-import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.SetTwiceClose
 import com.wonddak.loacell.di.LocalLostArkApi
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.network.LostArkResult
 import com.wonddak.loacell.network.lostark.model.EventInfo
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.ui.common.FABInfo
-import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.modal.sheet.RoomSheet
 import com.wonddak.loacell.ui.rememberWebLauncher
 import com.wonddak.loacell.theme.LoaCellRadius
@@ -73,9 +71,6 @@ import com.wonddak.loacell.theme.LoaCellSpace
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
 import kotlinx.coroutines.launch
-import loacell.sharedui.generated.resources.Res
-import loacell.sharedui.generated.resources.room_enter
-import loacell.sharedui.generated.resources.room_make
 
 private const val HomeRoomPreviewCount = 3
 
@@ -135,11 +130,7 @@ fun MainView(
 		//별개로 raidData는 메인에 오면 계속 탐색할 필요가 없다.
 		raidViewModel.stopObserveRaidInfo()
 	}
-	val fabStatus = rememberModalStatus()
 	SetTwiceClose()
-	SetBackAction(fabStatus.status) {
-		fabStatus.hide()
-	}
 	val roomAddSheet = rememberModalStatus()
 	Scaffold(
 		topBar = {
@@ -158,26 +149,6 @@ fun MainView(
 				}
 			)
 		},
-		floatingActionButton = {
-			OpenableFabMenu(
-				fabStatus,
-				arrayListOf(
-					FABInfo.Label(Res.drawable.room_enter, "입장") {
-						navController.navigate(Const.NAV_ROOM_ENTER_MAIN) {
-							launchSingleTop = true
-						}
-					}
-				).also { list ->
-					authViewModel.user?.let {
-						if (!it.isAnonymous) {
-							list.add(FABInfo.Label(Res.drawable.room_make, "만들기") {
-								roomAddSheet.show()
-							})
-						}
-					}
-				}
-			)
-		},
 		snackbarHost = { SnackbarHost(snackbarHostState) },
 	) { innerPadding ->
 		LazyColumn(
@@ -186,15 +157,14 @@ fun MainView(
 			verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(LoaCellSpace.xs),
 		) {
 			item {
-				HomeActionEntry(
-					title = "파티 찾기",
-					description = "참여할 파티를 찾아 바로 시작하세요.",
-					icon = Icons.Filled.People,
-					onClick = {
+				HomeRoomActions(
+					canCreateRoom = authViewModel.user?.isAnonymous == false,
+					onEnterClick = {
 						navController.navigate(Const.NAV_ROOM_ENTER_MAIN) {
 							launchSingleTop = true
 						}
 					},
+					onCreateClick = roomAddSheet::show,
 				)
 			}
 			item {
@@ -267,6 +237,62 @@ fun MainView(
 			raidViewModel.createRoom(title, description, password, authViewModel.user!!.uid) {
 				roomAddSheet.hide()
 			}
+		}
+	}
+}
+
+@Composable
+private fun HomeRoomActions(
+	canCreateRoom: Boolean,
+	onEnterClick: () -> Unit,
+	onCreateClick: () -> Unit,
+) {
+	Row(
+		modifier = Modifier.fillMaxWidth().padding(horizontal = LoaCellSpace.md),
+		horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(LoaCellSpace.sm),
+	) {
+		HomeRoomActionCard(
+			title = "입장",
+			icon = Icons.Filled.People,
+			onClick = onEnterClick,
+			modifier = Modifier.weight(1f),
+		)
+		if (canCreateRoom) {
+			HomeRoomActionCard(
+				title = "만들기",
+				icon = Icons.Filled.Add,
+				onClick = onCreateClick,
+				modifier = Modifier.weight(1f),
+			)
+		}
+	}
+}
+
+@Composable
+private fun HomeRoomActionCard(
+	title: String,
+	icon: androidx.compose.ui.graphics.vector.ImageVector,
+	onClick: () -> Unit,
+	modifier: Modifier = Modifier,
+) {
+	Card(
+		onClick = onClick,
+		modifier = modifier,
+		shape = RoundedCornerShape(LoaCellRadius.card),
+		colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+	) {
+		Row(
+			modifier = Modifier.fillMaxWidth().padding(LoaCellSpace.md),
+			horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+			verticalAlignment = Alignment.CenterVertically,
+		) {
+			Icon(
+				imageVector = icon,
+				contentDescription = null,
+				tint = MaterialTheme.colorScheme.onPrimaryContainer,
+			)
+			Spacer(Modifier.width(LoaCellSpace.xs))
+			Text(title, style = MaterialTheme.typography.titleMedium)
 		}
 	}
 }
