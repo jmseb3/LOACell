@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.theme.LoaCellRadius
@@ -54,7 +55,9 @@ fun LoginLoadingOverlay(
             ),
         ) {
             Column(
-                modifier = Modifier.padding(LoaCellSpace.lg),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(LoaCellSpace.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -67,12 +70,14 @@ fun LoginLoadingOverlay(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(LoaCellSpace.xs))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                 )
             }
         }

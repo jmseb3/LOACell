@@ -2,7 +2,6 @@ package com.wonddak.loacell.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -32,10 +31,9 @@ fun GoogleSignInButton(
     modifier: Modifier = Modifier,
     iconOnly: Boolean = false,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val buttonContainerColor = if (isDarkTheme) Color(0xFF131314) else Color.White
-    val buttonContentColor = if (isDarkTheme) Color(0xFFE3E3E3) else Color(0xFF1F1F1F)
-    val buttonBorderColor = if (isDarkTheme) Color(0xFF8E918F) else Color(0xFF747775)
+    val buttonContainerColor = Color.Black
+    val buttonContentColor = Color.White
+    val buttonBorderColor = Color.Black
 
     if (iconOnly) {
         IconButton(onClick = onClick, modifier = modifier) {
