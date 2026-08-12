@@ -240,20 +240,22 @@ fun RaidItemRow(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (raidInfo.day != Day.NONE) {
-                        Surface(
-                            shape = RoundedCornerShape(LoaCellRadius.image),
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(horizontal = LoaCellSpace.xs, vertical = LoaCellSpace.xxs),
-                                text = "${raidInfo.getDayText()} · ${raidInfo.makeGateText()}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
+                    Surface(
+                        shape = RoundedCornerShape(LoaCellRadius.image),
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(horizontal = LoaCellSpace.xs, vertical = LoaCellSpace.xxs),
+                            text = if (raidInfo.day == Day.NONE) {
+                                raidInfo.makeGateText()
+                            } else {
+                                "${raidInfo.getDayText()} · ${raidInfo.makeGateText()}"
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
