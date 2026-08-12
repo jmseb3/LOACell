@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-08-12",
+    "scope": "app",
+    "macrostructure": "Workbench",
+    "theme": "existing Material 3 blue",
+    "enrichment": "none",
+    "brief": "LoaCell raid party management UI/UX improvements"
+  }
+]

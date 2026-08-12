@@ -1,0 +1,8 @@
+{
+  "date": "2026-08-12",
+  "font_stack": "Roboto Compose resources",
+  "palette": "Material 3 light/dark color schemes",
+  "motion": "Compose AnimatedVisibility",
+  "spacing": "introduced 4dp named scale",
+  "framework": "Kotlin Multiplatform with Compose Material 3"
+}
