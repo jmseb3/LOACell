@@ -4,6 +4,7 @@ import com.wonddak.loacell.network.ApiResult
 import com.wonddak.loacell.network.LostArkResult
 import com.wonddak.loacell.network.lostark.LostArkApi.Companion.API_BASE
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
+import com.wonddak.loacell.network.lostark.model.EventInfo
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
 import com.wonddak.loacell.util.Config
@@ -42,6 +43,9 @@ class LostArkApi(
             token = config.tokenKey.first() ?: API_KEY,
         )
     }
+
+    suspend fun getEvents(): LostArkResult<List<EventInfo>> =
+        module.getEvents(token = config.tokenKey.first() ?: API_KEY)
 
     suspend fun validateToken(token: String): LostArkResult<List<CharacterInfo>> =
         module.getCharacterInfo(
@@ -101,6 +105,28 @@ class LostArkApiModule {
                     else -> {
                         LostArkResult.Fail(code, result.message.toError())
                     }
+                }
+            }
+
+            is ApiResult.Exception -> LostArkResult.Fail(0, result.e.message.toError())
+            is ApiResult.Loading -> LostArkResult.Fail(0, "")
+        }
+    }
+
+    @Throws(Throwable::class)
+    suspend fun getEvents(token: String): LostArkResult<List<EventInfo>> {
+        val result: ApiResult<List<EventInfo>> = httpClient.safeRequest {
+            url.path("news/events")
+            headers.append(HttpHeaders.Authorization, "bearer $token")
+        }
+        return when (result) {
+            is ApiResult.Success -> LostArkResult.Success(data = result.data)
+            is ApiResult.ErrorOnlyMsg -> LostArkResult.FailOnlyMsg(result.message)
+            is ApiResult.Error -> {
+                when (val code = result.response.status.value) {
+                    401 -> LostArkResult.Fail(code, "정상적인 토큰이 아닙니다.")
+                    503 -> LostArkResult.Fail(code, "로스트아크 서버가 점검중 입니다.")
+                    else -> LostArkResult.Fail(code, result.message.toError())
                 }
             }
 
