@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +32,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -95,6 +98,7 @@ fun MainView(
 	var showAllRooms by remember { mutableStateOf(false) }
 	val webLauncher = rememberWebLauncher()
 	val scope = rememberCoroutineScope()
+	val snackbarHostState = remember { SnackbarHostState() }
 
 	suspend fun loadEvents() {
 		eventState = EventSectionState.Loading
@@ -173,7 +177,8 @@ fun MainView(
 					}
 				}
 			)
-		}
+		},
+		snackbarHost = { SnackbarHost(snackbarHostState) },
 	) { innerPadding ->
 		LazyColumn(
 			modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -182,9 +187,25 @@ fun MainView(
 		) {
 			item {
 				HomeActionEntry(
+					title = "파티 찾기",
+					description = "참여할 파티를 찾아 바로 시작하세요.",
+					icon = Icons.Filled.People,
 					onClick = {
 						navController.navigate(Const.NAV_ROOM_ENTER_MAIN) {
 							launchSingleTop = true
+						}
+					},
+				)
+			}
+			item {
+				HomeActionEntry(
+					title = "경매장 검색",
+					description = "경매장 시세를 빠르게 확인하세요.",
+					icon = Icons.Filled.Search,
+					onClick = {
+						scope.launch {
+							snackbarHostState.currentSnackbarData?.dismiss()
+							snackbarHostState.showSnackbar("다음 버전에서 추가됩니다!")
 						}
 					},
 				)
@@ -252,6 +273,9 @@ fun MainView(
 
 @Composable
 private fun HomeActionEntry(
+	title: String,
+	description: String,
+	icon: androidx.compose.ui.graphics.vector.ImageVector,
 	onClick: () -> Unit,
 ) {
 	Card(
@@ -269,23 +293,23 @@ private fun HomeActionEntry(
 				color = MaterialTheme.colorScheme.primary,
 			) {
 				Icon(
-					imageVector = Icons.Filled.People,
+					imageVector = icon,
 					contentDescription = null,
 					modifier = Modifier.padding(LoaCellSpace.sm).size(24.dp),
 					tint = MaterialTheme.colorScheme.onPrimary,
 				)
 			}
 			Column(modifier = Modifier.weight(1f).padding(start = LoaCellSpace.sm)) {
-				Text("파티 찾기", style = MaterialTheme.typography.titleMedium)
+				Text(title, style = MaterialTheme.typography.titleMedium)
 				Text(
-					text = "참여할 파티를 찾아 바로 시작하세요.",
+					text = description,
 					style = MaterialTheme.typography.bodyMedium,
 					color = MaterialTheme.colorScheme.onPrimaryContainer,
 				)
 			}
 			Icon(
 				imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-				contentDescription = "파티 찾기",
+				contentDescription = title,
 				tint = MaterialTheme.colorScheme.onPrimaryContainer,
 			)
 		}
