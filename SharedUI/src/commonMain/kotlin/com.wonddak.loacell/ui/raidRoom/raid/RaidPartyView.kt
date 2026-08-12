@@ -1,3 +1,6 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
+ * component: party roster · genre: modern-minimal · theme: existing Material 3 blue
+ */
 package com.wonddak.loacell.ui.raidRoom.raid
 
 import androidx.compose.foundation.BorderStroke
@@ -29,6 +32,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -53,6 +58,8 @@ import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.getDayText
 import com.wonddak.loacell.model.getRaidText
 import com.wonddak.loacell.model.makeGateText
+import com.wonddak.loacell.theme.LoaCellRadius
+import com.wonddak.loacell.theme.LoaCellSpace
 import com.wonddak.loacell.ui.common.DropDownNameView
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
@@ -71,33 +78,96 @@ fun RaidPartyView(
     deleteAction: (subIndex: Int) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = LoaCellSpace.md, vertical = LoaCellSpace.sm),
+        verticalArrangement = Arrangement.spacedBy(LoaCellSpace.sm),
     ) {
         Card(
-            border = BorderStroke(1.dp, Color.Black),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            shape = RoundedCornerShape(LoaCellRadius.card),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
         ) {
-            LazyColumn(modifier = Modifier.padding(5.dp)) {
-                itemsIndexed(list) { index, item ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().height(55.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+            Column(modifier = Modifier.padding(LoaCellSpace.md)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "파티원",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(LoaCellRadius.image),
+                        color = MaterialTheme.colorScheme.secondaryContainer,
                     ) {
-                        Column {
-                            if (item != null) {
-                                DropDownNameView(name = item.name,
-                                    textAlign = TextAlign.Start,
-                                    textHorizontalAlignment = Alignment.Start,
-                                    otherContent = {
-                                        Row() {
-                                            Text(text = item.className)
-                                            Spacer(Modifier.width(10.dp))
-                                            Text(text = item.getLevel().toString())
-                                        }
-                                    })
-                            } else {
-                                Text(text = "캐릭터를 추가해주세요")
+                        Text(
+                            text = "${list.count { it != null }}/${list.size}",
+                            modifier = Modifier.padding(
+                                horizontal = LoaCellSpace.xs,
+                                vertical = LoaCellSpace.xxs,
+                            ),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(LoaCellSpace.sm))
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    itemsIndexed(list) { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 56.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Surface(
+                            modifier = Modifier.size(LoaCellSpace.lg),
+                            shape = RoundedCornerShape(LoaCellRadius.image),
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                        ) {
+                            Text(
+                                text = "${index + 1}",
+                                modifier = Modifier.wrapContentSize(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                        }
+                        if (item != null) {
+                            DropDownNameView(
+                                name = item.name,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = LoaCellSpace.sm),
+                                bold = true,
+                                textAlign = TextAlign.Start,
+                                textHorizontalAlignment = Alignment.Start,
+                                otherContent = {
+                                    Text(
+                                        text = "${item.className} · Lv. ${item.level}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                },
+                            )
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = LoaCellSpace.sm),
+                            ) {
+                                Text(
+                                    text = "빈 자리",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Text(
+                                    text = "파티원을 추가하세요.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
                             }
                         }
                         IconButton(onClick = {
@@ -114,26 +184,42 @@ fun RaidPartyView(
                             }
                             Icon(
                                 painter = painterResource(iconRes),
-                                null,
-                                modifier = Modifier.size(30.dp)
+                                contentDescription = if (item == null) "파티원 추가" else "${item.name} 삭제",
+                                modifier = Modifier.size(24.dp),
+                                tint = if (item == null) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                },
                             )
                         }
+                    }
+                    if (index < list.lastIndex) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
                     }
                 }
             }
         }
 
         Card(
-            border = BorderStroke(1.dp, Color.Black),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp)
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(LoaCellRadius.card),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
         ) {
             Column(
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier.padding(LoaCellSpace.md),
+                verticalArrangement = Arrangement.spacedBy(LoaCellSpace.xs),
             ) {
-                Text(text = "시너지")
-                Spacer(Modifier.height(10.dp))
-                Synergy.getSynergyList(list).forEach {
-                    Text(it)
+                Text(text = "시너지", style = MaterialTheme.typography.titleSmall)
+                Synergy.getSynergyList(list).forEach { synergy ->
+                    Text(
+                        text = synergy,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }

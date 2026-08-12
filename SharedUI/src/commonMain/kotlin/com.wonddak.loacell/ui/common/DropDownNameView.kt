@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenu
@@ -40,6 +41,7 @@ fun DropDownNameView(
     textAlign: TextAlign? = null,
     fontSize: TextUnit? = null,
     otherContent: (@Composable () -> Unit)? = null,
+    modifier: Modifier = Modifier,
 ) {
     val webLauncher = rememberWebLauncher()
     val config = LocalConfig.current
@@ -47,9 +49,11 @@ fun DropDownNameView(
     var openMenu by remember {
         mutableStateOf(false)
     }
-    Box {
+    Box(modifier = modifier) {
         Column(
-            modifier = Modifier.noRippleClickable { openMenu = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClickable { openMenu = true },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = textHorizontalAlignment ?: Alignment.CenterHorizontally
         ) {
@@ -57,7 +61,7 @@ fun DropDownNameView(
                 text = name,
                 fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
                 fontSize = fontSize ?: TextUnit.Unspecified,
-                textAlign = textAlign ?: TextAlign.Center
+                textAlign = textAlign ?: TextAlign.Center,
             )
             otherContent?.invoke()
         }
