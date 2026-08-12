@@ -37,6 +37,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.wonddak.loacell.model.Filter
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.getDayText
+import com.wonddak.loacell.model.getImage
+import com.wonddak.loacell.model.getRaidText
+import com.wonddak.loacell.model.makeGateText
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.rememberDataModalStatus
 import com.wonddak.loacell.rememberModalStatus

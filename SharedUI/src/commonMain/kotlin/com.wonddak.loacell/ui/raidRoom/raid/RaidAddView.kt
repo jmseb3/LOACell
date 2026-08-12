@@ -46,6 +46,10 @@ import com.wonddak.loacell.model.Day
 import com.wonddak.loacell.model.Level
 import com.wonddak.loacell.model.RaidData
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.getMinLevel
+import com.wonddak.loacell.model.getTimeText
+import com.wonddak.loacell.model.level
+import com.wonddak.loacell.model.raidItem
 import com.wonddak.loacell.noRippleClickable
 import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.ui.common.CheckBoxRow

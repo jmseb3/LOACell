@@ -50,6 +50,9 @@ import com.wonddak.loacell.assetData.Synergy
 import com.wonddak.loacell.model.Character
 import com.wonddak.loacell.model.Day
 import com.wonddak.loacell.model.RaidInfo
+import com.wonddak.loacell.model.getDayText
+import com.wonddak.loacell.model.getRaidText
+import com.wonddak.loacell.model.makeGateText
 import com.wonddak.loacell.ui.common.DropDownNameView
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController

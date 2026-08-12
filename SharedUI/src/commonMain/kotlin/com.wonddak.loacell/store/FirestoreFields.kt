@@ -18,3 +18,19 @@ internal object UserDocumentField {
     const val CLASS_NAME = "className"
     const val LEVEL = "level"
 }
+
+internal object RaidDocumentField {
+    const val TITLE = "title"
+    const val TYPE = "type"
+    const val DIFFICULTY = "difficulty"
+    const val START_GATE_NUMBER = "startGateNumber"
+    const val END_GATE_NUMBER = "endGateNumber"
+    const val FINISH = "finish"
+    const val PARTY_1 = "party1"
+    const val PARTY_2 = "party2"
+    const val PARTY_3 = "party3"
+    const val PARTY_4 = "party4"
+    const val DAY = "day"
+    const val HOUR = "hour"
+    const val MINUTE = "minute"
+}
