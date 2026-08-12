@@ -18,8 +18,6 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.network.firebase.model.FBDataItem
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.store.CommonRoomHelper
-import com.wonddak.loacell.store.Error
 import com.wonddak.loacell.ui.common.LoadingView
 import com.wonddak.loacell.ui.common.SectionCardView
 import com.wonddak.loacell.ui.modal.dialog.ConfirmDialog
@@ -71,23 +69,25 @@ fun SettingRoomView(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        SettingRoomInfo(roomInfo, raidList, userList, backToHome, showSnackBar)
+        SettingRoomInfo(raidViewModel, roomInfo, raidList, userList, backToHome, showSnackBar)
         HorizontalDivider()
         UserUidList(
+            raidViewModel,
             raidViewModel.fetch,
             roomInfo,
             result,
             ownerChangeSuccess = {
                 backToHome()
             }
-        ) { err ->
-            showSnackBar("변경에 실패했습니다.${err.errorMsg}")
+        ) { error ->
+            showSnackBar("변경에 실패했습니다.$error")
         }
     }
 }
 
 @Composable
 fun SettingRoomInfo(
+    raidViewModel: RaidViewModel,
     roomInfo: RoomInfo,
     raidList: List<RaidInfo>,
     userList: List<UserInfo>,
@@ -153,17 +153,17 @@ fun SettingRoomInfo(
         bodyText = "정말 해당 방에서 나갈까요?\n 삭제된 데이터는 복구가 불가능합니다.",
         confirmButtonText = "나가기",
         confirm = {
-            CommonRoomHelper.deleteRoom(
+            raidViewModel.deleteRoom(
                 roomInfo.uniqueId,
-                successAction = {
+                onSuccess = {
                     scope.launch {
                         showExitAlert.hide()
                         backToHome()
                     }
                 },
-                failAction = {
+                onFailure = {
                     showExitAlert.hide()
-                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요${it.errorMsg}")
+                    showSnackBar("나가기에 실패했습니다. 관리자에게 문의하세요$it")
                 }
             )
         }
@@ -172,7 +172,7 @@ fun SettingRoomInfo(
         showRoomEdit,
         roomInfo
     ) { title, description, password ->
-        CommonRoomHelper.updateRoom(
+        raidViewModel.updateRoom(
             roomInfo.uniqueId,
             title,
             description,
@@ -185,11 +185,12 @@ fun SettingRoomInfo(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserUidList(
+    raidViewModel: RaidViewModel,
     fetch: Boolean,
     roomInfo: RoomInfo,
     result: List<FBDataItem>,
     ownerChangeSuccess: () -> Unit,
-    ownerChangeFail: (error: Error) -> Unit,
+    ownerChangeFail: (error: String) -> Unit,
 ) {
     if (!fetch) {
         LoadingView("유저 정보를 가져옵니다.", Color.White.copy(0.3f))
@@ -215,18 +216,18 @@ fun UserUidList(
                         }
                         items(filter) { uid ->
                             UserUidItem(
+                                raidViewModel = raidViewModel,
                                 roomId = roomInfo.uniqueId,
                                 name = name,
                                 uid = uid,
                                 fbData = result
                             ) {
-                                CommonRoomHelper.changeOwner(
+                                raidViewModel.changeRoomOwner(
                                     roomId = roomInfo.uniqueId,
-                                    preOwner = roomInfo.owner,
-                                    newOwnerUid = uid,
-                                    commonAction = {},
-                                    successAction = ownerChangeSuccess,
-                                    failAction = ownerChangeFail
+                                    previousOwner = roomInfo.owner,
+                                    newOwner = uid,
+                                    onSuccess = ownerChangeSuccess,
+                                    onFailure = ownerChangeFail,
                                 )
                             }
                         }
@@ -239,6 +240,7 @@ fun UserUidList(
 
 @Composable
 fun UserUidItem(
+    raidViewModel: RaidViewModel,
     roomId: String,
     name: String,
     uid: String,
@@ -276,16 +278,12 @@ fun UserUidItem(
         title = "내보내기",
         bodyText = "해당 유저를 방에서 정말 내보내시겠습니까?",
         confirm = {
-            if (name == RoomInfo.RoomRole.MANAGER.toName) {
-                CommonRoomHelper.exitEditableUserFromRoom(roomId, listOf(uid)) {
-                    showConfirm.hide()
-                }
+            val role = when (name) {
+                RoomInfo.RoomRole.MANAGER.toName -> RoomInfo.RoomRole.MANAGER
+                RoomInfo.RoomRole.USER.toName -> RoomInfo.RoomRole.USER
+                else -> RoomInfo.RoomRole.NONE
             }
-            if (name == RoomInfo.RoomRole.USER.toName) {
-                CommonRoomHelper.exitEnterUserFromRoom(roomId, listOf(uid)) {
-                    showConfirm.hide()
-                }
-            }
+            raidViewModel.removeRoomUser(roomId, uid, role, showConfirm::hide)
         }
     )
 

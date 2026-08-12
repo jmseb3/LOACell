@@ -37,4 +37,23 @@ interface RoomRepository {
     fun removeEditableUsers(roomId: String, userIds: List<String>, completed: () -> Unit)
 
     fun removeEnteredUsers(roomId: String, userIds: List<String>, completed: () -> Unit)
+
+    fun update(
+        roomId: String,
+        title: String,
+        description: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    )
+
+    fun delete(roomId: String, onSuccess: () -> Unit, onFailure: (String) -> Unit)
+
+    fun changeOwner(
+        roomId: String,
+        previousOwner: String,
+        newOwner: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    )
 }

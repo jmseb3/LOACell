@@ -313,5 +313,32 @@ class RaidViewModel(
         party: List<String>,
         completed: () -> Unit,
     ) = raidRepository.updateParty(raidInfo.roomId, raidInfo.raidId, partyNumber, party, completed)
+
+    fun updateRoom(
+        roomId: String,
+        title: String,
+        description: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = roomRepository.update(roomId, title, description, password, onSuccess, onFailure)
+
+    fun deleteRoom(roomId: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+        roomRepository.delete(roomId, onSuccess, onFailure)
+
+    fun changeRoomOwner(
+        roomId: String,
+        previousOwner: String,
+        newOwner: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = roomRepository.changeOwner(roomId, previousOwner, newOwner, onSuccess, onFailure)
+
+    fun removeRoomUser(roomId: String, userId: String, role: RoomInfo.RoomRole, completed: () -> Unit) =
+        when (role) {
+            RoomInfo.RoomRole.MANAGER -> roomRepository.removeEditableUsers(roomId, listOf(userId), completed)
+            RoomInfo.RoomRole.USER -> roomRepository.removeEnteredUsers(roomId, listOf(userId), completed)
+            RoomInfo.RoomRole.OWNER, RoomInfo.RoomRole.NONE -> Unit
+        }
     //endregion
 }

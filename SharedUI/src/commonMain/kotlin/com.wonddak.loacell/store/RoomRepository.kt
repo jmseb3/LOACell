@@ -114,6 +114,47 @@ class FirestoreRoomRepository(
     override fun removeEnteredUsers(roomId: String, userIds: List<String>, completed: () -> Unit) =
         removeUsers(roomId, userIds, RoomDocumentField.ENTER_USER, completed)
 
+    override fun update(
+        roomId: String,
+        title: String,
+        description: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = room(roomId).update(
+        data = mapOf(
+            RoomDocumentField.TITLE to title,
+            RoomDocumentField.DESCRIPTION to description,
+            RoomDocumentField.PASSWORD to password,
+        ),
+        successAction = onSuccess,
+        failAction = { onFailure(it.errorMsg) },
+    )
+
+    override fun delete(roomId: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        room(roomId).delete(
+            successAction = onSuccess,
+            failAction = { onFailure(it.errorMsg) },
+        )
+    }
+
+    override fun changeOwner(
+        roomId: String,
+        previousOwner: String,
+        newOwner: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) = fireStore.runBatch(
+        write = { batch ->
+            val room = room(roomId)
+            batch.update(room, RoomDocumentField.ENTER_USER, CommonFieldValue.arrayUnion(previousOwner))
+            batch.update(room, RoomDocumentField.OWNER, newOwner)
+            batch.update(room, RoomDocumentField.ENTER_USER, CommonFieldValue.arrayRemove(newOwner))
+        },
+        successAction = onSuccess,
+        failAction = { onFailure(it.errorMsg) },
+    )
+
     private fun rooms(): CommonCollection = fireStore.collection("rooms")
 
     private fun room(roomId: String): CommonDocument = rooms().document(roomId)
