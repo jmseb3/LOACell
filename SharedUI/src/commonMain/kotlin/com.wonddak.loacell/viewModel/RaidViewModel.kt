@@ -17,8 +17,7 @@ import com.wonddak.loacell.network.firebase.model.FBRequest
 import com.wonddak.loacell.repository.Observation
 import com.wonddak.loacell.repository.RoomRepository
 import com.wonddak.loacell.repository.UserRepository
-import com.wonddak.loacell.store.CommonListenerRegistration
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.repository.RaidRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -40,6 +39,7 @@ class RaidViewModel(
     private val fbApi: FBApi,
     private val roomRepository: RoomRepository,
     private val userRepository: UserRepository,
+    private val raidRepository: RaidRepository,
 ) : ViewModel() {
 
 
@@ -113,7 +113,7 @@ class RaidViewModel(
     //endregion
 
     //region raidInfo Method
-    private var raidListenerRegistration: CommonListenerRegistration? = null
+    private var raidObservation: Observation? = null
     private var userObservation: Observation? = null
     var lastTabIndex = RoomState.Raid.index
 
@@ -131,8 +131,8 @@ class RaidViewModel(
             stopObserveRaidInfo()
             roomInfo.let {
                 role = it.getRole(uid)
-                raidListenerRegistration =
-                    CommonRaidHelper.observe(it.uniqueId) {
+                raidObservation =
+                    raidRepository.observe(it.uniqueId) {
                         raidList = it
                     }
                 userObservation =
@@ -151,9 +151,9 @@ class RaidViewModel(
     }
 
     fun stopObserveRaidInfo() {
-        raidListenerRegistration?.remove()
+        raidObservation?.stop()
         userObservation?.stop()
-        raidListenerRegistration = null
+        raidObservation = null
         userObservation = null
 
         this.lastTabIndex = RoomState.Raid.index
@@ -295,5 +295,23 @@ class RaidViewModel(
 
     fun deleteUser(userInfo: UserInfo) =
         userRepository.delete(userInfo.roomId, userInfo.name, onFailure = {}, onSuccess = {})
+
+    fun addRaid(raidInfo: RaidInfo, onSuccess: () -> Unit) =
+        raidRepository.add(raidInfo, onFailure = {}, onSuccess = onSuccess)
+
+    fun updateRaid(raidInfo: RaidInfo, onSuccess: () -> Unit) =
+        raidRepository.update(raidInfo, onFailure = {}, onSuccess = onSuccess)
+
+    fun deleteRaid(raidInfo: RaidInfo, completed: () -> Unit) =
+        raidRepository.delete(raidInfo.roomId, raidInfo.raidId, completed, completed)
+
+    fun toggleRaidFinish(raidInfo: RaidInfo) = raidRepository.toggleFinish(raidInfo)
+
+    fun updateRaidParty(
+        raidInfo: RaidInfo,
+        partyNumber: Int,
+        party: List<String>,
+        completed: () -> Unit,
+    ) = raidRepository.updateParty(raidInfo.roomId, raidInfo.raidId, partyNumber, party, completed)
     //endregion
 }

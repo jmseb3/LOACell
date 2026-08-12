@@ -208,6 +208,7 @@ fun NavGraphBuilder.roomGraph(
             val selectedRoomInfo by raidViewModel.selectedRoomInfo.collectAsState(null)
             selectedRoomInfo?.let {
                 RaidAddView(
+                    raidViewModel = raidViewModel,
                     roomId = it.uniqueId,
                     prevData = null,
                     onBack = navController::depth3toRoom
@@ -221,6 +222,7 @@ fun NavGraphBuilder.roomGraph(
             val raidInfo: RaidInfo? = raidViewModel.editItem
             selectedRoomInfo?.let {
                 RaidAddView(
+                    raidViewModel = raidViewModel,
                     roomId = it.uniqueId,
                     prevData = raidInfo,
                     onBack = navController::popBackStack

@@ -27,7 +27,6 @@ import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.UserInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.rememberPartyIndexModalStatus
-import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.common.FABInfo
 import com.wonddak.loacell.ui.common.OpenableFabMenu
 import com.wonddak.loacell.ui.main.LoaCellTopAppBar
@@ -79,7 +78,11 @@ fun RaidDetailView(
                 LoaCellTopAppBar(
                     raidInfo.title,
                     actionContent = {
-                        FinishButton(raidInfo, modifier = Modifier.padding(end = 5.dp))
+                        FinishButton(
+                            raidInfo = raidInfo,
+                            modifier = Modifier.padding(end = 5.dp),
+                            onToggleFinish = { raidViewModel.toggleRaidFinish(raidInfo) },
+                        )
                     },
                     onBack = onBack
                 )
@@ -195,9 +198,11 @@ fun RaidDetailView(
             raidUserDeleteDialogStatus,
             title = Dialog.CHARACTER_DELETE.title,
             confirm = {
-                CommonRaidHelper.deletePartyList(
-                    raidUserDeleteDialogStatus,
-                    raidInfo
+                raidViewModel.updateRaidParty(
+                    raidInfo = raidInfo,
+                    partyNumber = raidUserDeleteDialogStatus.partyNumber,
+                    party = requireNotNull(raidUserDeleteDialogStatus.subItem),
+                    completed = raidUserDeleteDialogStatus::hide,
                 )
             },
         ) {
@@ -208,17 +213,10 @@ fun RaidDetailView(
             raidDetailDeleteDialog,
             title = Dialog.RAID_DELETE.title,
             confirm = {
-                CommonRaidHelper.delete(
-                    raidInfo.roomId,
-                    raidInfo.raidId,
-                    {
-                        raidDetailDeleteDialog.hide()
-                    },
-                    {
-                        raidDetailDeleteDialog.hide()
-                        onBack()
-                    }
-                )
+                raidViewModel.deleteRaid(raidInfo) {
+                    raidDetailDeleteDialog.hide()
+                    onBack()
+                }
             },
         ) {
             Text(text = "레이드 정보를 삭제 하시겠습니까?")
@@ -228,7 +226,15 @@ fun RaidDetailView(
             raidUserAddSheetStatus,
             getUserMap(raidInfo, raidList, userList)
         ) { character ->
-            CommonRaidHelper.changePartyList(raidUserAddSheetStatus, raidInfo, character)
+            val party = requireNotNull(raidUserAddSheetStatus.subItem).toMutableList().also {
+                it[raidUserAddSheetStatus.subIndex] = character.name
+            }
+            raidViewModel.updateRaidParty(
+                raidInfo = raidInfo,
+                partyNumber = raidUserAddSheetStatus.partyNumber,
+                party = party,
+                completed = raidUserAddSheetStatus::hide,
+            )
         }
 
         roomInfo?.let {

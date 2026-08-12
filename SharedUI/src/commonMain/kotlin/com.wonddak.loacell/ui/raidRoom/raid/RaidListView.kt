@@ -40,7 +40,6 @@ import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.model.RoomType
 import com.wonddak.loacell.rememberDataModalStatus
 import com.wonddak.loacell.rememberModalStatus
-import com.wonddak.loacell.store.CommonRaidHelper
 import com.wonddak.loacell.ui.modal.dialog.SelectIdDialog
 import com.wonddak.loacell.ui.modal.sheet.FilterSheet
 import com.wonddak.loacell.ui.raidRoom.raid.calendar.RaidCalendarView
@@ -118,11 +117,11 @@ fun RaidListView(
                 ) {
                     items(filterList) { raidInfo ->
                         RaidItemRow(
-                            Modifier.padding(vertical = 5.dp, horizontal = 5.dp),
-                            raidInfo
-                        ) {
-                            navigation(raidInfo)
-                        }
+                            modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp),
+                            raidInfo = raidInfo,
+                            onToggleFinish = { raidViewModel.toggleRaidFinish(raidInfo) },
+                            onClick = { navigation(raidInfo) },
+                        )
                     }
                 }
             } else {
@@ -167,6 +166,7 @@ fun RaidListView(
 fun RaidItemRow(
     modifier: Modifier = Modifier,
     raidInfo: RaidInfo,
+    onToggleFinish: () -> Unit,
     onClick: () -> Unit,
 ) {
     val size = 100.dp
@@ -224,8 +224,9 @@ fun RaidItemRow(
                 }
             }
             FinishButton(
-                raidInfo,
-                Modifier.align(Alignment.BottomEnd)
+                raidInfo = raidInfo,
+                modifier = Modifier.align(Alignment.BottomEnd),
+                onToggleFinish = onToggleFinish,
             )
         }
     }
@@ -235,6 +236,7 @@ fun RaidItemRow(
 fun FinishButton(
     raidInfo: RaidInfo,
     modifier: Modifier = Modifier,
+    onToggleFinish: () -> Unit,
 ) {
     val icon = if (raidInfo.isFinish) {
         Res.drawable.task_finish_done
@@ -243,9 +245,7 @@ fun FinishButton(
     }
     IconButton(
         modifier = modifier.size(30.dp),
-        onClick = {
-            CommonRaidHelper.updateFinish(raidInfo)
-        }
+        onClick = onToggleFinish,
     ) {
         Icon(
             painter = painterResource(icon),

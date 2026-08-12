@@ -47,7 +47,7 @@ import com.wonddak.loacell.model.Level
 import com.wonddak.loacell.model.RaidData
 import com.wonddak.loacell.model.RaidInfo
 import com.wonddak.loacell.noRippleClickable
-import com.wonddak.loacell.store.CommonRaidHelper
+import com.wonddak.loacell.viewModel.RaidViewModel
 import com.wonddak.loacell.ui.common.CheckBoxRow
 import com.wonddak.loacell.ui.common.DropDownTextField
 import com.wonddak.loacell.ui.common.LengthLimitTextField
@@ -61,6 +61,7 @@ import kotlin.math.min
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RaidAddView(
+    raidViewModel: RaidViewModel,
     roomId: String,
     prevData: RaidInfo? = null,
     onBack: () -> Unit,
@@ -360,25 +361,9 @@ fun RaidAddView(
             OutlinedButton(
                 onClick = {
                     if (prevData == null) {
-                        CommonRaidHelper.add(
-                            raidInfo,
-                            failAction = {
-
-                            },
-                            successAction = {
-                                onBack()
-                            }
-                        )
+                        raidViewModel.addRaid(raidInfo, onBack)
                     } else {
-                        CommonRaidHelper.update(
-                            raidInfo,
-                            failAction = {
-
-                            },
-                            successAction = {
-                                onBack()
-                            }
-                        )
+                        raidViewModel.updateRaid(raidInfo, onBack)
                     }
                 },
                 enabled =
