@@ -170,8 +170,9 @@ fun MainView(
 			item {
 				HomeActionEntry(
 					title = "경매장 검색",
-					description = "경매장 시세를 빠르게 확인하세요.",
+					description = "다음 버전에서 사용할 수 있어요.",
 					icon = Icons.Filled.Search,
+					status = "준비 중",
 					onClick = {
 						scope.launch {
 							snackbarHostState.currentSnackbarData?.dismiss()
@@ -253,16 +254,16 @@ private fun HomeRoomActions(
 	) {
 		HomeRoomActionCard(
 			title = "입장",
-			description = "파티에 참여하세요.",
 			icon = Icons.Filled.People,
+			isPrimary = true,
 			onClick = onEnterClick,
 			modifier = Modifier.weight(1f),
 		)
 		if (canCreateRoom) {
 			HomeRoomActionCard(
 				title = "만들기",
-				description = "새 파티를 만드세요.",
 				icon = Icons.Filled.Add,
+				isPrimary = false,
 				onClick = onCreateClick,
 				modifier = Modifier.weight(1f),
 			)
@@ -273,8 +274,8 @@ private fun HomeRoomActions(
 @Composable
 private fun HomeRoomActionCard(
 	title: String,
-	description: String,
 	icon: androidx.compose.ui.graphics.vector.ImageVector,
+	isPrimary: Boolean,
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
@@ -282,7 +283,13 @@ private fun HomeRoomActionCard(
 		onClick = onClick,
 		modifier = modifier,
 		shape = RoundedCornerShape(LoaCellRadius.card),
-		colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+		colors = CardDefaults.cardColors(
+			containerColor = if (isPrimary) {
+				MaterialTheme.colorScheme.primary
+			} else {
+				MaterialTheme.colorScheme.primaryContainer
+			},
+		),
 	) {
 		Row(
 			modifier = Modifier.fillMaxWidth().padding(LoaCellSpace.md),
@@ -290,29 +297,33 @@ private fun HomeRoomActionCard(
 		) {
 			Surface(
 				shape = RoundedCornerShape(LoaCellRadius.image),
-				color = MaterialTheme.colorScheme.primary,
+				color = if (isPrimary) {
+					MaterialTheme.colorScheme.onPrimary
+				} else {
+					MaterialTheme.colorScheme.primary
+				},
 			) {
 				Icon(
 					imageVector = icon,
 					contentDescription = null,
 					modifier = Modifier.padding(LoaCellSpace.xs).size(20.dp),
-					tint = MaterialTheme.colorScheme.onPrimary,
+					tint = if (isPrimary) {
+						MaterialTheme.colorScheme.primary
+					} else {
+						MaterialTheme.colorScheme.onPrimary
+					},
 				)
 			}
-			Column(modifier = Modifier.weight(1f).padding(start = LoaCellSpace.xs)) {
-				Text(title, style = MaterialTheme.typography.titleMedium)
-				Text(
-					text = description,
-					style = MaterialTheme.typography.bodySmall,
-					color = MaterialTheme.colorScheme.onPrimaryContainer,
-					maxLines = 1,
-					overflow = TextOverflow.Ellipsis,
-				)
-			}
+			Text(
+				text = title,
+				modifier = Modifier.weight(1f).padding(start = LoaCellSpace.xs),
+				style = MaterialTheme.typography.titleMedium,
+				color = if (isPrimary) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
+			)
 			Icon(
 				imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-				contentDescription = title,
-				tint = MaterialTheme.colorScheme.onPrimaryContainer,
+				contentDescription = null,
+				tint = if (isPrimary) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
 			)
 		}
 	}
@@ -323,13 +334,20 @@ private fun HomeActionEntry(
 	title: String,
 	description: String,
 	icon: androidx.compose.ui.graphics.vector.ImageVector,
+	status: String? = null,
 	onClick: () -> Unit,
 ) {
 	Card(
 		onClick = onClick,
 		modifier = Modifier.fillMaxWidth().padding(horizontal = LoaCellSpace.md),
 		shape = RoundedCornerShape(LoaCellRadius.card),
-		colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+		colors = CardDefaults.cardColors(
+			containerColor = if (status == null) {
+				MaterialTheme.colorScheme.primaryContainer
+			} else {
+				MaterialTheme.colorScheme.surfaceContainerLow
+			},
+		),
 	) {
 		Row(
 			modifier = Modifier.fillMaxWidth().padding(LoaCellSpace.md),
@@ -337,13 +355,21 @@ private fun HomeActionEntry(
 		) {
 			Surface(
 				shape = RoundedCornerShape(LoaCellRadius.image),
-				color = MaterialTheme.colorScheme.primary,
+				color = if (status == null) {
+					MaterialTheme.colorScheme.primary
+				} else {
+					MaterialTheme.colorScheme.secondaryContainer
+				},
 			) {
 				Icon(
 					imageVector = icon,
 					contentDescription = null,
 					modifier = Modifier.padding(LoaCellSpace.sm).size(24.dp),
-					tint = MaterialTheme.colorScheme.onPrimary,
+					tint = if (status == null) {
+						MaterialTheme.colorScheme.onPrimary
+					} else {
+						MaterialTheme.colorScheme.onSecondaryContainer
+					},
 				)
 			}
 			Column(modifier = Modifier.weight(1f).padding(start = LoaCellSpace.sm)) {
@@ -351,14 +377,32 @@ private fun HomeActionEntry(
 				Text(
 					text = description,
 					style = MaterialTheme.typography.bodyMedium,
-					color = MaterialTheme.colorScheme.onPrimaryContainer,
+					color = if (status == null) {
+						MaterialTheme.colorScheme.onPrimaryContainer
+					} else {
+						MaterialTheme.colorScheme.onSurfaceVariant
+					},
 				)
 			}
-			Icon(
-				imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-				contentDescription = title,
-				tint = MaterialTheme.colorScheme.onPrimaryContainer,
-			)
+			if (status == null) {
+				Icon(
+					imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onPrimaryContainer,
+				)
+			} else {
+				Surface(
+					shape = RoundedCornerShape(LoaCellRadius.image),
+					color = MaterialTheme.colorScheme.secondaryContainer,
+				) {
+					Text(
+						text = status,
+						modifier = Modifier.padding(horizontal = LoaCellSpace.xs, vertical = LoaCellSpace.xxs),
+						style = MaterialTheme.typography.labelMedium,
+						color = MaterialTheme.colorScheme.onSecondaryContainer,
+					)
+				}
+			}
 		}
 	}
 }
