@@ -7,14 +7,12 @@ import com.wonddak.loacell.network.lostark.model.CharacterInfo
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
 import com.wonddak.loacell.util.Config
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
@@ -25,10 +23,13 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 
+@SingleIn(AppScope::class)
 @Inject
 class LostArkApi(
     private val config: Config
 ) {
+    private val module = LostArkApiModule()
+
     companion object {
         const val API_KEY =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAxOTg4MzgifQ.PaE7BfPP2E7kl94kIEs4xHJ6jfZrH6URxNTGSUQbRNROiysUzPfIIVazL5sS3KZ80ry29nvQh8ZbnjHOT1OrwazZNqfu7u5vQweb3hhyBSbV2lCKsgkBA3ruZclvAoYV8rIokKb2QpRSHkDO0vicRyhFR7QtYal-3_NkZ2XW56Qq6pssMTerRbIBA4KtiWAm2gSaLraDJeizrS7v7C3ou5lkUpZic_5PefIIyRS9bDDRJq2N1PkVh9ASLoYVnKgXlBCNmDONAhUDg1hsxTGh00lExQCI6KSGNpYGkpi4YtaOPnhNyFBbC-1d4byozg1WyTjSMIXLlUqsyhRSWYFylw"
@@ -36,31 +37,22 @@ class LostArkApi(
     }
 
     suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
-        val module = LostArkApiModule(config.tokenKey.first() ?: API_KEY)
-        return try {
-            module.getCharacterInfo(characterName)
-        } finally {
-            module.close()
-        }
+        return module.getCharacterInfo(
+            characterName = characterName,
+            token = config.tokenKey.first() ?: API_KEY,
+        )
     }
 }
 
-class LostArkApiModule(
-    token: String
-) {
+class LostArkApiModule {
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
-                prettyPrint = true
                 isLenient = true
                 ignoreUnknownKeys = true
             })
         }
         install(Resources)
-        install(Logging) {
-            logger = Logger.SIMPLE
-            level = LogLevel.ALL
-        }
         expectSuccess = true
         defaultRequest {
             url {
@@ -70,7 +62,6 @@ class LostArkApiModule(
             headers {
                 append(HttpHeaders.Accept, "application/json")
                 append(HttpHeaders.ContentType, "application/json")
-                append("authorization", "bearer $token")
             }
         }
     }
@@ -80,9 +71,13 @@ class LostArkApiModule(
     }
 
     @Throws(Throwable::class)
-    suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
+    suspend fun getCharacterInfo(
+        characterName: String,
+        token: String,
+    ): LostArkResult<List<CharacterInfo>> {
         val result: ApiResult<List<CharacterInfo>> = httpClient.safeRequest {
             url.path("characters/${characterName.encodeURLPath()}/siblings")
+            headers.append(HttpHeaders.Authorization, "bearer $token")
         }
         return when (result) {
             is ApiResult.Success -> LostArkResult.Success(data = result.data)

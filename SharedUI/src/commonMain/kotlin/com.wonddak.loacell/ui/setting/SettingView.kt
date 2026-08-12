@@ -188,9 +188,9 @@ fun SettingView(
                     val config = LocalConfig.current
                     LaunchedEffect(true) {
                         delay(1000L)
-                        val api = LostArkApiModule(token)
+                        val api = LostArkApiModule()
                         try {
-                            api.getCharacterInfo("아이오에스티떡상가즈아")
+                            api.getCharacterInfo("아이오에스티떡상가즈아", token)
                                 .onSuccess {
                                     title = "정상 확인 되었습니다."
                                     delay(1000)
