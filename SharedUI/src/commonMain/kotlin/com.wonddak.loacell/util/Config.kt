@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
 
@@ -66,11 +67,39 @@ class Config(provider: DataStoreProvider) {
             it[stringPreferencesKey(ConfigKeys.TOKEN_KEY)] = token
         }
     }
+
+    suspend fun getEventCache(): EventCache? = dataStore.data.first().let { preferences ->
+        val events = preferences[stringPreferencesKey(ConfigKeys.EventCache)] ?: return null
+        val updatedAt = preferences[stringPreferencesKey(ConfigKeys.EventCacheUpdatedAt)]?.toLongOrNull()
+            ?: return null
+        EventCache(events = events, updatedAt = updatedAt)
+    }
+
+    suspend fun updateEventCache(events: String, updatedAt: Long) {
+        dataStore.edit {
+            it[stringPreferencesKey(ConfigKeys.EventCache)] = events
+            it[stringPreferencesKey(ConfigKeys.EventCacheUpdatedAt)] = updatedAt.toString()
+        }
+    }
+
+    suspend fun clearEventCache() {
+        dataStore.edit {
+            it.remove(stringPreferencesKey(ConfigKeys.EventCache))
+            it.remove(stringPreferencesKey(ConfigKeys.EventCacheUpdatedAt))
+        }
+    }
 }
+
+data class EventCache(
+    val events: String,
+    val updatedAt: Long,
+)
 
 object ConfigKeys {
     const val DefaultUrl = "default_url"
     const val TOKEN_KEY = "tokenKey"
+    const val EventCache = "event_cache"
+    const val EventCacheUpdatedAt = "event_cache_updated_at"
 }
 
 const val ILOA = "https://iloa.gg/character/"

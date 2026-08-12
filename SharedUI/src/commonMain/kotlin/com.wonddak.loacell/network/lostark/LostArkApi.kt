@@ -22,7 +22,11 @@ import io.ktor.http.encodeURLPath
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.time.Clock
 
 @SingleIn(AppScope::class)
 @Inject
@@ -30,11 +34,13 @@ class LostArkApi(
     private val config: Config
 ) {
     private val module = LostArkApiModule()
+    private val eventCacheMutex = Mutex()
 
     companion object {
         const val API_KEY =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAxOTg4MzgifQ.PaE7BfPP2E7kl94kIEs4xHJ6jfZrH6URxNTGSUQbRNROiysUzPfIIVazL5sS3KZ80ry29nvQh8ZbnjHOT1OrwazZNqfu7u5vQweb3hhyBSbV2lCKsgkBA3ruZclvAoYV8rIokKb2QpRSHkDO0vicRyhFR7QtYal-3_NkZ2XW56Qq6pssMTerRbIBA4KtiWAm2gSaLraDJeizrS7v7C3ou5lkUpZic_5PefIIyRS9bDDRJq2N1PkVh9ASLoYVnKgXlBCNmDONAhUDg1hsxTGh00lExQCI6KSGNpYGkpi4YtaOPnhNyFBbC-1d4byozg1WyTjSMIXLlUqsyhRSWYFylw"
         const val API_BASE = "developer-lostark.game.onstove.com"
+        private const val EVENT_CACHE_DURATION_MILLIS = 24 * 60 * 60 * 1_000L
     }
 
     suspend fun getCharacterInfo(characterName: String): LostArkResult<List<CharacterInfo>> {
@@ -44,8 +50,30 @@ class LostArkApi(
         )
     }
 
-    suspend fun getEvents(): LostArkResult<List<EventInfo>> =
-        module.getEvents(token = config.tokenKey.first() ?: API_KEY)
+    suspend fun getEvents(): LostArkResult<List<EventInfo>> = eventCacheMutex.withLock {
+        val now = Clock.System.now().toEpochMilliseconds()
+        config.getEventCache()?.let { cache ->
+            if (now - cache.updatedAt < EVENT_CACHE_DURATION_MILLIS) {
+                runCatching {
+                    Json.decodeFromString<List<EventInfo>>(cache.events)
+                }.getOrNull()?.let { events ->
+                    return@withLock LostArkResult.Success(events)
+                }
+                config.clearEventCache()
+            }
+        }
+
+        when (val result = module.getEvents(token = config.tokenKey.first() ?: API_KEY)) {
+            is LostArkResult.Success -> {
+                config.updateEventCache(
+                    events = Json.encodeToString(result.data),
+                    updatedAt = now,
+                )
+                result
+            }
+            else -> result
+        }
+    }
 
     suspend fun validateToken(token: String): LostArkResult<List<CharacterInfo>> =
         module.getCharacterInfo(
