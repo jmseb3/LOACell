@@ -18,18 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.wonddak.loacell.di.LocalAssetStorage
-import com.wonddak.loacell.util.FileHelper
+import com.wonddak.loacell.viewModel.SplashViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun AssetProgressView(
     name: String,
-    fileHelper: FileHelper,
+    splashViewModel: SplashViewModel,
     onSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
-    val assetStorage = LocalAssetStorage.current
     Column(
         modifier = Modifier
             .size(180.dp)
@@ -45,27 +43,19 @@ fun AssetProgressView(
             title = "파일 삭제 요청"
             delay(1000)
             title = "파일 삭제중"
-            val result = fileHelper.deleteAssetFile(name)
             delay(1000)
-            if (result) {
-                title = "다운로드 요청중"
-                delay(1000L)
-                assetStorage.downloadAssetFile(
-                    fileName = name,
-                    fileHelper = fileHelper,
-                    successAction = {
-                        title = "다운로드 성공"
-                        onSuccess()
-                    },
-                    failAction = {
-                        title = "다운로드 실패"
-                    }
-                )
-            } else {
-                title = "파일 삭제에 실패 했습니다."
-                delay(1000)
-                onBack()
-            }
+            title = "다운로드 요청중"
+            delay(1000L)
+            splashViewModel.replaceAsset(
+                fileName = name,
+                onSuccess = {
+                    title = "다운로드 성공"
+                    onSuccess()
+                },
+                onFailure = {
+                    title = "다운로드 실패"
+                },
+            )
         }
 
         LaunchedEffect(title) {

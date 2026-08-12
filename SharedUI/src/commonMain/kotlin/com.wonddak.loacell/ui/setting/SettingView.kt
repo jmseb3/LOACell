@@ -42,7 +42,6 @@ import androidx.navigation.toRoute
 import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.di.LocalConfig
-import com.wonddak.loacell.di.LocalFileHelper
 import com.wonddak.loacell.di.LocalLostArkApi
 import com.wonddak.loacell.network.onFailMsg
 import com.wonddak.loacell.network.onSuccess
@@ -86,7 +85,6 @@ fun SettingView(
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
 
-    val fileHelper = LocalFileHelper.current
     SetBackAction(true) {
         onBack()
     }
@@ -154,7 +152,7 @@ fun SettingView(
                 val fileName = progress.name
                 AssetProgressView(
                     name = fileName,
-                    fileHelper = fileHelper,
+                    splashViewModel = splashViewModel,
                     onSuccess = splashViewModel::readAssetsFile,
                     onBack = navController::popBackStack
                 )

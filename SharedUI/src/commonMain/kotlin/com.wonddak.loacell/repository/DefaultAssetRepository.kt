@@ -33,6 +33,8 @@ class DefaultAssetRepository(
         )
     }
 
+    override fun isDownloaded(fileName: String): Boolean = fileHelper.isExistAsset(fileName)
+
     override fun download(fileNames: Set<String>, onFileDownloaded: () -> Unit) {
         fileNames.forEach { fileName ->
             assetStorage.downloadAssetFile(
@@ -41,6 +43,19 @@ class DefaultAssetRepository(
                 successAction = onFileDownloaded,
             )
         }
+    }
+
+    override fun replace(fileName: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+        if (!fileHelper.deleteAssetFile(fileName)) {
+            onFailure()
+            return
+        }
+        assetStorage.downloadAssetFile(
+            fileName = fileName,
+            fileHelper = fileHelper,
+            successAction = onSuccess,
+            failAction = { onFailure() },
+        )
     }
 
     override suspend fun load(fileNames: Set<String>) {

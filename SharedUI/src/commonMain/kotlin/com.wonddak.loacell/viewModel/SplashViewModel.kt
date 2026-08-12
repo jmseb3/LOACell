@@ -63,6 +63,11 @@ class SplashViewModel(
         }
     }
 
+    fun isAssetDownloaded(fileName: String): Boolean = assetRepository.isDownloaded(fileName)
+
+    fun replaceAsset(fileName: String, onSuccess: () -> Unit, onFailure: () -> Unit) =
+        assetRepository.replace(fileName, onSuccess, onFailure)
+
     fun readAssetsFile() {
         viewModelScope.launch {
             assetRepository.load(totalFileName)

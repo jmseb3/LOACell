@@ -16,9 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.loacell.util.FileHelper
 import com.wonddak.loacell.viewModel.SplashViewModel
-import com.wonddak.loacell.di.LocalFileHelper
 
 
 @Composable
@@ -27,7 +25,6 @@ fun AssetFileView(
     showProgressWithReDownload : (file:String) -> Unit
 ) {
     val totalFileName = splashViewModel.totalFileName
-    val fileHelper = LocalFileHelper.current
     Column(
         modifier = Modifier.fillMaxWidth()
             .background(Color.White)
@@ -76,7 +73,7 @@ fun AssetFileView(
                     onClick = {
                         showProgressWithReDownload(file)
                     },
-                    enabled = fileHelper.isExistAsset(file),
+                    enabled = splashViewModel.isAssetDownloaded(file),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("파일 삭제")
