@@ -5,5 +5,6 @@
     <string name="login_info_1">레이드 관리를 도와 주는</string>
     <string name="login_info_2">입니다.</string>
     <string name="login_anonymous">시작하기</string>
-    <string name="login_progress">로그인 처리 중입니다.</string>
+    <string name="login_progress">로그인하고 있어요</string>
+    <string name="login_progress_description">계정 정보를 안전하게 확인하는 중입니다.</string>
 </resources>
