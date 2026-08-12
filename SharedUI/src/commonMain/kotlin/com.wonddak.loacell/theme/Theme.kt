@@ -1,8 +1,11 @@
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R5 V4 */
+/* Hallmark · genre: modern-minimal · tone: practical · anchor hue: existing blue · macrostructure: Workbench */
 package com.wonddak.loacell.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -11,6 +14,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -91,6 +96,15 @@ private val darkScheme = darkColorScheme(
 internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
 
 @Composable
+private fun loaCellTypography() = Typography(
+    titleLarge = TextStyle(fontFamily = roboto(), fontWeight = FontWeight.Bold),
+    titleMedium = TextStyle(fontFamily = roboto(), fontWeight = FontWeight.SemiBold),
+    bodyLarge = TextStyle(fontFamily = roboto(), fontWeight = FontWeight.Normal),
+    bodyMedium = TextStyle(fontFamily = roboto(), fontWeight = FontWeight.Normal),
+    labelLarge = TextStyle(fontFamily = roboto(), fontWeight = FontWeight.SemiBold),
+)
+
+@Composable
 internal fun AppTheme(
     content: @Composable () -> Unit
 ) {
@@ -103,6 +117,7 @@ internal fun AppTheme(
         SystemAppearance(!isDark)
         MaterialTheme(
             colorScheme = if (isDark) darkScheme else lightScheme,
+            typography = loaCellTypography(),
             content = { Surface(content = content) }
         )
     }
