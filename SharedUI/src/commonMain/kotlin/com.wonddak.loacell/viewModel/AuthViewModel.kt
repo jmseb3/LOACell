@@ -79,7 +79,7 @@ class AuthViewModel(
         }
     }
 
-    val googleLoginHandler = object : TokenResultHandler<GoogleResult> {
+    private val googleLoginHandler = object : TokenResultHandler<GoogleResult> {
         override fun onFail(error: Error?) {
             Napier.d(tag = "auth") { "fail with $error" }
         }
@@ -89,6 +89,12 @@ class AuthViewModel(
             viewModelScope.launch {
                 loginHelper.registerGoogleToken(token)
             }
+        }
+    }
+
+    fun requestGoogleLogin() {
+        viewModelScope.launch {
+            loginHelper.requestGoogleLogin(googleLoginHandler)
         }
     }
 

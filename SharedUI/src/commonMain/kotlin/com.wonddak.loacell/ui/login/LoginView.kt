@@ -145,8 +145,7 @@ fun LoginView(
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 GoogleSignInButton(
-                    loginHelper = authViewModel.loginHelper,
-                    tokenResultHandler = authViewModel.googleLoginHandler,
+                    onClick = authViewModel::requestGoogleLogin,
                     modifier = Modifier.fillMaxWidth(0.8f),
                 )
             }

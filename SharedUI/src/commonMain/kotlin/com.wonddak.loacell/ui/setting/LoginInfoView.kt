@@ -25,12 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wonddak.hellogin.core.Error
-import com.wonddak.hellogin.core.TokenResultHandler
-import com.wonddak.hellogin.google.GoogleResult
 import com.wonddak.loacell.auth.FBUser
 import com.wonddak.loacell.auth.LoginHelper
-import com.wonddak.loacell.auth.registerAnonymousToGoogle
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.rememberModalStatus
 import com.wonddak.loacell.theme.roboto
@@ -180,28 +176,13 @@ fun LoginInfoView(
                         fontFamily = roboto()
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    val googleLinkHandler = remember {
-                        object : TokenResultHandler<GoogleResult> {
-                            override fun onFail(error: Error?) {
-                                showSnackbar(error.toString())
-                            }
-
-                            override fun onSuccess(token: GoogleResult) {
-                                authViewModel.loginHelper.registerAnonymousToGoogle(
-                                    result = token,
-                                    failAction = {
-                                        showSnackbar(it)
-                                    },
-                                    successAction = {
-                                        onBack()
-                                    }
-                                )
-                            }
-                        }
-                    }
                     GoogleSignInButton(
-                        loginHelper = authViewModel.loginHelper,
-                        tokenResultHandler = googleLinkHandler,
+                        onClick = {
+                            authViewModel.linkToGoogleAccount(
+                                failAction = showSnackbar,
+                                successAction = onBack,
+                            )
+                        },
                         iconOnly = true,
                     )
                     if (useLinkApple) {

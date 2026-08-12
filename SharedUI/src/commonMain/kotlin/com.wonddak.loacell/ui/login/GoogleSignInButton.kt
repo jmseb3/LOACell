@@ -6,14 +6,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.wonddak.hellogin.core.TokenResultHandler
-import com.wonddak.hellogin.google.GoogleResult
-import com.wonddak.loacell.auth.LoginHelper
-import kotlinx.coroutines.launch
 import loacell.sharedui.generated.resources.Res
 import loacell.sharedui.generated.resources.button_google
 import loacell.sharedui.generated.resources.logo_google
@@ -21,18 +16,10 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun GoogleSignInButton(
-    loginHelper: LoginHelper,
-    tokenResultHandler: TokenResultHandler<GoogleResult>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     iconOnly: Boolean = false,
 ) {
-    val scope = rememberCoroutineScope()
-    val onClick: () -> Unit = {
-        scope.launch {
-            loginHelper.requestGoogleLogin(tokenResultHandler)
-        }
-    }
-
     if (iconOnly) {
         IconButton(onClick = onClick, modifier = modifier) {
             Image(
