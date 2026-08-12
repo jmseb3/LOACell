@@ -20,7 +20,8 @@ let package = Package(
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
       exact: "9.2.0"
-    )
+    ),
+    .package(path: "subpackages/_data_firebaseData")
   ],
   targets: [
     .target(
@@ -49,7 +50,8 @@ let package = Package(
         .product(
           name: "GoogleSignIn",
           package: "GoogleSignIn-iOS"
-        )
+        ),
+        .product(name: "_data_firebaseData", package: "_data_firebaseData")
       ]
     )
   ]
