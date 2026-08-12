@@ -51,7 +51,7 @@ android {
 
 dependencies {
     implementation(project(":SharedUI"))
-    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
     implementation(project(":core:di"))
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)

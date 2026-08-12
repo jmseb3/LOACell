@@ -11,7 +11,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.wonddak.loacell.core.common"
+        namespace = "com.wonddak.loacell.core.ui"
         compileSdk = 37
         minSdk = 28
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
