@@ -4,6 +4,7 @@ import com.wonddak.loacell.network.ApiResult
 import com.wonddak.loacell.network.LostArkResult
 import com.wonddak.loacell.network.lostark.LostArkApi.Companion.API_BASE
 import com.wonddak.loacell.network.lostark.model.CharacterInfo
+import com.wonddak.loacell.network.lostark.model.CharacterProfile
 import com.wonddak.loacell.network.lostark.model.EventInfo
 import com.wonddak.loacell.network.safeRequest
 import com.wonddak.loacell.network.toError
@@ -49,6 +50,14 @@ class LostArkApi(
             token = config.tokenKey.first() ?: API_KEY,
         )
     }
+
+    suspend fun getCharacterCombatPower(characterName: String): Long? =
+        module.getCharacterProfile(
+            characterName = characterName,
+            token = config.tokenKey.first() ?: API_KEY,
+        ).let { result ->
+            (result as? ApiResult.Success)?.data?.combatPower
+        }
 
     suspend fun getEvents(): LostArkResult<List<EventInfo>> = eventCacheMutex.withLock {
         val now = Clock.System.now().toEpochMilliseconds()
@@ -139,6 +148,15 @@ class LostArkApiModule {
             is ApiResult.Exception -> LostArkResult.Fail(0, result.e.message.toError())
             is ApiResult.Loading -> LostArkResult.Fail(0, "")
         }
+    }
+
+    @Throws(Throwable::class)
+    suspend fun getCharacterProfile(
+        characterName: String,
+        token: String,
+    ): ApiResult<CharacterProfile> = httpClient.safeRequest {
+        url.path("armories/${characterName.encodeURLPath()}/profiles")
+        headers.append(HttpHeaders.Authorization, "bearer $token")
     }
 
     @Throws(Throwable::class)

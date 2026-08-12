@@ -170,5 +170,6 @@ fun UserInfoCharacter(
                 modifier = modifier
             )
         }
+        Text(text = "전투력: ${character.combatPower ?: "갱신필요"}")
     }
 }
