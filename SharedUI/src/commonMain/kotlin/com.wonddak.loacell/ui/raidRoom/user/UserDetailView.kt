@@ -64,12 +64,14 @@ fun UserDetailView(
                     fabStatus,
                     listOf(
                         FABInfo.Default(
-                            Res.drawable.change_person
+                            Res.drawable.change_person,
+                            "대표 캐릭터 변경",
                         ) {
                             changeCharacterStatus.show()
                         },
                         FABInfo.Default(
-                            Res.drawable.refresh
+                            Res.drawable.refresh,
+                            "캐릭터 정보 갱신",
                         ) {
                             Napier.d { "갱신: ${userInfo.timeStamp}" }
                             Napier.d { "갱신: ${userInfo.checkTimeOver()}" }
@@ -88,7 +90,8 @@ fun UserDetailView(
                             }
                         },
                         FABInfo.Default(
-                            Res.drawable.delete
+                            Res.drawable.delete,
+                            "사용자 삭제",
                         ) {
                             deleteDialogStatus.show()
                         },

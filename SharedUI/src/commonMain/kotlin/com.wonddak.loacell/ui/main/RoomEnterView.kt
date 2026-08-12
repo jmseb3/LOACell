@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -18,7 +19,6 @@ import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.ui.common.LengthLimitTextField
 import com.wonddak.loacell.viewModel.RaidViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun RoomEnterView(
@@ -43,12 +43,6 @@ fun RoomEnterView(
 	) { innerPadding ->
 		var errorMsg by remember {
 			mutableStateOf("")
-		}
-		LaunchedEffect(errorMsg) {
-			if (errorMsg.isNotEmpty()) {
-				delay(2_000L)
-				errorMsg = ""
-			}
 		}
 		var roomId by remember {
 			mutableStateOf(prevId)
@@ -95,7 +89,7 @@ fun RoomEnterView(
 					}
 				},
 			)
-			OutlinedButton(
+				Button(
 				modifier = Modifier.fillMaxWidth(),
 				onClick = {
 					raidViewModel.enterRoom(
@@ -121,8 +115,9 @@ fun RoomEnterView(
 				Text(
 					modifier = Modifier
 						.fillMaxWidth(),
-					text = errorMsg,
-					textAlign = TextAlign.Center
+						text = errorMsg,
+						textAlign = TextAlign.Center,
+						color = MaterialTheme.colorScheme.error,
 				)
 			}
 		}

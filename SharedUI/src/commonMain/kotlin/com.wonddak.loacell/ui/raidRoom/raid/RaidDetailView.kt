@@ -61,7 +61,7 @@ fun RaidDetailView(
             Text("현재 접근 하려는 페이지는 삭제되었거나\n정상적인 접근이 아닙니다.")
         }
     } else {
-        val tabs = arrayListOf("All").also { arr ->
+        val tabs = arrayListOf("전체").also { arr ->
             (1..raidInfo.getMaxParty()).forEach {
                 arr.add(it.toString())
             }
@@ -99,12 +99,14 @@ fun RaidDetailView(
                     fabStatus,
                     listOf(
                         FABInfo.Default(
-                            Res.drawable.room_setting
+                            Res.drawable.room_setting,
+                            "레이드 수정",
                         ) {
                             navigationEdit(raidInfo)
                         },
                         FABInfo.Default(
-                            Res.drawable.delete
+                            Res.drawable.delete,
+                            "레이드 삭제",
                         ) {
                             raidDetailDeleteDialog.show()
                         }

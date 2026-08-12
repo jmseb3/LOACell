@@ -20,6 +20,7 @@ sealed class FABInfo(
 ) {
     data class Default(
         override val img: DrawableResource,
+        val contentDescription: String,
         override val action: () -> Unit,
     ) : FABInfo(img, action)
 

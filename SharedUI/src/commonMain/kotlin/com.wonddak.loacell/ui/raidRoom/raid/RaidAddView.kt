@@ -20,7 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -362,7 +361,7 @@ fun RaidAddView(
                     }
                 }
             }
-            OutlinedButton(
+            Button(
                 onClick = {
                     if (prevData == null) {
                         raidViewModel.addRaid(raidInfo, onBack)
@@ -417,13 +416,15 @@ private fun RadioItem(
 private fun DayButton(
     day: Day, modifier: Modifier, selected: Boolean, update: () -> Unit,
 ) {
-    val color = if (selected) Color.Black else Color.Transparent
+    val color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
     TextButton(
         modifier = modifier.border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)),
         onClick = update
     ) {
         Text(
-            text = day.text, textAlign = TextAlign.Center, color = Color.Black
+            text = day.text,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

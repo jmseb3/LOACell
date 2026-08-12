@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.wonddak.loacell.SetBackAction
 import com.wonddak.loacell.model.RoomInfo
 import com.wonddak.loacell.model.RoomState
 import com.wonddak.loacell.noRippleClickable
@@ -43,6 +45,8 @@ import com.wonddak.loacell.ui.raidRoom.setting.SettingRoomView
 import com.wonddak.loacell.ui.raidRoom.user.UserListView
 import com.wonddak.loacell.viewModel.AuthViewModel
 import com.wonddak.loacell.viewModel.RaidViewModel
+import com.wonddak.loacell.theme.LoaCellRadius
+import com.wonddak.loacell.theme.LoaCellSpace
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loacell.sharedui.generated.resources.Res
@@ -59,6 +63,7 @@ fun RaidRoomView(
     navigateUserDetail: (userName: String) -> Unit,
     onBack: () -> Unit,
 ) {
+    SetBackAction(true, onBack)
     val pagerState = rememberPagerState(
         initialPage = raidViewModel.lastTabIndex,
         pageCount = {
@@ -213,25 +218,35 @@ private fun TitleView(
     onBack: () -> Unit,
 ) {
     val shareStatus = rememberModalStatus()
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = LoaCellSpace.md, vertical = LoaCellSpace.xs),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(LoaCellRadius.card),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LoaCellSpace.md, vertical = LoaCellSpace.sm),
         ) {
             Column(
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(end = 48.dp)
             ) {
                 Text(
-                    text = roomInfo.description,
-                    modifier = Modifier
+                    text = roomInfo.description.ifBlank { "방 설명이 없습니다." },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = roomInfo.uniqueId,
-                    modifier = Modifier.noRippleClickable {
-                        shareStatus.show()
-                    },
+                    text = "방 코드 ${roomInfo.uniqueId}",
+                    modifier = Modifier
+                        .padding(top = LoaCellSpace.xxs)
+                        .noRippleClickable { shareStatus.show() },
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -277,7 +292,6 @@ private fun TitleView(
                 }
             }
         }
-        HorizontalDivider()
     }
 
     ShareSheet(
