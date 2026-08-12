@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.metro)
 }
 
+apply(from = rootProject.file("keystore/signing.gradle"))
+
 android {
     namespace = "com.wonddak.loacell"
     compileSdk = 37
@@ -25,6 +27,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfigs.findByName("LoaCellSigning")?.let {
+                signingConfig = it
+            }
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = true
             }
