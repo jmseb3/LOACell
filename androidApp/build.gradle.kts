@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.wonddak.loacell.android"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 36
         versionCode = 14
         versionName = "2.0.0"

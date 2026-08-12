@@ -13,7 +13,7 @@ kotlin {
     android {
         namespace = "com.wonddak.loacell.core.common"
         compileSdk = 37
-        minSdk = 26
+        minSdk = 28
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
     iosArm64()

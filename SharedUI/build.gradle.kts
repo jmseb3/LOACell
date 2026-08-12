@@ -15,7 +15,7 @@ kotlin {
     android {
         namespace = "com.wonddak.loacell.shared"
         compileSdk = 37
-        minSdk = 26
+        minSdk = 28
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)

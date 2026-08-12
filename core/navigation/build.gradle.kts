@@ -11,7 +11,7 @@ kotlin {
     android {
         namespace = "com.wonddak.loacell.core.navigation"
         compileSdk = 37
-        minSdk = 26
+        minSdk = 28
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
