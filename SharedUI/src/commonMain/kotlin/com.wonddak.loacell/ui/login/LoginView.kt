@@ -61,12 +61,12 @@ fun LoginView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .navigationBarsPadding()
             .background(MaterialTheme.colorScheme.background),
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .navigationBarsPadding(),
         ) {
             Column(
                 modifier = Modifier.align(Alignment.Center),
