@@ -2,16 +2,24 @@ package com.wonddak.loacell.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import loacell.sharedui.generated.resources.Res
@@ -24,22 +32,38 @@ fun GoogleSignInButton(
     modifier: Modifier = Modifier,
     iconOnly: Boolean = false,
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val buttonContainerColor = if (isDarkTheme) Color(0xFF131314) else Color.White
+    val buttonContentColor = if (isDarkTheme) Color(0xFFE3E3E3) else Color(0xFF1F1F1F)
+    val buttonBorderColor = if (isDarkTheme) Color(0xFF8E918F) else Color(0xFF747775)
+
     if (iconOnly) {
         IconButton(onClick = onClick, modifier = modifier) {
-            Image(
-                painter = painterResource(Res.drawable.logo_google),
-                contentDescription = "Google login",
-                modifier = Modifier.size(40.dp),
-            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(buttonContainerColor)
+                    .border(1.dp, buttonBorderColor, RoundedCornerShape(4.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.logo_google),
+                    contentDescription = "Google 계정 연동",
+                    modifier = Modifier.size(20.dp),
+                )
+            }
         }
     } else {
         OutlinedButton(
             onClick = onClick,
             modifier = modifier
+                .widthIn(min = 180.dp, max = 180.dp)
                 .heightIn(min = 48.dp),
-            border = BorderStroke(1.dp, Color(0xFF747775)),
+            border = BorderStroke(1.dp, buttonBorderColor),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color(0xFF1F1F1F),
+                containerColor = buttonContainerColor,
+                contentColor = buttonContentColor,
             ),
         ) {
             Image(
@@ -47,7 +71,7 @@ fun GoogleSignInButton(
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text("Google로 로그인")
         }
     }
